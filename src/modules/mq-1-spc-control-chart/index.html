@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SPC Control Chart — Hospital Quality Metrics</title>
+
+  <!-- KaTeX CSS -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
+    integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV"
+    crossorigin="anonymous"
+  />
+
+  <!-- Platform styles -->
+  <link rel="stylesheet" href="../../assets/design-system.css" />
+  <link rel="stylesheet" href="../../assets/module-template.css" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="module-page">
+
+    <!-- Header -->
+    <header class="module-header">
+      <ul class="breadcrumb">
+        <li><a href="../../../index.html">Home</a></li>
+        <li><a href="#">Medical Quality</a></li>
+        <li>SPC Control Chart</li>
+      </ul>
+      <h1>Statistical Process Control Chart</h1>
+      <p class="text-secondary">
+        Monitor hospital quality metrics over time with control limits and special-cause detection
+      </p>
+    </header>
+
+    <!-- Main layout -->
+    <div class="module-body">
+      <div class="module-layout">
+
+        <!-- Visualization area -->
+        <div class="viz-area">
+
+          <!-- Main control chart -->
+          <div class="viz-container" id="spc-panel">
+            <div class="viz-title">Control Chart</div>
+            <div class="viz-subtitle" id="spc-subtitle">
+              Tracking metric over time with UCL / CL / LCL
+            </div>
+            <div id="spc-chart"></div>
+            <div class="viz-legend" id="spc-legend"></div>
+          </div>
+
+          <!-- Secondary panels -->
+          <div class="secondary-panels">
+            <!-- Run chart / histogram -->
+            <div class="viz-container" id="histogram-panel">
+              <div class="viz-title">Distribution of Values</div>
+              <div class="viz-subtitle" id="histogram-subtitle">
+                Histogram of observed metric values
+              </div>
+              <div id="histogram-chart"></div>
+            </div>
+
+            <!-- Violations summary -->
+            <div class="viz-container" id="violations-panel">
+              <div class="viz-title">Rule Violations</div>
+              <div class="viz-subtitle" id="violations-subtitle">
+                Western Electric / Nelson rules triggered
+              </div>
+              <div id="violations-chart"></div>
+              <div class="stats-grid" id="violations-stats"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Control panel -->
+        <aside class="control-panel" id="control-panel">
+          <h2>Controls</h2>
+
+          <!-- Dataset selector -->
+          <div class="control-group dropdown-control">
+            <label for="dataset-select">Quality Metric</label>
+            <select id="dataset-select">
+              <option value="hai">Hospital-Acquired Infections</option>
+              <option value="readmission">30-Day Readmission Rate</option>
+              <option value="ssi">Surgical Site Infections</option>
+              <option value="clabsi">CLABSI Rate</option>
+              <option value="falls">Falls per 1000 Patient-Days</option>
+              <option value="mortality">Risk-Adjusted Mortality</option>
+            </select>
+          </div>
+
+          <!-- Chart type -->
+          <div class="control-group dropdown-control">
+            <label for="chart-type">Chart Type</label>
+            <select id="chart-type">
+              <option value="p-chart">p-Chart (Proportion)</option>
+              <option value="u-chart">u-Chart (Rate)</option>
+              <option value="xbar">X-bar Chart (Mean)</option>
+              <option value="individuals">Individuals Chart</option>
+            </select>
+          </div>
+
+          <hr class="control-divider" />
+
+          <!-- Time periods -->
+          <div class="control-group slider-control">
+            <label for="num-periods">
+              Time Periods
+              <span class="value-display" id="num-periods-val">36</span>
+            </label>
+            <input
+              type="range" id="num-periods"
+              min="12" max="60" step="1" value="36"
+            />
+          </div>
+
+          <!-- Sigma level -->
+          <div class="control-group slider-control">
+            <label for="sigma-level">
+              Control Limit (&sigma;)
+              <span class="value-display" id="sigma-level-val">3.0</span>
+            </label>
+            <input
+              type="range" id="sigma-level"
+              min="1.0" max="4.0" step="0.5" value="3.0"
+            />
+          </div>
+
+          <hr class="control-divider" />
+
+          <!-- Toggles -->
+          <label class="toggle-control">
+            <input type="checkbox" id="toggle-western-electric" checked />
+            <span class="toggle-track"></span>
+            <span class="toggle-label">Western Electric rules</span>
+          </label>
+
+          <label class="toggle-control">
+            <input type="checkbox" id="toggle-zones" />
+            <span class="toggle-track"></span>
+            <span class="toggle-label">Show zone bands (A/B/C)</span>
+          </label>
+
+          <label class="toggle-control">
+            <input type="checkbox" id="toggle-shift" />
+            <span class="toggle-track"></span>
+            <span class="toggle-label">Inject quality shift</span>
+          </label>
+
+          <hr class="control-divider" />
+
+          <!-- Actions -->
+          <div class="action-row">
+            <button class="btn btn-primary" id="regenerate-btn">
+              Regenerate Data
+            </button>
+          </div>
+
+          <!-- Stats -->
+          <div class="stats-grid" id="stats-grid">
+            <div class="stat-card">
+              <div class="stat-value" id="stat-mean">--</div>
+              <div class="stat-label">Center Line</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="stat-ucl">--</div>
+              <div class="stat-label">UCL</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="stat-violations">0</div>
+              <div class="stat-label">Violations</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="stat-capability">--</div>
+              <div class="stat-label">Cpk</div>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <!-- Info panel -->
+      <div class="info-panel" style="max-width:1400px; margin:0 auto var(--space-xl); padding:var(--space-lg) var(--space-xl);">
+        <h2>About SPC Control Charts in Healthcare</h2>
+        <details open>
+          <summary>What is Statistical Process Control?</summary>
+          <div class="detail-body">
+            <p>
+              <strong>Statistical Process Control (SPC)</strong> applies statistical methods to monitor
+              and control healthcare processes. A control chart plots observed values over time against
+              statistically derived control limits, distinguishing <em>common-cause variation</em>
+              (inherent to the process) from <em>special-cause variation</em> (signals of change).
+            </p>
+            <p>
+              Control limits are typically set at &pm;3&sigma; from the center line, capturing 99.73%
+              of values when the process is stable.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>Chart Types</summary>
+          <div class="detail-body">
+            <p>
+              <strong>p-Chart:</strong> Monitors the proportion of events (e.g., infection rate).
+              Control limits adjust for varying denominator sizes.
+            </p>
+            <p>
+              <strong>u-Chart:</strong> Monitors event rates per unit of exposure (e.g., falls
+              per 1,000 patient-days). Similar to p-chart but for count rates.
+            </p>
+            <p>
+              <strong>X-bar Chart:</strong> Tracks the mean of subgroups over time.
+            </p>
+            <p>
+              <strong>Individuals Chart:</strong> Plots individual measurements when subgrouping
+              is not practical. Uses moving range for sigma estimation.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>Western Electric Rules</summary>
+          <div class="detail-body">
+            <p>Beyond a single point outside control limits, the <strong>Western Electric rules</strong>
+               detect subtler patterns of special-cause variation:</p>
+            <ul>
+              <li><strong>Rule 1:</strong> One point beyond 3&sigma;</li>
+              <li><strong>Rule 2:</strong> Two of three consecutive points beyond 2&sigma;</li>
+              <li><strong>Rule 3:</strong> Four of five consecutive points beyond 1&sigma;</li>
+              <li><strong>Rule 4:</strong> Eight consecutive points on one side of the center line</li>
+            </ul>
+          </div>
+        </details>
+        <details>
+          <summary>Healthcare Applications</summary>
+          <div class="detail-body">
+            <p>
+              SPC charts are mandated or recommended by CMS, The Joint Commission, and IHI for
+              monitoring key quality indicators:
+            </p>
+            <ul>
+              <li>Hospital-acquired infection rates (CLABSI, CAUTI, SSI)</li>
+              <li>30-day readmission and mortality rates</li>
+              <li>Patient falls and medication errors</li>
+              <li>ED wait times and length of stay</li>
+              <li>Surgical complications and never events</li>
+            </ul>
+          </div>
+        </details>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="./module.js"></script>
+</body>
+</html>

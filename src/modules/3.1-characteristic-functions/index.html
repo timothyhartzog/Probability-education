@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module 3.1 — Characteristic Function Gallery</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" crossorigin="anonymous" />
+  <link rel="stylesheet" href="../../assets/design-system.css" />
+  <link rel="stylesheet" href="../../assets/module-template.css" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="module-page">
+    <header class="module-header">
+      <ul class="breadcrumb">
+        <li><a href="../../../index.html">Home</a></li>
+        <li><a href="#">Fourier Methods</a></li>
+        <li>Characteristic Functions</li>
+      </ul>
+      <h1>Characteristic Function Gallery</h1>
+      <p class="text-secondary">
+        Visualize &phi;<sub>X</sub>(t) = E[e<sup>itX</sup>] in the complex plane and connect distribution properties to Fourier structure
+      </p>
+    </header>
+
+    <div class="module-body">
+      <div class="module-layout">
+        <div class="viz-area">
+          <!-- Complex plane plot -->
+          <div class="viz-container" id="complex-panel">
+            <div class="viz-title">Characteristic Function in Complex Plane</div>
+            <div class="viz-subtitle" id="complex-subtitle">
+              Parametric curve (&phi;(t)) as t varies
+            </div>
+            <div id="complex-chart"></div>
+          </div>
+
+          <div class="secondary-panels">
+            <!-- Real/Imaginary parts -->
+            <div class="viz-container" id="reim-panel">
+              <div class="viz-title">Real &amp; Imaginary Parts</div>
+              <div class="viz-subtitle" id="reim-subtitle">
+                Re(&phi;(t)) and Im(&phi;(t)) vs. t
+              </div>
+              <div id="reim-chart"></div>
+              <div class="viz-legend" id="reim-legend"></div>
+            </div>
+
+            <!-- PDF/PMF -->
+            <div class="viz-container" id="density-panel">
+              <div class="viz-title">Density / PMF</div>
+              <div class="viz-subtitle" id="density-subtitle">
+                The distribution whose CF is shown
+              </div>
+              <div id="density-chart"></div>
+            </div>
+          </div>
+        </div>
+
+        <aside class="control-panel" id="control-panel">
+          <h2>Controls</h2>
+
+          <div class="control-group dropdown-control">
+            <label for="dist-select">Distribution</label>
+            <select id="dist-select">
+              <option value="normal">Normal(&mu;, &sigma;&sup2;)</option>
+              <option value="uniform">Uniform(a, b)</option>
+              <option value="exponential">Exponential(&lambda;)</option>
+              <option value="poisson">Poisson(&lambda;)</option>
+              <option value="cauchy">Cauchy</option>
+              <option value="laplace">Laplace</option>
+              <option value="chi-squared">Chi-Squared(k)</option>
+              <option value="bernoulli">Bernoulli(p)</option>
+            </select>
+          </div>
+
+          <hr class="control-divider" />
+
+          <!-- Parameter 1 -->
+          <div class="control-group slider-control" id="param1-group">
+            <label for="param1">
+              <span id="param1-name">&mu;</span>
+              <span class="value-display" id="param1-val">0</span>
+            </label>
+            <input type="range" id="param1" min="-3" max="3" step="0.1" value="0" />
+          </div>
+
+          <!-- Parameter 2 -->
+          <div class="control-group slider-control" id="param2-group">
+            <label for="param2">
+              <span id="param2-name">&sigma;</span>
+              <span class="value-display" id="param2-val">1.0</span>
+            </label>
+            <input type="range" id="param2" min="0.1" max="5" step="0.1" value="1.0" />
+          </div>
+
+          <hr class="control-divider" />
+
+          <div class="control-group slider-control">
+            <label for="t-range">
+              Frequency Range |t|
+              <span class="value-display" id="t-range-val">10</span>
+            </label>
+            <input type="range" id="t-range" min="2" max="30" step="1" value="10" />
+          </div>
+
+          <hr class="control-divider" />
+
+          <div class="control-group dropdown-control">
+            <label for="display-mode">Display Mode</label>
+            <select id="display-mode">
+              <option value="complex">Complex Plane</option>
+              <option value="modarg">Modulus &amp; Argument</option>
+            </select>
+          </div>
+
+          <label class="toggle-control">
+            <input type="checkbox" id="toggle-moments" />
+            <span class="toggle-track"></span>
+            <span class="toggle-label">Show moment markers at t=0</span>
+          </label>
+
+          <label class="toggle-control">
+            <input type="checkbox" id="toggle-animate" />
+            <span class="toggle-track"></span>
+            <span class="toggle-label">Animate t sweep</span>
+          </label>
+
+          <div class="stats-grid" id="stats-grid">
+            <div class="stat-card">
+              <div class="stat-value" id="stat-phi0">1.00</div>
+              <div class="stat-label">&phi;(0)</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="stat-mean">--</div>
+              <div class="stat-label">Mean</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="stat-var">--</div>
+              <div class="stat-label">Variance</div>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <div class="info-panel" style="max-width:1400px; margin:0 auto var(--space-xl); padding:var(--space-lg) var(--space-xl);">
+        <h2>About Characteristic Functions</h2>
+        <details open>
+          <summary>Definition</summary>
+          <div class="detail-body">
+            <p>
+              The <strong>characteristic function</strong> of a random variable X is
+              &phi;<sub>X</sub>(t) = E[e<sup>itX</sup>] for t &in; R. Unlike the moment
+              generating function, it always exists.
+            </p>
+            <div class="math-block" id="info-cf-def"></div>
+          </div>
+        </details>
+        <details>
+          <summary>Key Properties</summary>
+          <div class="detail-body">
+            <p>&phi;(0) = 1 always. If X is symmetric about 0, &phi; is real-valued.
+               Moments appear as derivatives: E[X<sup>k</sup>] = &phi;<sup>(k)</sup>(0)/i<sup>k</sup>.
+               &phi; uniquely determines the distribution (inversion theorem).</p>
+          </div>
+        </details>
+        <details>
+          <summary>Connection to Fourier Transform</summary>
+          <div class="detail-body">
+            <p>
+              The characteristic function is the Fourier transform of the distribution.
+              The inversion formula recovers the density (when it exists):
+              f(x) = (1/2&pi;) &int; e<sup>-itx</sup> &phi;(t) dt.
+            </p>
+          </div>
+        </details>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="./module.js"></script>
+</body>
+</html>

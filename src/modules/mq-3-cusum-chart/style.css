@@ -1,0 +1,61 @@
+/* CUSUM Chart — Module Styles */
+
+.viz-area {
+  flex: 1 1 65%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.secondary-panels {
+  display: flex;
+  gap: var(--space-lg);
+}
+
+.secondary-panels .viz-container {
+  flex: 1 1 50%;
+  min-width: 0;
+}
+
+/* CUSUM line */
+.cusum-line { fill: none; stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; }
+.cusum-upper { stroke: var(--color-error); }
+.cusum-lower { stroke: var(--color-accent); }
+
+/* Threshold */
+.threshold-line { stroke-dasharray: 8 4; stroke-width: 2; }
+.threshold-upper { stroke: var(--color-error); opacity: 0.7; }
+.threshold-lower { stroke: var(--color-accent); opacity: 0.7; }
+.threshold-label { font-family: var(--font-heading); font-size: 12px; font-weight: 600; }
+
+/* Signal marker */
+.signal-marker { fill: var(--color-error); stroke: #fff; stroke-width: 2; }
+.signal-line { stroke: var(--color-error); stroke-dasharray: 3 3; stroke-width: 1; opacity: 0.5; }
+
+/* Shift region */
+.shift-region { fill: rgba(220, 38, 38, 0.05); }
+.shift-line { stroke: var(--color-error); stroke-dasharray: 4 3; stroke-width: 1; opacity: 0.4; }
+
+/* Raw data panel */
+.outcome-success { fill: var(--color-accent); opacity: 0.6; }
+.outcome-failure { fill: var(--color-error); opacity: 0.8; }
+.running-rate-line { fill: none; stroke: var(--color-primary); stroke-width: 1.5; }
+.target-line { stroke: var(--color-text-secondary); stroke-dasharray: 5 3; stroke-width: 1; }
+
+/* ARL curve */
+.arl-line { fill: none; stroke: var(--color-primary); stroke-width: 2; }
+.arl-area { fill: rgba(37, 99, 235, 0.1); }
+.arl-marker { fill: var(--color-secondary); stroke: #fff; stroke-width: 2; r: 5; }
+
+/* Axis */
+.axis path, .axis line { stroke: #cbd5e1; }
+.axis text { fill: var(--color-text-secondary); font-family: var(--font-heading); font-size: 11px; }
+.axis-label { font-family: var(--font-heading); font-size: 12px; fill: var(--color-text-secondary); }
+
+/* Responsive */
+@media (max-width: 900px) {
+  .secondary-panels {
+    flex-direction: column;
+  }
+}

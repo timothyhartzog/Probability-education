@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module 1.1 — Sigma-Algebra Explorer</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" crossorigin="anonymous" />
+  <link rel="stylesheet" href="../../assets/design-system.css" />
+  <link rel="stylesheet" href="../../assets/module-template.css" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="module-page">
+    <header class="module-header">
+      <ul class="breadcrumb">
+        <li><a href="../../../index.html">Home</a></li>
+        <li><a href="#">Foundations</a></li>
+        <li>Sigma-Algebra Explorer</li>
+      </ul>
+      <h1>Sigma-Algebra Explorer</h1>
+      <p class="text-secondary">
+        Interactively construct sigma-algebras and visualize closure properties on finite sets
+      </p>
+    </header>
+
+    <div class="module-body">
+      <div class="module-layout">
+        <div class="viz-area">
+          <!-- Set diagram -->
+          <div class="viz-container" id="set-diagram-panel">
+            <div class="viz-title">Set Diagram</div>
+            <div class="viz-subtitle" id="set-diagram-subtitle">
+              Click subsets of &Omega; to toggle membership &mdash; closure is enforced automatically
+            </div>
+            <div id="set-diagram-chart"></div>
+          </div>
+
+          <div class="secondary-panels">
+            <!-- Lattice of sigma-algebras -->
+            <div class="viz-container" id="lattice-panel">
+              <div class="viz-title">Sigma-Algebra Lattice</div>
+              <div class="viz-subtitle" id="lattice-subtitle">
+                Containment partial order on all sigma-algebras of &Omega;
+              </div>
+              <div id="lattice-chart"></div>
+            </div>
+
+            <!-- Current sigma-algebra contents -->
+            <div class="viz-container" id="contents-panel">
+              <div class="viz-title">Current Sigma-Algebra</div>
+              <div class="viz-subtitle" id="contents-subtitle">
+                All sets in the generated sigma-algebra &sigma;(S)
+              </div>
+              <div id="contents-chart"></div>
+              <div class="stats-grid" id="contents-stats"></div>
+            </div>
+          </div>
+        </div>
+
+        <aside class="control-panel" id="control-panel">
+          <h2>Controls</h2>
+
+          <div class="control-group slider-control">
+            <label for="omega-size">
+              |&Omega;|
+              <span class="value-display" id="omega-size-val">3</span>
+            </label>
+            <input type="range" id="omega-size" min="2" max="5" step="1" value="3" />
+          </div>
+
+          <hr class="control-divider" />
+
+          <div class="control-group" id="subset-toggles">
+            <label>Generator Sets</label>
+            <!-- Dynamically populated -->
+          </div>
+
+          <hr class="control-divider" />
+
+          <label class="toggle-control">
+            <input type="checkbox" id="toggle-closure-animate" checked />
+            <span class="toggle-track"></span>
+            <span class="toggle-label">Animate closure steps</span>
+          </label>
+
+          <label class="toggle-control">
+            <input type="checkbox" id="toggle-lattice" checked />
+            <span class="toggle-track"></span>
+            <span class="toggle-label">Show full lattice</span>
+          </label>
+
+          <hr class="control-divider" />
+
+          <div class="action-row">
+            <button class="btn btn-primary" id="reset-btn">Reset</button>
+            <button class="btn" id="random-btn">Random</button>
+          </div>
+
+          <div class="stats-grid" id="stats-grid">
+            <div class="stat-card">
+              <div class="stat-value" id="stat-generators">0</div>
+              <div class="stat-label">Generators</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="stat-size">2</div>
+              <div class="stat-label">&sigma;-Algebra Size</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="stat-atoms">--</div>
+              <div class="stat-label">Atoms</div>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <div class="info-panel" style="max-width:1400px; margin:0 auto var(--space-xl); padding:var(--space-lg) var(--space-xl);">
+        <h2>About Sigma-Algebras</h2>
+        <details open>
+          <summary>Definition</summary>
+          <div class="detail-body">
+            <p>
+              A <strong>sigma-algebra</strong> (or &sigma;-field) F on a set &Omega; is a collection
+              of subsets of &Omega; satisfying: (1) &Omega; &in; F, (2) if A &in; F then A<sup>c</sup> &in; F,
+              and (3) if A<sub>1</sub>, A<sub>2</sub>, ... &in; F then &cup; A<sub>i</sub> &in; F.
+            </p>
+            <div class="math-block" id="info-sigma-def"></div>
+            <p>
+              These closure properties ensure that any "reasonable" set operation applied to
+              measurable sets yields another measurable set. The pair (&Omega;, F) is called a
+              <strong>measurable space</strong>.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>Generated Sigma-Algebras</summary>
+          <div class="detail-body">
+            <p>
+              Given any collection S of subsets, &sigma;(S) denotes the <strong>smallest</strong>
+              sigma-algebra containing all sets in S. It is constructed by taking all complements,
+              unions, and intersections until closure is achieved. This module shows that process
+              step by step.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>Atoms and Partitions</summary>
+          <div class="detail-body">
+            <p>
+              On a finite set, every sigma-algebra is generated by a unique partition of &Omega;
+              into <strong>atoms</strong> &mdash; the minimal non-empty sets in F. The number
+              of atoms determines the "information content" of the sigma-algebra: more atoms
+              means finer resolution.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>Information and Filtrations</summary>
+          <div class="detail-body">
+            <p>
+              A <strong>filtration</strong> F<sub>0</sub> &sube; F<sub>1</sub> &sube; ... is a
+              nested sequence of sigma-algebras representing information accumulating over time.
+              A finer sigma-algebra (higher in the lattice) corresponds to more information.
+              This is fundamental to conditional expectation and martingale theory.
+            </p>
+          </div>
+        </details>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="./module.js"></script>
+</body>
+</html>

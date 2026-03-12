@@ -1,0 +1,92 @@
+/* Funnel Plot — Module Styles */
+
+.viz-area {
+  flex: 1 1 65%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.secondary-panels {
+  display: flex;
+  gap: var(--space-lg);
+}
+
+.secondary-panels .viz-container {
+  flex: 1 1 50%;
+  min-width: 0;
+}
+
+/* Funnel bands */
+.funnel-band-95 { fill: rgba(37, 99, 235, 0.08); }
+.funnel-band-998 { fill: rgba(37, 99, 235, 0.04); }
+.funnel-limit { fill: none; stroke-dasharray: 5 3; stroke-width: 1.5; }
+.funnel-limit-95 { stroke: var(--color-primary); }
+.funnel-limit-998 { stroke: var(--color-primary); opacity: 0.5; }
+
+/* Target line */
+.target-line { stroke: var(--color-text-secondary); stroke-width: 2; stroke-dasharray: 8 4; }
+
+/* Hospital dots */
+.hospital-dot {
+  r: 4;
+  stroke-width: 1.5;
+  cursor: pointer;
+  transition: r 150ms ease, opacity 150ms ease;
+}
+.hospital-dot:hover { r: 7; }
+.hospital-dot.within { fill: var(--color-primary); stroke: var(--color-primary); opacity: 0.7; }
+.hospital-dot.outlier-high { fill: var(--color-error); stroke: var(--color-error); }
+.hospital-dot.outlier-low { fill: var(--color-accent); stroke: var(--color-accent); }
+.hospital-dot.alert { fill: #f59e0b; stroke: #f59e0b; }
+
+/* Hospital labels */
+.hospital-label {
+  font-family: var(--font-heading);
+  font-size: 10px;
+  fill: var(--color-text-secondary);
+  pointer-events: none;
+}
+
+/* Caterpillar plot */
+.ci-line { stroke-width: 1.5; opacity: 0.6; }
+.cat-dot { r: 3.5; cursor: pointer; }
+.cat-dot:hover { r: 5.5; }
+.reference-line { stroke: var(--color-text-secondary); stroke-dasharray: 4 3; stroke-width: 1; }
+
+/* Volume histogram */
+.vol-bar { fill: var(--color-secondary); opacity: 0.7; }
+.vol-bar:hover { opacity: 1; }
+
+/* Tooltip */
+.hospital-tooltip {
+  position: absolute;
+  background: var(--color-text);
+  color: #fff;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 150ms ease;
+  z-index: 100;
+  max-width: 220px;
+  line-height: 1.5;
+}
+.hospital-tooltip.visible { opacity: 1; }
+.hospital-tooltip .tt-name { font-weight: 700; margin-bottom: 2px; }
+.hospital-tooltip .tt-detail { font-family: var(--font-mono); font-size: 0.75rem; }
+
+/* Axis */
+.axis path, .axis line { stroke: #cbd5e1; }
+.axis text { fill: var(--color-text-secondary); font-family: var(--font-heading); font-size: 11px; }
+.axis-label { font-family: var(--font-heading); font-size: 12px; fill: var(--color-text-secondary); }
+
+/* Responsive */
+@media (max-width: 900px) {
+  .secondary-panels {
+    flex-direction: column;
+  }
+}

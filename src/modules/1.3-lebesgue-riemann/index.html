@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module 1.3 — Lebesgue vs. Riemann Integration</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" crossorigin="anonymous" />
+  <link rel="stylesheet" href="../../assets/design-system.css" />
+  <link rel="stylesheet" href="../../assets/module-template.css" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="module-page">
+    <header class="module-header">
+      <ul class="breadcrumb">
+        <li><a href="../../../index.html">Home</a></li>
+        <li><a href="#">Foundations</a></li>
+        <li>Lebesgue vs. Riemann</li>
+      </ul>
+      <h1>Lebesgue vs. Riemann Integration</h1>
+      <p class="text-secondary">
+        Side-by-side comparison of domain partitioning (Riemann) vs. range partitioning (Lebesgue)
+      </p>
+    </header>
+
+    <div class="module-body">
+      <div class="module-layout">
+        <div class="viz-area">
+          <!-- Dual panels -->
+          <div class="dual-panels">
+            <div class="viz-container" id="riemann-panel">
+              <div class="viz-title">Riemann Integration</div>
+              <div class="viz-subtitle" id="riemann-subtitle">
+                Partition the domain &mdash; upper and lower sums bracket the integral
+              </div>
+              <div id="riemann-chart"></div>
+              <div class="stats-grid" id="riemann-stats"></div>
+            </div>
+
+            <div class="viz-container" id="lebesgue-panel">
+              <div class="viz-title">Lebesgue Integration</div>
+              <div class="viz-subtitle" id="lebesgue-subtitle">
+                Partition the range &mdash; measure the preimage of each slice
+              </div>
+              <div id="lebesgue-chart"></div>
+              <div class="stats-grid" id="lebesgue-stats"></div>
+            </div>
+          </div>
+
+          <!-- Convergence panel -->
+          <div class="viz-container" id="convergence-panel">
+            <div class="viz-title">Convergence of Sums</div>
+            <div class="viz-subtitle" id="convergence-subtitle">
+              Upper and lower sums vs. partition refinement
+            </div>
+            <div id="convergence-chart"></div>
+          </div>
+        </div>
+
+        <aside class="control-panel" id="control-panel">
+          <h2>Controls</h2>
+
+          <div class="control-group dropdown-control">
+            <label for="function-select">Function</label>
+            <select id="function-select">
+              <option value="smooth">Smooth: sin(2&pi;x) + 1.5</option>
+              <option value="step">Step Function</option>
+              <option value="quadratic">Quadratic: x&sup2;</option>
+              <option value="sqrt">Square Root: &radic;x</option>
+              <option value="oscillating">Fast Oscillation: sin(20&pi;x)</option>
+              <option value="dirichlet">Dirichlet-like (approx)</option>
+            </select>
+          </div>
+
+          <hr class="control-divider" />
+
+          <div class="control-group slider-control">
+            <label for="num-partitions">
+              Partition Size
+              <span class="value-display" id="num-partitions-val">8</span>
+            </label>
+            <input type="range" id="num-partitions" min="2" max="100" step="1" value="8" />
+          </div>
+
+          <div class="control-group slider-control">
+            <label for="range-slices">
+              Range Slices (Lebesgue)
+              <span class="value-display" id="range-slices-val">8</span>
+            </label>
+            <input type="range" id="range-slices" min="2" max="100" step="1" value="8" />
+          </div>
+
+          <hr class="control-divider" />
+
+          <label class="toggle-control">
+            <input type="checkbox" id="toggle-upper" checked />
+            <span class="toggle-track"></span>
+            <span class="toggle-label">Show upper sums</span>
+          </label>
+
+          <label class="toggle-control">
+            <input type="checkbox" id="toggle-lower" checked />
+            <span class="toggle-track"></span>
+            <span class="toggle-label">Show lower sums</span>
+          </label>
+
+          <label class="toggle-control">
+            <input type="checkbox" id="toggle-sync" checked />
+            <span class="toggle-track"></span>
+            <span class="toggle-label">Sync partition sizes</span>
+          </label>
+
+          <hr class="control-divider" />
+
+          <div class="action-row">
+            <button class="btn btn-primary" id="animate-btn">Animate Refinement</button>
+          </div>
+
+          <div class="stats-grid" id="stats-grid">
+            <div class="stat-card">
+              <div class="stat-value" id="stat-riemann-upper">--</div>
+              <div class="stat-label">Riemann Upper</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="stat-riemann-lower">--</div>
+              <div class="stat-label">Riemann Lower</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="stat-lebesgue">--</div>
+              <div class="stat-label">Lebesgue Sum</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="stat-exact">--</div>
+              <div class="stat-label">Exact Integral</div>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <div class="info-panel" style="max-width:1400px; margin:0 auto var(--space-xl); padding:var(--space-lg) var(--space-xl);">
+        <h2>About Lebesgue vs. Riemann Integration</h2>
+        <details open>
+          <summary>The Key Difference</summary>
+          <div class="detail-body">
+            <p>
+              <strong>Riemann integration</strong> partitions the <em>domain</em> [a,b] into subintervals
+              and approximates the function's values on each. <strong>Lebesgue integration</strong>
+              partitions the <em>range</em> of f and measures the preimage of each slice.
+            </p>
+            <div class="math-block" id="info-comparison-def"></div>
+          </div>
+        </details>
+        <details>
+          <summary>When They Agree</summary>
+          <div class="detail-body">
+            <p>
+              For bounded functions on [a,b], the Riemann integral exists if and only if the set
+              of discontinuities has Lebesgue measure zero (Lebesgue's criterion). When it exists,
+              both integrals give the same value. The Lebesgue integral is strictly more general.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>The Dirichlet Function</summary>
+          <div class="detail-body">
+            <p>
+              The indicator of the rationals, 1<sub>Q</sub>(x), is the canonical example where
+              Riemann integration fails but Lebesgue integration succeeds. Every subinterval
+              contains both rationals and irrationals, so the Riemann upper sum is 1 and the
+              lower sum is 0, regardless of partition size. But the Lebesgue integral is 0
+              because Q has measure zero.
+            </p>
+          </div>
+        </details>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="./module.js"></script>
+</body>
+</html>

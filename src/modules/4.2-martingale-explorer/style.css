@@ -1,0 +1,155 @@
+/* ============================================================
+   Module 4.2 — Martingale Path Explorer
+   Module-specific styles for three-panel layout
+   ============================================================ */
+
+/* --- Viz Area (left column) -------------------------------- */
+.viz-area {
+  flex: 1 1 65%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+/* --- Sub-panels: histogram + quadratic variation ----------- */
+.sub-panels {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-lg);
+}
+
+/* Ensure SVGs inside panels are responsive */
+#paths-chart svg,
+#histogram-chart svg,
+#qv-chart svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* --- Paths panel ------------------------------------------- */
+#paths-panel {
+  min-height: 380px;
+}
+
+#paths-panel .math-block {
+  margin-top: var(--space-md);
+  margin-bottom: 0;
+  font-size: var(--font-size-base);
+}
+
+/* --- Histogram panel --------------------------------------- */
+#histogram-panel .stats-grid {
+  margin-top: var(--space-md);
+}
+
+/* --- Sample path styling ----------------------------------- */
+.sample-path {
+  fill: none;
+  stroke-width: 1.2;
+  stroke-linecap: round;
+}
+
+.stop-dot {
+  stroke: #1a1a2e;
+  stroke-width: 1.5;
+}
+
+/* --- Reference line ---------------------------------------- */
+.reference-line line {
+  stroke: var(--color-text);
+  stroke-width: 1.5;
+  stroke-dasharray: 8 4;
+  opacity: 0.6;
+}
+
+/* --- QV reference line (y = n) ----------------------------- */
+.qv-reference {
+  stroke: var(--color-secondary);
+  stroke-width: 2;
+  stroke-dasharray: 6 3;
+  opacity: 0.7;
+}
+
+/* --- E[M_T] vertical indicator ----------------------------- */
+.mean-line {
+  stroke: var(--color-error);
+  stroke-width: 2;
+  stroke-dasharray: 6 3;
+}
+
+.mean-label {
+  font-family: var(--font-heading);
+  font-size: 11px;
+  fill: var(--color-error);
+  font-weight: 600;
+}
+
+/* --- Axis styling ------------------------------------------ */
+.x-axis text,
+.y-axis text {
+  font-family: var(--font-heading);
+  font-size: 11px;
+  fill: var(--color-text-secondary);
+}
+
+.x-axis line,
+.x-axis path,
+.y-axis line,
+.y-axis path {
+  stroke: #cbd5e1;
+}
+
+/* --- Axis labels ------------------------------------------- */
+.axis-label {
+  font-family: var(--font-heading);
+  font-size: 12px;
+  fill: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+/* --- Conditional controls (fade in/out) -------------------- */
+#p-group,
+#theta-group {
+  transition: opacity var(--transition-normal), max-height var(--transition-normal);
+  overflow: hidden;
+}
+
+#p-group[style*="display: none"],
+#theta-group[style*="display: none"] {
+  opacity: 0;
+}
+
+/* --- Histogram bars ---------------------------------------- */
+.hist-bar {
+  fill: var(--viz-1);
+  opacity: 0.7;
+  transition: opacity var(--transition-fast);
+}
+
+.hist-bar:hover {
+  opacity: 0.9;
+}
+
+/* --- Responsive -------------------------------------------- */
+@media (max-width: 1024px) {
+  .sub-panels {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .viz-area {
+    flex: none;
+    width: 100%;
+  }
+
+  .sub-panels {
+    grid-template-columns: 1fr;
+  }
+
+  #paths-panel {
+    min-height: 280px;
+  }
+}

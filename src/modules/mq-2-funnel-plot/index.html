@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Funnel Plot — Hospital Performance Comparison</title>
+
+  <!-- KaTeX CSS -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
+    integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV"
+    crossorigin="anonymous"
+  />
+
+  <!-- Platform styles -->
+  <link rel="stylesheet" href="../../assets/design-system.css" />
+  <link rel="stylesheet" href="../../assets/module-template.css" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="module-page">
+
+    <!-- Header -->
+    <header class="module-header">
+      <ul class="breadcrumb">
+        <li><a href="../../../index.html">Home</a></li>
+        <li><a href="#">Medical Quality</a></li>
+        <li>Funnel Plot</li>
+      </ul>
+      <h1>Hospital Performance Funnel Plot</h1>
+      <p class="text-secondary">
+        Compare institutional outcomes accounting for case volume — identify true outliers
+      </p>
+    </header>
+
+    <!-- Main layout -->
+    <div class="module-body">
+      <div class="module-layout">
+
+        <!-- Visualization area -->
+        <div class="viz-area">
+
+          <!-- Main funnel plot -->
+          <div class="viz-container" id="funnel-panel">
+            <div class="viz-title">Funnel Plot</div>
+            <div class="viz-subtitle" id="funnel-subtitle">
+              Each dot is one hospital — funnel narrows with increasing volume
+            </div>
+            <div id="funnel-chart"></div>
+            <div class="viz-legend" id="funnel-legend"></div>
+          </div>
+
+          <!-- Secondary panels -->
+          <div class="secondary-panels">
+            <div class="viz-container" id="caterpillar-panel">
+              <div class="viz-title">Ranked Hospital Comparison</div>
+              <div class="viz-subtitle" id="caterpillar-subtitle">
+                Hospitals ranked by observed rate with 95% CI
+              </div>
+              <div id="caterpillar-chart"></div>
+            </div>
+
+            <div class="viz-container" id="volume-panel">
+              <div class="viz-title">Volume Distribution</div>
+              <div class="viz-subtitle" id="volume-subtitle">
+                Distribution of hospital case volumes
+              </div>
+              <div id="volume-chart"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Control panel -->
+        <aside class="control-panel" id="control-panel">
+          <h2>Controls</h2>
+
+          <!-- Metric -->
+          <div class="control-group dropdown-control">
+            <label for="metric-select">Quality Metric</label>
+            <select id="metric-select">
+              <option value="mortality">Risk-Adjusted Mortality</option>
+              <option value="readmission">30-Day Readmission</option>
+              <option value="csection">C-Section Rate</option>
+              <option value="ssi">Surgical Site Infection</option>
+              <option value="sepsis">Sepsis Mortality</option>
+            </select>
+          </div>
+
+          <hr class="control-divider" />
+
+          <!-- Number of hospitals -->
+          <div class="control-group slider-control">
+            <label for="num-hospitals">
+              Hospitals
+              <span class="value-display" id="num-hospitals-val">80</span>
+            </label>
+            <input
+              type="range" id="num-hospitals"
+              min="20" max="200" step="10" value="80"
+            />
+          </div>
+
+          <!-- Confidence levels -->
+          <div class="control-group dropdown-control">
+            <label for="ci-level">Confidence Intervals</label>
+            <select id="ci-level">
+              <option value="95-998">95% &amp; 99.8%</option>
+              <option value="95">95% only</option>
+              <option value="998">99.8% only</option>
+              <option value="90-99">90% &amp; 99%</option>
+            </select>
+          </div>
+
+          <hr class="control-divider" />
+
+          <!-- Toggles -->
+          <label class="toggle-control">
+            <input type="checkbox" id="toggle-labels" />
+            <span class="toggle-track"></span>
+            <span class="toggle-label">Show outlier labels</span>
+          </label>
+
+          <label class="toggle-control">
+            <input type="checkbox" id="toggle-target" checked />
+            <span class="toggle-track"></span>
+            <span class="toggle-label">Show national target</span>
+          </label>
+
+          <label class="toggle-control">
+            <input type="checkbox" id="toggle-overdispersion" />
+            <span class="toggle-track"></span>
+            <span class="toggle-label">Adjust for overdispersion</span>
+          </label>
+
+          <hr class="control-divider" />
+
+          <div class="action-row">
+            <button class="btn btn-primary" id="regenerate-btn">
+              Regenerate Data
+            </button>
+          </div>
+
+          <!-- Stats -->
+          <div class="stats-grid" id="stats-grid">
+            <div class="stat-card">
+              <div class="stat-value" id="stat-target">--</div>
+              <div class="stat-label">National Rate</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="stat-outliers-high">0</div>
+              <div class="stat-label">High Outliers</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="stat-outliers-low">0</div>
+              <div class="stat-label">Low Outliers</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="stat-median-vol">--</div>
+              <div class="stat-label">Median Volume</div>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <!-- Info panel -->
+      <div class="info-panel" style="max-width:1400px; margin:0 auto var(--space-xl); padding:var(--space-lg) var(--space-xl);">
+        <h2>About Funnel Plots in Healthcare</h2>
+        <details open>
+          <summary>Why Funnel Plots?</summary>
+          <div class="detail-body">
+            <p>
+              <strong>Funnel plots</strong> are the gold standard for comparing institutional
+              performance in healthcare. Unlike simple league tables or rankings, funnel plots
+              account for the <em>precision</em> of each estimate by plotting outcomes against
+              case volume.
+            </p>
+            <p>
+              Low-volume hospitals have wider confidence limits (the "funnel" shape), reflecting
+              greater statistical uncertainty. This prevents false labeling of small hospitals as
+              outliers due to random variation alone.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>Interpreting the Funnel</summary>
+          <div class="detail-body">
+            <p>
+              Points <strong>inside</strong> the funnel represent hospitals whose outcomes are
+              consistent with the national average, given their volume. Points <strong>outside</strong>
+              the 95% limits warrant further investigation; those outside 99.8% limits are
+              strong signals of genuinely different performance.
+            </p>
+            <p>
+              <strong>Overdispersion adjustment</strong> inflates the funnel to account for
+              between-hospital heterogeneity beyond random variation (e.g., differences in case
+              mix not captured by risk adjustment).
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>Statistical Methodology</summary>
+          <div class="detail-body">
+            <p>
+              For proportion data (mortality, readmission), the expected standard error at
+              volume n is SE = &radic;(p(1-p)/n), where p is the national rate. The funnel
+              limits are p &pm; z&middot;SE for the chosen confidence level.
+            </p>
+            <p>
+              With overdispersion parameter &phi;, the variance inflates to &phi;&middot;p(1-p)/n,
+              widening the funnel. &phi; is estimated from the between-hospital variation using
+              a method-of-moments approach.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>CMS & Quality Reporting</summary>
+          <div class="detail-body">
+            <p>
+              CMS uses funnel plot methodology (or equivalent) in programs like Hospital Compare,
+              the Hospital Readmissions Reduction Program (HRRP), and the Hospital-Acquired
+              Condition Reduction Program (HACRP). These methods inform value-based purchasing
+              and public reporting.
+            </p>
+          </div>
+        </details>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="./module.js"></script>
+</body>
+</html>

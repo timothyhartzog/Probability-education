@@ -1,0 +1,177 @@
+/* ============================================================
+   Module 2.1 — Convergence Mode Comparator
+   ============================================================ */
+
+/* --- Four-Panel Grid -------------------------------------- */
+.four-panel-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
+  gap: var(--space-lg);
+}
+
+.four-panel-grid .viz-container {
+  min-height: 280px;
+  display: flex;
+  flex-direction: column;
+}
+
+.four-panel-grid .viz-container h3 {
+  font-size: var(--font-size-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-sm);
+  flex-shrink: 0;
+}
+
+.four-panel-grid .chart-area {
+  flex: 1;
+  position: relative;
+  min-height: 220px;
+}
+
+.four-panel-grid .chart-area svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* --- Viz Area --------------------------------------------- */
+.viz-area {
+  flex: 1 1 65%;
+  min-width: 0;
+}
+
+/* --- Panel Annotations ------------------------------------ */
+.panel-annotation {
+  position: absolute;
+  bottom: var(--space-sm);
+  right: var(--space-sm);
+  font-size: 0.7rem;
+  color: var(--color-text-secondary);
+  pointer-events: none;
+}
+
+.panel-annotation .katex {
+  font-size: 0.8em;
+}
+
+/* --- Convergence Status Badges ---------------------------- */
+.convergence-badge {
+  display: inline-block;
+  font-family: var(--font-heading);
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 999px;
+  margin-left: var(--space-sm);
+  vertical-align: middle;
+}
+
+.convergence-badge.converges {
+  background: rgba(5, 150, 105, 0.12);
+  color: var(--color-accent);
+}
+
+.convergence-badge.fails {
+  background: rgba(220, 38, 38, 0.1);
+  color: var(--color-error);
+}
+
+/* --- Module Subtitle -------------------------------------- */
+.module-subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: 0;
+}
+
+/* --- Axis Styling ----------------------------------------- */
+.four-panel-grid .axis text {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  fill: var(--color-text-secondary);
+}
+
+.four-panel-grid .axis line,
+.four-panel-grid .axis path {
+  stroke: #cbd5e1;
+}
+
+.four-panel-grid .grid-line {
+  stroke: #f1f5f9;
+  stroke-dasharray: 2, 4;
+}
+
+/* --- Sample Path Lines ------------------------------------ */
+.sample-path {
+  fill: none;
+  stroke-width: 1;
+  opacity: 0.5;
+}
+
+.limit-line {
+  fill: none;
+  stroke: var(--color-text);
+  stroke-width: 1.5;
+  stroke-dasharray: 6, 4;
+  opacity: 0.7;
+}
+
+/* --- Probability & Lp Curves ----------------------------- */
+.metric-curve {
+  fill: none;
+  stroke-width: 2;
+  stroke: var(--color-primary);
+}
+
+.metric-area {
+  fill: var(--color-primary);
+  opacity: 0.08;
+}
+
+/* --- CDF Lines ------------------------------------------- */
+.cdf-line {
+  fill: none;
+  stroke-width: 1.5;
+}
+
+.cdf-limit {
+  fill: none;
+  stroke: var(--color-text);
+  stroke-width: 2;
+  stroke-dasharray: 6, 4;
+  opacity: 0.6;
+}
+
+/* --- Info Panel Enhancements ----------------------------- */
+.info-panel .hierarchy-diagram {
+  text-align: center;
+  padding: var(--space-md) 0;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.info-panel .hierarchy-diagram .arrow {
+  color: var(--color-primary);
+  font-weight: 700;
+  margin: 0 var(--space-sm);
+}
+
+/* --- Responsive: Stack to Single Column ------------------- */
+@media (max-width: 900px) {
+  .four-panel-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .four-panel-grid .viz-container {
+    min-height: 240px;
+  }
+}
+
+@media (max-width: 768px) {
+  .four-panel-grid {
+    gap: var(--space-md);
+  }
+}
