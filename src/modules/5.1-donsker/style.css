@@ -1,0 +1,263 @@
+/* ============================================================
+   Module 5.1 — Donsker's Theorem: Random Walk to Brownian Motion
+   ============================================================ */
+
+/* --- Viz Area Layout -------------------------------------- */
+.viz-area {
+  flex: 1 1 65%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.secondary-panels {
+  display: flex;
+  gap: var(--space-lg);
+}
+
+.secondary-panels .viz-container {
+  flex: 1 1 100%;
+  min-width: 0;
+}
+
+/* --- Path Panel ------------------------------------------- */
+#path-panel {
+  min-height: 420px;
+}
+
+#path-panel #path-chart {
+  position: relative;
+  width: 100%;
+  min-height: 380px;
+}
+
+#path-panel #path-chart svg {
+  overflow: visible;
+}
+
+/* --- Supremum Panel --------------------------------------- */
+#supremum-panel {
+  min-height: 320px;
+}
+
+#supremum-panel #supremum-chart {
+  position: relative;
+  width: 100%;
+  min-height: 280px;
+}
+
+#supremum-panel #supremum-chart svg {
+  overflow: visible;
+}
+
+/* --- Random Walk Paths ------------------------------------ */
+.walk-path {
+  fill: none;
+  stroke-width: 1.5;
+  opacity: 0.65;
+  transition: opacity 150ms ease;
+}
+
+.walk-path:hover {
+  opacity: 1;
+  stroke-width: 2.5;
+}
+
+.bm-reference-path {
+  fill: none;
+  stroke: var(--color-error);
+  stroke-width: 2;
+  stroke-dasharray: 6 3;
+  opacity: 0.7;
+}
+
+/* --- Supremum Histogram ----------------------------------- */
+.sup-bar {
+  transition: height 350ms ease, y 350ms ease, fill 150ms ease;
+}
+
+.sup-bar:hover {
+  fill: var(--color-secondary) !important;
+}
+
+.theory-curve {
+  fill: none;
+  stroke: var(--color-error);
+  stroke-width: 2.5;
+  stroke-dasharray: 6 3;
+  opacity: 0.85;
+}
+
+/* --- Play Button ------------------------------------------ */
+.play-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  width: 100%;
+  padding: var(--space-sm) var(--space-md);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: #fff;
+  background: var(--color-primary);
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--transition-fast), transform var(--transition-fast);
+  user-select: none;
+}
+
+.play-btn:hover {
+  background: #1d4ed8;
+}
+
+.play-btn:active {
+  transform: translateY(1px);
+}
+
+.play-btn.playing {
+  background: var(--color-secondary);
+}
+
+.play-btn.playing:hover {
+  background: #c9600e;
+}
+
+.play-btn .play-icon {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 6px 0 6px 10px;
+  border-color: transparent transparent transparent #fff;
+}
+
+.play-btn.playing .play-icon {
+  width: 10px;
+  height: 12px;
+  border: none;
+  border-left: 3px solid #fff;
+  border-right: 3px solid #fff;
+}
+
+/* --- Stats Readout ---------------------------------------- */
+.stats-readout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-xs) var(--space-sm);
+  padding: var(--space-sm);
+  background: #f8fafc;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  margin-top: var(--space-md);
+}
+
+.stats-readout .stat-item {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-xs);
+}
+
+.stats-readout .stat-label {
+  color: var(--color-text-secondary);
+  font-family: var(--font-heading);
+}
+
+.stats-readout .stat-val {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+/* --- KaTeX in Panels -------------------------------------- */
+.formula-display {
+  margin: var(--space-sm) 0;
+  padding: var(--space-sm) var(--space-md);
+  background: #f8fafc;
+  border-left: 3px solid var(--color-primary-light);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  text-align: center;
+  overflow-x: auto;
+}
+
+/* --- N Display Badge -------------------------------------- */
+.n-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-sm) var(--space-md);
+  background: #f8fafc;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-primary);
+  text-align: center;
+}
+
+/* --- Axis Styling ----------------------------------------- */
+.axis text {
+  font-family: var(--font-heading);
+  font-size: 11px;
+  fill: var(--color-text-secondary);
+}
+
+.axis line,
+.axis path {
+  stroke: #cbd5e1;
+}
+
+.axis-label {
+  font-family: var(--font-heading);
+  font-size: 12px;
+  fill: var(--color-text-secondary);
+}
+
+/* --- Zero line -------------------------------------------- */
+.zero-line {
+  stroke: #94a3b8;
+  stroke-width: 1;
+  stroke-dasharray: 4 3;
+  opacity: 0.6;
+}
+
+/* --- Responsive ------------------------------------------- */
+@media (max-width: 900px) {
+  .secondary-panels {
+    flex-direction: column;
+  }
+
+  .secondary-panels .viz-container {
+    flex: none;
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .viz-area {
+    flex: none;
+    width: 100%;
+  }
+
+  #path-panel {
+    min-height: 300px;
+  }
+
+  #path-panel #path-chart {
+    min-height: 260px;
+  }
+
+  #supremum-panel {
+    min-height: 250px;
+  }
+
+  #supremum-panel #supremum-chart {
+    min-height: 220px;
+  }
+
+  .stats-readout {
+    grid-template-columns: 1fr;
+  }
+}

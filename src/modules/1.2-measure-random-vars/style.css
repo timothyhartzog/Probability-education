@@ -1,0 +1,161 @@
+/* Measure Construction & Random Variables — Module Styles */
+
+.viz-area {
+  flex: 1 1 65%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.secondary-panels {
+  display: flex;
+  gap: var(--space-lg);
+}
+
+.secondary-panels .viz-container {
+  flex: 1 1 50%;
+  min-width: 0;
+}
+
+/* Measure bar chart */
+.measure-bar {
+  cursor: ns-resize;
+  transition: opacity 150ms ease;
+}
+.measure-bar:hover {
+  opacity: 0.85;
+}
+.measure-bar.dragging {
+  opacity: 1;
+}
+
+.bar-label {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  fill: var(--color-text);
+  pointer-events: none;
+  text-anchor: middle;
+}
+
+.bar-value {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  fill: var(--color-text-secondary);
+  pointer-events: none;
+  text-anchor: middle;
+}
+
+.sum-line {
+  stroke: var(--color-accent);
+  stroke-width: 2;
+  stroke-dasharray: 6,3;
+}
+
+.sum-label {
+  font-family: var(--font-heading);
+  font-size: 11px;
+  fill: var(--color-accent);
+}
+
+/* Preimage highlight groups */
+.preimage-group {
+  stroke-width: 2;
+  stroke-dasharray: 4,3;
+  fill-opacity: 0.08;
+  rx: 6;
+  ry: 6;
+  pointer-events: none;
+}
+
+/* RV bipartite graph */
+.rv-node {
+  transition: r 150ms ease, fill 150ms ease;
+}
+.rv-node:hover {
+  r: 12;
+}
+
+.rv-node-label {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  fill: var(--color-text);
+  pointer-events: none;
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+
+.rv-arrow {
+  stroke-width: 2;
+  fill: none;
+  marker-end: url(#rv-arrowhead);
+  transition: stroke 150ms ease, stroke-width 150ms ease;
+}
+
+.rv-column-label {
+  font-family: var(--font-heading);
+  font-size: 12px;
+  fill: var(--color-text-secondary);
+  text-anchor: middle;
+  font-weight: 600;
+}
+
+.preimage-bracket {
+  stroke-width: 2;
+  fill: none;
+  stroke-dasharray: 4,2;
+}
+
+.preimage-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  fill: var(--color-text-secondary);
+  text-anchor: start;
+}
+
+/* Pushforward bar chart */
+.pushforward-bar {
+  transition: opacity 150ms ease;
+}
+.pushforward-bar:hover {
+  opacity: 0.85;
+}
+
+.pushforward-label {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  fill: var(--color-text);
+  pointer-events: none;
+  text-anchor: middle;
+}
+
+.pushforward-value {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  fill: var(--color-text-secondary);
+  pointer-events: none;
+  text-anchor: middle;
+}
+
+/* Pushforward arrows animation */
+.pushforward-flow {
+  stroke-width: 1.5;
+  fill: none;
+  opacity: 0.5;
+}
+
+/* Axis */
+.axis path, .axis line { stroke: #cbd5e1; }
+.axis text { fill: var(--color-text-secondary); font-family: var(--font-heading); font-size: 11px; }
+
+/* Color-coding for preimage groups */
+.preimage-color-0 { stroke: var(--viz-1); fill: var(--viz-1); }
+.preimage-color-1 { stroke: var(--viz-2); fill: var(--viz-2); }
+.preimage-color-2 { stroke: var(--viz-3); fill: var(--viz-3); }
+.preimage-color-3 { stroke: var(--viz-4); fill: var(--viz-4); }
+.preimage-color-4 { stroke: var(--viz-5); fill: var(--viz-5); }
+.preimage-color-5 { stroke: var(--viz-6); fill: var(--viz-6); }
+
+@media (max-width: 900px) {
+  .secondary-panels { flex-direction: column; }
+}

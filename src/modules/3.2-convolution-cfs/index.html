@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module 3.2 — Convolution and CLT via Characteristic Functions</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" crossorigin="anonymous" />
+  <link rel="stylesheet" href="../../assets/design-system.css" />
+  <link rel="stylesheet" href="../../assets/module-template.css" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="module-page">
+    <header class="module-header">
+      <ul class="breadcrumb">
+        <li><a href="../../../index.html">Home</a></li>
+        <li><a href="#">Fourier Methods</a></li>
+        <li>Convolution via CFs</li>
+      </ul>
+      <h1>Convolution &amp; CLT via Characteristic Functions</h1>
+      <p class="text-secondary">
+        Watch the product of characteristic functions converge to the Gaussian &mdash; a Fourier-domain proof of the CLT
+      </p>
+    </header>
+
+    <div class="module-body">
+      <div class="module-layout">
+        <div class="viz-area">
+          <!-- CF product panel -->
+          <div class="viz-container" id="cf-product-panel">
+            <div class="viz-title">Characteristic Function Product</div>
+            <div class="viz-subtitle" id="cf-product-subtitle">
+              &phi;<sub>S<sub>n</sub>/&radic;n</sub>(t) = [&phi;<sub>X</sub>(t/&radic;n)]<sup>n</sup> &rarr; e<sup>-t&sup2;/2</sup>
+            </div>
+            <div id="cf-product-chart"></div>
+            <div class="viz-legend" id="cf-product-legend"></div>
+          </div>
+
+          <div class="secondary-panels">
+            <!-- Density evolution -->
+            <div class="viz-container" id="density-evolution-panel">
+              <div class="viz-title">Density Evolution</div>
+              <div class="viz-subtitle" id="density-evolution-subtitle">
+                Density of standardized sum converging to N(0,1)
+              </div>
+              <div id="density-evolution-chart"></div>
+            </div>
+
+            <!-- Log-modulus -->
+            <div class="viz-container" id="log-mod-panel">
+              <div class="viz-title">Log-Modulus Comparison</div>
+              <div class="viz-subtitle" id="log-mod-subtitle">
+                log|&phi;<sub>n</sub>(t)| &rarr; -t&sup2;/2
+              </div>
+              <div id="log-mod-chart"></div>
+            </div>
+          </div>
+        </div>
+
+        <aside class="control-panel" id="control-panel">
+          <h2>Controls</h2>
+
+          <div class="control-group dropdown-control">
+            <label for="dist-select">Summand Distribution</label>
+            <select id="dist-select">
+              <option value="uniform">Uniform(-&radic;3, &radic;3)</option>
+              <option value="bernoulli">Bernoulli(&plusmn;1)</option>
+              <option value="exponential">Centered Exponential</option>
+              <option value="poisson">Centered Poisson(&lambda;=1)</option>
+              <option value="chi-squared">Centered Chi-Squared(1)</option>
+            </select>
+          </div>
+
+          <hr class="control-divider" />
+
+          <div class="control-group slider-control">
+            <label for="num-summands">
+              Number of Summands n
+              <span class="value-display" id="num-summands-val">1</span>
+            </label>
+            <input type="range" id="num-summands" min="1" max="100" step="1" value="1" />
+          </div>
+
+          <div class="control-group slider-control">
+            <label for="t-range">
+              Frequency Range |t|
+              <span class="value-display" id="t-range-val">6</span>
+            </label>
+            <input type="range" id="t-range" min="2" max="20" step="1" value="6" />
+          </div>
+
+          <hr class="control-divider" />
+
+          <label class="toggle-control">
+            <input type="checkbox" id="toggle-gaussian" checked />
+            <span class="toggle-track"></span>
+            <span class="toggle-label">Show Gaussian CF overlay</span>
+          </label>
+
+          <label class="toggle-control">
+            <input type="checkbox" id="toggle-individual" />
+            <span class="toggle-track"></span>
+            <span class="toggle-label">Show individual CFs</span>
+          </label>
+
+          <hr class="control-divider" />
+
+          <div class="action-row">
+            <button class="btn btn-primary" id="play-btn">Animate n</button>
+          </div>
+
+          <div class="stats-grid" id="stats-grid">
+            <div class="stat-card">
+              <div class="stat-value" id="stat-n">1</div>
+              <div class="stat-label">n</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="stat-sup-error">--</div>
+              <div class="stat-label">sup |&phi;<sub>n</sub> - &phi;<sub>G</sub>|</div>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <div class="info-panel" style="max-width:1400px; margin:0 auto var(--space-xl); padding:var(--space-lg) var(--space-xl);">
+        <h2>About Convolution via Characteristic Functions</h2>
+        <details open>
+          <summary>The Product Rule</summary>
+          <div class="detail-body">
+            <p>
+              For independent random variables X and Y, the characteristic function of their
+              sum satisfies &phi;<sub>X+Y</sub>(t) = &phi;<sub>X</sub>(t) &middot; &phi;<sub>Y</sub>(t).
+              This is the Fourier analog of convolution: multiplication in frequency domain
+              corresponds to convolution in the spatial domain.
+            </p>
+            <div class="math-block" id="info-product-def"></div>
+          </div>
+        </details>
+        <details>
+          <summary>CLT in Fourier Domain</summary>
+          <div class="detail-body">
+            <p>
+              For i.i.d. X<sub>i</sub> with mean 0 and variance 1, the CF of the standardized sum is
+              [&phi;(t/&radic;n)]<sup>n</sup>. Taylor expanding &phi;(t) = 1 - t&sup2;/2 + o(t&sup2;),
+              we get [1 - t&sup2;/(2n) + ...]<sup>n</sup> &rarr; e<sup>-t&sup2;/2</sup>,
+              which is the CF of N(0,1).
+            </p>
+            <div class="math-block" id="info-clt-fourier"></div>
+          </div>
+        </details>
+        <details>
+          <summary>Universality</summary>
+          <div class="detail-body">
+            <p>
+              The CLT holds regardless of the summand distribution (given finite variance) because
+              the Taylor expansion of any CF matches the Gaussian CF to second order. Higher-order
+              terms are suppressed by 1/&radic;n, making the product converge to e<sup>-t&sup2;/2</sup>.
+            </p>
+          </div>
+        </details>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="./module.js"></script>
+</body>
+</html>

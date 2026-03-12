@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module 5.1 — Donsker's Theorem: Random Walk to Brownian Motion</title>
+
+  <!-- KaTeX CSS -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
+    integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV"
+    crossorigin="anonymous"
+  />
+
+  <!-- Platform styles -->
+  <link rel="stylesheet" href="../../assets/design-system.css" />
+  <link rel="stylesheet" href="../../assets/module-template.css" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="module-page">
+
+    <!-- Header -->
+    <header class="module-header">
+      <ul class="breadcrumb">
+        <li><a href="../../../index.html">Home</a></li>
+        <li><a href="#">Brownian Motion</a></li>
+        <li>Donsker's Theorem</li>
+      </ul>
+      <h1>Random Walk to Brownian Motion</h1>
+      <p class="text-secondary">
+        Donsker's invariance principle: scaled random walks converge to Brownian motion
+      </p>
+    </header>
+
+    <!-- Main layout -->
+    <div class="module-body">
+      <div class="module-layout">
+
+        <!-- Visualization area -->
+        <div class="viz-area">
+
+          <!-- Main path comparison panel -->
+          <div class="viz-container" id="path-panel">
+            <div class="viz-title">Scaled Random Walk Paths</div>
+            <div class="viz-subtitle" id="path-subtitle">
+              W<sub>n</sub>(t) = S<sub>&lfloor;nt&rfloor;</sub> / &radic;n on [0, 1]
+            </div>
+            <div id="path-chart"></div>
+            <div class="viz-legend" id="path-legend"></div>
+            <div class="formula-display" id="path-formula"></div>
+          </div>
+
+          <!-- Distribution of supremum panel -->
+          <div class="secondary-panels">
+            <div class="viz-container" id="supremum-panel">
+              <div class="viz-title">Distribution of Supremum</div>
+              <div class="viz-subtitle" id="supremum-subtitle">
+                sup<sub>0&le;t&le;1</sub> W<sub>n</sub>(t) across 2000 runs
+              </div>
+              <div id="supremum-chart"></div>
+              <div class="stats-readout" id="supremum-stats"></div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Control panel -->
+        <aside class="control-panel" id="control-panel">
+          <h2>Controls</h2>
+
+          <!-- n display badge -->
+          <div class="n-display" id="n-display">n = 100</div>
+
+          <!-- Scaling parameter n (log scale) -->
+          <div class="control-group slider-control">
+            <label for="n-slider">
+              Scaling n
+              <span class="value-display" id="n-slider-val">100</span>
+            </label>
+            <input
+              type="range" id="n-slider"
+              min="1" max="5" step="0.01" value="2"
+            />
+          </div>
+
+          <!-- Step distribution -->
+          <div class="control-group dropdown-control">
+            <label for="step-dist">Step Distribution</label>
+            <select id="step-dist">
+              <option value="bernoulli">Symmetric Bernoulli (&plusmn;1)</option>
+              <option value="normal">Standard Normal</option>
+              <option value="uniform">Centered Uniform</option>
+              <option value="exponential">Centered Exponential</option>
+            </select>
+          </div>
+
+          <!-- Number of paths -->
+          <div class="control-group slider-control">
+            <label for="num-paths">
+              Number of Paths
+              <span class="value-display" id="num-paths-val">5</span>
+            </label>
+            <input
+              type="range" id="num-paths"
+              min="1" max="20" step="1" value="5"
+            />
+          </div>
+
+          <hr class="control-divider" />
+
+          <!-- Toggle: show BM reference -->
+          <label class="toggle-control">
+            <input type="checkbox" id="show-bm" />
+            <span class="toggle-track"></span>
+            <span class="toggle-label">Show Brownian motion reference</span>
+          </label>
+
+          <!-- Toggle: show theoretical supremum -->
+          <label class="toggle-control">
+            <input type="checkbox" id="show-theory" checked />
+            <span class="toggle-track"></span>
+            <span class="toggle-label">Show theoretical supremum density</span>
+          </label>
+
+          <hr class="control-divider" />
+
+          <!-- Animate n button -->
+          <button class="play-btn" id="play-btn">
+            <span class="play-icon"></span>
+            Animate n
+          </button>
+
+          <!-- Regenerate -->
+          <div class="action-row">
+            <button class="btn btn-primary" id="regenerate-btn">
+              Regenerate
+            </button>
+          </div>
+        </aside>
+      </div>
+
+      <!-- Info panel -->
+      <div class="info-panel" style="max-width:1400px; margin:0 auto var(--space-xl); padding:var(--space-lg) var(--space-xl);">
+        <h2>About Donsker's Theorem</h2>
+        <details open>
+          <summary>Donsker's Invariance Principle</summary>
+          <div class="detail-body">
+            <p>
+              <strong>Donsker's theorem</strong> (1951) is a functional extension of the
+              Central Limit Theorem. It states that the rescaled random walk converges
+              in distribution to Brownian motion as a random element of the space of
+              continuous functions C[0,1].
+            </p>
+            <div class="math-block" id="info-donsker-def"></div>
+            <p>
+              The key insight: <em>any</em> random walk with i.i.d. mean-zero,
+              variance-one steps produces the same limiting process, regardless of the
+              step distribution. This universality is visible in the visualization above.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>The Scaling</summary>
+          <div class="detail-body">
+            <p>
+              Given i.i.d. steps X<sub>1</sub>, X<sub>2</sub>, ... with E[X<sub>i</sub>] = 0
+              and Var(X<sub>i</sub>) = 1, form the partial sums S<sub>k</sub> = X<sub>1</sub> + ... + X<sub>k</sub>.
+              The scaled process is:
+            </p>
+            <div class="math-block" id="info-scaling-def"></div>
+            <p>
+              Dividing by &radic;n normalizes the variance at each time point.
+              Evaluating at &lfloor;nt&rfloor; maps discrete steps to continuous time [0,1].
+              As n grows, the walk takes more and more tiny steps, and the path becomes
+              smoother in a Brownian sense.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>Supremum Distribution</summary>
+          <div class="detail-body">
+            <p>
+              A consequence of Donsker's theorem is convergence of functionals.
+              In particular, the supremum of the scaled walk converges to the supremum
+              of Brownian motion on [0,1]:
+            </p>
+            <div class="math-block" id="info-supremum-def"></div>
+            <p>
+              The distribution of sup<sub>0&le;t&le;1</sub> B<sub>t</sub> is the
+              folded normal: its CDF is P(M &le; x) = 2&Phi;(x) - 1 for x &ge; 0,
+              and its density is f(x) = 2&phi;(x) = (2/&radic;(2&pi;)) e<sup>-x&sup2;/2</sup>.
+              The histogram of simulated suprema should converge to this curve.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>Step Distributions</summary>
+          <div class="detail-body">
+            <p>
+              All four distributions have mean 0 and variance 1, as required by the theorem:
+            </p>
+            <ul>
+              <li><strong>Symmetric Bernoulli:</strong> X = +1 or -1 each with probability 1/2</li>
+              <li><strong>Standard Normal:</strong> X ~ N(0,1)</li>
+              <li><strong>Centered Uniform:</strong> X ~ Uniform(-&radic;3, &radic;3), giving variance = 1</li>
+              <li><strong>Centered Exponential:</strong> X = Exp(1) - 1, giving mean 0 and variance 1</li>
+            </ul>
+            <p>
+              Despite their very different shapes, all produce Brownian motion in the limit.
+            </p>
+          </div>
+        </details>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="./module.js"></script>
+</body>
+</html>

@@ -1,0 +1,166 @@
+/* Conditional Expectation — Module Styles */
+
+.viz-area {
+  flex: 1 1 65%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.secondary-panels {
+  display: flex;
+  gap: var(--space-lg);
+}
+
+.secondary-panels .viz-container {
+  flex: 1 1 50%;
+  min-width: 0;
+}
+
+/* Projection chart bars */
+.bar-x {
+  fill: var(--viz-1);
+  fill-opacity: 0.7;
+  transition: height 500ms ease, y 500ms ease;
+}
+
+.bar-x:hover {
+  fill-opacity: 1;
+}
+
+.bar-cond-exp {
+  fill: var(--viz-2);
+  fill-opacity: 0.85;
+  transition: height 500ms ease, y 500ms ease;
+}
+
+.step-line {
+  stroke: var(--viz-2);
+  stroke-width: 2.5;
+  fill: none;
+  stroke-dasharray: 6 3;
+}
+
+.tower-line {
+  stroke: var(--viz-4);
+  stroke-width: 2;
+  fill: none;
+  stroke-dasharray: 4 4;
+}
+
+/* Partition chart */
+.atom-rect {
+  stroke: var(--color-surface);
+  stroke-width: 2;
+  rx: 6;
+  ry: 6;
+  cursor: pointer;
+  transition: fill-opacity 200ms ease;
+}
+
+.atom-rect:hover {
+  fill-opacity: 0.9;
+}
+
+.atom-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  fill: var(--color-text);
+  text-anchor: middle;
+  pointer-events: none;
+}
+
+.atom-value-label {
+  font-family: var(--font-heading);
+  font-size: 10px;
+  fill: var(--color-text-secondary);
+  text-anchor: middle;
+  pointer-events: none;
+}
+
+.element-in-atom {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  fill: var(--color-text);
+  text-anchor: middle;
+  pointer-events: none;
+}
+
+/* L2 chart */
+.l2-dot {
+  fill: var(--viz-8);
+  fill-opacity: 0.5;
+  stroke: var(--viz-8);
+  stroke-width: 1;
+  transition: fill-opacity 200ms ease;
+}
+
+.l2-dot:hover {
+  fill-opacity: 1;
+}
+
+.l2-dot.optimal {
+  fill: var(--viz-2);
+  fill-opacity: 1;
+  stroke: var(--viz-2);
+  stroke-width: 2.5;
+}
+
+.l2-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  fill: var(--color-text-secondary);
+  text-anchor: middle;
+  pointer-events: none;
+}
+
+.orthogonality-line {
+  stroke: var(--viz-3);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 3;
+}
+
+/* Custom partition buttons */
+#custom-atom-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.atom-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  border: 2px solid #cbd5e1;
+  background: var(--color-surface);
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+
+.atom-btn:hover {
+  border-color: var(--color-primary-light);
+}
+
+.atom-btn.selected {
+  border-color: var(--color-primary);
+  background: rgba(37, 99, 235, 0.08);
+}
+
+/* Axis */
+.axis path, .axis line { stroke: #cbd5e1; }
+.axis text { fill: var(--color-text-secondary); font-family: var(--font-heading); font-size: 11px; }
+
+/* Stats grid adjustments */
+#stats-grid .stat-card .stat-value {
+  font-size: var(--font-size-base);
+}
+
+@media (max-width: 900px) {
+  .secondary-panels { flex-direction: column; }
+}

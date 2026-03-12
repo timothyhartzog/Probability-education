@@ -1,0 +1,85 @@
+/* SPC Control Chart — Module Styles */
+
+.viz-area {
+  flex: 1 1 65%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.secondary-panels {
+  display: flex;
+  gap: var(--space-lg);
+}
+
+.secondary-panels .viz-container {
+  flex: 1 1 50%;
+  min-width: 0;
+}
+
+/* Control chart styling */
+.control-line { stroke-dasharray: 6 4; }
+.ucl-line, .lcl-line { stroke: var(--color-error); stroke-width: 1.5; }
+.cl-line { stroke: var(--color-primary); stroke-width: 2; }
+
+.zone-band { opacity: 0.08; }
+.zone-a { fill: #ef4444; }
+.zone-b { fill: #f59e0b; }
+.zone-c { fill: #22c55e; }
+
+.data-point { transition: r 150ms ease, fill 150ms ease; cursor: pointer; }
+.data-point:hover { r: 6; }
+.data-point.violation { fill: var(--color-error); stroke: var(--color-error); stroke-width: 2; }
+.data-point.normal { fill: var(--color-primary); }
+
+.data-line { fill: none; stroke: var(--color-primary); stroke-width: 1.5; }
+
+.shift-region { fill: rgba(220, 38, 38, 0.06); stroke: var(--color-error); stroke-dasharray: 4 3; stroke-width: 1; }
+
+/* Violations panel */
+.violation-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm);
+  background: #fef2f2;
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--space-xs);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+}
+
+.violation-item .rule-badge {
+  background: var(--color-error);
+  color: white;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.no-violations {
+  text-align: center;
+  padding: var(--space-xl);
+  color: var(--color-accent);
+  font-family: var(--font-heading);
+  font-weight: 600;
+}
+
+/* Histogram bars */
+.hist-bar { fill: var(--color-primary); opacity: 0.7; transition: opacity 150ms ease; }
+.hist-bar:hover { opacity: 1; }
+
+/* Axis styling */
+.axis path, .axis line { stroke: #cbd5e1; }
+.axis text { fill: var(--color-text-secondary); font-family: var(--font-heading); font-size: 11px; }
+.axis-label { font-family: var(--font-heading); font-size: 12px; fill: var(--color-text-secondary); }
+
+/* Responsive */
+@media (max-width: 900px) {
+  .secondary-panels {
+    flex-direction: column;
+  }
+}

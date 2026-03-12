@@ -1,0 +1,28 @@
+{
+  "name": "probability-education",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest run && npx playwright test --grep-invert visual",
+    "test:unit": "vitest run",
+    "test:e2e": "npx playwright test --grep-invert visual",
+    "test:e2e:smoke": "npx playwright test smoke",
+    "test:e2e:interactions": "npx playwright test interactions",
+    "test:screenshots": "npx playwright test screenshots",
+    "test:screenshots:update": "npx playwright test screenshots --update-snapshots"
+  },
+  "dependencies": {
+    "d3": "^7.9.0",
+    "jstat": "^1.9.6",
+    "katex": "^0.16.38",
+    "vite": "^7.3.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.56.0",
+    "vitest": "^4.1.0"
+  }
+}

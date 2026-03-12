@@ -1,0 +1,334 @@
+/* ============================================================
+   Module Template — Shared page styles for all modules
+   ============================================================
+   Import the design system, then layer module-specific layout
+   and component styles on top.
+   ============================================================ */
+
+@import url('./design-system.css');
+
+/* --- Page Shell ------------------------------------------- */
+.module-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.module-page .module-header {
+  flex-shrink: 0;
+}
+
+.module-page .module-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- Status Bar ------------------------------------------- */
+.status-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-sm) var(--space-xl);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  background: var(--color-surface);
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.status-bar .status-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: 2px var(--space-sm);
+  border-radius: 999px;
+  background: #f1f5f9;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.status-bar .status-chip.active {
+  background: rgba(37, 99, 235, 0.1);
+  color: var(--color-primary);
+}
+
+/* --- Visualization Overlays ------------------------------- */
+.viz-container .viz-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: var(--space-md);
+}
+
+.viz-container .viz-subtitle {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-md);
+}
+
+.viz-container .viz-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  color: var(--color-text-secondary);
+  font-family: var(--font-heading);
+  gap: var(--space-sm);
+}
+
+.viz-container .viz-empty-state .icon {
+  font-size: 2rem;
+  opacity: 0.4;
+}
+
+/* --- Legend ------------------------------------------------ */
+.viz-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm) var(--space-md);
+  margin-top: var(--space-md);
+  padding-top: var(--space-md);
+  border-top: 1px solid #f1f5f9;
+}
+
+.viz-legend .legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.viz-legend .legend-swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+/* --- Tooltip ---------------------------------------------- */
+.viz-tooltip {
+  position: absolute;
+  pointer-events: none;
+  background: var(--color-text);
+  color: #fff;
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-lg);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+  z-index: 100;
+}
+
+.viz-tooltip.visible {
+  opacity: 1;
+}
+
+.viz-tooltip .tooltip-label {
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.viz-tooltip .tooltip-value {
+  font-family: var(--font-mono);
+}
+
+/* --- Control Sections ------------------------------------- */
+.control-panel .control-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.control-panel .control-section-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-secondary);
+}
+
+.control-panel .control-divider {
+  border: none;
+  border-top: 1px solid #e2e8f0;
+}
+
+/* --- Action Buttons Row ----------------------------------- */
+.control-panel .action-row {
+  display: flex;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+.control-panel .action-row .btn {
+  flex: 1;
+  min-width: 0;
+}
+
+/* --- Stats Display ---------------------------------------- */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: var(--space-md);
+}
+
+.stat-card {
+  background: #f8fafc;
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  text-align: center;
+}
+
+.stat-card .stat-value {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  color: var(--color-primary);
+  line-height: 1.2;
+}
+
+.stat-card .stat-label {
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  margin-top: var(--space-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+/* --- Tabbed Content --------------------------------------- */
+.tab-bar {
+  display: flex;
+  border-bottom: 2px solid #e2e8f0;
+  margin-bottom: var(--space-lg);
+}
+
+.tab-bar .tab {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  padding: var(--space-sm) var(--space-md);
+  color: var(--color-text-secondary);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  cursor: pointer;
+  transition: color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.tab-bar .tab:hover {
+  color: var(--color-text);
+}
+
+.tab-bar .tab.active {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+/* --- Collapsible Info Sections ---------------------------- */
+.info-panel details {
+  margin-bottom: var(--space-md);
+}
+
+.info-panel details summary {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  cursor: pointer;
+  padding: var(--space-sm) 0;
+  color: var(--color-text);
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.info-panel details summary::before {
+  content: '\25B6';
+  font-size: 0.6em;
+  transition: transform var(--transition-fast);
+}
+
+.info-panel details[open] summary::before {
+  transform: rotate(90deg);
+}
+
+.info-panel details summary::-webkit-details-marker {
+  display: none;
+}
+
+.info-panel details .detail-body {
+  padding: var(--space-sm) 0 var(--space-sm) var(--space-lg);
+}
+
+/* --- Animated Transitions (for viz updates) --------------- */
+.fade-enter {
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+}
+
+.fade-enter-active {
+  opacity: 1;
+}
+
+/* --- Print Styles ----------------------------------------- */
+@media print {
+  .control-panel,
+  .status-bar,
+  .module-header .breadcrumb {
+    display: none;
+  }
+
+  .module-layout {
+    display: block;
+  }
+
+  .viz-container {
+    box-shadow: none;
+    border: 1px solid #e2e8f0;
+    page-break-inside: avoid;
+  }
+
+  .info-panel {
+    box-shadow: none;
+    border: 1px solid #e2e8f0;
+  }
+}
+
+/* --- Responsive Adjustments ------------------------------- */
+@media (max-width: 768px) {
+  .status-bar {
+    padding: var(--space-sm) var(--space-md);
+    flex-wrap: wrap;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .tab-bar {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .tab-bar .tab {
+    white-space: nowrap;
+  }
+}

@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Diagnostic Test Probability — Base Rate Fallacy</title>
+
+  <!-- KaTeX CSS -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
+    integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV"
+    crossorigin="anonymous"
+  />
+
+  <!-- Platform styles -->
+  <link rel="stylesheet" href="../../assets/design-system.css" />
+  <link rel="stylesheet" href="../../assets/module-template.css" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="module-page">
+
+    <!-- Header -->
+    <header class="module-header">
+      <ul class="breadcrumb">
+        <li><a href="../../../index.html">Home</a></li>
+        <li><a href="#">Medical Quality</a></li>
+        <li>Diagnostic Test Probability</li>
+      </ul>
+      <h1>Diagnostic Test Probability</h1>
+      <p class="text-secondary">
+        Why a "95% accurate" test can be wrong most of the time — the base rate fallacy in medical screening
+      </p>
+    </header>
+
+    <!-- Main layout -->
+    <div class="module-body">
+      <div class="module-layout">
+
+        <!-- Visualization area -->
+        <div class="viz-area">
+
+          <!-- Bayes formula banner -->
+          <div class="viz-container" id="formula-panel">
+            <div id="bayes-formula"></div>
+          </div>
+
+          <!-- Main icon array -->
+          <div class="viz-container" id="icon-array-panel">
+            <div class="viz-title">Natural Frequency Icon Array</div>
+            <div class="viz-subtitle" id="icon-array-subtitle">
+              Each icon represents one person in the tested population
+            </div>
+            <div id="icon-array-chart"></div>
+            <div class="viz-legend" id="icon-array-legend"></div>
+          </div>
+
+          <!-- Secondary panels -->
+          <div class="secondary-panels">
+            <div class="viz-container" id="matrix-panel">
+              <div class="viz-title">Confusion Matrix</div>
+              <div class="viz-subtitle">
+                2&times;2 contingency table with predictive values
+              </div>
+              <div id="matrix-chart"></div>
+            </div>
+
+            <div class="viz-container" id="tree-panel">
+              <div class="viz-title">Bayesian Probability Tree</div>
+              <div class="viz-subtitle">
+                Sequential branching from prevalence through test result
+              </div>
+              <div id="tree-chart"></div>
+            </div>
+
+            <div class="viz-container" id="ppv-curve-panel">
+              <div class="viz-title">PPV &amp; NPV vs Prevalence</div>
+              <div class="viz-subtitle">
+                How predictive values change across disease prevalence
+              </div>
+              <div id="ppv-curve-chart"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Control panel -->
+        <aside class="control-panel" id="control-panel">
+          <h2>Controls</h2>
+
+          <!-- Scenario presets -->
+          <div class="control-group dropdown-control">
+            <label for="scenario-select">Clinical Scenario</label>
+            <select id="scenario-select">
+              <option value="custom">Custom</option>
+              <option value="mammography">Mammography Screening</option>
+              <option value="covid-symptomatic">COVID Rapid Antigen (symptomatic)</option>
+              <option value="covid-asymptomatic">COVID Rapid Antigen (asymptomatic)</option>
+              <option value="hiv-elisa">HIV ELISA Screening</option>
+              <option value="troponin">Troponin for MI (ER chest pain)</option>
+            </select>
+          </div>
+
+          <hr class="control-divider" />
+
+          <!-- Prevalence slider -->
+          <div class="control-group slider-control">
+            <label for="prevalence-slider">
+              Prevalence
+              <span class="value-display" id="prevalence-val">1%</span>
+            </label>
+            <input
+              type="range" id="prevalence-slider"
+              min="0" max="500" step="1" value="100"
+            />
+            <div class="slider-range-labels">
+              <span>0.1%</span><span>50%</span>
+            </div>
+          </div>
+
+          <!-- Sensitivity slider -->
+          <div class="control-group slider-control">
+            <label for="sensitivity-slider">
+              Sensitivity
+              <span class="value-display" id="sensitivity-val">95%</span>
+            </label>
+            <input
+              type="range" id="sensitivity-slider"
+              min="50" max="100" step="1" value="95"
+            />
+            <div class="slider-range-labels">
+              <span>50%</span><span>100%</span>
+            </div>
+          </div>
+
+          <!-- Specificity slider -->
+          <div class="control-group slider-control">
+            <label for="specificity-slider">
+              Specificity
+              <span class="value-display" id="specificity-val">95%</span>
+            </label>
+            <input
+              type="range" id="specificity-slider"
+              min="50" max="100" step="1" value="95"
+            />
+            <div class="slider-range-labels">
+              <span>50%</span><span>100%</span>
+            </div>
+          </div>
+
+          <hr class="control-divider" />
+
+          <!-- Display mode toggle -->
+          <label class="toggle-control">
+            <input type="checkbox" id="toggle-frequencies" checked />
+            <span class="toggle-track"></span>
+            <span class="toggle-label">Show natural frequencies</span>
+          </label>
+
+          <!-- Population size -->
+          <div class="control-group dropdown-control">
+            <label for="population-select">Population Size</label>
+            <select id="population-select">
+              <option value="1000" selected>1,000</option>
+              <option value="10000">10,000</option>
+            </select>
+          </div>
+
+          <hr class="control-divider" />
+
+          <!-- Stats grid -->
+          <div class="stats-grid" id="stats-grid">
+            <div class="stat-card">
+              <div class="stat-value" id="stat-ppv">--</div>
+              <div class="stat-label">PPV</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="stat-npv">--</div>
+              <div class="stat-label">NPV</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="stat-lr-pos">--</div>
+              <div class="stat-label">LR+</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="stat-lr-neg">--</div>
+              <div class="stat-label">LR&minus;</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="stat-pretest-odds">--</div>
+              <div class="stat-label">Pre-test Odds</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="stat-posttest-odds">--</div>
+              <div class="stat-label">Post-test Odds</div>
+            </div>
+            <div class="stat-card stat-card-wide">
+              <div class="stat-value" id="stat-nnt">--</div>
+              <div class="stat-label">Number Needed to Test</div>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <!-- Info panel -->
+      <div class="info-panel" style="max-width:1400px; margin:0 auto var(--space-xl); padding:var(--space-lg) var(--space-xl);">
+        <h2>Understanding Diagnostic Test Probability</h2>
+        <details open>
+          <summary>Bayes' Theorem in Medicine</summary>
+          <div class="detail-body">
+            <p>
+              <strong>Bayes' theorem</strong> tells us how to update the probability
+              of disease given a test result. The <em>Positive Predictive Value</em>
+              (PPV) answers: "If I test positive, what is the probability I actually
+              have the disease?"
+            </p>
+            <p id="info-bayes-formula"></p>
+            <p>
+              The denominator represents <em>all</em> positive results — both true
+              positives from diseased individuals and false positives from healthy
+              individuals. When prevalence is low, even a tiny false-positive rate
+              can overwhelm the true positives.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>The Base Rate Fallacy</summary>
+          <div class="detail-body">
+            <p>
+              The <strong>base rate fallacy</strong> (or base rate neglect) is the
+              tendency to ignore prevalence when interpreting a test result. Consider:
+              a test with 95% sensitivity and 95% specificity sounds impressive.
+              But if the disease prevalence is only 1%:
+            </p>
+            <ul>
+              <li>In 1,000 people: 10 have disease, 990 are healthy</li>
+              <li>True positives: 10 &times; 0.95 = 9.5 &approx; 10</li>
+              <li>False positives: 990 &times; 0.05 = 49.5 &approx; 50</li>
+              <li>PPV = 10 / (10 + 50) = <strong>16.7%</strong></li>
+            </ul>
+            <p>
+              So ~83% of positive results are <em>false alarms</em>. This is why
+              mass screening for rare diseases requires extremely specific tests,
+              and why confirmatory testing is essential.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>Likelihood Ratios</summary>
+          <div class="detail-body">
+            <p>
+              <strong>Likelihood ratios</strong> express how much a test result
+              changes the odds of disease. They are independent of prevalence,
+              making them portable across populations:
+            </p>
+            <p>
+              <strong>LR+ = Sensitivity / (1 &minus; Specificity)</strong> — how
+              much more likely a positive result is in a diseased vs. healthy
+              person. LR+ &gt; 10 is a strong positive test.
+            </p>
+            <p>
+              <strong>LR&minus; = (1 &minus; Sensitivity) / Specificity</strong> —
+              how much less likely a negative result is in a diseased vs. healthy
+              person. LR&minus; &lt; 0.1 is a strong negative test.
+            </p>
+            <p>
+              <strong>Post-test odds = Pre-test odds &times; LR</strong>. This
+              is the odds form of Bayes' theorem and is the basis of bedside
+              Bayesian reasoning.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>Clinical Decision Making</summary>
+          <div class="detail-body">
+            <p>
+              In clinical practice, the key insight is that <strong>pre-test
+              probability matters enormously</strong>. A positive mammogram in a
+              40-year-old woman (low prevalence) has very different implications
+              than the same result in a woman with a palpable mass (high pre-test
+              probability).
+            </p>
+            <p>
+              <strong>Sequential testing</strong> leverages this: the post-test
+              probability after the first test becomes the pre-test probability
+              for the second test. This is why clinicians order confirmatory tests
+              — each successive test refines the probability estimate.
+            </p>
+            <p>
+              Screening programs must balance sensitivity (catching all cases)
+              against the psychological and financial costs of false positives.
+              The <em>Number Needed to Test</em> (1/PPV) indicates how many
+              positive results must be worked up to find one true case.
+            </p>
+          </div>
+        </details>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="./module.js"></script>
+</body>
+</html>

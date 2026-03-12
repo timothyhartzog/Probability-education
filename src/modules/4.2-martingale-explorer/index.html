@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module 4.2 — Martingale Path Explorer</title>
+
+  <!-- KaTeX CSS -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
+    integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV"
+    crossorigin="anonymous"
+  />
+
+  <!-- Platform styles -->
+  <link rel="stylesheet" href="../../assets/design-system.css" />
+  <link rel="stylesheet" href="../../assets/module-template.css" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="module-page">
+
+    <!-- Header -->
+    <header class="module-header">
+      <ul class="breadcrumb">
+        <li><a href="../../../index.html">Home</a></li>
+        <li><a href="#">Martingales</a></li>
+        <li>Path Explorer</li>
+      </ul>
+      <h1>Martingale Path Explorer</h1>
+      <p class="text-secondary">
+        Visualize fair games, optional stopping, and martingale convergence
+      </p>
+    </header>
+
+    <!-- Main layout -->
+    <div class="module-body">
+      <div class="module-layout">
+
+        <!-- Visualization area -->
+        <div class="viz-area">
+
+          <!-- Main paths panel -->
+          <div class="viz-container" id="paths-panel">
+            <div class="viz-title">Sample Paths</div>
+            <div class="viz-subtitle" id="paths-subtitle"></div>
+            <div id="paths-chart"></div>
+            <div class="math-block" id="paths-formula"></div>
+          </div>
+
+          <!-- Two-column sub-panels -->
+          <div class="sub-panels">
+            <!-- Stopped values histogram -->
+            <div class="viz-container" id="histogram-panel">
+              <div class="viz-title">Stopped Values Distribution</div>
+              <div class="viz-subtitle" id="histogram-subtitle">
+                Enable a stopping rule to view M<sub>T</sub> histogram
+              </div>
+              <div id="histogram-chart"></div>
+              <div class="stats-grid" id="histogram-stats"></div>
+            </div>
+
+            <!-- Quadratic variation panel -->
+            <div class="viz-container" id="qv-panel">
+              <div class="viz-title">Quadratic Variation [M]<sub>n</sub></div>
+              <div class="viz-subtitle" id="qv-subtitle"></div>
+              <div id="qv-chart"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Control panel -->
+        <aside class="control-panel" id="control-panel">
+          <h2>Controls</h2>
+
+          <!-- Martingale type -->
+          <div class="control-group dropdown-control">
+            <label for="martingale-type">Martingale Type</label>
+            <select id="martingale-type">
+              <option value="simple">Simple Random Walk</option>
+              <option value="scaled">Scaled Random Walk</option>
+              <option value="doob">Doob Martingale</option>
+              <option value="exponential">Exponential Martingale</option>
+            </select>
+          </div>
+
+          <!-- Time horizon -->
+          <div class="control-group slider-control">
+            <label for="time-horizon">
+              Time Horizon
+              <span class="value-display" id="time-horizon-val">500</span>
+            </label>
+            <input
+              type="range" id="time-horizon"
+              min="50" max="5000" step="50" value="500"
+            />
+          </div>
+
+          <!-- Number of paths -->
+          <div class="control-group slider-control">
+            <label for="num-paths">
+              Number of Paths
+              <span class="value-display" id="num-paths-val">50</span>
+            </label>
+            <input
+              type="range" id="num-paths"
+              min="10" max="200" step="10" value="50"
+            />
+          </div>
+
+          <hr class="control-divider" />
+
+          <!-- Stopping rule -->
+          <div class="control-group dropdown-control">
+            <label for="stopping-rule">Stopping Rule</label>
+            <select id="stopping-rule">
+              <option value="none">None</option>
+              <option value="first-passage">First Passage</option>
+              <option value="fixed-time">Fixed Time</option>
+            </select>
+          </div>
+
+          <!-- Barrier level -->
+          <div class="control-group slider-control" id="barrier-group">
+            <label for="barrier-level">
+              Barrier Level
+              <span class="value-display" id="barrier-level-val">10</span>
+            </label>
+            <input
+              type="range" id="barrier-level"
+              min="1" max="50" step="1" value="10"
+            />
+          </div>
+
+          <hr class="control-divider" />
+
+          <!-- p for biased walk (conditional) -->
+          <div class="control-group slider-control" id="p-group" style="display:none;">
+            <label for="p-value">
+              Step probability p
+              <span class="value-display" id="p-value-val">0.5</span>
+            </label>
+            <input
+              type="range" id="p-value"
+              min="0.1" max="0.9" step="0.01" value="0.5"
+            />
+          </div>
+
+          <!-- theta for exponential martingale (conditional) -->
+          <div class="control-group slider-control" id="theta-group" style="display:none;">
+            <label for="theta-value">
+              Theta
+              <span class="value-display" id="theta-value-val">0.5</span>
+            </label>
+            <input
+              type="range" id="theta-value"
+              min="0.1" max="2.0" step="0.01" value="0.5"
+            />
+          </div>
+
+          <hr class="control-divider" />
+
+          <!-- Regenerate -->
+          <div class="action-row">
+            <button class="btn btn-primary" id="regenerate-btn">
+              Regenerate
+            </button>
+          </div>
+        </aside>
+      </div>
+
+      <!-- Info panel -->
+      <div class="info-panel" style="max-width:1400px; margin:0 auto var(--space-xl); padding:var(--space-lg) var(--space-xl);">
+        <h2>About Martingales</h2>
+        <details open>
+          <summary>What is a Martingale?</summary>
+          <div class="detail-body">
+            <p>
+              A <strong>martingale</strong> is a stochastic process where the
+              conditional expected value of the next observation, given all past
+              observations, equals the current observation. Formally,
+            </p>
+            <div class="math-block" id="info-martingale-def"></div>
+            <p>
+              Intuitively, a martingale models a "fair game" where your expected
+              future wealth equals your current wealth, regardless of history.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>Optional Stopping Theorem</summary>
+          <div class="detail-body">
+            <p>
+              The <strong>Optional Stopping Theorem</strong> states that under
+              suitable conditions (bounded stopping time, or bounded increments),
+              the expected value at the stopping time equals the initial value:
+            </p>
+            <div class="math-block" id="info-ost-def"></div>
+            <p>
+              Watch the histogram of stopped values: the sample mean should be
+              near zero for true martingales with appropriate stopping rules.
+              For submartingales (p > 0.5 in the scaled walk), observe how the
+              mean drifts upward.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>Quadratic Variation</summary>
+          <div class="detail-body">
+            <p>
+              The <strong>quadratic variation</strong> of a process measures
+              accumulated volatility:
+            </p>
+            <div class="math-block" id="info-qv-def"></div>
+            <p>
+              For a simple random walk with ±1 steps, the quadratic variation
+              equals exactly n (one unit of variance per step). The quadratic
+              variation panel lets you verify this fundamental property.
+            </p>
+          </div>
+        </details>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="./module.js"></script>
+</body>
+</html>

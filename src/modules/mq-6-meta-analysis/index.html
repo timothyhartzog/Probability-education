@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Meta-Analysis &amp; Evidence Synthesis — Forest Plot</title>
+
+  <!-- KaTeX CSS -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
+    integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV"
+    crossorigin="anonymous"
+  />
+
+  <!-- Platform styles -->
+  <link rel="stylesheet" href="../../assets/design-system.css" />
+  <link rel="stylesheet" href="../../assets/module-template.css" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="module-page">
+
+    <!-- Header -->
+    <header class="module-header">
+      <ul class="breadcrumb">
+        <li><a href="../../../index.html">Home</a></li>
+        <li><a href="#">Medical Quality</a></li>
+        <li>Meta-Analysis</li>
+      </ul>
+      <h1>Meta-Analysis &amp; Evidence Synthesis</h1>
+      <p class="text-secondary">
+        Interactive forest plots, heterogeneity analysis, and publication bias detection
+        &mdash; the core visual tools of evidence-based medicine
+      </p>
+    </header>
+
+    <!-- Main layout -->
+    <div class="module-body">
+      <div class="module-layout">
+
+        <!-- Visualization area -->
+        <div class="viz-area">
+
+          <!-- Main forest plot -->
+          <div class="viz-container" id="forest-panel">
+            <div class="viz-title">Forest Plot</div>
+            <div class="viz-subtitle" id="forest-subtitle">
+              Each row is one study &mdash; square size reflects weight, diamond shows pooled estimate
+            </div>
+            <div id="forest-chart"></div>
+            <div class="viz-legend" id="forest-legend"></div>
+          </div>
+
+          <!-- Secondary panels -->
+          <div class="secondary-panels">
+            <div class="viz-container" id="bias-panel">
+              <div class="viz-title">Publication Bias Funnel</div>
+              <div class="viz-subtitle" id="bias-subtitle">
+                Asymmetry suggests selective reporting of positive results
+              </div>
+              <div id="bias-funnel-chart"></div>
+            </div>
+
+            <div class="viz-container" id="heterogeneity-panel">
+              <div class="viz-title">Heterogeneity Explorer</div>
+              <div class="viz-subtitle" id="heterogeneity-subtitle">
+                Distribution of study effects relative to pooled estimate
+              </div>
+              <div id="heterogeneity-chart"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Control panel -->
+        <aside class="control-panel" id="control-panel">
+          <h2>Controls</h2>
+
+          <!-- Dataset -->
+          <div class="control-group dropdown-control">
+            <label for="dataset-select">Clinical Dataset</label>
+            <select id="dataset-select">
+              <option value="aspirin-mi">Aspirin for MI Prevention</option>
+              <option value="statins-primary">Statins for Primary Prevention</option>
+              <option value="beta-blockers-mi">Beta-Blockers Post-MI</option>
+              <option value="ssris-depression">SSRIs for Depression</option>
+              <option value="hcq-covid">Hydroxychloroquine for COVID</option>
+              <option value="custom">Custom (editable)</option>
+            </select>
+          </div>
+
+          <!-- Effect measure -->
+          <div class="control-group dropdown-control">
+            <label for="measure-select">Effect Measure</label>
+            <select id="measure-select">
+              <option value="OR">Odds Ratio</option>
+              <option value="RR">Risk Ratio</option>
+              <option value="RD">Risk Difference</option>
+            </select>
+          </div>
+
+          <!-- Pooling model -->
+          <div class="control-group dropdown-control">
+            <label for="model-select">Pooling Model</label>
+            <select id="model-select">
+              <option value="MH">Fixed-effect: Mantel-Haenszel</option>
+              <option value="IV">Fixed-effect: Inverse Variance</option>
+              <option value="DL">Random-effects: DerSimonian-Laird</option>
+            </select>
+          </div>
+
+          <hr class="control-divider" />
+
+          <!-- Toggles -->
+          <label class="toggle-control">
+            <input type="checkbox" id="toggle-random-diamond" checked />
+            <span class="toggle-track"></span>
+            <span class="toggle-label">Show random-effects diamond</span>
+          </label>
+
+          <label class="toggle-control">
+            <input type="checkbox" id="toggle-prediction" />
+            <span class="toggle-track"></span>
+            <span class="toggle-label">Show prediction interval</span>
+          </label>
+
+          <label class="toggle-control">
+            <input type="checkbox" id="toggle-funnel" checked />
+            <span class="toggle-track"></span>
+            <span class="toggle-label">Show publication bias funnel</span>
+          </label>
+
+          <label class="toggle-control">
+            <input type="checkbox" id="toggle-trimfill" />
+            <span class="toggle-track"></span>
+            <span class="toggle-label">Show trim-and-fill adjustment</span>
+          </label>
+
+          <hr class="control-divider" />
+
+          <!-- Confidence level -->
+          <div class="control-group slider-control">
+            <label for="ci-slider">
+              Confidence Level
+              <span class="value-display" id="ci-val">95%</span>
+            </label>
+            <input
+              type="range" id="ci-slider"
+              min="0" max="2" step="1" value="1"
+            />
+          </div>
+
+          <!-- Sort -->
+          <div class="control-group dropdown-control">
+            <label for="sort-select">Sort Studies By</label>
+            <select id="sort-select">
+              <option value="year">Year</option>
+              <option value="weight">Weight (descending)</option>
+              <option value="effect">Effect Size</option>
+            </select>
+          </div>
+
+          <hr class="control-divider" />
+
+          <!-- Custom study editor (hidden unless custom) -->
+          <div id="custom-editor" style="display:none;">
+            <div class="control-group">
+              <label>Add / Edit Studies</label>
+              <textarea id="custom-textarea" rows="8" style="width:100%; font-family:var(--font-mono); font-size:0.75rem; padding:var(--space-sm); border:1px solid #cbd5e1; border-radius:var(--radius-sm);"></textarea>
+              <div style="font-size:0.7rem; color:var(--color-text-secondary); margin-top:var(--space-xs);">
+                Format: name, year, n_t, e_t, n_c, e_c (one study per line)
+              </div>
+            </div>
+            <div class="action-row">
+              <button class="btn btn-primary" id="apply-custom-btn">Apply Custom Data</button>
+            </div>
+            <hr class="control-divider" />
+          </div>
+
+          <!-- Stats -->
+          <div class="stats-grid" id="stats-grid">
+            <div class="stat-card">
+              <div class="stat-value" id="stat-pooled">--</div>
+              <div class="stat-label">Pooled Estimate [CI]</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="stat-i2">--</div>
+              <div class="stat-label">I&sup2; Heterogeneity</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="stat-tau2">--</div>
+              <div class="stat-label">&tau;&sup2; Between-Study Var</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="stat-q">--</div>
+              <div class="stat-label">Q Statistic (p)</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="stat-studies">--</div>
+              <div class="stat-label">Studies / Participants</div>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <!-- Info panel -->
+      <div class="info-panel" style="max-width:1400px; margin:0 auto var(--space-xl); padding:var(--space-lg) var(--space-xl);">
+        <h2>About Meta-Analysis</h2>
+        <details open>
+          <summary>Forest Plots</summary>
+          <div class="detail-body">
+            <p>
+              A <strong>forest plot</strong> is the standard graphical display of a meta-analysis.
+              Each study is shown as a row: the <em>square</em> marks the point estimate (sized
+              proportional to the study's weight), and the <em>horizontal line</em> shows its
+              confidence interval. The pooled estimate is shown as a <em>diamond</em> at the
+              bottom, whose width indicates the confidence interval of the combined effect.
+            </p>
+            <p>
+              The vertical <strong>line of no effect</strong> (OR = 1 or RD = 0) is the key
+              reference. If a study's CI crosses this line, its result is not statistically
+              significant at the chosen confidence level. If the pooled diamond does not cross
+              the line, the overall meta-analytic result is statistically significant.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>Fixed vs Random Effects</summary>
+          <div class="detail-body">
+            <p>
+              A <strong>fixed-effect model</strong> assumes all studies estimate the same
+              underlying true effect. The <em>Mantel-Haenszel</em> method is preferred for
+              sparse binary data; <em>inverse variance</em> weighting is more general.
+            </p>
+            <p>
+              A <strong>random-effects model</strong> (DerSimonian-Laird) allows the true
+              effect to vary between studies. It incorporates between-study variance (&tau;&sup2;)
+              into the weights, giving small studies relatively more influence. When
+              heterogeneity is low, fixed and random models converge.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>Heterogeneity</summary>
+          <div class="detail-body">
+            <p>
+              <strong>I&sup2;</strong> quantifies the percentage of variability due to true
+              differences rather than chance: &lt;25% is low, 25&ndash;75% moderate, &gt;75%
+              high. <strong>Cochran's Q</strong> tests whether observed differences exceed
+              sampling error (significant p means real heterogeneity exists).
+              <strong>&tau;&sup2;</strong> is the estimated between-study variance on the
+              effect-size scale.
+            </p>
+            <p>
+              The <strong>prediction interval</strong> shows where 95% of future study effects
+              would fall &mdash; it is always wider than the confidence interval and conveys the
+              clinical relevance of heterogeneity better than I&sup2; alone.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>Publication Bias</summary>
+          <div class="detail-body">
+            <p>
+              <strong>Funnel plots</strong> plot effect size against precision (1/SE). In the
+              absence of bias, studies scatter symmetrically around the pooled estimate. Asymmetry
+              (typically a gap in the lower-left) suggests that small negative studies were not
+              published.
+            </p>
+            <p>
+              <strong>Egger's regression</strong> tests for funnel asymmetry formally. The
+              <strong>trim-and-fill</strong> method imputes "missing" studies to restore symmetry
+              and re-estimates the pooled effect, providing a sensitivity analysis.
+            </p>
+          </div>
+        </details>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="./module.js"></script>
+</body>
+</html>

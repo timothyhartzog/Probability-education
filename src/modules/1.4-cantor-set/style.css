@@ -1,0 +1,42 @@
+/* Cantor Set — Module Styles */
+
+.viz-area {
+  flex: 1 1 65%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.secondary-panels {
+  display: flex;
+  gap: var(--space-lg);
+}
+
+.secondary-panels .viz-container {
+  flex: 1 1 50%;
+  min-width: 0;
+}
+
+/* Construction intervals */
+.cantor-interval { fill: var(--color-primary); transition: all 300ms ease; }
+.cantor-removed { fill: var(--color-error); opacity: 0.15; }
+.iteration-label { font-family: var(--font-mono); font-size: 11px; fill: var(--color-text-secondary); }
+
+/* Cantor function */
+.cantor-function-line { fill: none; stroke: var(--color-primary); stroke-width: 2; }
+.cantor-flat-segment { stroke: var(--color-secondary); stroke-width: 2; opacity: 0.6; }
+
+/* Measure chart */
+.length-bar { transition: all 300ms ease; }
+.removed-bar { fill: var(--color-error); opacity: 0.6; }
+.remaining-bar { fill: var(--color-primary); opacity: 0.6; }
+
+/* Axis */
+.axis path, .axis line { stroke: #cbd5e1; }
+.axis text { fill: var(--color-text-secondary); font-family: var(--font-heading); font-size: 11px; }
+.axis-label { font-family: var(--font-heading); font-size: 12px; fill: var(--color-text-secondary); }
+
+@media (max-width: 900px) {
+  .secondary-panels { flex-direction: column; }
+}

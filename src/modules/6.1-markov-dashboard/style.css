@@ -1,0 +1,221 @@
+/* ============================================================
+   Module 6.1 — Markov Chain Dynamics Dashboard
+   Module-specific styles for three-panel layout
+   ============================================================ */
+
+/* --- Viz Area (left column) -------------------------------- */
+.viz-area {
+  flex: 1 1 65%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+/* --- Sub-panels: heatmap + distribution -------------------- */
+.sub-panels {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-lg);
+}
+
+/* --- State Diagram Panel (larger) -------------------------- */
+#state-diagram-panel {
+  min-height: 420px;
+}
+
+#state-diagram-chart {
+  position: relative;
+  width: 100%;
+  min-height: 380px;
+}
+
+#state-diagram-chart svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* --- Heatmap Panel ----------------------------------------- */
+#heatmap-panel {
+  min-height: 300px;
+}
+
+#heatmap-chart svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* --- Distribution Panel ------------------------------------ */
+#distribution-panel {
+  min-height: 300px;
+}
+
+#distribution-chart svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* --- State Diagram Nodes ----------------------------------- */
+.state-node {
+  cursor: pointer;
+  transition: filter var(--transition-fast);
+}
+
+.state-node:hover {
+  filter: brightness(1.15);
+}
+
+.state-node circle {
+  stroke: #1a1a2e;
+  stroke-width: 2;
+}
+
+.state-node text {
+  font-family: var(--font-heading);
+  font-size: 13px;
+  font-weight: 600;
+  fill: #fff;
+  text-anchor: middle;
+  dominant-baseline: central;
+  pointer-events: none;
+}
+
+/* --- Edges ------------------------------------------------- */
+.edge-path {
+  fill: none;
+  stroke: #94a3b8;
+  stroke-linecap: round;
+}
+
+.edge-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  fill: var(--color-text-secondary);
+  pointer-events: none;
+}
+
+/* --- Probability Dots (animated) --------------------------- */
+.prob-dot {
+  fill: var(--color-secondary);
+  opacity: 0.85;
+}
+
+/* --- Self-loop arcs ---------------------------------------- */
+.self-loop {
+  fill: none;
+  stroke: #94a3b8;
+  stroke-linecap: round;
+}
+
+/* --- Heatmap Cells ----------------------------------------- */
+.heatmap-cell {
+  stroke: var(--color-surface);
+  stroke-width: 1.5;
+  transition: opacity var(--transition-fast);
+}
+
+.heatmap-cell:hover {
+  opacity: 0.85;
+}
+
+.heatmap-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  fill: var(--color-text);
+  text-anchor: middle;
+  dominant-baseline: central;
+  pointer-events: none;
+}
+
+.heatmap-axis-label {
+  font-family: var(--font-heading);
+  font-size: 12px;
+  fill: var(--color-text-secondary);
+  font-weight: 500;
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+
+/* --- Distribution Bars ------------------------------------- */
+.dist-bar {
+  transition: opacity var(--transition-fast);
+}
+
+.dist-bar:hover {
+  opacity: 0.85;
+}
+
+.stationary-marker {
+  stroke: var(--color-text);
+  stroke-width: 2;
+  stroke-dasharray: 6 3;
+  opacity: 0.7;
+}
+
+.stationary-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  fill: var(--color-text-secondary);
+}
+
+/* --- Axis styling ------------------------------------------ */
+.x-axis text,
+.y-axis text {
+  font-family: var(--font-heading);
+  font-size: 11px;
+  fill: var(--color-text-secondary);
+}
+
+.x-axis line,
+.x-axis path,
+.y-axis line,
+.y-axis path {
+  stroke: #cbd5e1;
+}
+
+.axis-label {
+  font-family: var(--font-heading);
+  font-size: 12px;
+  fill: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+/* --- Arrow marker ------------------------------------------ */
+.arrow-marker {
+  fill: #94a3b8;
+}
+
+/* --- Heatmap title label ----------------------------------- */
+#heatmap-title-label {
+  font-family: var(--font-mono);
+  font-weight: 600;
+}
+
+/* --- Responsive -------------------------------------------- */
+@media (max-width: 1024px) {
+  .sub-panels {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .viz-area {
+    flex: none;
+    width: 100%;
+  }
+
+  .sub-panels {
+    grid-template-columns: 1fr;
+  }
+
+  #state-diagram-panel {
+    min-height: 300px;
+  }
+
+  #state-diagram-chart {
+    min-height: 260px;
+  }
+}

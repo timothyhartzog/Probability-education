@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Central Limit Theorem Studio | Probability Education</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <link rel="stylesheet" href="../../assets/design-system.css">
+  <link rel="stylesheet" href="../../assets/module-template.css">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="module-page">
+    <header class="module-header">
+      <nav class="breadcrumb"><a href="../../../index.html">Home</a> / <a href="../../../index.html#convergence">Convergence</a> / Central Limit Theorem</nav>
+      <h1>Central Limit Theorem Studio</h1>
+      <p class="module-subtitle">Watch standardized sums converge to the Gaussian distribution</p>
+    </header>
+    <div class="module-layout">
+      <div class="viz-area">
+        <div class="viz-container" id="histogram-panel">
+          <h3>Standardized Sum Distribution</h3>
+          <div class="chart-area"></div>
+        </div>
+        <div class="secondary-panels">
+          <div class="viz-container" id="qq-panel">
+            <h3>Q-Q Plot vs Normal</h3>
+            <div class="chart-area"></div>
+          </div>
+          <div class="viz-container" id="moments-panel">
+            <h3>Moments vs n</h3>
+            <div class="chart-area"></div>
+          </div>
+        </div>
+      </div>
+      <aside class="control-panel" id="controls"></aside>
+    </div>
+    <div class="info-panel" id="info"></div>
+  </div>
+  <script type="module" src="./module.js"></script>
+</body>
+</html>

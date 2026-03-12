@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module 6.2 — Ergodic Theory &amp; Mixing Times</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" crossorigin="anonymous" />
+  <link rel="stylesheet" href="../../assets/design-system.css" />
+  <link rel="stylesheet" href="../../assets/module-template.css" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="module-page">
+    <header class="module-header">
+      <ul class="breadcrumb">
+        <li><a href="../../../index.html">Home</a></li>
+        <li><a href="#">Markov Chains</a></li>
+        <li>Ergodic Theory &amp; Mixing Times</li>
+      </ul>
+      <h1>Ergodic Theory &amp; Mixing Times</h1>
+      <p class="text-secondary">
+        Visualize the ergodic theorem for Markov chains and how mixing time measures the speed of convergence to stationarity
+      </p>
+    </header>
+
+    <div class="module-body">
+      <div class="module-layout">
+        <div class="viz-area">
+          <!-- Main: Total Variation Distance -->
+          <div class="viz-container" id="tv-panel">
+            <div class="viz-title">Total Variation Distance</div>
+            <div class="viz-subtitle" id="tv-subtitle">
+              d<sub>TV</sub>(P<sup>n</sup>(x, &middot;), &pi;) vs step n for each starting state &mdash; mixing time marked at threshold 1/4
+            </div>
+            <div id="tv-chart"></div>
+          </div>
+
+          <div class="secondary-panels">
+            <!-- Secondary Left: Ergodic Average -->
+            <div class="viz-container" id="ergodic-panel">
+              <div class="viz-title">Time Average vs Space Average</div>
+              <div class="viz-subtitle" id="ergodic-subtitle">
+                Running average (1/n)&Sigma;f(X<sub>k</sub>) converging to E<sub>&pi;</sub>[f]
+              </div>
+              <div id="ergodic-chart"></div>
+            </div>
+
+            <!-- Secondary Right: Distribution Evolution -->
+            <div class="viz-container" id="dist-panel">
+              <div class="viz-title">Distribution Evolution</div>
+              <div class="viz-subtitle" id="dist-subtitle">
+                P<sup>n</sup>(x<sub>0</sub>, &middot;) converging to stationary &pi; (dashed)
+              </div>
+              <div id="dist-chart"></div>
+            </div>
+          </div>
+        </div>
+
+        <aside class="control-panel" id="control-panel">
+          <h2>Controls</h2>
+
+          <div class="control-group">
+            <label for="preset-chain">Preset Chain</label>
+            <select id="preset-chain" class="control-select">
+              <option value="lazy-cycle">Lazy Random Walk on Cycle (5)</option>
+              <option value="complete-graph">Complete Graph Walk (5)</option>
+              <option value="barbell">Barbell Graph (6)</option>
+              <option value="birth-death">Birth-Death Chain (5)</option>
+            </select>
+          </div>
+
+          <hr class="control-divider" />
+
+          <div class="control-group slider-control">
+            <label for="num-steps">
+              Steps N
+              <span class="value-display" id="num-steps-val">100</span>
+            </label>
+            <input type="range" id="num-steps" min="10" max="500" step="1" value="100" />
+          </div>
+
+          <div class="control-group slider-control">
+            <label for="num-paths">
+              Sample Paths
+              <span class="value-display" id="num-paths-val">20</span>
+            </label>
+            <input type="range" id="num-paths" min="5" max="50" step="1" value="20" />
+          </div>
+
+          <hr class="control-divider" />
+
+          <div class="control-group">
+            <label for="start-state">Starting State x<sub>0</sub></label>
+            <select id="start-state" class="control-select">
+              <!-- Populated dynamically -->
+            </select>
+          </div>
+
+          <div class="control-group">
+            <label for="fn-choice">Function f</label>
+            <select id="fn-choice" class="control-select">
+              <option value="indicator-0">Indicator of state 0</option>
+              <option value="state-value">State value (index)</option>
+              <option value="parity">Parity (even=0, odd=1)</option>
+            </select>
+          </div>
+
+          <hr class="control-divider" />
+
+          <label class="toggle-control">
+            <input type="checkbox" id="toggle-stationary" checked />
+            <span class="toggle-track"></span>
+            <span class="toggle-label">Show stationary distribution</span>
+          </label>
+
+          <hr class="control-divider" />
+
+          <div class="action-row">
+            <button class="btn btn-primary" id="animate-btn">Animate</button>
+            <button class="btn" id="step-btn">Step</button>
+            <button class="btn" id="reset-btn">Reset</button>
+          </div>
+
+          <div class="stats-grid" id="stats-grid">
+            <div class="stat-card">
+              <div class="stat-value" id="stat-tmix">--</div>
+              <div class="stat-label">t<sub>mix</sub></div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="stat-gap">--</div>
+              <div class="stat-label">Spectral Gap</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="stat-entropy">--</div>
+              <div class="stat-label">&pi; Entropy</div>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <div class="info-panel" style="max-width:1400px; margin:0 auto var(--space-xl); padding:var(--space-lg) var(--space-xl);">
+        <h2>About Ergodic Theory &amp; Mixing</h2>
+        <details open>
+          <summary>The Ergodic Theorem</summary>
+          <div class="detail-body">
+            <p>
+              For an <strong>irreducible, positive-recurrent</strong> Markov chain with stationary
+              distribution &pi;, the <strong>ergodic theorem</strong> states that time averages
+              converge to space averages almost surely:
+            </p>
+            <div class="math-block" id="info-ergodic-def"></div>
+            <p>
+              This means that a single long trajectory of the chain provides a consistent
+              estimate of any expectation under &pi;, regardless of the starting state.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>Total Variation Distance</summary>
+          <div class="detail-body">
+            <p>
+              The <strong>total variation distance</strong> between two distributions &mu; and &nu;
+              on a finite state space S is:
+            </p>
+            <div class="math-block" id="info-tv-def"></div>
+            <p>
+              It measures the maximum difference in probability assigned to any event.
+              For a Markov chain, d<sub>TV</sub>(P<sup>n</sup>(x, &middot;), &pi;) measures how
+              far the chain's distribution at time n (starting from x) is from stationarity.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>Mixing Time</summary>
+          <div class="detail-body">
+            <p>
+              The <strong>mixing time</strong> is defined as the first time the total variation
+              distance drops below a threshold (conventionally 1/4):
+            </p>
+            <div class="math-block" id="info-tmix-def"></div>
+            <p>
+              Mixing time quantifies how many steps the chain needs to "forget" its starting state.
+              It is related to the spectral gap: for reversible chains,
+              t<sub>mix</sub> is of order 1/&gamma; where &gamma; = 1 &minus; |&lambda;<sub>2</sub>|.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>The Cutoff Phenomenon</summary>
+          <div class="detail-body">
+            <p>
+              Some families of Markov chains exhibit a <strong>cutoff phenomenon</strong>: the
+              total variation distance stays close to 1 for many steps, then drops abruptly to
+              near 0 over a narrow window. The barbell graph preset demonstrates a bottleneck
+              effect where mixing is delayed until the chain crosses between the two clusters.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>Reversibility &amp; Detailed Balance</summary>
+          <div class="detail-body">
+            <p>
+              A chain is <strong>reversible</strong> with respect to &pi; if it satisfies
+              <strong>detailed balance</strong>: &pi;(x)P(x,y) = &pi;(y)P(y,x) for all states x, y.
+              All preset chains in this module are reversible. Reversibility implies the transition
+              matrix has real eigenvalues, and the spectral gap directly controls the rate of convergence.
+            </p>
+          </div>
+        </details>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="./module.js"></script>
+</body>
+</html>

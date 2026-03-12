@@ -1,0 +1,48 @@
+/* Lebesgue vs. Riemann — Module Styles */
+
+.viz-area {
+  flex: 1 1 65%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.dual-panels {
+  display: flex;
+  gap: var(--space-lg);
+}
+
+.dual-panels .viz-container {
+  flex: 1 1 50%;
+  min-width: 0;
+}
+
+/* Function curve */
+.function-curve { fill: none; stroke: var(--color-text); stroke-width: 2; }
+
+/* Riemann rectangles */
+.riemann-upper { fill: rgba(37, 99, 235, 0.15); stroke: var(--color-primary); stroke-width: 1; }
+.riemann-lower { fill: rgba(233, 115, 25, 0.15); stroke: var(--color-secondary); stroke-width: 1; }
+
+/* Lebesgue horizontal slices */
+.lebesgue-slice { opacity: 0.2; stroke-width: 0.5; }
+.lebesgue-preimage { opacity: 0.4; }
+
+/* Partition lines */
+.partition-line { stroke: #94a3b8; stroke-width: 0.5; stroke-dasharray: 2 2; }
+
+/* Convergence chart */
+.upper-line { stroke: var(--color-primary); stroke-width: 2; }
+.lower-line { stroke: var(--color-secondary); stroke-width: 2; }
+.exact-line { stroke: var(--color-accent); stroke-width: 1.5; stroke-dasharray: 6 4; }
+.lebesgue-conv-line { stroke: var(--viz-4); stroke-width: 2; }
+
+/* Axis */
+.axis path, .axis line { stroke: #cbd5e1; }
+.axis text { fill: var(--color-text-secondary); font-family: var(--font-heading); font-size: 11px; }
+.axis-label { font-family: var(--font-heading); font-size: 12px; fill: var(--color-text-secondary); }
+
+@media (max-width: 900px) {
+  .dual-panels { flex-direction: column; }
+}
