@@ -1,0 +1,163 @@
+/* ============================================================
+   Module 2.3 — Laws of Large Numbers Laboratory
+   ============================================================ */
+
+/* --- Viz Area Layout -------------------------------------- */
+.viz-area {
+  flex: 1 1 65%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+/* --- Secondary Panels ------------------------------------- */
+.secondary-panels {
+  display: flex;
+  gap: var(--space-lg);
+}
+
+.secondary-panels .viz-container {
+  flex: 1 1 50%;
+  min-width: 0;
+}
+
+/* --- Chart Area ------------------------------------------- */
+.chart-area {
+  width: 100%;
+  position: relative;
+}
+
+.chart-area svg {
+  width: 100%;
+  display: block;
+}
+
+/* --- Sample Path Lines ------------------------------------ */
+.sample-path {
+  fill: none;
+  stroke-width: 1;
+  opacity: 0.2;
+}
+
+.sample-path:hover {
+  opacity: 0.8;
+  stroke-width: 1.5;
+}
+
+/* --- Mean Line -------------------------------------------- */
+.mean-line {
+  stroke-dasharray: 8, 4;
+  stroke-width: 2;
+}
+
+/* --- Envelope Lines --------------------------------------- */
+.envelope-line {
+  stroke-dasharray: 4, 3;
+  stroke-width: 1.5;
+  opacity: 0.6;
+}
+
+/* --- Axis Styling ----------------------------------------- */
+.axis text {
+  font-family: var(--font-heading);
+  font-size: 11px;
+  fill: var(--color-text-secondary);
+}
+
+.axis line,
+.axis path {
+  stroke: #cbd5e1;
+}
+
+.axis-label {
+  font-family: var(--font-heading);
+  font-size: 12px;
+  fill: var(--color-text-secondary);
+}
+
+/* --- Histogram Bars --------------------------------------- */
+.hist-bar {
+  fill: var(--viz-1);
+  opacity: 0.7;
+  transition: opacity var(--transition-fast);
+}
+
+.hist-bar:hover {
+  opacity: 1;
+}
+
+/* --- Rate Plot -------------------------------------------- */
+.rate-path {
+  fill: none;
+  stroke-width: 1.5;
+}
+
+/* --- Legend within charts ---------------------------------- */
+.chart-legend {
+  font-family: var(--font-heading);
+  font-size: 11px;
+}
+
+.chart-legend text {
+  fill: var(--color-text-secondary);
+}
+
+/* --- Pareto Control Highlight ----------------------------- */
+.pareto-control {
+  padding: var(--space-sm);
+  border-radius: var(--radius-sm);
+  background: rgba(233, 115, 25, 0.06);
+  border: 1px solid rgba(233, 115, 25, 0.15);
+  transition: opacity var(--transition-normal), max-height var(--transition-normal);
+}
+
+.pareto-control.hidden {
+  opacity: 0;
+  max-height: 0;
+  padding: 0;
+  margin: 0;
+  border: none;
+  overflow: hidden;
+}
+
+/* --- Info panel columns ----------------------------------- */
+.info-columns {
+  display: flex;
+  gap: var(--space-xl);
+}
+
+.info-columns > div {
+  flex: 1;
+}
+
+/* --- Module subtitle -------------------------------------- */
+.module-subtitle {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+  margin-top: var(--space-xs);
+}
+
+/* --- Responsive ------------------------------------------- */
+@media (max-width: 900px) {
+  .secondary-panels {
+    flex-direction: column;
+  }
+
+  .secondary-panels .viz-container {
+    flex: none;
+    width: 100%;
+  }
+
+  .info-columns {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 768px) {
+  .viz-area {
+    flex: none;
+    width: 100%;
+  }
+}

@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module 5.2 — Brownian Motion Properties Studio</title>
+
+  <!-- KaTeX CSS -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
+    integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV"
+    crossorigin="anonymous"
+  />
+
+  <!-- Platform styles -->
+  <link rel="stylesheet" href="../../assets/design-system.css" />
+  <link rel="stylesheet" href="../../assets/module-template.css" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="module-page">
+
+    <!-- Header -->
+    <header class="module-header">
+      <ul class="breadcrumb">
+        <li><a href="../../../index.html">Home</a></li>
+        <li><a href="#">Brownian Motion</a></li>
+        <li>Properties Studio</li>
+      </ul>
+      <h1>Brownian Motion Properties Studio</h1>
+      <p class="text-secondary">
+        Self-similarity, roughness, quadratic variation, and arcsine laws
+      </p>
+    </header>
+
+    <!-- Main layout -->
+    <div class="module-body">
+      <div class="module-layout">
+
+        <!-- Visualization area -->
+        <div class="viz-area">
+
+          <!-- Tab bar -->
+          <div class="tab-bar" id="tab-bar">
+            <button class="tab active" data-tab="path-explorer">Path Explorer</button>
+            <button class="tab" data-tab="self-similarity">Self-Similarity</button>
+            <button class="tab" data-tab="quadratic-variation">Quadratic Variation</button>
+            <button class="tab" data-tab="arcsine-laws">Arcsine Laws</button>
+          </div>
+
+          <!-- Tab 1: Path Explorer -->
+          <div class="tab-content active" id="tab-path-explorer">
+            <div class="viz-container" id="path-explorer-panel">
+              <div class="viz-title">Brownian Motion Paths</div>
+              <div class="viz-subtitle" id="path-explorer-subtitle">
+                Zoom in to see fractal roughness at every scale
+              </div>
+              <div id="path-explorer-chart"></div>
+              <div class="stats-grid" id="path-explorer-stats"></div>
+              <div class="math-block" id="path-explorer-formula"></div>
+            </div>
+          </div>
+
+          <!-- Tab 2: Self-Similarity -->
+          <div class="tab-content" id="tab-self-similarity">
+            <div class="viz-container" id="self-similarity-panel">
+              <div class="viz-title">Self-Similarity of Brownian Motion</div>
+              <div class="viz-subtitle" id="self-similarity-subtitle">
+                Original path vs rescaled path — statistically identical
+              </div>
+              <div id="self-similarity-chart"></div>
+              <div class="math-block" id="self-similarity-formula"></div>
+            </div>
+          </div>
+
+          <!-- Tab 3: Quadratic Variation -->
+          <div class="tab-content" id="tab-quadratic-variation">
+            <div class="viz-container" id="qv-panel">
+              <div class="viz-title">Quadratic Variation</div>
+              <div class="viz-subtitle" id="qv-subtitle">
+                Quadratic variation converges to t as the partition refines
+              </div>
+              <div id="qv-chart"></div>
+              <div class="stats-grid" id="qv-stats"></div>
+              <div class="math-block" id="qv-formula"></div>
+            </div>
+          </div>
+
+          <!-- Tab 4: Arcsine Laws -->
+          <div class="tab-content" id="tab-arcsine-laws">
+            <div class="viz-container" id="arcsine-panel">
+              <div class="viz-title">Arcsine Law for Time Spent Positive</div>
+              <div class="viz-subtitle" id="arcsine-subtitle">
+                The fraction of time B_t > 0 follows the arcsine distribution
+              </div>
+              <div id="arcsine-chart"></div>
+              <div class="stats-grid" id="arcsine-stats"></div>
+              <div class="math-block" id="arcsine-formula"></div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Control panel -->
+        <aside class="control-panel" id="control-panel">
+          <h2>Controls</h2>
+
+          <!-- Tab 1 controls -->
+          <div class="tab-controls active" id="controls-path-explorer">
+            <div class="control-group slider-control">
+              <label for="pe-time-horizon">
+                Time Horizon T
+                <span class="value-display" id="pe-time-horizon-val">1</span>
+              </label>
+              <input
+                type="range" id="pe-time-horizon"
+                min="1" max="10" step="1" value="1"
+              />
+            </div>
+
+            <div class="control-group slider-control">
+              <label for="pe-num-points">
+                Points
+                <span class="value-display" id="pe-num-points-val">5000</span>
+              </label>
+              <input
+                type="range" id="pe-num-points"
+                min="3" max="5" step="0.1" value="3.699"
+              />
+            </div>
+
+            <div class="control-group slider-control">
+              <label for="pe-num-paths">
+                Number of Paths
+                <span class="value-display" id="pe-num-paths-val">1</span>
+              </label>
+              <input
+                type="range" id="pe-num-paths"
+                min="1" max="5" step="1" value="1"
+              />
+            </div>
+
+            <hr class="control-divider" />
+            <div class="action-row">
+              <button class="btn btn-primary" id="pe-regenerate-btn">
+                Regenerate
+              </button>
+            </div>
+          </div>
+
+          <!-- Tab 2 controls -->
+          <div class="tab-controls" id="controls-self-similarity">
+            <div class="control-group slider-control">
+              <label for="ss-scaling-factor">
+                Scaling Factor a
+                <span class="value-display" id="ss-scaling-factor-val">2.0</span>
+              </label>
+              <input
+                type="range" id="ss-scaling-factor"
+                min="0.1" max="5.0" step="0.1" value="2.0"
+              />
+            </div>
+
+            <hr class="control-divider" />
+            <div class="action-row">
+              <button class="btn btn-primary" id="ss-regenerate-btn">
+                Regenerate
+              </button>
+            </div>
+          </div>
+
+          <!-- Tab 3 controls -->
+          <div class="tab-controls" id="controls-quadratic-variation">
+            <div class="control-group slider-control">
+              <label for="qv-partition-points">
+                Partition Points
+                <span class="value-display" id="qv-partition-points-val">100</span>
+              </label>
+              <input
+                type="range" id="qv-partition-points"
+                min="1" max="4" step="0.01" value="2"
+              />
+            </div>
+
+            <hr class="control-divider" />
+            <div class="action-row">
+              <button class="btn btn-primary" id="qv-regenerate-btn">
+                Regenerate
+              </button>
+            </div>
+          </div>
+
+          <!-- Tab 4 controls -->
+          <div class="tab-controls" id="controls-arcsine-laws">
+            <div class="control-group slider-control">
+              <label for="al-num-sims">
+                Simulations
+                <span class="value-display" id="al-num-sims-val">5000</span>
+              </label>
+              <input
+                type="range" id="al-num-sims"
+                min="500" max="10000" step="500" value="5000"
+              />
+            </div>
+
+            <hr class="control-divider" />
+            <div class="action-row">
+              <button class="btn btn-primary" id="al-regenerate-btn">
+                Regenerate
+              </button>
+            </div>
+          </div>
+
+        </aside>
+      </div>
+
+      <!-- Info panel -->
+      <div class="info-panel" style="max-width:1400px; margin:0 auto var(--space-xl); padding:var(--space-lg) var(--space-xl);">
+        <h2>About Brownian Motion Properties</h2>
+        <details open>
+          <summary>What is Brownian Motion?</summary>
+          <div class="detail-body">
+            <p>
+              <strong>Brownian motion</strong> (or Wiener process) is a continuous-time
+              stochastic process with independent, stationary, Gaussian increments. It is
+              the scaling limit of random walks and the fundamental building block of
+              stochastic calculus.
+            </p>
+            <div class="math-block" id="info-bm-def"></div>
+          </div>
+        </details>
+        <details>
+          <summary>Self-Similarity</summary>
+          <div class="detail-body">
+            <p>
+              Brownian motion is <strong>self-similar</strong> with exponent 1/2: for any
+              constant a > 0, the rescaled process has the same distribution as the
+              original.
+            </p>
+            <div class="math-block" id="info-ss-def"></div>
+            <p>
+              This means zooming into a Brownian path (rescaling time by a^2 and space
+              by a) produces a statistically identical path. The roughness you see at
+              every scale is a consequence of this property.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>Quadratic Variation</summary>
+          <div class="detail-body">
+            <p>
+              Unlike smooth functions (whose quadratic variation is zero), Brownian motion
+              has <strong>quadratic variation equal to t</strong>:
+            </p>
+            <div class="math-block" id="info-qv-def"></div>
+            <p>
+              As the partition mesh goes to zero, the sum of squared increments converges
+              to t. This is fundamental in stochastic calculus and underlies Ito's formula.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>Arcsine Laws</summary>
+          <div class="detail-body">
+            <p>
+              Levy's <strong>arcsine law</strong> states that the fraction of time a
+              Brownian motion spends positive on [0,1] follows the arcsine distribution:
+            </p>
+            <div class="math-block" id="info-arcsine-def"></div>
+            <p>
+              Counterintuitively, the most likely outcomes are near 0 or 1 — the path
+              tends to spend most of its time on one side of zero, rather than splitting
+              evenly.
+            </p>
+          </div>
+        </details>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="./module.js"></script>
+</body>
+</html>

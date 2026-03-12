@@ -1,0 +1,231 @@
+/* ============================================================
+   Module 5.2 — Brownian Motion Properties Studio
+   Tab-based layout and visualization styles
+   ============================================================ */
+
+/* --- Viz Area (left column) -------------------------------- */
+.viz-area {
+  flex: 1 1 65%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+/* --- Tab controls: show/hide per tab ----------------------- */
+.tab-controls {
+  display: none;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.tab-controls.active {
+  display: flex;
+}
+
+/* --- Tab content panels ------------------------------------ */
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+/* --- Chart containers -------------------------------------- */
+#path-explorer-chart svg,
+#self-similarity-chart svg,
+#qv-chart svg,
+#arcsine-chart svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* --- Path explorer panel ----------------------------------- */
+#path-explorer-panel {
+  min-height: 420px;
+}
+
+#path-explorer-panel .math-block {
+  margin-top: var(--space-md);
+  margin-bottom: 0;
+  font-size: var(--font-size-base);
+}
+
+#path-explorer-panel .stats-grid {
+  margin-top: var(--space-md);
+}
+
+/* --- Self-similarity panel --------------------------------- */
+#self-similarity-panel {
+  min-height: 420px;
+}
+
+#self-similarity-panel .math-block {
+  margin-top: var(--space-md);
+  margin-bottom: 0;
+  font-size: var(--font-size-base);
+}
+
+/* --- Quadratic variation panel ----------------------------- */
+#qv-panel {
+  min-height: 420px;
+}
+
+#qv-panel .math-block {
+  margin-top: var(--space-md);
+  margin-bottom: 0;
+  font-size: var(--font-size-base);
+}
+
+#qv-panel .stats-grid {
+  margin-top: var(--space-md);
+}
+
+/* --- Arcsine panel ----------------------------------------- */
+#arcsine-panel {
+  min-height: 420px;
+}
+
+#arcsine-panel .math-block {
+  margin-top: var(--space-md);
+  margin-bottom: 0;
+  font-size: var(--font-size-base);
+}
+
+#arcsine-panel .stats-grid {
+  margin-top: var(--space-md);
+}
+
+/* --- Sample path styling ----------------------------------- */
+.bm-path {
+  fill: none;
+  stroke-width: 1.2;
+  stroke-linecap: round;
+}
+
+.bm-path-rescaled {
+  fill: none;
+  stroke-width: 1.2;
+  stroke-linecap: round;
+  stroke-dasharray: 4 2;
+}
+
+/* --- Reference lines --------------------------------------- */
+.reference-line {
+  stroke: var(--color-text);
+  stroke-width: 1.5;
+  stroke-dasharray: 8 4;
+  opacity: 0.5;
+}
+
+.qv-reference {
+  stroke: var(--color-secondary);
+  stroke-width: 2;
+  stroke-dasharray: 6 3;
+  opacity: 0.7;
+}
+
+.qv-path {
+  fill: none;
+  stroke: var(--viz-1);
+  stroke-width: 2;
+}
+
+/* --- Arcsine density overlay ------------------------------- */
+.arcsine-density {
+  fill: none;
+  stroke: var(--color-error);
+  stroke-width: 2.5;
+}
+
+/* --- Histogram bars ---------------------------------------- */
+.hist-bar {
+  fill: var(--viz-1);
+  opacity: 0.7;
+  transition: opacity var(--transition-fast);
+}
+
+.hist-bar:hover {
+  opacity: 0.9;
+}
+
+/* --- Axis styling ------------------------------------------ */
+.x-axis text,
+.y-axis text {
+  font-family: var(--font-heading);
+  font-size: 11px;
+  fill: var(--color-text-secondary);
+}
+
+.x-axis line,
+.x-axis path,
+.y-axis line,
+.y-axis path {
+  stroke: #cbd5e1;
+}
+
+/* --- Axis labels ------------------------------------------- */
+.axis-label {
+  font-family: var(--font-heading);
+  font-size: 12px;
+  fill: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+/* --- Legend ------------------------------------------------- */
+.chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm) var(--space-md);
+  margin-top: var(--space-sm);
+}
+
+.chart-legend .legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.chart-legend .legend-line {
+  width: 20px;
+  height: 3px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.chart-legend .legend-line-dashed {
+  width: 20px;
+  height: 0;
+  border-top: 3px dashed;
+  flex-shrink: 0;
+}
+
+/* --- Zoom hint --------------------------------------------- */
+.zoom-hint {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  opacity: 0.7;
+  margin-top: var(--space-sm);
+  font-style: italic;
+}
+
+/* --- Responsive -------------------------------------------- */
+@media (max-width: 768px) {
+  .viz-area {
+    flex: none;
+    width: 100%;
+  }
+
+  #path-explorer-panel,
+  #self-similarity-panel,
+  #qv-panel,
+  #arcsine-panel {
+    min-height: 280px;
+  }
+}

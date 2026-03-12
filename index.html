@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive Probability Education</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <link rel="stylesheet" href="./src/assets/design-system.css">
+  <style>
+    .landing-page {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: var(--space-xl) var(--space-lg);
+    }
+
+    .hero {
+      text-align: center;
+      padding: var(--space-2xl) 0;
+      border-bottom: 1px solid #e5e7eb;
+      margin-bottom: var(--space-2xl);
+    }
+
+    .hero h1 {
+      font-family: var(--font-heading);
+      font-size: 2.5rem;
+      color: var(--color-text);
+      margin-bottom: var(--space-md);
+      font-weight: 700;
+    }
+
+    .hero .subtitle {
+      font-size: var(--font-size-lg);
+      color: var(--color-text-secondary);
+      max-width: 700px;
+      margin: 0 auto var(--space-lg);
+      line-height: 1.6;
+    }
+
+    .hero .tagline {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+      font-style: italic;
+    }
+
+    .pillar-section {
+      margin-bottom: var(--space-2xl);
+    }
+
+    .pillar-section h2 {
+      font-family: var(--font-heading);
+      font-size: var(--font-size-xl);
+      color: var(--color-text);
+      margin-bottom: var(--space-sm);
+      padding-bottom: var(--space-sm);
+      border-bottom: 2px solid var(--color-primary);
+      display: inline-block;
+    }
+
+    .pillar-section .pillar-desc {
+      color: var(--color-text-secondary);
+      margin-bottom: var(--space-lg);
+      line-height: 1.5;
+    }
+
+    .module-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: var(--space-lg);
+    }
+
+    .module-card {
+      background: var(--color-surface);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      padding: var(--space-lg);
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      border: 1px solid #e5e7eb;
+    }
+
+    .module-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--color-primary-light);
+    }
+
+    .module-card .module-id {
+      font-family: var(--font-mono);
+      font-size: var(--font-size-sm);
+      color: var(--color-primary);
+      margin-bottom: var(--space-xs);
+    }
+
+    .module-card h3 {
+      font-family: var(--font-heading);
+      font-size: var(--font-size-lg);
+      margin-bottom: var(--space-sm);
+      color: var(--color-text);
+    }
+
+    .module-card p {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+      line-height: 1.5;
+      margin-bottom: var(--space-md);
+    }
+
+    .module-card .tags {
+      display: flex;
+      gap: var(--space-xs);
+      flex-wrap: wrap;
+    }
+
+    .module-card .tag {
+      font-size: 0.75rem;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #eff6ff;
+      color: var(--color-primary);
+      font-family: var(--font-heading);
+    }
+
+    .module-card .tag.coming-soon {
+      background: #f3f4f6;
+      color: #9ca3af;
+    }
+
+    .references {
+      margin-top: var(--space-2xl);
+      padding-top: var(--space-xl);
+      border-top: 1px solid #e5e7eb;
+    }
+
+    .references h2 {
+      font-family: var(--font-heading);
+      font-size: var(--font-size-xl);
+      margin-bottom: var(--space-lg);
+    }
+
+    .references ul {
+      list-style: none;
+      padding: 0;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: var(--space-md);
+    }
+
+    .references li {
+      font-size: var(--font-size-sm);
+      line-height: 1.5;
+      padding: var(--space-sm);
+      background: #f9fafb;
+      border-radius: var(--radius-sm);
+    }
+
+    .references li strong {
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    footer {
+      text-align: center;
+      padding: var(--space-xl) 0;
+      margin-top: var(--space-2xl);
+      border-top: 1px solid #e5e7eb;
+      color: var(--color-text-secondary);
+      font-size: var(--font-size-sm);
+    }
+
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 1.75rem; }
+      .module-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="landing-page">
+    <header class="hero">
+      <h1>Interactive Probability Education</h1>
+      <p class="subtitle">
+        A D3.js visualization platform for graduate-level probability theory.
+        Explore measure theory, convergence, martingales, Brownian motion, and more
+        through parameter-driven interactive visualizations.
+      </p>
+      <p class="tagline">
+        Based on Billingsley, Durrett, Feller, Grimmett &amp; Stirzaker, and Shiryaev
+      </p>
+    </header>
+
+    <section class="pillar-section" id="convergence">
+      <h2>Pillar 2: Convergence Concepts</h2>
+      <p class="pillar-desc">
+        The various modes of convergence in probability form one of the most subtle and
+        conceptually challenging topics. These modules make the distinctions visceral through
+        direct visual comparison.
+      </p>
+      <div class="module-grid">
+        <a href="./src/modules/2.1-convergence-modes/index.html" class="module-card">
+          <div class="module-id">Module 2.1</div>
+          <h3>Convergence Mode Comparator</h3>
+          <p>
+            Simultaneously visualize almost sure convergence, convergence in probability,
+            L<sup>p</sup> convergence, and convergence in distribution with synchronized panels.
+          </p>
+          <div class="tags">
+            <span class="tag">a.s. convergence</span>
+            <span class="tag">typewriter sequence</span>
+            <span class="tag">interactive</span>
+          </div>
+        </a>
+        <a href="./src/modules/2.3-lln-lab/index.html" class="module-card">
+          <div class="module-id">Module 2.3</div>
+          <h3>Laws of Large Numbers Laboratory</h3>
+          <p>
+            Watch running averages converge (or fail) as you adjust tail behavior.
+            Explore the transition from infinite mean (Cauchy) to finite variance (Gaussian).
+          </p>
+          <div class="tags">
+            <span class="tag">WLLN / SLLN</span>
+            <span class="tag">Pareto tails</span>
+            <span class="tag">Cauchy</span>
+          </div>
+        </a>
+        <a href="./src/modules/2.4-clt-studio/index.html" class="module-card">
+          <div class="module-id">Module 2.4</div>
+          <h3>Central Limit Theorem Studio</h3>
+          <p>
+            Watch standardized sums morph into the Gaussian bell curve. Animated histogram with
+            Berry-Esseen bound, Q-Q plots, and moment tracking.
+          </p>
+          <div class="tags">
+            <span class="tag">CLT</span>
+            <span class="tag">Berry-Esseen</span>
+            <span class="tag">animated</span>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <section class="pillar-section" id="martingales">
+      <h2>Pillar 4: Conditional Expectation &amp; Martingales</h2>
+      <p class="pillar-desc">
+        Conditional expectation as a projection and martingale theory form the backbone of
+        modern probability and stochastic analysis.
+      </p>
+      <div class="module-grid">
+        <a href="./src/modules/4.2-martingale-explorer/index.html" class="module-card">
+          <div class="module-id">Module 4.2</div>
+          <h3>Martingale Path Explorer</h3>
+          <p>
+            Simulate martingale sample paths with optional stopping theorem demonstrations.
+            Explore random walks, exponential martingales, and stopping rules.
+          </p>
+          <div class="tags">
+            <span class="tag">OST</span>
+            <span class="tag">quadratic variation</span>
+            <span class="tag">fair games</span>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <section class="pillar-section" id="brownian">
+      <h2>Pillar 5: Random Walks &amp; Brownian Motion</h2>
+      <p class="pillar-desc">
+        This pillar bridges discrete random walks and continuous-time Brownian motion,
+        visualizing Donsker's invariance principle and the remarkable properties of Brownian paths.
+      </p>
+      <div class="module-grid">
+        <a href="./src/modules/5.1-donsker/index.html" class="module-card">
+          <div class="module-id">Module 5.1</div>
+          <h3>Random Walk to Brownian Motion</h3>
+          <p>
+            Visualize Donsker's invariance principle: watch scaled random walks smooth into
+            Brownian motion as the scaling parameter increases.
+          </p>
+          <div class="tags">
+            <span class="tag">Donsker's theorem</span>
+            <span class="tag">functional CLT</span>
+            <span class="tag">scaling limit</span>
+          </div>
+        </a>
+        <a href="./src/modules/5.2-brownian-properties/index.html" class="module-card">
+          <div class="module-id">Module 5.2</div>
+          <h3>Brownian Motion Properties Studio</h3>
+          <p>
+            Explore self-similarity, nowhere differentiability, quadratic variation,
+            and the surprising arcsine laws through interactive tabs.
+          </p>
+          <div class="tags">
+            <span class="tag">self-similarity</span>
+            <span class="tag">quadratic variation</span>
+            <span class="tag">arcsine laws</span>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <section class="pillar-section" id="markov">
+      <h2>Pillar 6: Markov Chains &amp; Ergodic Theory</h2>
+      <p class="pillar-desc">
+        Markov chains are the workhorses of applied probability. These modules visualize chain
+        dynamics, convergence to stationarity, and the ergodic theorem.
+      </p>
+      <div class="module-grid">
+        <a href="./src/modules/6.1-markov-dashboard/index.html" class="module-card">
+          <div class="module-id">Module 6.1</div>
+          <h3>Markov Chain Dynamics Dashboard</h3>
+          <p>
+            Interactive state diagrams, transition matrix heatmaps, and animated probability
+            mass flow showing convergence to stationarity.
+          </p>
+          <div class="tags">
+            <span class="tag">transition matrix</span>
+            <span class="tag">stationary distribution</span>
+            <span class="tag">force-directed</span>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <section class="references">
+      <h2>Textbook References</h2>
+      <ul>
+        <li>
+          <strong>Billingsley, P.</strong>
+          <em>Probability and Measure</em> (3rd ed.). Wiley.
+          Measure theory foundations, convergence theorems, characteristic functions.
+        </li>
+        <li>
+          <strong>Durrett, R.</strong>
+          <em>Probability: Theory and Examples</em> (5th ed.). Cambridge.
+          Laws of large numbers, CLT, martingales, Markov chains, ergodic theory.
+        </li>
+        <li>
+          <strong>Feller, W.</strong>
+          <em>An Introduction to Probability Theory and Its Applications</em>, Vol. I &amp; II. Wiley.
+          Discrete probability, generating functions, renewal theory, Brownian motion.
+        </li>
+        <li>
+          <strong>Grimmett, G. &amp; Stirzaker, D.</strong>
+          <em>Probability and Random Processes</em> (4th ed.). Oxford.
+          Random processes, branching processes, queuing theory, diffusions.
+        </li>
+        <li>
+          <strong>Shiryaev, A. N.</strong>
+          <em>Probability</em> (2nd ed.). Springer.
+          Rigorous measure-theoretic treatment, optional stopping, stochastic integration.
+        </li>
+        <li>
+          <strong>Kallenberg, O.</strong>
+          <em>Foundations of Modern Probability</em> (3rd ed.). Springer.
+          Deep measure theory, disintegration, Palm measures, Levy processes.
+        </li>
+      </ul>
+    </section>
+
+    <footer>
+      <p>Interactive Probability Education Platform &mdash; Built with D3.js v7</p>
+      <p>An open educational resource for graduate-level probability theory</p>
+    </footer>
+  </div>
+</body>
+</html>

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module 6.1 — Markov Chain Dynamics Dashboard</title>
+
+  <!-- KaTeX CSS -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
+    integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV"
+    crossorigin="anonymous"
+  />
+
+  <!-- Platform styles -->
+  <link rel="stylesheet" href="../../assets/design-system.css" />
+  <link rel="stylesheet" href="../../assets/module-template.css" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="module-page">
+
+    <!-- Header -->
+    <header class="module-header">
+      <ul class="breadcrumb">
+        <li><a href="../../../index.html">Home</a></li>
+        <li><a href="#">Markov Chains</a></li>
+        <li>Dynamics Dashboard</li>
+      </ul>
+      <h1>Markov Chain Dynamics Dashboard</h1>
+      <p class="text-secondary">
+        Explore transition matrices, state diagrams, and convergence to stationarity
+      </p>
+    </header>
+
+    <!-- Main layout -->
+    <div class="module-body">
+      <div class="module-layout">
+
+        <!-- Visualization area -->
+        <div class="viz-area">
+
+          <!-- Panel 1: State Diagram -->
+          <div class="viz-container" id="state-diagram-panel">
+            <div class="viz-title">State Diagram</div>
+            <div class="viz-subtitle" id="state-diagram-subtitle">
+              Force-directed graph &mdash; node color encodes current probability mass
+            </div>
+            <div id="state-diagram-chart"></div>
+          </div>
+
+          <!-- Two-column sub-panels -->
+          <div class="sub-panels">
+
+            <!-- Panel 2: Transition Matrix Heatmap -->
+            <div class="viz-container" id="heatmap-panel">
+              <div class="viz-title">Transition Matrix <span id="heatmap-title-label">P</span></div>
+              <div class="viz-subtitle" id="heatmap-subtitle">
+                Color intensity encodes transition probability
+              </div>
+              <div id="heatmap-chart"></div>
+            </div>
+
+            <!-- Panel 3: Distribution Evolution -->
+            <div class="viz-container" id="distribution-panel">
+              <div class="viz-title">Distribution Evolution</div>
+              <div class="viz-subtitle" id="distribution-subtitle">
+                Current distribution &mu;<sub>n</sub> = &mu;<sub>0</sub> P<sup>n</sup>
+              </div>
+              <div id="distribution-chart"></div>
+              <div class="viz-legend" id="distribution-legend"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Control panel -->
+        <aside class="control-panel" id="control-panel">
+          <h2>Controls</h2>
+
+          <!-- Preset chain -->
+          <div class="control-group dropdown-control">
+            <label for="preset-chain">Preset Chain</label>
+            <select id="preset-chain">
+              <option value="weather">Simple 3-State (Weather)</option>
+              <option value="gambler">Gambler's Ruin (5 states)</option>
+              <option value="periodic">Periodic Chain (period 2)</option>
+              <option value="doubly">Doubly Stochastic (4 states)</option>
+              <option value="ehrenfest">Ehrenfest Model (6 states)</option>
+            </select>
+          </div>
+
+          <!-- Initial state -->
+          <div class="control-group dropdown-control">
+            <label for="initial-state">Initial State</label>
+            <select id="initial-state"></select>
+          </div>
+
+          <hr class="control-divider" />
+
+          <!-- Step n slider -->
+          <div class="control-group slider-control">
+            <label for="step-n">
+              Step n
+              <span class="value-display" id="step-n-val">0</span>
+            </label>
+            <input
+              type="range" id="step-n"
+              min="0" max="200" step="1" value="0"
+            />
+          </div>
+
+          <!-- Play / Pause -->
+          <div class="action-row">
+            <button class="btn btn-primary" id="play-btn">Play</button>
+            <button class="btn" id="reset-btn">Reset</button>
+          </div>
+
+          <hr class="control-divider" />
+
+          <!-- Toggles -->
+          <div class="control-group">
+            <label class="toggle-control">
+              <input type="checkbox" id="toggle-stationary" checked />
+              <span class="toggle-track"></span>
+              <span class="toggle-label">Show stationary dist.</span>
+            </label>
+          </div>
+
+          <div class="control-group">
+            <label class="toggle-control">
+              <input type="checkbox" id="toggle-pn" />
+              <span class="toggle-track"></span>
+              <span class="toggle-label">Show P<sup>n</sup> in heatmap</span>
+            </label>
+          </div>
+
+          <hr class="control-divider" />
+
+          <!-- Stats -->
+          <div class="stats-grid" id="stats-grid">
+            <div class="stat-card">
+              <div class="stat-value" id="stat-step">0</div>
+              <div class="stat-label">Step</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="stat-tv">--</div>
+              <div class="stat-label">TV dist.</div>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <!-- Info panel -->
+      <div class="info-panel" style="max-width:1400px; margin:0 auto var(--space-xl); padding:var(--space-lg) var(--space-xl);">
+        <h2>About Markov Chains</h2>
+        <details open>
+          <summary>Definition</summary>
+          <div class="detail-body">
+            <p>
+              A <strong>Markov chain</strong> is a stochastic process where the
+              future state depends only on the current state, not on the history.
+              Formally, for states <em>X<sub>0</sub>, X<sub>1</sub>, ...</em>:
+            </p>
+            <div class="math-block" id="info-markov-def"></div>
+            <p>
+              The <strong>transition matrix</strong> P encodes all transition
+              probabilities: entry P<sub>ij</sub> is the probability of moving
+              from state i to state j in one step.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>Stationary Distribution</summary>
+          <div class="detail-body">
+            <p>
+              A distribution &pi; is <strong>stationary</strong> if it satisfies
+              &pi;P = &pi;. Under certain conditions (irreducibility, aperiodicity),
+              the chain converges to &pi; regardless of the initial distribution.
+            </p>
+            <div class="math-block" id="info-stationary-def"></div>
+            <p>
+              Watch the distribution evolution panel: the bars converge to the
+              dashed overlay as n increases. The <strong>total variation distance</strong>
+              measures how far the current distribution is from stationarity.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>Convergence and Mixing</summary>
+          <div class="detail-body">
+            <p>
+              The <strong>mixing time</strong> is the number of steps needed for
+              the chain to be close to its stationary distribution. Chains with
+              absorbing states or periodic structure may not converge to a unique
+              stationary distribution.
+            </p>
+            <p>
+              Try the different presets to see how chain structure affects
+              convergence: the weather model converges quickly, the periodic
+              chain oscillates forever, and the gambler's ruin gets absorbed.
+            </p>
+          </div>
+        </details>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="./module.js"></script>
+</body>
+</html>
