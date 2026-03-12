@@ -1,0 +1,81 @@
+/* Sigma-Algebra Explorer — Module Styles */
+
+.viz-area {
+  flex: 1 1 65%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.secondary-panels {
+  display: flex;
+  gap: var(--space-lg);
+}
+
+.secondary-panels .viz-container {
+  flex: 1 1 50%;
+  min-width: 0;
+}
+
+/* Set diagram */
+.set-node { cursor: pointer; transition: opacity 150ms ease; }
+.set-node:hover { opacity: 0.85; }
+.set-node.selected { stroke-width: 3; }
+.set-node.in-sigma { opacity: 1; }
+.set-node.not-in-sigma { opacity: 0.3; }
+
+.element-label { font-family: var(--font-mono); font-size: 14px; fill: var(--color-text); pointer-events: none; text-anchor: middle; }
+.set-label { font-family: var(--font-heading); font-size: 11px; fill: var(--color-text-secondary); text-anchor: middle; }
+
+.closure-arrow { stroke: var(--color-secondary); stroke-width: 2; fill: none; marker-end: url(#arrowhead); }
+
+/* Lattice */
+.lattice-node { cursor: pointer; transition: r 150ms ease, fill 150ms ease; }
+.lattice-node:hover { r: 8; }
+.lattice-node.current { fill: var(--color-primary); stroke: var(--color-primary); }
+.lattice-node.ancestor { fill: var(--color-primary-light); }
+.lattice-edge { stroke: #cbd5e1; stroke-width: 1; }
+
+.lattice-label { font-family: var(--font-mono); font-size: 9px; fill: var(--color-text-secondary); text-anchor: middle; }
+
+/* Contents panel */
+.subset-chip {
+  display: inline-block;
+  padding: 2px 8px;
+  margin: 2px;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  background: #eff6ff;
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary-light);
+}
+.subset-chip.generator { background: rgba(233, 115, 25, 0.1); color: var(--color-secondary); border-color: var(--color-secondary); }
+.subset-chip.derived { background: #f0fdf4; color: var(--color-accent); border-color: var(--color-accent); }
+
+/* Subset toggles in control panel */
+.subset-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 10px;
+  margin: 2px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  border: 1px solid #cbd5e1;
+  background: var(--color-surface);
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+.subset-toggle-btn:hover { border-color: var(--color-primary-light); }
+.subset-toggle-btn.active { background: var(--color-primary); color: #fff; border-color: var(--color-primary); }
+
+/* Axis */
+.axis path, .axis line { stroke: #cbd5e1; }
+.axis text { fill: var(--color-text-secondary); font-family: var(--font-heading); font-size: 11px; }
+
+@media (max-width: 900px) {
+  .secondary-panels { flex-direction: column; }
+}

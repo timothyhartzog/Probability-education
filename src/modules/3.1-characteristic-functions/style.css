@@ -1,0 +1,50 @@
+/* Characteristic Function Gallery — Module Styles */
+
+.viz-area {
+  flex: 1 1 65%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.secondary-panels {
+  display: flex;
+  gap: var(--space-lg);
+}
+
+.secondary-panels .viz-container {
+  flex: 1 1 50%;
+  min-width: 0;
+}
+
+/* Complex plane */
+.cf-curve { fill: none; stroke-width: 2.5; stroke-linejoin: round; }
+.cf-cursor { r: 5; stroke: #fff; stroke-width: 2; }
+.unit-circle { fill: none; stroke: #e2e8f0; stroke-width: 1; stroke-dasharray: 4 3; }
+.axis-ref { stroke: #e2e8f0; stroke-width: 1; }
+.origin-marker { fill: var(--color-text-secondary); r: 3; }
+.phi0-marker { fill: var(--color-accent); stroke: #fff; stroke-width: 2; r: 5; }
+
+/* Moment markers */
+.moment-marker { stroke-width: 2; r: 4; }
+.moment-line { stroke-dasharray: 3 3; stroke-width: 1; }
+
+/* Re/Im chart */
+.re-line { fill: none; stroke: var(--color-primary); stroke-width: 2; }
+.im-line { fill: none; stroke: var(--color-secondary); stroke-width: 2; }
+.modulus-line { fill: none; stroke: var(--viz-4); stroke-width: 2; stroke-dasharray: 5 3; }
+
+/* Density */
+.density-area { opacity: 0.15; }
+.density-line { fill: none; stroke-width: 2; }
+.pmf-bar { opacity: 0.6; }
+
+/* Axis */
+.axis path, .axis line { stroke: #cbd5e1; }
+.axis text { fill: var(--color-text-secondary); font-family: var(--font-heading); font-size: 11px; }
+.axis-label { font-family: var(--font-heading); font-size: 12px; fill: var(--color-text-secondary); }
+
+@media (max-width: 900px) {
+  .secondary-panels { flex-direction: column; }
+}

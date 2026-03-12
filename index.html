@@ -189,6 +189,59 @@
       </p>
     </header>
 
+    <section class="pillar-section" id="foundations">
+      <h2>Pillar 1: Measure-Theoretic Foundations</h2>
+      <p class="pillar-desc">
+        The abstract machinery of sigma-algebras, measures, and measurability that
+        undergirds the entire theory. These modules build intuition for the structures
+        that make modern probability rigorous.
+      </p>
+      <div class="module-grid">
+        <a href="./src/modules/1.1-sigma-algebra/index.html" class="module-card">
+          <div class="module-id">Module 1.1</div>
+          <h3>Sigma-Algebra Explorer</h3>
+          <p>
+            Interactively construct sigma-algebras on finite sets. Visualize closure
+            under complement and union, the lattice of all sigma-algebras, atoms, and
+            filtrations.
+          </p>
+          <div class="tags">
+            <span class="tag">sigma-algebra</span>
+            <span class="tag">lattice</span>
+            <span class="tag">filtrations</span>
+          </div>
+        </a>
+        <a href="./src/modules/1.3-lebesgue-riemann/index.html" class="module-card">
+          <div class="module-id">Module 1.3</div>
+          <h3>Lebesgue vs. Riemann Integration</h3>
+          <p>
+            Side-by-side visualization of domain partitioning (Riemann) vs. range
+            partitioning (Lebesgue). See where they agree and where Lebesgue succeeds
+            where Riemann fails.
+          </p>
+          <div class="tags">
+            <span class="tag">integration</span>
+            <span class="tag">Dirichlet function</span>
+            <span class="tag">upper/lower sums</span>
+          </div>
+        </a>
+        <a href="./src/modules/1.4-cantor-set/index.html" class="module-card">
+          <div class="module-id">Module 1.4</div>
+          <h3>Cantor Set &amp; Singular Measures</h3>
+          <p>
+            Interactive construction of the Cantor set through iterative removal.
+            Visualize the devil's staircase, singular continuous measures, and
+            fractal dimension.
+          </p>
+          <div class="tags">
+            <span class="tag">Cantor set</span>
+            <span class="tag">devil's staircase</span>
+            <span class="tag">fractal</span>
+          </div>
+        </a>
+      </div>
+    </section>
+
     <section class="pillar-section" id="convergence">
       <h2>Pillar 2: Convergence Concepts</h2>
       <p class="pillar-desc">
@@ -233,6 +286,43 @@
           <div class="tags">
             <span class="tag">CLT</span>
             <span class="tag">Berry-Esseen</span>
+            <span class="tag">animated</span>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <section class="pillar-section" id="fourier">
+      <h2>Pillar 3: Characteristic Functions &amp; Fourier Methods</h2>
+      <p class="pillar-desc">
+        Characteristic functions are the Fourier transform of probability distributions.
+        These modules make the complex-valued characteristic function visually accessible
+        and show the CLT as a Fourier-domain convergence result.
+      </p>
+      <div class="module-grid">
+        <a href="./src/modules/3.1-characteristic-functions/index.html" class="module-card">
+          <div class="module-id">Module 3.1</div>
+          <h3>Characteristic Function Gallery</h3>
+          <p>
+            Visualize &phi;<sub>X</sub>(t) = E[e<sup>itX</sup>] in the complex plane.
+            See how distribution properties (symmetry, moments, tails) map to CF structure.
+          </p>
+          <div class="tags">
+            <span class="tag">Fourier transform</span>
+            <span class="tag">complex plane</span>
+            <span class="tag">moments</span>
+          </div>
+        </a>
+        <a href="./src/modules/3.2-convolution-cfs/index.html" class="module-card">
+          <div class="module-id">Module 3.2</div>
+          <h3>Convolution &amp; CLT via CFs</h3>
+          <p>
+            Watch the product of characteristic functions converge to the Gaussian CF
+            as summands increase &mdash; a Fourier-domain proof of the Central Limit Theorem.
+          </p>
+          <div class="tags">
+            <span class="tag">convolution</span>
+            <span class="tag">CLT proof</span>
             <span class="tag">animated</span>
           </div>
         </a>
