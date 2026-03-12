@@ -1,6 +1,400 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Probability Education - Interactive Advanced Probability</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">Probability Education</div>
+            <ul class="nav-links">
+                <li><a href="#home" class="nav-link active" data-section="home">Home</a></li>
+                <li><a href="#lln" class="nav-link" data-section="lln">Law of Large Numbers</a></li>
+                <li><a href="#clt" class="nav-link" data-section="clt">Central Limit Theorem</a></li>
+                <li><a href="#bayes" class="nav-link" data-section="bayes">Bayes' Theorem</a></li>
+                <li><a href="#distributions" class="nav-link" data-section="distributions">Distributions</a></li>
+                <li><a href="#conditional" class="nav-link" data-section="conditional">Conditional Probability</a></li>
+                <li><a href="#markov" class="nav-link" data-section="markov">Markov Chains</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Home Section -->
+        <section id="home" class="section active">
+            <div class="hero">
+                <h1>Interactive Advanced Probability</h1>
+                <p class="subtitle">Explore fundamental theorems and concepts through hands-on simulations</p>
+            </div>
+            <div class="card-grid">
+                <div class="card" data-target="lln">
+                    <div class="card-icon">&#x1f3b2;</div>
+                    <h3>Law of Large Numbers</h3>
+                    <p>Watch sample averages converge to the expected value as you increase trial count.</p>
+                </div>
+                <div class="card" data-target="clt">
+                    <div class="card-icon">&#x1f4ca;</div>
+                    <h3>Central Limit Theorem</h3>
+                    <p>See how sample means form a normal distribution regardless of the underlying population.</p>
+                </div>
+                <div class="card" data-target="bayes">
+                    <div class="card-icon">&#x1f9ea;</div>
+                    <h3>Bayes' Theorem</h3>
+                    <p>Update beliefs with evidence using interactive prior and likelihood controls.</p>
+                </div>
+                <div class="card" data-target="distributions">
+                    <div class="card-icon">&#x1f4c8;</div>
+                    <h3>Probability Distributions</h3>
+                    <p>Explore Normal, Binomial, and Poisson distributions with adjustable parameters.</p>
+                </div>
+                <div class="card" data-target="conditional">
+                    <div class="card-icon">&#x1f500;</div>
+                    <h3>Conditional Probability</h3>
+                    <p>Visualize how conditioning on events changes probability through interactive Venn diagrams.</p>
+                </div>
+                <div class="card" data-target="markov">
+                    <div class="card-icon">&#x1f517;</div>
+                    <h3>Markov Chains</h3>
+                    <p>Build transition matrices and watch state evolution over time.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Law of Large Numbers -->
+        <section id="lln" class="section">
+            <h2>Law of Large Numbers</h2>
+            <div class="theory-box">
+                <p>The <strong>Law of Large Numbers</strong> states that as the number of trials increases,
+                the sample average converges to the expected value. Formally, for i.i.d. random variables
+                X<sub>1</sub>, X<sub>2</sub>, ..., X<sub>n</sub> with mean &mu;:</p>
+                <div class="formula">
+                    P(|X&#x0304;<sub>n</sub> - &mu;| &gt; &epsilon;) &rarr; 0 as n &rarr; &infin;
+                </div>
+            </div>
+            <div class="controls">
+                <div class="control-group">
+                    <label>Experiment:</label>
+                    <select id="lln-experiment">
+                        <option value="coin">Fair Coin (p=0.5)</option>
+                        <option value="die">Fair Die (1-6)</option>
+                        <option value="biased">Biased Coin (p=0.7)</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Speed:</label>
+                    <input type="range" id="lln-speed" min="1" max="100" value="50">
+                </div>
+                <button id="lln-start" class="btn">Start Simulation</button>
+                <button id="lln-reset" class="btn btn-secondary">Reset</button>
+            </div>
+            <div class="viz-container">
+                <canvas id="lln-canvas" width="800" height="400"></canvas>
+            </div>
+            <div class="stats-bar">
+                <div class="stat">
+                    <span class="stat-label">Trials:</span>
+                    <span id="lln-trials" class="stat-value">0</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Running Average:</span>
+                    <span id="lln-avg" class="stat-value">-</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Expected Value:</span>
+                    <span id="lln-expected" class="stat-value">0.5</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Central Limit Theorem -->
+        <section id="clt" class="section">
+            <h2>Central Limit Theorem</h2>
+            <div class="theory-box">
+                <p>The <strong>Central Limit Theorem</strong> states that the distribution of sample means
+                approaches a normal distribution as sample size increases, regardless of the population's
+                distribution. For sample means X&#x0304;<sub>n</sub> from a population with mean &mu; and
+                variance &sigma;&sup2;:</p>
+                <div class="formula">
+                    &radic;n (X&#x0304;<sub>n</sub> - &mu;) / &sigma; &xrarr; N(0, 1) as n &rarr; &infin;
+                </div>
+            </div>
+            <div class="controls">
+                <div class="control-group">
+                    <label>Population Distribution:</label>
+                    <select id="clt-distribution">
+                        <option value="uniform">Uniform (0, 1)</option>
+                        <option value="exponential">Exponential (&lambda;=1)</option>
+                        <option value="bernoulli">Bernoulli (p=0.3)</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Sample Size (n): <span id="clt-n-display">30</span></label>
+                    <input type="range" id="clt-n" min="1" max="100" value="30">
+                </div>
+                <div class="control-group">
+                    <label>Number of Samples: <span id="clt-samples-display">500</span></label>
+                    <input type="range" id="clt-samples" min="100" max="5000" value="500" step="100">
+                </div>
+                <button id="clt-generate" class="btn">Generate Samples</button>
+                <button id="clt-reset" class="btn btn-secondary">Reset</button>
+            </div>
+            <div class="viz-row">
+                <div class="viz-container half">
+                    <h4>Population Distribution</h4>
+                    <canvas id="clt-population-canvas" width="380" height="300"></canvas>
+                </div>
+                <div class="viz-container half">
+                    <h4>Distribution of Sample Means</h4>
+                    <canvas id="clt-means-canvas" width="380" height="300"></canvas>
+                </div>
+            </div>
+            <div class="stats-bar">
+                <div class="stat">
+                    <span class="stat-label">Population Mean:</span>
+                    <span id="clt-pop-mean" class="stat-value">-</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Mean of Sample Means:</span>
+                    <span id="clt-sample-mean" class="stat-value">-</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Std of Sample Means:</span>
+                    <span id="clt-sample-std" class="stat-value">-</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Bayes' Theorem -->
+        <section id="bayes" class="section">
+            <h2>Bayes' Theorem</h2>
+            <div class="theory-box">
+                <p><strong>Bayes' Theorem</strong> describes how to update the probability of a hypothesis
+                given new evidence:</p>
+                <div class="formula">
+                    P(H|E) = P(E|H) &middot; P(H) / P(E)
+                </div>
+                <p>where P(H) is the prior, P(E|H) is the likelihood, and P(H|E) is the posterior.</p>
+            </div>
+            <div class="controls">
+                <div class="control-group">
+                    <label>Scenario:</label>
+                    <select id="bayes-scenario">
+                        <option value="medical">Medical Test</option>
+                        <option value="email">Spam Filter</option>
+                        <option value="custom">Custom Values</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Prior P(H): <span id="bayes-prior-display">0.01</span></label>
+                    <input type="range" id="bayes-prior" min="0.001" max="0.999" step="0.001" value="0.01">
+                </div>
+                <div class="control-group">
+                    <label>Sensitivity P(E|H): <span id="bayes-sensitivity-display">0.95</span></label>
+                    <input type="range" id="bayes-sensitivity" min="0.001" max="0.999" step="0.001" value="0.95">
+                </div>
+                <div class="control-group">
+                    <label>False Positive P(E|&not;H): <span id="bayes-fp-display">0.05</span></label>
+                    <input type="range" id="bayes-fp" min="0.001" max="0.999" step="0.001" value="0.05">
+                </div>
+            </div>
+            <div class="viz-container">
+                <canvas id="bayes-canvas" width="800" height="400"></canvas>
+            </div>
+            <div class="stats-bar">
+                <div class="stat">
+                    <span class="stat-label">Prior P(H):</span>
+                    <span id="bayes-prior-val" class="stat-value">0.01</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">P(E):</span>
+                    <span id="bayes-evidence" class="stat-value">-</span>
+                </div>
+                <div class="stat highlight">
+                    <span class="stat-label">Posterior P(H|E):</span>
+                    <span id="bayes-posterior" class="stat-value">-</span>
+                </div>
+            </div>
+            <div id="bayes-interpretation" class="interpretation-box"></div>
+        </section>
+
+        <!-- Probability Distributions -->
+        <section id="distributions" class="section">
+            <h2>Probability Distributions</h2>
+            <div class="theory-box">
+                <p>Explore three fundamental probability distributions. Adjust parameters and observe how the
+                shape, center, and spread change.</p>
+            </div>
+            <div class="controls">
+                <div class="control-group">
+                    <label>Distribution:</label>
+                    <select id="dist-type">
+                        <option value="normal">Normal (Gaussian)</option>
+                        <option value="binomial">Binomial</option>
+                        <option value="poisson">Poisson</option>
+                    </select>
+                </div>
+                <div id="normal-params" class="param-group">
+                    <div class="control-group">
+                        <label>&mu; (mean): <span id="normal-mu-display">0</span></label>
+                        <input type="range" id="normal-mu" min="-5" max="5" step="0.1" value="0">
+                    </div>
+                    <div class="control-group">
+                        <label>&sigma; (std dev): <span id="normal-sigma-display">1</span></label>
+                        <input type="range" id="normal-sigma" min="0.1" max="5" step="0.1" value="1">
+                    </div>
+                </div>
+                <div id="binomial-params" class="param-group" style="display:none">
+                    <div class="control-group">
+                        <label>n (trials): <span id="binom-n-display">20</span></label>
+                        <input type="range" id="binom-n" min="1" max="100" value="20">
+                    </div>
+                    <div class="control-group">
+                        <label>p (success prob): <span id="binom-p-display">0.5</span></label>
+                        <input type="range" id="binom-p" min="0.01" max="0.99" step="0.01" value="0.5">
+                    </div>
+                </div>
+                <div id="poisson-params" class="param-group" style="display:none">
+                    <div class="control-group">
+                        <label>&lambda; (rate): <span id="poisson-lambda-display">5</span></label>
+                        <input type="range" id="poisson-lambda" min="0.5" max="30" step="0.5" value="5">
+                    </div>
+                </div>
+            </div>
+            <div class="viz-container">
+                <canvas id="dist-canvas" width="800" height="400"></canvas>
+            </div>
+            <div class="stats-bar">
+                <div class="stat">
+                    <span class="stat-label">Mean:</span>
+                    <span id="dist-mean" class="stat-value">-</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Variance:</span>
+                    <span id="dist-variance" class="stat-value">-</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Std Dev:</span>
+                    <span id="dist-std" class="stat-value">-</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Conditional Probability -->
+        <section id="conditional" class="section">
+            <h2>Conditional Probability</h2>
+            <div class="theory-box">
+                <p><strong>Conditional Probability</strong> measures the probability of event A given that event B
+                has occurred:</p>
+                <div class="formula">
+                    P(A|B) = P(A &cap; B) / P(B)
+                </div>
+                <p>Drag the circles to change the overlap and observe how conditional probabilities update.</p>
+            </div>
+            <div class="controls">
+                <div class="control-group">
+                    <label>P(A): <span id="cond-pa-display">0.40</span></label>
+                    <input type="range" id="cond-pa" min="0.05" max="0.80" step="0.01" value="0.40">
+                </div>
+                <div class="control-group">
+                    <label>P(B): <span id="cond-pb-display">0.35</span></label>
+                    <input type="range" id="cond-pb" min="0.05" max="0.80" step="0.01" value="0.35">
+                </div>
+                <div class="control-group">
+                    <label>P(A &cap; B): <span id="cond-pab-display">0.15</span></label>
+                    <input type="range" id="cond-pab" min="0.00" max="0.40" step="0.01" value="0.15">
+                </div>
+            </div>
+            <div class="viz-container">
+                <canvas id="conditional-canvas" width="800" height="400"></canvas>
+            </div>
+            <div class="stats-bar">
+                <div class="stat">
+                    <span class="stat-label">P(A|B):</span>
+                    <span id="cond-a-given-b" class="stat-value">-</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">P(B|A):</span>
+                    <span id="cond-b-given-a" class="stat-value">-</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">P(A &cup; B):</span>
+                    <span id="cond-a-or-b" class="stat-value">-</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Independent?</span>
+                    <span id="cond-independent" class="stat-value">-</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Markov Chains -->
+        <section id="markov" class="section">
+            <h2>Markov Chains</h2>
+            <div class="theory-box">
+                <p>A <strong>Markov Chain</strong> is a stochastic process where the probability of each state
+                depends only on the current state (memoryless property). The evolution is governed by a
+                <strong>transition matrix</strong> P where P<sub>ij</sub> = P(X<sub>t+1</sub> = j | X<sub>t</sub> = i).</p>
+                <div class="formula">
+                    &pi;<sup>(n)</sup> = &pi;<sup>(0)</sup> &middot; P<sup>n</sup>
+                </div>
+            </div>
+            <div class="controls">
+                <div class="control-group">
+                    <label>Preset:</label>
+                    <select id="markov-preset">
+                        <option value="weather">Weather (Sunny/Rainy)</option>
+                        <option value="gambler">Gambler's Ruin (3 states)</option>
+                        <option value="custom">Custom (2 states)</option>
+                    </select>
+                </div>
+                <div id="markov-matrix-editor">
+                    <h4>Transition Matrix</h4>
+                    <table id="markov-matrix">
+                        <thead><tr><th></th><th>Sunny</th><th>Rainy</th></tr></thead>
+                        <tbody>
+                            <tr><th>Sunny</th><td><input type="number" class="matrix-input" data-row="0" data-col="0" value="0.7" min="0" max="1" step="0.05"></td><td><input type="number" class="matrix-input" data-row="0" data-col="1" value="0.3" min="0" max="1" step="0.05"></td></tr>
+                            <tr><th>Rainy</th><td><input type="number" class="matrix-input" data-row="1" data-col="0" value="0.4" min="0" max="1" step="0.05"></td><td><input type="number" class="matrix-input" data-row="1" data-col="1" value="0.6" min="0" max="1" step="0.05"></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="control-group">
+                    <label>Steps: <span id="markov-steps-display">20</span></label>
+                    <input type="range" id="markov-steps" min="1" max="100" value="20">
+                </div>
+                <button id="markov-simulate" class="btn">Simulate</button>
+                <button id="markov-reset" class="btn btn-secondary">Reset</button>
+            </div>
+            <div class="viz-row">
+                <div class="viz-container half">
+                    <h4>State Diagram</h4>
+                    <canvas id="markov-diagram-canvas" width="380" height="300"></canvas>
+                </div>
+                <div class="viz-container half">
+                    <h4>State Distribution Over Time</h4>
+                    <canvas id="markov-evolution-canvas" width="380" height="300"></canvas>
+                </div>
+            </div>
+            <div class="stats-bar">
+                <div class="stat">
+                    <span class="stat-label">Stationary Dist:</span>
+                    <span id="markov-stationary" class="stat-value">-</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Current State:</span>
+                    <span id="markov-current" class="stat-value">-</span>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Probability Education - Interactive Learning Tool</p>
+    </footer>
+
+    <script src="js/app.js"></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Interactive Probability Education</title>
