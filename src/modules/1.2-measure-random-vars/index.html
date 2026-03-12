@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module 1.2 — Measure Construction & Random Variables</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" crossorigin="anonymous" />
+  <link rel="stylesheet" href="../../assets/design-system.css" />
+  <link rel="stylesheet" href="../../assets/module-template.css" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="module-page">
+    <header class="module-header">
+      <ul class="breadcrumb">
+        <li><a href="../../../index.html">Home</a></li>
+        <li><a href="#">Foundations</a></li>
+        <li>Measure Construction &amp; Random Variables</li>
+      </ul>
+      <h1>Measure Construction &amp; Random Variables</h1>
+      <p class="text-secondary">
+        Build probability measures on finite sample spaces, explore random variables as measurable functions, and visualize pushforward distributions
+      </p>
+    </header>
+
+    <div class="module-body">
+      <div class="module-layout">
+        <div class="viz-area">
+          <!-- Main: Measure Builder -->
+          <div class="viz-container" id="measure-panel">
+            <div class="viz-title">Measure Builder</div>
+            <div class="viz-subtitle" id="measure-subtitle">
+              Drag bars to assign probabilities to each outcome &mdash; must sum to 1
+            </div>
+            <div id="measure-chart"></div>
+          </div>
+
+          <div class="secondary-panels">
+            <!-- Random Variable Mapping -->
+            <div class="viz-container" id="rv-panel">
+              <div class="viz-title">Random Variable Mapping</div>
+              <div class="viz-subtitle" id="rv-subtitle">
+                X: &Omega; &rarr; &Reals; shown as a bipartite graph
+              </div>
+              <div id="rv-chart"></div>
+            </div>
+
+            <!-- Pushforward Distribution -->
+            <div class="viz-container" id="pushforward-panel">
+              <div class="viz-title">Pushforward Distribution</div>
+              <div class="viz-subtitle" id="pushforward-subtitle">
+                Image measure P<sub>X</sub> = P &compfn; X<sup>&minus;1</sup> on &Reals;
+              </div>
+              <div id="pushforward-chart"></div>
+            </div>
+          </div>
+        </div>
+
+        <aside class="control-panel" id="control-panel">
+          <h2>Controls</h2>
+
+          <div class="control-group slider-control">
+            <label for="omega-size">
+              |&Omega;|
+              <span class="value-display" id="omega-size-val">4</span>
+            </label>
+            <input type="range" id="omega-size" min="2" max="6" step="1" value="4" />
+          </div>
+
+          <hr class="control-divider" />
+
+          <div class="control-group dropdown-control">
+            <label for="rv-type">Random Variable Type</label>
+            <select id="rv-type">
+              <option value="indicator">Indicator</option>
+              <option value="two-value">Two-Value</option>
+              <option value="three-value">Three-Value</option>
+              <option value="identity">Identity</option>
+            </select>
+          </div>
+
+          <hr class="control-divider" />
+
+          <label class="toggle-control">
+            <input type="checkbox" id="toggle-preimage" checked />
+            <span class="toggle-track"></span>
+            <span class="toggle-label">Show &sigma;(X) preimage sets</span>
+          </label>
+
+          <label class="toggle-control">
+            <input type="checkbox" id="toggle-pushforward-arrows" checked />
+            <span class="toggle-track"></span>
+            <span class="toggle-label">Show pushforward arrows</span>
+          </label>
+
+          <hr class="control-divider" />
+
+          <div class="action-row">
+            <button class="btn btn-primary" id="reset-btn">Reset</button>
+            <button class="btn" id="random-btn">Random</button>
+          </div>
+
+          <div class="stats-grid" id="stats-grid">
+            <div class="stat-card">
+              <div class="stat-value" id="stat-total">1</div>
+              <div class="stat-label">P(&Omega;)</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="stat-entropy">0</div>
+              <div class="stat-label">Entropy H(P)</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="stat-atoms">0</div>
+              <div class="stat-label">Atoms of &sigma;(X)</div>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <div class="info-panel" style="max-width:1400px; margin:0 auto var(--space-xl); padding:var(--space-lg) var(--space-xl);">
+        <h2>About Measures &amp; Random Variables</h2>
+        <details open>
+          <summary>Measure Axioms</summary>
+          <div class="detail-body">
+            <p>
+              A <strong>probability measure</strong> P on a measurable space (&Omega;, F) is a function
+              P: F &rarr; [0, 1] satisfying three axioms:
+            </p>
+            <div class="math-block" id="info-measure-def"></div>
+            <p>
+              <strong>Non-negativity:</strong> P(A) &ge; 0 for all A &in; F.<br/>
+              <strong>Normalization:</strong> P(&Omega;) = 1.<br/>
+              <strong>Countable additivity:</strong> For disjoint sets A<sub>1</sub>, A<sub>2</sub>, &hellip;,
+              P(&cup; A<sub>i</sub>) = &sum; P(A<sub>i</sub>).
+            </p>
+            <p>
+              On a finite sample space, specifying P({&omega;}) for each outcome &omega; &in; &Omega;
+              completely determines the measure, provided the values are non-negative and sum to 1.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>Random Variables as Measurable Functions</summary>
+          <div class="detail-body">
+            <p>
+              A <strong>random variable</strong> X: &Omega; &rarr; &Reals; is a measurable function, meaning
+              that for every Borel set B &sube; &Reals;, the preimage X<sup>&minus;1</sup>(B) = {&omega; &in; &Omega; : X(&omega;) &in; B}
+              belongs to the sigma-algebra F.
+            </p>
+            <div class="math-block" id="info-rv-def"></div>
+            <p>
+              On a finite space, every function X: &Omega; &rarr; &Reals; is automatically measurable
+              with respect to the power set sigma-algebra. The key insight is the
+              <strong>induced sigma-algebra</strong> &sigma;(X), which captures exactly the information
+              that X reveals about the outcome.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>Pushforward Measures</summary>
+          <div class="detail-body">
+            <p>
+              Given a probability measure P on &Omega; and a random variable X: &Omega; &rarr; &Reals;,
+              the <strong>pushforward measure</strong> (or image measure, or distribution of X) is defined by:
+            </p>
+            <div class="math-block" id="info-pushforward-def"></div>
+            <p>
+              This transfers the probability from the abstract sample space to concrete real numbers.
+              The pushforward P<sub>X</sub> is also called the <strong>law</strong> or <strong>distribution</strong> of X.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>The Induced Sigma-Algebra &sigma;(X)</summary>
+          <div class="detail-body">
+            <p>
+              The sigma-algebra generated by X is the collection of all preimage sets:
+            </p>
+            <div class="math-block" id="info-sigma-x-def"></div>
+            <p>
+              &sigma;(X) is the coarsest sigma-algebra on &Omega; that makes X measurable. Its atoms
+              are the level sets {&omega; : X(&omega;) = x} for each value x in the range of X.
+              More atoms means X distinguishes more outcomes &mdash; the identity function generates
+              the finest (power set) sigma-algebra, while a constant function generates the trivial one.
+            </p>
+          </div>
+        </details>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="./module.js"></script>
+</body>
+</html>

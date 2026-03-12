@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module 4.1 — Conditional Expectation</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" crossorigin="anonymous" />
+  <link rel="stylesheet" href="../../assets/design-system.css" />
+  <link rel="stylesheet" href="../../assets/module-template.css" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="module-page">
+    <header class="module-header">
+      <ul class="breadcrumb">
+        <li><a href="../../../index.html">Home</a></li>
+        <li><a href="#">Expectation &amp; Conditioning</a></li>
+        <li>Conditional Expectation</li>
+      </ul>
+      <h1>Conditional Expectation as Projection</h1>
+      <p class="text-secondary">
+        Visualize E[X|G] as the orthogonal projection of X onto G-measurable functions &mdash;
+        averaging over the atoms of a sub-sigma-algebra
+      </p>
+    </header>
+
+    <div class="module-body">
+      <div class="module-layout">
+        <div class="viz-area">
+          <!-- Main: Projection Visualization -->
+          <div class="viz-container" id="projection-panel">
+            <div class="viz-title">Projection Visualization</div>
+            <div class="viz-subtitle" id="projection-subtitle">
+              Blue bars show X(&omega;); orange step function shows E[X|G] constant on each atom of G
+            </div>
+            <div id="projection-chart"></div>
+          </div>
+
+          <div class="secondary-panels">
+            <!-- Partition View -->
+            <div class="viz-container" id="partition-panel">
+              <div class="viz-title">Partition View</div>
+              <div class="viz-subtitle" id="partition-subtitle">
+                Atoms of G partition &Omega; &mdash; each colored region is one atom
+              </div>
+              <div id="partition-chart"></div>
+            </div>
+
+            <!-- L2 Distance -->
+            <div class="viz-container" id="l2-panel">
+              <div class="viz-title">L&sup2; Projection</div>
+              <div class="viz-subtitle" id="l2-subtitle">
+                E[X|G] minimizes &Vert;X &minus; Y&Vert;&sup2; over G-measurable Y
+              </div>
+              <div id="l2-chart"></div>
+            </div>
+          </div>
+        </div>
+
+        <aside class="control-panel" id="control-panel">
+          <h2>Controls</h2>
+
+          <div class="control-group slider-control">
+            <label for="omega-size">
+              |&Omega;|
+              <span class="value-display" id="omega-size-val">6</span>
+            </label>
+            <input type="range" id="omega-size" min="3" max="8" step="1" value="6" />
+          </div>
+
+          <hr class="control-divider" />
+
+          <div class="control-group dropdown-control">
+            <label for="x-distribution">X Distribution</label>
+            <select id="x-distribution">
+              <option value="uniform">Uniform random</option>
+              <option value="linear">Linear 1..n</option>
+              <option value="quadratic">Quadratic</option>
+              <option value="custom">Custom</option>
+            </select>
+          </div>
+
+          <hr class="control-divider" />
+
+          <div class="control-group dropdown-control">
+            <label for="sigma-algebra">Sub-&sigma;-algebra G</label>
+            <select id="sigma-algebra">
+              <option value="trivial">Trivial {&empty;, &Omega;}</option>
+              <option value="pairs">Pairs {{1,2},{3,4},{5,6}}</option>
+              <option value="oddeven" selected>Odd/Even</option>
+              <option value="full">Full (singletons)</option>
+              <option value="custom">Custom (click to merge/split)</option>
+            </select>
+          </div>
+
+          <div class="control-group" id="custom-partition-controls" style="display:none;">
+            <label>Click atoms below to merge, shift-click to split</label>
+            <div id="custom-atom-buttons"></div>
+          </div>
+
+          <hr class="control-divider" />
+
+          <label class="toggle-control">
+            <input type="checkbox" id="toggle-tower" />
+            <span class="toggle-track"></span>
+            <span class="toggle-label">Show tower property</span>
+          </label>
+
+          <label class="toggle-control">
+            <input type="checkbox" id="toggle-l2" checked />
+            <span class="toggle-track"></span>
+            <span class="toggle-label">Show L&sup2; projection</span>
+          </label>
+
+          <hr class="control-divider" />
+
+          <div class="action-row">
+            <button class="btn btn-primary" id="reset-btn">Reset</button>
+            <button class="btn btn-secondary" id="resample-btn">Resample</button>
+          </div>
+
+          <div class="stats-grid" id="stats-grid">
+            <div class="stat-card">
+              <div class="stat-value" id="stat-ex">--</div>
+              <div class="stat-label">E[X]</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="stat-exg">--</div>
+              <div class="stat-label">E[X|G] values</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="stat-l2">--</div>
+              <div class="stat-label">&Vert;X &minus; E[X|G]&Vert;&sup2;</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="stat-vardecomp">--</div>
+              <div class="stat-label">Var Decomposition</div>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <div class="info-panel" style="max-width:1400px; margin:0 auto var(--space-xl); padding:var(--space-lg) var(--space-xl);">
+        <h2>About Conditional Expectation</h2>
+        <details open>
+          <summary>Conditional Expectation as Projection</summary>
+          <div class="detail-body">
+            <p>
+              Given a random variable X on a finite probability space (&Omega;, F, P) and a
+              sub-&sigma;-algebra G &sube; F, the <strong>conditional expectation</strong>
+              E[X|G] is the unique G-measurable random variable that satisfies the
+              <strong>defining property</strong>:
+            </p>
+            <div class="math-block" id="info-defining-property"></div>
+            <p>
+              Geometrically, E[X|G] is the <strong>orthogonal projection</strong> of X onto
+              the subspace of G-measurable (square-integrable) functions in L&sup2;(&Omega;, F, P).
+              It "flattens" X by averaging within each atom of G.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>Tower Law (Law of Iterated Expectations)</summary>
+          <div class="detail-body">
+            <p>
+              If H &sube; G &sube; F are sub-&sigma;-algebras, then:
+            </p>
+            <div class="math-block" id="info-tower-law"></div>
+            <p>
+              Projecting first onto G-measurable functions and then onto H-measurable
+              functions is the same as projecting directly onto H-measurable functions.
+              This is analogous to composing orthogonal projections onto nested subspaces.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>L&sup2; Optimality (Least-Squares)</summary>
+          <div class="detail-body">
+            <p>
+              Among all G-measurable random variables Y, the conditional expectation
+              E[X|G] is the unique minimizer of the mean squared error:
+            </p>
+            <div class="math-block" id="info-l2-optimality"></div>
+            <p>
+              Moreover, the residual X &minus; E[X|G] is orthogonal to every G-measurable
+              function Z: E[(X &minus; E[X|G]) &middot; Z] = 0. This is the
+              <strong>projection theorem</strong> in L&sup2;.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>Variance Decomposition (Law of Total Variance)</summary>
+          <div class="detail-body">
+            <p>
+              The total variance of X decomposes as:
+            </p>
+            <div class="math-block" id="info-var-decomp"></div>
+            <p>
+              The first term captures variance <em>within</em> atoms (unexplained by G)
+              and the second captures variance <em>between</em> atoms (explained by G).
+              As G becomes finer, more variance is explained.
+            </p>
+          </div>
+        </details>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="./module.js"></script>
+</body>
+</html>

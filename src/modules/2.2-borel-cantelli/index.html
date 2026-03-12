@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Module 2.2 — Borel-Cantelli Lemmas</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" crossorigin="anonymous" />
+  <link rel="stylesheet" href="../../assets/design-system.css" />
+  <link rel="stylesheet" href="../../assets/module-template.css" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="module-page">
+    <header class="module-header">
+      <ul class="breadcrumb">
+        <li><a href="../../../index.html">Home</a></li>
+        <li><a href="#">Probability Theory</a></li>
+        <li>Borel-Cantelli Lemmas</li>
+      </ul>
+      <h1>Borel-Cantelli Lemmas</h1>
+      <p class="text-secondary">
+        Visualize when infinitely many events occur &mdash; explore convergence of &Sigma; P(A<sub>n</sub>) and the limsup of events
+      </p>
+    </header>
+
+    <div class="module-body">
+      <div class="module-layout">
+        <div class="viz-area">
+          <!-- Main: Event Occurrence Grid -->
+          <div class="viz-container" id="event-grid-panel">
+            <div class="viz-title">Event Occurrence Grid</div>
+            <div class="viz-subtitle" id="event-grid-subtitle">
+              Rows = events A<sub>1</sub>, A<sub>2</sub>, &hellip; &ensp;|&ensp; Columns = sample paths &omega; &ensp;|&ensp; Highlighted columns &isin; limsup (A<sub>n</sub> i.o.)
+            </div>
+            <div id="event-grid-chart"></div>
+          </div>
+
+          <div class="secondary-panels">
+            <!-- Partial Sum Chart -->
+            <div class="viz-container" id="sum-panel">
+              <div class="viz-title">Partial Sum &Sigma; P(A<sub>n</sub>)</div>
+              <div class="viz-subtitle" id="sum-subtitle">
+                Convergent &rArr; BC1 applies &ensp;|&ensp; Divergent + independent &rArr; BC2 applies
+              </div>
+              <div id="sum-chart"></div>
+            </div>
+
+            <!-- Frequency Tracker -->
+            <div class="viz-container" id="freq-panel">
+              <div class="viz-title">Running Hit Count per Path</div>
+              <div class="viz-subtitle" id="freq-subtitle">
+                Cumulative number of events fired for each sample path
+              </div>
+              <div id="freq-chart"></div>
+            </div>
+          </div>
+        </div>
+
+        <aside class="control-panel" id="control-panel">
+          <h2>Controls</h2>
+
+          <div class="control-group dropdown-control">
+            <label for="seq-type">P(A<sub>n</sub>) sequence</label>
+            <select id="seq-type">
+              <option value="1/n^2">1/n&sup2; (summable &rarr; BC1)</option>
+              <option value="1/n" selected>1/n (not summable, indep &rarr; BC2)</option>
+              <option value="1/sqrt(n)">1/&radic;n (not summable &rarr; BC2)</option>
+              <option value="custom">Custom: 1/n^&alpha;</option>
+            </select>
+          </div>
+
+          <div class="control-group slider-control" id="alpha-group" style="display:none;">
+            <label for="alpha-slider">
+              &alpha;
+              <span class="value-display" id="alpha-val">1.0</span>
+            </label>
+            <input type="range" id="alpha-slider" min="0.5" max="3" step="0.1" value="1.0" />
+          </div>
+
+          <hr class="control-divider" />
+
+          <div class="control-group slider-control">
+            <label for="num-events">
+              Events N
+              <span class="value-display" id="num-events-val">200</span>
+            </label>
+            <input type="range" id="num-events" min="50" max="500" step="50" value="200" />
+          </div>
+
+          <div class="control-group slider-control">
+            <label for="num-paths">
+              Sample Paths M
+              <span class="value-display" id="num-paths-val">50</span>
+            </label>
+            <input type="range" id="num-paths" min="10" max="100" step="10" value="50" />
+          </div>
+
+          <hr class="control-divider" />
+
+          <label class="toggle-control">
+            <input type="checkbox" id="toggle-independence" checked />
+            <span class="toggle-track"></span>
+            <span class="toggle-label">Independent events</span>
+          </label>
+
+          <label class="toggle-control">
+            <input type="checkbox" id="toggle-annotation" checked />
+            <span class="toggle-track"></span>
+            <span class="toggle-label">Show &Sigma;P(A<sub>n</sub>) annotation</span>
+          </label>
+
+          <hr class="control-divider" />
+
+          <div class="control-group slider-control">
+            <label for="seed-input">
+              Seed
+              <span class="value-display" id="seed-val">42</span>
+            </label>
+            <input type="range" id="seed-input" min="1" max="999" step="1" value="42" />
+          </div>
+
+          <div class="action-row">
+            <button class="btn btn-primary" id="resample-btn">Resample</button>
+            <button class="btn" id="reset-btn">Reset</button>
+          </div>
+
+          <div class="stats-grid" id="stats-grid">
+            <div class="stat-card">
+              <div class="stat-value" id="stat-sum">&mdash;</div>
+              <div class="stat-label">&Sigma; P(A<sub>n</sub>)</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="stat-empirical">&mdash;</div>
+              <div class="stat-label">Empirical P(limsup)</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="stat-lemma">&mdash;</div>
+              <div class="stat-label">Applicable Lemma</div>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <div class="info-panel" style="max-width:1400px; margin:0 auto var(--space-xl); padding:var(--space-lg) var(--space-xl);">
+        <h2>About the Borel-Cantelli Lemmas</h2>
+        <details open>
+          <summary>The Limsup of Events</summary>
+          <div class="detail-body">
+            <p>
+              Given a sequence of events A<sub>1</sub>, A<sub>2</sub>, &hellip; the <strong>limsup</strong>
+              (or limit superior) is the set of outcomes &omega; that belong to <em>infinitely many</em> of the A<sub>n</sub>:
+            </p>
+            <div class="math-block" id="info-limsup-def"></div>
+            <p>
+              We write {A<sub>n</sub> i.o.} (read "A<sub>n</sub> infinitely often") for this event.
+              An outcome is in the limsup if and only if, no matter how far along the sequence we go,
+              it eventually appears in some later event.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>First Borel-Cantelli Lemma (BC1)</summary>
+          <div class="detail-body">
+            <div class="math-block" id="info-bc1"></div>
+            <p>
+              If the total probability mass spread over the events is finite, then the probability
+              of being in infinitely many of them is zero. This holds for <em>any</em> sequence of events &mdash;
+              no independence required. Intuitively, if the events become improbable fast enough,
+              they cannot keep occurring.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>Second Borel-Cantelli Lemma (BC2)</summary>
+          <div class="detail-body">
+            <div class="math-block" id="info-bc2"></div>
+            <p>
+              If the sum diverges <em>and</em> the events are <strong>mutually independent</strong>,
+              then with probability 1, infinitely many of the events occur. The independence
+              condition is essential &mdash; without it, the divergence of the sum alone does not
+              guarantee infinitely many occurrences (use the independence toggle to see this).
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>Why Independence Matters</summary>
+          <div class="detail-body">
+            <p>
+              When events are dependent, BC2 can fail. For example, if every event A<sub>n</sub> is
+              actually the <em>same</em> event A with P(A) = 1/n (which doesn't even make sense
+              for a fixed event), or more concretely, if A<sub>n</sub> = A for all n where P(A) &gt; 0,
+              then &Sigma; P(A<sub>n</sub>) = &infin; but {A<sub>n</sub> i.o.} = A, which need not have probability 1.
+              This module lets you toggle independence off to see dependent constructions
+              where the limsup probability drops below 1 despite a divergent sum.
+            </p>
+          </div>
+        </details>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="./module.js"></script>
+</body>
+</html>

@@ -1,0 +1,169 @@
+/* Clinical Trial Statistics — Module Styles */
+
+.viz-area {
+  flex: 1 1 65%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.secondary-panels {
+  display: flex;
+  gap: var(--space-lg);
+}
+
+.secondary-panels .viz-container {
+  flex: 1 1 50%;
+  min-width: 0;
+}
+
+/* ---- Patient icon grid ---------------------------------- */
+.patient-icon {
+  transition: opacity 400ms ease, fill 400ms ease;
+}
+.patient-icon.recovered { fill: var(--color-accent); }
+.patient-icon.not-recovered { fill: var(--color-error); }
+.patient-icon.nnt-highlight {
+  stroke: #facc15;
+  stroke-width: 2;
+  filter: drop-shadow(0 0 3px rgba(250, 204, 21, 0.6));
+}
+
+/* Group labels */
+.group-label {
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 600;
+  fill: var(--color-text);
+  text-anchor: middle;
+}
+.group-sublabel {
+  font-family: var(--font-heading);
+  font-size: 11px;
+  fill: var(--color-text-secondary);
+  text-anchor: middle;
+}
+.arr-label {
+  font-family: var(--font-heading);
+  font-size: 13px;
+  font-weight: 600;
+  fill: var(--color-primary);
+  text-anchor: middle;
+}
+.nnt-label {
+  font-family: var(--font-heading);
+  font-size: 11px;
+  fill: #a16207;
+  text-anchor: middle;
+  font-weight: 600;
+}
+
+/* ---- Risk measures bar chart ---------------------------- */
+.risk-bar {
+  transition: opacity 200ms ease;
+}
+.risk-bar:hover { opacity: 0.85; }
+.ci-whisker {
+  stroke: var(--color-text);
+  stroke-width: 1.5;
+}
+.ci-cap {
+  stroke: var(--color-text);
+  stroke-width: 1.5;
+}
+.bar-value-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  fill: var(--color-text-secondary);
+  text-anchor: middle;
+}
+
+/* ---- CI simulation chart -------------------------------- */
+.ci-line-sim {
+  stroke-width: 2;
+  opacity: 0.8;
+}
+.ci-line-sim.contains { stroke: var(--color-primary); }
+.ci-line-sim.misses { stroke: var(--color-error); }
+.true-effect-line {
+  stroke: var(--color-text);
+  stroke-width: 2;
+  stroke-dasharray: 6 3;
+}
+.bell-curve {
+  fill: rgba(37, 99, 235, 0.12);
+  stroke: var(--color-primary);
+  stroke-width: 1.5;
+}
+.ci-region {
+  fill: rgba(37, 99, 235, 0.18);
+}
+.ci-endpoint-dot {
+  r: 3;
+}
+.ci-endpoint-dot.contains { fill: var(--color-primary); }
+.ci-endpoint-dot.misses { fill: var(--color-error); }
+
+/* ---- Tooltip -------------------------------------------- */
+.module-tooltip {
+  position: absolute;
+  background: var(--color-text);
+  color: #fff;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 150ms ease;
+  z-index: 100;
+  max-width: 260px;
+  line-height: 1.5;
+}
+.module-tooltip.visible { opacity: 1; }
+
+/* ---- Axis ---------------------------------------------- */
+.axis path, .axis line { stroke: #cbd5e1; }
+.axis text { fill: var(--color-text-secondary); font-family: var(--font-heading); font-size: 11px; }
+.axis-label { font-family: var(--font-heading); font-size: 12px; fill: var(--color-text-secondary); }
+
+/* ---- Legend --------------------------------------------- */
+.viz-legend {
+  display: flex;
+  gap: 1.2rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-family: var(--font-heading);
+  color: var(--color-text-secondary);
+  margin-top: var(--space-sm);
+}
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.legend-swatch {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+}
+
+/* ---- KaTeX in info panel -------------------------------- */
+.info-panel .katex-display {
+  margin: var(--space-sm) 0;
+}
+
+/* ---- Stats grid tweaks ---------------------------------- */
+.stats-grid .stat-value {
+  font-size: 0.85rem;
+}
+
+/* ---- Responsive ----------------------------------------- */
+@media (max-width: 900px) {
+  .secondary-panels {
+    flex-direction: column;
+  }
+}
