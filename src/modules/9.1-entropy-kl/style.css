@@ -1,0 +1,52 @@
+/* Entropy & KL Divergence — Module Styles */
+
+.viz-area {
+  flex: 1 1 65%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.secondary-panels {
+  display: flex;
+  gap: var(--space-lg);
+}
+
+.secondary-panels .viz-container {
+  flex: 1 1 50%;
+  min-width: 0;
+}
+
+/* Distribution bars */
+.p-bar { fill: var(--color-primary); opacity: 0.7; cursor: ns-resize; }
+.p-bar:hover { opacity: 0.9; }
+.q-bar { fill: var(--color-secondary); opacity: 0.7; cursor: ns-resize; }
+.q-bar:hover { opacity: 0.9; }
+.bar-label { font-family: var(--font-mono); font-size: 10px; fill: var(--color-text-secondary); text-anchor: middle; }
+
+/* Entropy stacked bars */
+.entropy-segment { transition: height 200ms ease, y 200ms ease; }
+.info-content { fill: var(--color-primary); }
+.cross-entropy-extra { fill: var(--color-secondary); opacity: 0.5; }
+
+/* KL divergence */
+.kl-bar { fill: var(--color-secondary); transition: height 200ms, y 200ms; }
+.kl-bar.negative { fill: var(--color-primary); opacity: 0.5; }
+
+/* Coding visualization */
+.code-block { stroke: #fff; stroke-width: 1; }
+.optimal-code { fill: var(--color-primary); opacity: 0.6; }
+.suboptimal-code { fill: var(--color-secondary); opacity: 0.6; }
+.code-label { font-family: var(--font-mono); font-size: 9px; fill: var(--color-text); text-anchor: middle; }
+
+/* Inequality annotations */
+.inequality-line { stroke: var(--color-text-secondary); stroke-width: 1; stroke-dasharray: 4 2; }
+.inequality-label { font-size: 11px; fill: var(--color-text-secondary); font-family: var(--font-heading); }
+
+.axis path, .axis line { stroke: #cbd5e1; }
+.axis text { fill: var(--color-text-secondary); font-family: var(--font-heading); font-size: 11px; }
+
+@media (max-width: 900px) {
+  .secondary-panels { flex-direction: column; }
+}

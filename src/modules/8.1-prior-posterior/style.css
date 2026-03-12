@@ -1,0 +1,53 @@
+/* Prior-to-Posterior Machine — Module Styles */
+
+.viz-area {
+  flex: 1 1 65%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.secondary-panels {
+  display: flex;
+  gap: var(--space-lg);
+}
+
+.secondary-panels .viz-container {
+  flex: 1 1 50%;
+  min-width: 0;
+}
+
+/* Distribution curves */
+.prior-curve { fill: none; stroke: var(--color-primary); stroke-width: 2.5; }
+.prior-fill { fill: var(--color-primary); opacity: 0.1; }
+.likelihood-curve { fill: none; stroke: var(--color-secondary); stroke-width: 2; stroke-dasharray: 6 3; }
+.posterior-curve { fill: none; stroke: var(--color-accent); stroke-width: 2.5; }
+.posterior-fill { fill: var(--color-accent); opacity: 0.15; }
+
+/* Credible interval */
+.credible-band { fill: var(--color-accent); opacity: 0.2; }
+.credible-line { stroke: var(--color-accent); stroke-width: 1.5; stroke-dasharray: 4 2; }
+.point-estimate { fill: var(--color-accent); }
+
+/* Sequential updating ghost curves */
+.ghost-curve { fill: none; stroke: #94a3b8; stroke-width: 1; opacity: 0.3; }
+
+/* Data icons */
+.data-icon { transition: transform 200ms ease; }
+.data-icon.success { fill: var(--color-accent); }
+.data-icon.failure { fill: var(--color-secondary); }
+.data-icon.new { animation: pop-in 300ms ease; }
+
+@keyframes pop-in {
+  0% { transform: scale(0); }
+  70% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+.axis path, .axis line { stroke: #cbd5e1; }
+.axis text { fill: var(--color-text-secondary); font-family: var(--font-heading); font-size: 11px; }
+
+@media (max-width: 900px) {
+  .secondary-panels { flex-direction: column; }
+}

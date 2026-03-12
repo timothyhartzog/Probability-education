@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mutual Information & Channel Capacity | Probability Education</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <link rel="stylesheet" href="../../assets/design-system.css">
+  <link rel="stylesheet" href="../../assets/module-template.css">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="module-page">
+    <header class="module-header">
+      <nav class="breadcrumb"><a href="../../../index.html">Home</a> / <a href="../../../index.html#information-theory">Information Theory</a> / Mutual Information</nav>
+      <h1>Mutual Information &amp; Channel Capacity</h1>
+      <p class="module-subtitle">Joint distributions, information Venn diagrams, and noisy channel communication</p>
+    </header>
+    <div class="module-layout">
+      <div class="viz-area">
+        <div class="viz-container" id="joint-chart">
+          <div class="viz-title">Joint Distribution P(X, Y)</div>
+          <div class="viz-subtitle" id="joint-subtitle">Heatmap with marginals</div>
+          <div id="joint-plot"></div>
+        </div>
+        <div class="secondary-panels">
+          <div class="viz-container" id="venn-chart">
+            <div class="viz-title">Information Venn Diagram</div>
+            <div id="venn-plot"></div>
+          </div>
+          <div class="viz-container" id="channel-chart">
+            <div class="viz-title">Channel Diagram</div>
+            <div id="channel-plot"></div>
+          </div>
+        </div>
+        <div class="viz-container" id="capacity-chart">
+          <div class="viz-title">Channel Capacity vs Noise</div>
+          <div id="capacity-plot"></div>
+        </div>
+      </div>
+      <aside class="control-panel" id="controls">
+        <h2>Parameters</h2>
+        <div id="channel-select"></div>
+        <div id="noise-slider"></div>
+        <div id="input-dist"></div>
+        <div id="alphabet-size"></div>
+        <button class="btn btn-primary" id="optimize-btn">Find Capacity</button>
+        <button class="btn btn-secondary" id="reset-btn">Reset</button>
+        <div class="stats-grid" id="stats"></div>
+      </aside>
+    </div>
+    <div class="info-panel" id="info"></div>
+  </div>
+  <script type="module" src="./module.js"></script>
+</body>
+</html>

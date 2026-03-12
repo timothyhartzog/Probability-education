@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MCMC Sampling Explorer | Probability Education</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <link rel="stylesheet" href="../../assets/design-system.css">
+  <link rel="stylesheet" href="../../assets/module-template.css">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="module-page">
+    <header class="module-header">
+      <nav class="breadcrumb"><a href="../../../index.html">Home</a> / <a href="../../../index.html#bayesian">Bayesian Inference</a> / MCMC Explorer</nav>
+      <h1>MCMC Sampling Explorer</h1>
+      <p class="module-subtitle">Metropolis-Hastings in action: trace plots, acceptance rates, and convergence diagnostics</p>
+    </header>
+    <div class="module-layout">
+      <div class="viz-area">
+        <div class="viz-container" id="target-chart">
+          <div class="viz-title">Target Distribution &amp; MCMC Samples</div>
+          <div class="viz-subtitle" id="target-subtitle">2D target with sample overlay</div>
+          <div id="target-plot"></div>
+        </div>
+        <div class="secondary-panels">
+          <div class="viz-container" id="trace-chart">
+            <div class="viz-title">Trace Plot</div>
+            <div id="trace-plot"></div>
+          </div>
+          <div class="viz-container" id="acf-chart">
+            <div class="viz-title">Autocorrelation</div>
+            <div id="acf-plot"></div>
+          </div>
+        </div>
+        <div class="secondary-panels">
+          <div class="viz-container" id="histogram-chart">
+            <div class="viz-title">Marginal Histogram</div>
+            <div id="histogram-plot"></div>
+          </div>
+          <div class="viz-container" id="acceptance-chart">
+            <div class="viz-title">Running Acceptance Rate</div>
+            <div id="acceptance-plot"></div>
+          </div>
+        </div>
+      </div>
+      <aside class="control-panel" id="controls">
+        <h2>Parameters</h2>
+        <div id="target-select"></div>
+        <div id="algorithm-select"></div>
+        <div id="proposal-sd"></div>
+        <div id="num-samples"></div>
+        <div id="burnin-slider"></div>
+        <div id="thin-slider"></div>
+        <button class="btn btn-primary" id="run-btn">Run Sampler</button>
+        <button class="btn btn-secondary" id="step-btn">Step Forward</button>
+        <div class="stats-grid" id="stats"></div>
+      </aside>
+    </div>
+    <div class="info-panel" id="info"></div>
+  </div>
+  <script type="module" src="./module.js"></script>
+</body>
+</html>

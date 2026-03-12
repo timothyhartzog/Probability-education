@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prior-to-Posterior Machine | Probability Education</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <link rel="stylesheet" href="../../assets/design-system.css">
+  <link rel="stylesheet" href="../../assets/module-template.css">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="module-page">
+    <header class="module-header">
+      <nav class="breadcrumb"><a href="../../../index.html">Home</a> / <a href="../../../index.html#bayesian">Bayesian Inference</a> / Prior-to-Posterior</nav>
+      <h1>Prior-to-Posterior Machine</h1>
+      <p class="module-subtitle">Watch Bayesian updating in real time: prior + data = posterior across conjugate families</p>
+    </header>
+    <div class="module-layout">
+      <div class="viz-area">
+        <div class="viz-container" id="distribution-chart">
+          <div class="viz-title">Prior, Likelihood &amp; Posterior</div>
+          <div class="viz-subtitle" id="conjugate-subtitle">Beta-Binomial conjugate family</div>
+          <div id="distribution-plot"></div>
+        </div>
+        <div class="secondary-panels">
+          <div class="viz-container" id="updating-chart">
+            <div class="viz-title">Sequential Updating</div>
+            <div id="updating-plot"></div>
+          </div>
+          <div class="viz-container" id="credible-chart">
+            <div class="viz-title">Credible Intervals &amp; Point Estimates</div>
+            <div id="credible-plot"></div>
+          </div>
+        </div>
+        <div class="viz-container" id="data-panel">
+          <div class="viz-title">Observed Data</div>
+          <div id="data-viz"></div>
+        </div>
+      </div>
+      <aside class="control-panel" id="controls">
+        <h2>Parameters</h2>
+        <div id="family-select"></div>
+        <div id="prior-param-1"></div>
+        <div id="prior-param-2"></div>
+        <div id="data-param"></div>
+        <div id="sample-size-slider"></div>
+        <button class="btn btn-primary" id="add-data-btn">Add Observation</button>
+        <button class="btn btn-secondary" id="reset-btn">Reset Data</button>
+        <div class="stats-grid" id="stats"></div>
+      </aside>
+    </div>
+    <div class="info-panel" id="info"></div>
+  </div>
+  <script type="module" src="./module.js"></script>
+</body>
+</html>

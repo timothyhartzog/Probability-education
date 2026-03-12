@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Itô Integral & Stochastic Differentials | Probability Education</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <link rel="stylesheet" href="../../assets/design-system.css">
+  <link rel="stylesheet" href="../../assets/module-template.css">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="module-page">
+    <header class="module-header">
+      <nav class="breadcrumb"><a href="../../../index.html">Home</a> / <a href="../../../index.html#stochastic-calculus">Stochastic Calculus</a> / Itô Integral</nav>
+      <h1>Itô Integral &amp; Stochastic Differentials</h1>
+      <p class="module-subtitle">Visualize stochastic integration: Itô vs Stratonovich, quadratic variation, and Itô's formula</p>
+    </header>
+    <div class="module-layout">
+      <div class="viz-area">
+        <div class="viz-container" id="integrand-chart">
+          <div class="viz-title">Integrand f(t, B<sub>t</sub>)</div>
+          <div class="viz-subtitle" id="integrand-subtitle">Select an integrand to visualize</div>
+          <div id="integrand-plot"></div>
+        </div>
+        <div class="secondary-panels">
+          <div class="viz-container" id="integral-chart">
+            <div class="viz-title">Stochastic Integral &int; f dB<sub>t</sub></div>
+            <div id="integral-plot"></div>
+          </div>
+          <div class="viz-container" id="quadvar-chart">
+            <div class="viz-title">Quadratic Variation &amp; Itô Correction</div>
+            <div id="quadvar-plot"></div>
+          </div>
+        </div>
+        <div class="viz-container" id="ito-formula-chart">
+          <div class="viz-title">Itô's Formula Decomposition</div>
+          <div class="viz-subtitle">g(B<sub>t</sub>) = g(B<sub>0</sub>) + &int;g'dB + &frac12;&int;g''dt</div>
+          <div id="ito-formula-plot"></div>
+        </div>
+      </div>
+      <aside class="control-panel" id="controls">
+        <h2>Parameters</h2>
+        <div id="integrand-select"></div>
+        <div id="interpretation-toggle"></div>
+        <div id="num-steps-slider"></div>
+        <div id="num-paths-slider"></div>
+        <div id="seed-control"></div>
+        <div id="formula-select"></div>
+        <div class="stats-grid" id="stats"></div>
+      </aside>
+    </div>
+    <div class="info-panel" id="info"></div>
+  </div>
+  <script type="module" src="./module.js"></script>
+</body>
+</html>

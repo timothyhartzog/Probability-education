@@ -1,0 +1,42 @@
+/* SDE Solver Studio — Module Styles */
+
+.viz-area {
+  flex: 1 1 65%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.secondary-panels {
+  display: flex;
+  gap: var(--space-lg);
+}
+
+.secondary-panels .viz-container {
+  flex: 1 1 50%;
+  min-width: 0;
+}
+
+/* Sample paths */
+.sde-path { fill: none; stroke-width: 1.2; opacity: 0.6; }
+.sde-path:hover { opacity: 1; stroke-width: 2; }
+.mean-path { fill: none; stroke: var(--color-text); stroke-width: 2.5; stroke-dasharray: 8 4; }
+.exact-mean { fill: none; stroke: var(--color-accent); stroke-width: 2; }
+.confidence-band { opacity: 0.12; }
+
+/* Density */
+.density-curve { fill: none; stroke-width: 2; }
+.density-fill { opacity: 0.15; }
+.histogram-bar { opacity: 0.5; stroke: #fff; stroke-width: 0.5; }
+
+/* Moments */
+.empirical-line { fill: none; stroke-width: 2; }
+.theoretical-line { fill: none; stroke-width: 2; stroke-dasharray: 6 3; }
+
+.axis path, .axis line { stroke: #cbd5e1; }
+.axis text { fill: var(--color-text-secondary); font-family: var(--font-heading); font-size: 11px; }
+
+@media (max-width: 900px) {
+  .secondary-panels { flex-direction: column; }
+}
