@@ -884,19 +884,19 @@ function renderItoFormulaPanel() {
   g.append('path')
     .datum(decomp.martingale)
     .attr('class', 'martingale-part')
-    .attr('d', makeLine()());
+    .attr('d', makeLine());
 
   // Drift part: 0.5 integral g'' ds
   g.append('path')
     .datum(decomp.drift)
     .attr('class', 'drift-part')
-    .attr('d', makeLine()());
+    .attr('d', makeLine());
 
   // Actual g(Bt) = total
   g.append('path')
     .datum(decomp.total)
     .attr('class', 'total-part')
-    .attr('d', makeLine()());
+    .attr('d', makeLine());
 
   // Reconstructed: g(B0) + martingale + drift
   const reconstructed = decomp.total.map((_, i) =>
@@ -908,7 +908,7 @@ function renderItoFormulaPanel() {
     .attr('stroke', '#7c3aed')
     .attr('stroke-width', 1.5)
     .attr('stroke-dasharray', '4 2')
-    .attr('d', makeLine()());
+    .attr('d', makeLine());
 
   // Shade drift correction area
   const driftAreaData = decomp.drift.map((v, i) => ({ t: i * dt, v }));
