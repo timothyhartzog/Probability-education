@@ -1,0 +1,85 @@
+/* Pareto Chart — Module Styles */
+
+.viz-area {
+  flex: 1 1 65%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.secondary-panels {
+  display: flex;
+  gap: var(--space-lg);
+}
+
+.secondary-panels .viz-container {
+  flex: 1 1 50%;
+  min-width: 0;
+}
+
+/* Pareto bars */
+.pareto-bar {
+  cursor: pointer;
+  transition: opacity 150ms ease;
+}
+.pareto-bar:hover { opacity: 0.85; }
+.pareto-bar.vital { fill: var(--color-error); }
+.pareto-bar.trivial { fill: var(--color-primary); opacity: 0.5; }
+
+/* Cumulative line */
+.cumulative-line { fill: none; stroke: var(--color-secondary); stroke-width: 2.5; }
+.cumulative-dot { fill: var(--color-secondary); stroke: #fff; stroke-width: 1.5; r: 3.5; }
+.cumulative-dot:hover { r: 5.5; }
+
+/* Threshold line */
+.threshold-80 { stroke: var(--color-text-secondary); stroke-dasharray: 6 4; stroke-width: 1.5; }
+.threshold-label { font-family: var(--font-heading); font-size: 11px; fill: var(--color-text-secondary); }
+
+/* Bar labels */
+.bar-count-label { font-family: var(--font-mono); font-size: 10px; fill: var(--color-text); text-anchor: middle; }
+
+/* Trend lines */
+.trend-line { fill: none; stroke-width: 2; }
+.trend-dot { stroke: #fff; stroke-width: 1.5; r: 3; }
+.trend-dot:hover { r: 5; }
+
+/* Comparison stacked bars */
+.dept-bar { opacity: 0.8; cursor: pointer; }
+.dept-bar:hover { opacity: 1; }
+
+/* Tooltip */
+.pareto-tooltip {
+  position: absolute;
+  background: var(--color-text);
+  color: #fff;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 150ms ease;
+  z-index: 100;
+  line-height: 1.5;
+}
+.pareto-tooltip.visible { opacity: 1; }
+
+/* Axis */
+.axis path, .axis line { stroke: #cbd5e1; }
+.axis text { fill: var(--color-text-secondary); font-family: var(--font-heading); font-size: 11px; }
+.axis-label { font-family: var(--font-heading); font-size: 12px; fill: var(--color-text-secondary); }
+
+/* Rotated x-axis labels */
+.x-axis text {
+  text-anchor: end;
+  transform: rotate(-35deg);
+  transform-origin: center;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .secondary-panels {
+    flex-direction: column;
+  }
+}

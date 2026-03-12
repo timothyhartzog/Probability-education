@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CUSUM Chart — Sequential Quality Monitoring</title>
+
+  <!-- KaTeX CSS -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
+    integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV"
+    crossorigin="anonymous"
+  />
+
+  <!-- Platform styles -->
+  <link rel="stylesheet" href="../../assets/design-system.css" />
+  <link rel="stylesheet" href="../../assets/module-template.css" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="module-page">
+
+    <!-- Header -->
+    <header class="module-header">
+      <ul class="breadcrumb">
+        <li><a href="../../../index.html">Home</a></li>
+        <li><a href="#">Medical Quality</a></li>
+        <li>CUSUM Chart</li>
+      </ul>
+      <h1>CUSUM Sequential Analysis</h1>
+      <p class="text-secondary">
+        Detect shifts in surgical outcomes and infection rates using cumulative sum monitoring
+      </p>
+    </header>
+
+    <!-- Main layout -->
+    <div class="module-body">
+      <div class="module-layout">
+
+        <!-- Visualization area -->
+        <div class="viz-area">
+
+          <!-- Main CUSUM chart -->
+          <div class="viz-container" id="cusum-panel">
+            <div class="viz-title">CUSUM Chart</div>
+            <div class="viz-subtitle" id="cusum-subtitle">
+              Cumulative sum of deviations from target — signals when threshold is crossed
+            </div>
+            <div id="cusum-chart"></div>
+            <div class="viz-legend" id="cusum-legend"></div>
+          </div>
+
+          <!-- Secondary panels -->
+          <div class="secondary-panels">
+            <div class="viz-container" id="raw-data-panel">
+              <div class="viz-title">Raw Outcome Sequence</div>
+              <div class="viz-subtitle" id="raw-data-subtitle">
+                Individual case outcomes (success/failure) over time
+              </div>
+              <div id="raw-data-chart"></div>
+            </div>
+
+            <div class="viz-container" id="arl-panel">
+              <div class="viz-title">Average Run Length</div>
+              <div class="viz-subtitle" id="arl-subtitle">
+                Expected cases to detection vs. true failure rate
+              </div>
+              <div id="arl-chart"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Control panel -->
+        <aside class="control-panel" id="control-panel">
+          <h2>Controls</h2>
+
+          <!-- Scenario -->
+          <div class="control-group dropdown-control">
+            <label for="scenario-select">Clinical Scenario</label>
+            <select id="scenario-select">
+              <option value="cardiac">Cardiac Surgery Mortality</option>
+              <option value="hip">Hip Replacement Revision</option>
+              <option value="infection">Post-Op Infection Rate</option>
+              <option value="stroke">Stroke 30-Day Mortality</option>
+              <option value="custom">Custom Parameters</option>
+            </select>
+          </div>
+
+          <hr class="control-divider" />
+
+          <!-- Target rate p0 -->
+          <div class="control-group slider-control">
+            <label for="target-rate">
+              Target Rate p<sub>0</sub>
+              <span class="value-display" id="target-rate-val">0.030</span>
+            </label>
+            <input
+              type="range" id="target-rate"
+              min="0.005" max="0.15" step="0.005" value="0.030"
+            />
+          </div>
+
+          <!-- Unacceptable rate p1 -->
+          <div class="control-group slider-control">
+            <label for="alert-rate">
+              Alert Rate p<sub>1</sub>
+              <span class="value-display" id="alert-rate-val">0.060</span>
+            </label>
+            <input
+              type="range" id="alert-rate"
+              min="0.01" max="0.30" step="0.005" value="0.060"
+            />
+          </div>
+
+          <!-- Number of cases -->
+          <div class="control-group slider-control">
+            <label for="num-cases">
+              Cases
+              <span class="value-display" id="num-cases-val">500</span>
+            </label>
+            <input
+              type="range" id="num-cases"
+              min="100" max="2000" step="50" value="500"
+            />
+          </div>
+
+          <hr class="control-divider" />
+
+          <!-- True rate (hidden shift) -->
+          <div class="control-group slider-control">
+            <label for="true-rate">
+              True Rate (after case
+              <span id="shift-point-label">250</span>)
+              <span class="value-display" id="true-rate-val">0.060</span>
+            </label>
+            <input
+              type="range" id="true-rate"
+              min="0.005" max="0.20" step="0.005" value="0.060"
+            />
+          </div>
+
+          <!-- Shift point -->
+          <div class="control-group slider-control">
+            <label for="shift-point">
+              Shift Point
+              <span class="value-display" id="shift-point-val">250</span>
+            </label>
+            <input
+              type="range" id="shift-point"
+              min="50" max="450" step="10" value="250"
+            />
+          </div>
+
+          <hr class="control-divider" />
+
+          <label class="toggle-control">
+            <input type="checkbox" id="toggle-both-sides" />
+            <span class="toggle-track"></span>
+            <span class="toggle-label">Show two-sided CUSUM</span>
+          </label>
+
+          <hr class="control-divider" />
+
+          <div class="action-row">
+            <button class="btn btn-primary" id="regenerate-btn">
+              Regenerate
+            </button>
+            <button class="btn" id="animate-btn">
+              Animate
+            </button>
+          </div>
+
+          <!-- Stats -->
+          <div class="stats-grid" id="stats-grid">
+            <div class="stat-card">
+              <div class="stat-value" id="stat-signal">--</div>
+              <div class="stat-label">Signal at Case</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="stat-observed">--</div>
+              <div class="stat-label">Observed Rate</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="stat-threshold">--</div>
+              <div class="stat-label">Threshold h</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="stat-max-cusum">--</div>
+              <div class="stat-label">Max CUSUM</div>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <!-- Info panel -->
+      <div class="info-panel" style="max-width:1400px; margin:0 auto var(--space-xl); padding:var(--space-lg) var(--space-xl);">
+        <h2>About CUSUM Charts in Healthcare</h2>
+        <details open>
+          <summary>What is a CUSUM?</summary>
+          <div class="detail-body">
+            <p>
+              The <strong>Cumulative Sum (CUSUM)</strong> chart is a sequential analysis method
+              that accumulates evidence of a process change over time. For binary outcomes
+              (success/failure), each case contributes a score based on the log-likelihood ratio
+              between the target rate p<sub>0</sub> and the alert rate p<sub>1</sub>.
+            </p>
+            <p>
+              When the cumulative sum crosses a decision threshold <em>h</em>, it signals that
+              the failure rate has likely shifted above the acceptable level. The CUSUM resets
+              to zero whenever it would go negative (one-sided) or can be run two-sided.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>CUSUM Score Calculation</summary>
+          <div class="detail-body">
+            <p>For each case <em>i</em> with outcome X<sub>i</sub> (1 = failure, 0 = success):</p>
+            <div class="math-block" id="info-cusum-formula"></div>
+            <p>
+              The weight <em>w</em> for a failure is log(p<sub>1</sub>/p<sub>0</sub>), and
+              for a success is log((1-p<sub>1</sub>)/(1-p<sub>0</sub>)). A failure adds a
+              positive score (evidence of deterioration) and a success subtracts (evidence of
+              acceptable performance).
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>Threshold Selection</summary>
+          <div class="detail-body">
+            <p>
+              The threshold <em>h</em> controls the trade-off between <strong>sensitivity</strong>
+              (detecting real shifts quickly) and <strong>specificity</strong> (avoiding false alarms).
+              Higher thresholds reduce false alarms but delay detection.
+            </p>
+            <p>
+              The <strong>Average Run Length (ARL)</strong> measures expected cases until signal:
+              ARL<sub>0</sub> is the false-alarm rate under p<sub>0</sub>; ARL<sub>1</sub> is
+              the detection speed under p<sub>1</sub>.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>Clinical Applications</summary>
+          <div class="detail-body">
+            <p>
+              CUSUM monitoring is widely used in surgery and critical care:
+            </p>
+            <ul>
+              <li>Monitoring surgeon learning curves for new procedures</li>
+              <li>Detecting deterioration in cardiac surgery outcomes</li>
+              <li>Post-operative infection surveillance</li>
+              <li>ICU mortality monitoring</li>
+              <li>Transplant center quality oversight</li>
+            </ul>
+          </div>
+        </details>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="./module.js"></script>
+</body>
+</html>

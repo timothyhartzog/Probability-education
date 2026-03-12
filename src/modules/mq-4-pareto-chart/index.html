@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pareto Chart — Root Cause Analysis</title>
+
+  <!-- KaTeX CSS -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
+    integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV"
+    crossorigin="anonymous"
+  />
+
+  <!-- Platform styles -->
+  <link rel="stylesheet" href="../../assets/design-system.css" />
+  <link rel="stylesheet" href="../../assets/module-template.css" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="module-page">
+
+    <!-- Header -->
+    <header class="module-header">
+      <ul class="breadcrumb">
+        <li><a href="../../../index.html">Home</a></li>
+        <li><a href="#">Medical Quality</a></li>
+        <li>Pareto Chart</li>
+      </ul>
+      <h1>Hospital Quality Pareto Analysis</h1>
+      <p class="text-secondary">
+        Identify the vital few causes driving the majority of quality issues
+      </p>
+    </header>
+
+    <!-- Main layout -->
+    <div class="module-body">
+      <div class="module-layout">
+
+        <!-- Visualization area -->
+        <div class="viz-area">
+
+          <!-- Main Pareto chart -->
+          <div class="viz-container" id="pareto-panel">
+            <div class="viz-title">Pareto Chart</div>
+            <div class="viz-subtitle" id="pareto-subtitle">
+              Bars = frequency, line = cumulative percentage — the 80/20 rule
+            </div>
+            <div id="pareto-chart"></div>
+            <div class="viz-legend" id="pareto-legend"></div>
+          </div>
+
+          <!-- Secondary panels -->
+          <div class="secondary-panels">
+            <div class="viz-container" id="trend-panel">
+              <div class="viz-title">Trend Over Time</div>
+              <div class="viz-subtitle" id="trend-subtitle">
+                Top categories tracked across quarters
+              </div>
+              <div id="trend-chart"></div>
+            </div>
+
+            <div class="viz-container" id="comparison-panel">
+              <div class="viz-title">Department Comparison</div>
+              <div class="viz-subtitle" id="comparison-subtitle">
+                Stacked distribution across departments
+              </div>
+              <div id="comparison-chart"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Control panel -->
+        <aside class="control-panel" id="control-panel">
+          <h2>Controls</h2>
+
+          <!-- Dataset -->
+          <div class="control-group dropdown-control">
+            <label for="dataset-select">Quality Dataset</label>
+            <select id="dataset-select">
+              <option value="adverse-events">Adverse Events</option>
+              <option value="patient-complaints">Patient Complaints</option>
+              <option value="medication-errors">Medication Errors</option>
+              <option value="near-misses">Near-Miss Reports</option>
+              <option value="readmission-causes">Readmission Root Causes</option>
+              <option value="surgical-complications">Surgical Complications</option>
+            </select>
+          </div>
+
+          <!-- Time period -->
+          <div class="control-group dropdown-control">
+            <label for="time-period">Time Period</label>
+            <select id="time-period">
+              <option value="q4-2025">Q4 2025</option>
+              <option value="q3-2025">Q3 2025</option>
+              <option value="year-2025">Full Year 2025</option>
+              <option value="rolling-12">Rolling 12 Months</option>
+            </select>
+          </div>
+
+          <hr class="control-divider" />
+
+          <!-- Threshold -->
+          <div class="control-group slider-control">
+            <label for="threshold-pct">
+              Cumulative % Threshold
+              <span class="value-display" id="threshold-pct-val">80%</span>
+            </label>
+            <input
+              type="range" id="threshold-pct"
+              min="50" max="95" step="5" value="80"
+            />
+          </div>
+
+          <!-- Top N categories -->
+          <div class="control-group slider-control">
+            <label for="top-n">
+              Max Categories
+              <span class="value-display" id="top-n-val">10</span>
+            </label>
+            <input
+              type="range" id="top-n"
+              min="5" max="20" step="1" value="10"
+            />
+          </div>
+
+          <hr class="control-divider" />
+
+          <label class="toggle-control">
+            <input type="checkbox" id="toggle-80-line" checked />
+            <span class="toggle-track"></span>
+            <span class="toggle-label">Show 80% threshold line</span>
+          </label>
+
+          <label class="toggle-control">
+            <input type="checkbox" id="toggle-highlight" checked />
+            <span class="toggle-track"></span>
+            <span class="toggle-label">Highlight vital few</span>
+          </label>
+
+          <hr class="control-divider" />
+
+          <div class="action-row">
+            <button class="btn btn-primary" id="regenerate-btn">
+              Regenerate Data
+            </button>
+          </div>
+
+          <!-- Stats -->
+          <div class="stats-grid" id="stats-grid">
+            <div class="stat-card">
+              <div class="stat-value" id="stat-total">--</div>
+              <div class="stat-label">Total Events</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="stat-vital-few">--</div>
+              <div class="stat-label">Vital Few</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="stat-top-pct">--</div>
+              <div class="stat-label">Top Category %</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="stat-categories">--</div>
+              <div class="stat-label">Categories</div>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <!-- Info panel -->
+      <div class="info-panel" style="max-width:1400px; margin:0 auto var(--space-xl); padding:var(--space-lg) var(--space-xl);">
+        <h2>About Pareto Analysis in Healthcare Quality</h2>
+        <details open>
+          <summary>The Pareto Principle</summary>
+          <div class="detail-body">
+            <p>
+              The <strong>Pareto principle</strong> (80/20 rule) states that roughly 80% of
+              effects come from 20% of causes. In healthcare quality improvement, this means
+              a small number of root causes typically drive the majority of adverse events,
+              complaints, or errors.
+            </p>
+            <p>
+              Pareto charts combine a bar chart (sorted by frequency) with a cumulative
+              percentage line to visually separate the "vital few" causes from the "trivial many."
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>How to Read the Chart</summary>
+          <div class="detail-body">
+            <p>
+              <strong>Bars</strong> show the count or frequency of each category, sorted from
+              highest to lowest. The <strong>cumulative line</strong> shows the running total
+              as a percentage. Where the line crosses 80%, you've identified the vital few
+              categories responsible for most of the problem.
+            </p>
+            <p>
+              Focus improvement efforts on the leftmost bars — small changes to the top
+              categories yield the greatest overall improvement.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>Quality Improvement Applications</summary>
+          <div class="detail-body">
+            <ul>
+              <li><strong>Root cause analysis:</strong> Prioritize which failure modes to address first</li>
+              <li><strong>Patient safety:</strong> Focus on the most common types of adverse events</li>
+              <li><strong>Patient experience:</strong> Target the top complaint categories</li>
+              <li><strong>Medication safety:</strong> Identify the most frequent error types</li>
+              <li><strong>Before/after comparison:</strong> Verify that targeted interventions reduced the vital few</li>
+            </ul>
+          </div>
+        </details>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="./module.js"></script>
+</body>
+</html>
