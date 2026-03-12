@@ -1,0 +1,273 @@
+/* Diagnostic Test Probability — Module Styles */
+
+.viz-area {
+  flex: 1 1 65%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.secondary-panels {
+  display: flex;
+  gap: var(--space-lg);
+}
+
+.secondary-panels .viz-container {
+  flex: 1 1 33%;
+  min-width: 0;
+}
+
+/* Bayes formula banner */
+#formula-panel {
+  text-align: center;
+  padding: var(--space-md) var(--space-lg);
+}
+
+#bayes-formula {
+  font-size: 1.3rem;
+  overflow-x: auto;
+}
+
+/* Icon array */
+#icon-array-chart {
+  width: 100%;
+  overflow: hidden;
+}
+
+#icon-array-chart svg {
+  width: 100%;
+  display: block;
+}
+
+.icon-tp { fill: #dc2626; }
+.icon-fp { fill: #f59e0b; }
+.icon-tn { fill: #cbd5e1; }
+.icon-fn { fill: none; stroke: #2563eb; stroke-width: 1.5; }
+
+.icon-count-label {
+  font-family: var(--font-heading);
+  font-size: 13px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+
+.icon-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.icon-legend-swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+/* Confusion matrix */
+#matrix-chart {
+  overflow-x: auto;
+}
+
+.confusion-matrix {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
+}
+
+.confusion-matrix th,
+.confusion-matrix td {
+  padding: var(--space-sm) var(--space-md);
+  text-align: center;
+  border: 1px solid #e2e8f0;
+  position: relative;
+}
+
+.confusion-matrix th {
+  background: #f8fafc;
+  font-weight: 600;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--color-text-secondary);
+}
+
+.confusion-matrix .corner-cell {
+  background: transparent;
+  border: none;
+}
+
+.confusion-matrix .cell-value {
+  font-family: var(--font-mono);
+  font-size: 1.1rem;
+  font-weight: 700;
+  display: block;
+  line-height: 1.3;
+}
+
+.confusion-matrix .cell-pct {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--color-text-secondary);
+  display: block;
+}
+
+.confusion-matrix .cell-tp { background: rgba(220, 38, 38, 0.08); }
+.confusion-matrix .cell-fp { background: rgba(245, 158, 11, 0.08); }
+.confusion-matrix .cell-fn { background: rgba(37, 99, 235, 0.08); }
+.confusion-matrix .cell-tn { background: rgba(203, 213, 225, 0.12); }
+
+.confusion-matrix .cell-ppv {
+  background: rgba(220, 38, 38, 0.15);
+  font-weight: 700;
+}
+
+.confusion-matrix .cell-npv {
+  background: rgba(5, 150, 105, 0.12);
+  font-weight: 700;
+}
+
+.confusion-matrix .cell-total {
+  background: #f1f5f9;
+  font-weight: 600;
+}
+
+.confusion-matrix .cell-bar {
+  position: absolute;
+  bottom: 2px;
+  left: 4px;
+  height: 3px;
+  border-radius: 2px;
+  transition: width 300ms ease;
+}
+
+/* Tree chart */
+#tree-chart svg {
+  width: 100%;
+  display: block;
+}
+
+.tree-link {
+  fill: none;
+  stroke-width: 2;
+  opacity: 0.5;
+}
+
+.tree-link-highlight {
+  opacity: 1;
+  stroke-width: 3;
+}
+
+.tree-node-circle {
+  stroke-width: 2;
+}
+
+.tree-label {
+  font-family: var(--font-heading);
+  font-size: 11px;
+  fill: var(--color-text);
+}
+
+.tree-prob-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  fill: var(--color-text-secondary);
+}
+
+.tree-count-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* PPV curve chart */
+#ppv-curve-chart svg {
+  width: 100%;
+  display: block;
+}
+
+.ppv-line {
+  fill: none;
+  stroke-width: 2.5;
+}
+
+.npv-line {
+  fill: none;
+  stroke-width: 2.5;
+  stroke-dasharray: 6 3;
+}
+
+.prevalence-marker {
+  stroke-dasharray: 4 3;
+  stroke-width: 1.5;
+}
+
+.curve-dot {
+  stroke-width: 2;
+  stroke: #fff;
+}
+
+/* Axis styles */
+.axis path, .axis line { stroke: #cbd5e1; }
+.axis text {
+  fill: var(--color-text-secondary);
+  font-family: var(--font-heading);
+  font-size: 11px;
+}
+.axis-label {
+  font-family: var(--font-heading);
+  font-size: 12px;
+  fill: var(--color-text-secondary);
+}
+
+/* Tooltip */
+.diag-tooltip {
+  position: absolute;
+  background: var(--color-text);
+  color: #fff;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 150ms ease;
+  z-index: 100;
+  max-width: 240px;
+  line-height: 1.5;
+}
+.diag-tooltip.visible { opacity: 1; }
+
+/* Slider range labels */
+.slider-range-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-heading);
+  font-size: 0.7rem;
+  color: var(--color-text-secondary);
+  margin-top: 2px;
+}
+
+/* Stat card wide variant */
+.stat-card-wide {
+  grid-column: 1 / -1;
+}
+
+/* Info panel formula */
+#info-bayes-formula {
+  text-align: center;
+  margin: var(--space-md) 0;
+  overflow-x: auto;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .secondary-panels {
+    flex-direction: column;
+  }
+}

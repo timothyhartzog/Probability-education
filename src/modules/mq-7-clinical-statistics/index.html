@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clinical Trial Statistics — Treatment Effects, NNT &amp; Confidence Intervals</title>
+
+  <!-- KaTeX CSS -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
+    integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV"
+    crossorigin="anonymous"
+  />
+
+  <!-- Platform styles -->
+  <link rel="stylesheet" href="../../assets/design-system.css" />
+  <link rel="stylesheet" href="../../assets/module-template.css" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="module-page">
+
+    <!-- Header -->
+    <header class="module-header">
+      <ul class="breadcrumb">
+        <li><a href="../../../index.html">Home</a></li>
+        <li><a href="#">Medical Quality</a></li>
+        <li>Clinical Trial Statistics</li>
+      </ul>
+      <h1>Clinical Trial &amp; Treatment Effect Statistics</h1>
+      <p class="text-secondary">
+        Understanding ARR, NNT, confidence intervals, and the statistical backbone of evidence-based medicine
+      </p>
+    </header>
+
+    <!-- Main layout -->
+    <div class="module-body">
+      <div class="module-layout">
+
+        <!-- Visualization area -->
+        <div class="viz-area">
+
+          <!-- Main: Treatment Effect Visualizer -->
+          <div class="viz-container" id="effect-panel">
+            <div class="viz-title">Treatment Effect Visualizer</div>
+            <div class="viz-subtitle" id="effect-subtitle">
+              Side-by-side comparison of treatment vs control groups (100 patients each)
+            </div>
+            <div id="effect-chart"></div>
+            <div class="viz-legend" id="effect-legend"></div>
+          </div>
+
+          <!-- Secondary panels -->
+          <div class="secondary-panels">
+            <div class="viz-container" id="risk-panel">
+              <div class="viz-title">Risk Measures Comparison</div>
+              <div class="viz-subtitle" id="risk-subtitle">
+                CER, EER, ARR, RRR, and NNT with confidence intervals
+              </div>
+              <div id="risk-chart"></div>
+            </div>
+
+            <div class="viz-container" id="ci-panel">
+              <div class="viz-title">Confidence Interval &amp; Repeated Sampling</div>
+              <div class="viz-subtitle" id="ci-subtitle">
+                What "95% confidence" actually means
+              </div>
+              <div id="ci-chart"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Control panel -->
+        <aside class="control-panel" id="control-panel">
+          <h2>Controls</h2>
+
+          <!-- Scenario dropdown -->
+          <div class="control-group dropdown-control">
+            <label for="scenario-select">Clinical Scenario</label>
+            <select id="scenario-select">
+              <option value="aspirin-mi">Aspirin for MI</option>
+              <option value="statins">Statins Primary Prevention</option>
+              <option value="ace-hf">ACE Inhibitors for Heart Failure</option>
+              <option value="antibiotics-throat">Antibiotics for Sore Throat</option>
+              <option value="cancer-screening">Cancer Screening</option>
+              <option value="custom" selected>Custom</option>
+            </select>
+          </div>
+
+          <hr class="control-divider" />
+
+          <!-- CER slider -->
+          <div class="control-group slider-control">
+            <label for="cer-slider">
+              Control Event Rate
+              <span class="value-display" id="cer-val">20%</span>
+            </label>
+            <input
+              type="range" id="cer-slider"
+              min="1" max="80" step="0.5" value="20"
+            />
+          </div>
+
+          <!-- EER slider -->
+          <div class="control-group slider-control">
+            <label for="eer-slider">
+              Treatment Event Rate
+              <span class="value-display" id="eer-val">15%</span>
+            </label>
+            <input
+              type="range" id="eer-slider"
+              min="0.5" max="79" step="0.5" value="15"
+            />
+          </div>
+
+          <!-- Sample size slider -->
+          <div class="control-group slider-control">
+            <label for="n-slider">
+              Sample Size (per group)
+              <span class="value-display" id="n-val">500</span>
+            </label>
+            <input
+              type="range" id="n-slider"
+              min="50" max="10000" step="50" value="500"
+            />
+          </div>
+
+          <!-- Confidence level slider -->
+          <div class="control-group slider-control">
+            <label for="conf-slider">
+              Confidence Level
+              <span class="value-display" id="conf-val">95%</span>
+            </label>
+            <input
+              type="range" id="conf-slider"
+              min="80" max="99" step="1" value="95"
+            />
+          </div>
+
+          <hr class="control-divider" />
+
+          <!-- Toggles -->
+          <label class="toggle-control">
+            <input type="checkbox" id="toggle-nnt" checked />
+            <span class="toggle-track"></span>
+            <span class="toggle-label">Show NNT visualization</span>
+          </label>
+
+          <label class="toggle-control">
+            <input type="checkbox" id="toggle-ci-sim" checked />
+            <span class="toggle-track"></span>
+            <span class="toggle-label">Show CI simulation</span>
+          </label>
+
+          <label class="toggle-control">
+            <input type="checkbox" id="toggle-log-nnt" />
+            <span class="toggle-track"></span>
+            <span class="toggle-label">Log scale for NNT</span>
+          </label>
+
+          <hr class="control-divider" />
+
+          <div class="action-row">
+            <button class="btn btn-primary" id="resample-btn">
+              Resample CIs
+            </button>
+          </div>
+
+          <!-- Stats grid -->
+          <div class="stats-grid" id="stats-grid">
+            <div class="stat-card">
+              <div class="stat-value" id="stat-arr">--</div>
+              <div class="stat-label">ARR [CI]</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="stat-rrr">--</div>
+              <div class="stat-label">RRR [CI]</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="stat-nnt">--</div>
+              <div class="stat-label">NNT [CI]</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="stat-or">--</div>
+              <div class="stat-label">Odds Ratio [CI]</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="stat-rr">--</div>
+              <div class="stat-label">Risk Ratio [CI]</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="stat-pval">--</div>
+              <div class="stat-label">P-value (&chi;&sup2;)</div>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <!-- Info panel -->
+      <div class="info-panel" style="max-width:1400px; margin:0 auto var(--space-xl); padding:var(--space-lg) var(--space-xl);">
+        <h2>Understanding Clinical Trial Statistics</h2>
+        <details open>
+          <summary>Absolute vs Relative Risk</summary>
+          <div class="detail-body">
+            <p>
+              <strong>Relative Risk Reduction (RRR)</strong> sounds impressive but can be deeply
+              misleading without context. A drug that reduces mortality from 0.002% to 0.001%
+              has a 50% RRR &mdash; the same headline as one reducing mortality from 40% to 20%.
+            </p>
+            <p>
+              The <strong>Absolute Risk Reduction (ARR)</strong> tells the clinically meaningful
+              story: the first drug saves 1 extra person per 100,000 treated; the second saves
+              20 per 100. Always ask: <em>"50% reduction of what?"</em>
+            </p>
+            <p id="formula-arr"></p>
+          </div>
+        </details>
+        <details>
+          <summary>Number Needed to Treat</summary>
+          <div class="detail-body">
+            <p>
+              The <strong>NNT</strong> answers the question: <em>"How many patients must I treat
+              to prevent one additional bad outcome?"</em> It is simply 1/ARR.
+            </p>
+            <p>
+              NNT depends entirely on the baseline (control) risk. A treatment with a constant
+              RRR of 25% yields NNT = 4 when CER is 100%, but NNT = 400 when CER is 1%.
+              The lower the baseline risk, the more patients must be treated for one to benefit.
+            </p>
+            <p>
+              The <strong>NNH (Number Needed to Harm)</strong> is the analogous measure for
+              adverse effects. A balanced clinical decision compares NNT with NNH.
+            </p>
+            <p id="formula-nnt"></p>
+          </div>
+        </details>
+        <details>
+          <summary>Confidence Intervals</summary>
+          <div class="detail-body">
+            <p>
+              A 95% confidence interval does <strong>not</strong> mean "there is a 95% probability
+              that the true value lies in this interval." The true value is fixed &mdash; it either
+              is or is not in a given interval.
+            </p>
+            <p>
+              The correct interpretation: if we repeated the trial many times, about 95% of the
+              resulting CIs would contain the true treatment effect. The CI simulation panel
+              on the right illustrates this directly &mdash; each horizontal line is one simulated
+              trial, and roughly 95% of the lines cross the true value.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>Clinical vs Statistical Significance</summary>
+          <div class="detail-body">
+            <p>
+              A <strong>statistically significant</strong> result (p &lt; 0.05) simply means the
+              observed effect is unlikely under the null hypothesis. It says nothing about the
+              <em>magnitude</em> or <em>clinical importance</em> of the effect.
+            </p>
+            <p>
+              Very large trials can detect tiny effects (ARR of 0.1%) with high statistical
+              significance. Whether such an effect justifies the cost, side effects, and effort
+              of treatment is a separate clinical judgment. Always examine the confidence
+              interval and NNT, not just the p-value.
+            </p>
+          </div>
+        </details>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="./module.js"></script>
+</body>
+</html>
