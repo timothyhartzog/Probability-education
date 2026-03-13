@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Evidence-Based Medicine — Interactive Integration Hub</title>
+
+  <!-- KaTeX CSS -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
+    integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV"
+    crossorigin="anonymous"
+  />
+
+  <!-- Platform styles -->
+  <link rel="stylesheet" href="../../assets/design-system.css" />
+  <link rel="stylesheet" href="../../assets/module-template.css" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="module-page">
+
+    <!-- Header -->
+    <header class="module-header">
+      <ul class="breadcrumb">
+        <li><a href="../../../index.html">Home</a></li>
+        <li><a href="#">Medical Quality</a></li>
+        <li>Evidence-Based Medicine</li>
+      </ul>
+      <h1>Evidence-Based Medicine Integration Hub</h1>
+      <p class="text-secondary">
+        Explore how best evidence, clinical expertise, and patient values converge
+        to form optimal clinical decisions &mdash; the three pillars of EBM
+      </p>
+    </header>
+
+    <!-- Main layout -->
+    <div class="module-body">
+      <div class="module-layout ebm-layout">
+
+        <!-- Visualization area -->
+        <div class="viz-area">
+
+          <!-- Central Venn diagram -->
+          <div class="viz-container" id="venn-panel">
+            <div class="viz-title">The EBM Integration Model</div>
+            <div class="viz-subtitle">
+              Click any sphere to explore its components. Hover for quick descriptions.
+            </div>
+            <div id="venn-chart"></div>
+            <div id="venn-tooltip" class="ebm-tooltip" style="display:none;"></div>
+          </div>
+
+          <!-- Module panels (shown/hidden on sphere click) -->
+          <div class="secondary-panels">
+
+            <!-- Module A: Evidence Explorer -->
+            <div class="viz-container module-panel" id="evidence-panel" style="display:none;">
+              <div class="panel-header">
+                <div class="viz-title">Evidence Explorer</div>
+                <button class="panel-close" aria-label="Close panel">&times;</button>
+              </div>
+              <div class="viz-subtitle">
+                Navigate the hierarchy of evidence and appraise study quality
+              </div>
+              <div id="pyramid-chart"></div>
+              <div id="evidence-detail" class="detail-box"></div>
+            </div>
+
+            <!-- Module B: Clinical Expertise -->
+            <div class="viz-container module-panel" id="expertise-panel" style="display:none;">
+              <div class="panel-header">
+                <div class="viz-title">Clinical Expertise Showcase</div>
+                <button class="panel-close" aria-label="Close panel">&times;</button>
+              </div>
+              <div class="viz-subtitle">
+                See how experience shapes clinical decision-making
+              </div>
+              <div id="expertise-profiles"></div>
+              <div id="expertise-case" class="detail-box"></div>
+            </div>
+
+            <!-- Module C: Patient Values -->
+            <div class="viz-container module-panel" id="values-panel" style="display:none;">
+              <div class="panel-header">
+                <div class="viz-title">Patient Values &amp; Preferences</div>
+                <button class="panel-close" aria-label="Close panel">&times;</button>
+              </div>
+              <div class="viz-subtitle">
+                Explore how patient preferences shift the decision balance
+              </div>
+              <div id="persona-cards"></div>
+              <div id="values-sliders"></div>
+              <div id="values-detail" class="detail-box"></div>
+            </div>
+
+            <!-- Module D: Decision Simulator -->
+            <div class="viz-container module-panel" id="decision-panel" style="display:none;">
+              <div class="panel-header">
+                <div class="viz-title">Decision Simulator</div>
+                <button class="panel-close" aria-label="Close panel">&times;</button>
+              </div>
+              <div class="viz-subtitle">
+                Build a clinical scenario and see how EBM components integrate
+              </div>
+              <div id="decision-config"></div>
+              <div id="decision-viz"></div>
+              <div id="decision-output" class="detail-box"></div>
+            </div>
+          </div>
+
+          <!-- EBM Process Flow -->
+          <div class="viz-container" id="process-panel">
+            <div class="viz-title">The 5-Step EBM Process</div>
+            <div class="viz-subtitle">
+              Click each step to see details and interactive examples
+            </div>
+            <div id="process-flow"></div>
+            <div id="process-detail" class="detail-box"></div>
+          </div>
+        </div>
+
+        <!-- Control panel -->
+        <aside class="control-panel" id="control-panel">
+          <h2>Controls</h2>
+
+          <!-- Scenario selector -->
+          <div class="control-group dropdown-control">
+            <label for="scenario-select">Clinical Scenario</label>
+            <select id="scenario-select">
+              <option value="hypertension" selected>Hypertension Treatment</option>
+              <option value="cancer-screening">Cancer Screening</option>
+              <option value="anticoagulation">Anticoagulation for AF</option>
+              <option value="depression">Depression Management</option>
+            </select>
+          </div>
+
+          <hr class="control-divider" />
+
+          <!-- Evidence weight slider -->
+          <div class="control-group slider-control">
+            <label for="evidence-slider">
+              Evidence Strength
+              <span class="value-display" id="evidence-val">70%</span>
+            </label>
+            <input
+              type="range" id="evidence-slider"
+              min="0" max="100" step="1" value="70"
+            />
+            <div class="slider-range-labels">
+              <span>Weak</span><span>Strong</span>
+            </div>
+          </div>
+
+          <!-- Expertise weight slider -->
+          <div class="control-group slider-control">
+            <label for="expertise-slider">
+              Clinical Expertise
+              <span class="value-display" id="expertise-val">60%</span>
+            </label>
+            <input
+              type="range" id="expertise-slider"
+              min="0" max="100" step="1" value="60"
+            />
+            <div class="slider-range-labels">
+              <span>Novice</span><span>Expert</span>
+            </div>
+          </div>
+
+          <!-- Patient values alignment slider -->
+          <div class="control-group slider-control">
+            <label for="values-slider">
+              Patient Values Alignment
+              <span class="value-display" id="values-val">50%</span>
+            </label>
+            <input
+              type="range" id="values-slider"
+              min="0" max="100" step="1" value="50"
+            />
+            <div class="slider-range-labels">
+              <span>Resistant</span><span>Aligned</span>
+            </div>
+          </div>
+
+          <hr class="control-divider" />
+
+          <!-- Toggles -->
+          <label class="toggle-control">
+            <input type="checkbox" id="toggle-labels" checked />
+            <span class="toggle-track"></span>
+            <span class="toggle-label">Show sphere labels</span>
+          </label>
+
+          <label class="toggle-control">
+            <input type="checkbox" id="toggle-process" checked />
+            <span class="toggle-track"></span>
+            <span class="toggle-label">Show EBM process flow</span>
+          </label>
+
+          <hr class="control-divider" />
+
+          <div class="action-row">
+            <button class="btn btn-primary" id="simulate-btn">
+              Run Decision Simulation
+            </button>
+          </div>
+
+          <!-- Stats grid -->
+          <div class="stats-grid" id="stats-grid">
+            <div class="stat-card">
+              <div class="stat-value" id="stat-confidence">--</div>
+              <div class="stat-label">Decision Confidence</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="stat-dominant">--</div>
+              <div class="stat-label">Dominant Factor</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="stat-grade">--</div>
+              <div class="stat-label">Evidence Grade</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="stat-recommendation">--</div>
+              <div class="stat-label">Recommendation</div>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <!-- Info panel -->
+      <div class="info-panel" style="max-width:1400px; margin:0 auto var(--space-xl); padding:var(--space-lg) var(--space-xl);">
+        <h2>Understanding Evidence-Based Medicine</h2>
+        <details open>
+          <summary>What Is EBM?</summary>
+          <div class="detail-body">
+            <p>
+              <strong>Evidence-Based Medicine (EBM)</strong> is the conscientious, explicit,
+              and judicious use of current best evidence in making decisions about the care
+              of individual patients. Coined by Gordon Guyatt and popularized by David Sackett,
+              EBM integrates three fundamental components:
+            </p>
+            <ul>
+              <li><strong>Best External Evidence</strong> &mdash; from systematic research</li>
+              <li><strong>Clinical Expertise</strong> &mdash; the clinician's accumulated experience and skills</li>
+              <li><strong>Patient Values</strong> &mdash; the unique preferences and expectations each patient brings</li>
+            </ul>
+            <p>
+              None of these components alone is sufficient. Without evidence, practice risks
+              becoming outdated. Without expertise, evidence may be misapplied. Without patient
+              values, medicine becomes paternalistic.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>The Evidence Hierarchy</summary>
+          <div class="detail-body">
+            <p>
+              Not all evidence is created equal. The <strong>hierarchy of evidence</strong>
+              ranks study designs by their susceptibility to bias:
+            </p>
+            <ol>
+              <li><strong>Systematic Reviews &amp; Meta-Analyses</strong> &mdash; synthesize multiple studies, highest quality</li>
+              <li><strong>Randomized Controlled Trials (RCTs)</strong> &mdash; gold standard for causal inference</li>
+              <li><strong>Cohort Studies</strong> &mdash; follow groups over time, observational</li>
+              <li><strong>Case-Control Studies</strong> &mdash; compare groups retrospectively</li>
+              <li><strong>Case Series &amp; Case Reports</strong> &mdash; descriptive, hypothesis-generating</li>
+              <li><strong>Expert Opinion</strong> &mdash; lowest in hierarchy but still valuable when evidence is absent</li>
+            </ol>
+            <p>
+              The <strong>GRADE framework</strong> (Grading of Recommendations, Assessment,
+              Development and Evaluation) provides a structured approach to rating evidence
+              quality and strength of recommendations.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>The 5 Steps of EBM</summary>
+          <div class="detail-body">
+            <p>
+              The practice of EBM follows a systematic five-step process:
+            </p>
+            <ol>
+              <li><strong>ASK</strong> &mdash; Formulate a clear clinical question using the PICO framework
+                (Patient/Problem, Intervention, Comparison, Outcome)</li>
+              <li><strong>ACQUIRE</strong> &mdash; Search for the best available evidence
+                (PubMed, Cochrane Library, clinical guidelines)</li>
+              <li><strong>APPRAISE</strong> &mdash; Critically evaluate the evidence for validity,
+                impact, and applicability</li>
+              <li><strong>APPLY</strong> &mdash; Integrate evidence with clinical expertise and
+                patient values to make a decision</li>
+              <li><strong>ASSESS</strong> &mdash; Evaluate the outcome and refine the approach</li>
+            </ol>
+          </div>
+        </details>
+        <details>
+          <summary>Shared Decision Making</summary>
+          <div class="detail-body">
+            <p>
+              <strong>Shared decision making (SDM)</strong> is the process by which clinicians
+              and patients work together to make healthcare decisions that align with the best
+              evidence and the patient's values. SDM is the practical manifestation of EBM's
+              integration principle.
+            </p>
+            <p>
+              Key elements include: presenting options with balanced information about benefits
+              and harms, using decision aids when available, eliciting patient preferences and
+              values, and reaching a mutually agreed-upon plan. SDM is particularly important
+              when there is clinical equipoise or when outcomes depend heavily on patient
+              preferences (e.g., quality vs. quantity of life tradeoffs).
+            </p>
+          </div>
+        </details>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="./module.js"></script>
+</body>
+</html>
