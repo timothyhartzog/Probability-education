@@ -274,6 +274,7 @@ function renderLiteratureEquations() {
     'lit-sir-equations': String.raw`\frac{dS}{dt} = -\beta \frac{SI}{N}, \quad \frac{dI}{dt} = \beta \frac{SI}{N} - \gamma I, \quad \frac{dR}{dt} = \gamma I \qquad R_0 = \frac{\beta}{\gamma}`,
     'lit-threshold': String.raw`R_0 > 1 \implies \text{epidemic occurs} \qquad \text{Herd immunity threshold} = 1 - \frac{1}{R_0}`,
     'lit-seir-equations': String.raw`\frac{dS}{dt} = -\beta\frac{SI}{N},\quad \frac{dE}{dt} = \beta\frac{SI}{N} - \sigma E,\quad \frac{dI}{dt} = \sigma E - \gamma I,\quad \frac{dR}{dt} = \gamma I`,
+    'lit-gillespie-equations': String.raw`\text{Rates: } \lambda_{\text{inf}} = \frac{\beta S I}{N}, \quad \lambda_{\text{rec}} = \gamma I \qquad \Delta t \sim \text{Exp}(\lambda_{\text{inf}} + \lambda_{\text{rec}}) \qquad P(\text{epidemic}) \approx 1 - \left(\frac{1}{R_0}\right)^{I_0}`,
   };
 
   for (const [id, eq] of Object.entries(ids)) {
@@ -1315,7 +1316,702 @@ function drawDegreeDistribution() {
 }
 
 /* ============================================================
-   SECTION 14: Event Binding & Initialization
+   SECTION 14: Stochastic Simulation (Gillespie Algorithm)
+   ============================================================ */
+
+/**
+ * Gillespie SSA for SIR model.
+ * Events: infection (S->I at rate beta*S*I/N), recovery (I->R at rate gamma*I)
+ * Returns array of { t, S, I, R } snapshots.
+ */
+function gillespieSIR(beta, gamma, N, I0, maxTime) {
+  let S = N - I0, I = I0, R = 0;
+  let t = 0;
+  const trajectory = [{ t, S, I, R }];
+
+  while (I > 0 && t < maxTime) {
+    const rateInfect = beta * S * I / N;
+    const rateRecover = gamma * I;
+    const totalRate = rateInfect + rateRecover;
+
+    if (totalRate <= 0) break;
+
+    // Time to next event (exponential)
+    const dt = -Math.log(Math.random()) / totalRate;
+    t += dt;
+    if (t > maxTime) break;
+
+    // Which event?
+    if (Math.random() < rateInfect / totalRate) {
+      S--; I++;
+    } else {
+      I--; R++;
+    }
+
+    trajectory.push({ t, S, I, R });
+  }
+
+  return trajectory;
+}
+
+/**
+ * Run Monte Carlo stochastic simulations and render results.
+ */
+function runStochasticSimulation() {
+  const diseaseKey = document.getElementById('stoch-disease').value;
+  const preset = DISEASE_PRESETS[diseaseKey];
+  const beta = preset && diseaseKey !== 'custom'
+    ? preset.beta : +document.getElementById('stoch-beta-slider').value;
+  const gamma = preset && diseaseKey !== 'custom'
+    ? preset.gamma : +document.getElementById('stoch-gamma-slider').value;
+  const N = +document.getElementById('stoch-pop-slider').value;
+  const I0 = +document.getElementById('stoch-i0-slider').value;
+  const nRuns = +document.getElementById('stoch-runs-slider').value;
+  const nShow = +document.getElementById('stoch-show-slider').value;
+  const r0 = beta / gamma;
+  const maxTime = Math.max(200, Math.round(300 / Math.max(0.1, gamma)));
+
+  // Update sliders if preset selected
+  if (preset && diseaseKey !== 'custom') {
+    document.getElementById('stoch-beta-slider').value = beta;
+    document.getElementById('stoch-gamma-slider').value = gamma;
+    document.getElementById('stoch-beta-display').textContent = beta.toFixed(2);
+    document.getElementById('stoch-gamma-display').textContent = gamma.toFixed(3);
+  }
+
+  // Run simulations
+  const allRuns = [];
+  const finalSizes = [];
+  let epidemicCount = 0;
+  const epidemicThreshold = N * 0.05; // >5% infected = major epidemic
+
+  for (let i = 0; i < nRuns; i++) {
+    const traj = gillespieSIR(beta, gamma, N, I0, maxTime);
+    allRuns.push(traj);
+    const finalR = traj[traj.length - 1].R;
+    finalSizes.push(finalR);
+    if (finalR > epidemicThreshold) epidemicCount++;
+  }
+
+  // Deterministic solution for comparison
+  const detDerivs = getDerivatives('SIR', { beta, gamma, sigma: 0.2, mu: 0, xi: 0 });
+  const detData = rk4(detDerivs, [N - I0, I0, 0], [0, maxTime], 0.2);
+  const detStep = Math.max(1, Math.floor(detData.length / 1000));
+  const detSampled = detData.filter((_, i) => i % detStep === 0);
+
+  // Draw all visualizations
+  drawStochTrajectories(allRuns, detSampled, N, nShow, maxTime);
+  drawFinalSizeDistribution(finalSizes, N);
+  drawEpidemicProbability(gamma, N, I0);
+
+  // Update metrics
+  const epiProb = epidemicCount / nRuns;
+  const sortedSizes = [...finalSizes].sort((a, b) => a - b);
+  const median = sortedSizes[Math.floor(sortedSizes.length / 2)];
+  const mean = d3.mean(finalSizes);
+
+  document.getElementById('stoch-r0').textContent = r0.toFixed(2);
+  document.getElementById('stoch-epi-prob').textContent = (epiProb * 100).toFixed(1) + '%';
+  document.getElementById('stoch-median-size').textContent = Math.round(median).toLocaleString();
+  document.getElementById('stoch-mean-size').textContent = Math.round(mean).toLocaleString();
+  document.getElementById('stoch-fadeout').textContent = ((1 - epiProb) * 100).toFixed(1) + '%';
+  document.getElementById('stoch-runs').textContent = nRuns;
+}
+
+function drawStochTrajectories(allRuns, detData, N, nShow, maxTime) {
+  const container = document.getElementById('stoch-trajectories');
+  if (!container) return;
+  container.innerHTML = '';
+
+  const width = container.clientWidth || 700;
+  const height = 380;
+  const svg = d3.select(container).append('svg').attr('width', width).attr('height', height);
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+  const w = width - margin.left - margin.right;
+  const h = height - margin.top - margin.bottom;
+
+  const x = d3.scaleLinear().domain([0, maxTime]).range([0, w]);
+  const y = d3.scaleLinear().domain([0, N * 0.6]).range([h, 0]);
+
+  // Grid + axes
+  g.append('g').attr('class', 'grid')
+    .call(d3.axisLeft(y).tickSize(-w).tickFormat('').ticks(6));
+  g.append('g').attr('class', 'axis').attr('transform', `translate(0,${h})`)
+    .call(d3.axisBottom(x).ticks(8))
+    .append('text').attr('x', w / 2).attr('y', 38).attr('fill', '#555')
+    .attr('text-anchor', 'middle').style('font-size', '0.8rem').text('Time (days)');
+  g.append('g').attr('class', 'axis')
+    .call(d3.axisLeft(y).ticks(6).tickFormat(d3.format('.0f')))
+    .append('text').attr('transform', 'rotate(-90)').attr('x', -h / 2).attr('y', -50)
+    .attr('fill', '#555').attr('text-anchor', 'middle').style('font-size', '0.8rem').text('Infected (I)');
+
+  // Draw stochastic trajectories (thin, semi-transparent)
+  const showRuns = allRuns.slice(0, nShow);
+  const line = d3.line().x(d => x(d.t)).y(d => y(d.I));
+
+  showRuns.forEach(traj => {
+    // Downsample long trajectories
+    const step = Math.max(1, Math.floor(traj.length / 300));
+    const sampled = traj.filter((_, i) => i % step === 0 || i === traj.length - 1);
+    g.append('path').datum(sampled)
+      .attr('fill', 'none')
+      .attr('stroke', '#ef4444')
+      .attr('stroke-width', 1)
+      .attr('stroke-opacity', 0.15)
+      .attr('d', line);
+  });
+
+  // Draw deterministic solution (thick)
+  const detLine = d3.line().x(d => x(d.t)).y(d => y(d.y[1])).curve(d3.curveBasis);
+  g.append('path').datum(detData)
+    .attr('fill', 'none')
+    .attr('stroke', '#1e40af')
+    .attr('stroke-width', 3)
+    .attr('stroke-dasharray', '8,4')
+    .attr('d', detLine);
+
+  // Compute and draw median + IQR envelope from stochastic runs
+  const timeBins = 100;
+  const binWidth = maxTime / timeBins;
+  const envelopeData = [];
+
+  for (let b = 0; b <= timeBins; b++) {
+    const tTarget = b * binWidth;
+    const values = [];
+
+    for (const traj of allRuns) {
+      // Find nearest point in trajectory
+      let best = traj[0];
+      for (const pt of traj) {
+        if (Math.abs(pt.t - tTarget) < Math.abs(best.t - tTarget)) best = pt;
+      }
+      values.push(best.I);
+    }
+
+    values.sort((a, c) => a - c);
+    envelopeData.push({
+      t: tTarget,
+      q25: values[Math.floor(values.length * 0.25)],
+      q50: values[Math.floor(values.length * 0.50)],
+      q75: values[Math.floor(values.length * 0.75)],
+    });
+  }
+
+  // IQR shaded area
+  const area = d3.area()
+    .x(d => x(d.t))
+    .y0(d => y(d.q25))
+    .y1(d => y(d.q75))
+    .curve(d3.curveBasis);
+  g.append('path').datum(envelopeData)
+    .attr('fill', '#ef4444').attr('opacity', 0.12).attr('d', area);
+
+  // Median line
+  const medLine = d3.line().x(d => x(d.t)).y(d => y(d.q50)).curve(d3.curveBasis);
+  g.append('path').datum(envelopeData)
+    .attr('fill', 'none').attr('stroke', '#ef4444').attr('stroke-width', 2.5)
+    .attr('d', medLine);
+
+  // Legend
+  const legend = svg.append('g').attr('transform', `translate(${width - margin.right + 10}, ${margin.top})`);
+  const items = [
+    { color: '#ef4444', dash: '', label: 'Stochastic median', width: 2.5 },
+    { color: '#ef4444', dash: '', label: 'IQR envelope', width: 0, fill: true },
+    { color: '#1e40af', dash: '8,4', label: 'Deterministic', width: 3 },
+    { color: '#ef4444', dash: '', label: 'Individual runs', width: 1, opacity: 0.3 },
+  ];
+  items.forEach((item, i) => {
+    const row = legend.append('g').attr('transform', `translate(0, ${i * 20})`);
+    if (item.fill) {
+      row.append('rect').attr('width', 14).attr('height', 8).attr('y', 2).attr('rx', 2)
+        .attr('fill', item.color).attr('opacity', 0.2);
+    } else {
+      row.append('line').attr('x1', 0).attr('x2', 14).attr('y1', 6).attr('y2', 6)
+        .attr('stroke', item.color).attr('stroke-width', item.width)
+        .attr('stroke-dasharray', item.dash).attr('stroke-opacity', item.opacity || 1);
+    }
+    row.append('text').attr('x', 20).attr('y', 10).attr('class', 'chart-legend')
+      .attr('fill', '#555').text(item.label);
+  });
+}
+
+function drawFinalSizeDistribution(finalSizes, N) {
+  const container = document.getElementById('stoch-finalsize');
+  if (!container) return;
+  container.innerHTML = '';
+
+  const width = container.clientWidth || 700;
+  const height = 280;
+  const svg = d3.select(container).append('svg').attr('width', width).attr('height', height);
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+  const w = width - margin.left - margin.right;
+  const h = height - margin.top - margin.bottom;
+
+  // Create histogram bins
+  const nBins = 30;
+  const histogram = d3.histogram()
+    .domain([0, N])
+    .thresholds(nBins);
+  const bins = histogram(finalSizes);
+
+  const x = d3.scaleLinear().domain([0, N]).range([0, w]);
+  const yMax = d3.max(bins, b => b.length);
+  const y = d3.scaleLinear().domain([0, yMax]).range([h, 0]);
+
+  g.append('g').attr('class', 'axis').attr('transform', `translate(0,${h})`)
+    .call(d3.axisBottom(x).ticks(8).tickFormat(d3.format('.0f')))
+    .append('text').attr('x', w / 2).attr('y', 38).attr('fill', '#555')
+    .attr('text-anchor', 'middle').style('font-size', '0.8rem').text('Total Recovered (Final Epidemic Size)');
+  g.append('g').attr('class', 'axis')
+    .call(d3.axisLeft(y).ticks(5))
+    .append('text').attr('transform', 'rotate(-90)').attr('x', -h / 2).attr('y', -45)
+    .attr('fill', '#555').attr('text-anchor', 'middle').style('font-size', '0.8rem').text('Frequency');
+
+  // Bars
+  g.selectAll('.hist-bar').data(bins).enter().append('rect')
+    .attr('class', 'hist-bar')
+    .attr('x', d => x(d.x0) + 1)
+    .attr('y', d => y(d.length))
+    .attr('width', d => Math.max(0, x(d.x1) - x(d.x0) - 2))
+    .attr('height', d => h - y(d.length))
+    .attr('fill', d => {
+      const midpoint = (d.x0 + d.x1) / 2;
+      return midpoint < N * 0.05 ? '#60a5fa' : '#ef4444';
+    })
+    .attr('opacity', 0.7)
+    .attr('rx', 2);
+
+  // Annotations
+  const fadeCount = finalSizes.filter(s => s < N * 0.05).length;
+  const epiCount = finalSizes.length - fadeCount;
+  if (fadeCount > 0 && epiCount > 0) {
+    g.append('text').attr('x', x(N * 0.025)).attr('y', 15)
+      .attr('text-anchor', 'middle').style('font-size', '0.75rem').attr('fill', '#2563eb')
+      .style('font-family', 'var(--font-heading)').style('font-weight', '600')
+      .text(`Fade-outs (${fadeCount})`);
+    const epiSizes = finalSizes.filter(s => s >= N * 0.05);
+    const epiMean = d3.mean(epiSizes);
+    if (epiMean) {
+      g.append('text').attr('x', x(epiMean)).attr('y', 15)
+        .attr('text-anchor', 'middle').style('font-size', '0.75rem').attr('fill', '#dc2626')
+        .style('font-family', 'var(--font-heading)').style('font-weight', '600')
+        .text(`Major epidemics (${epiCount})`);
+    }
+  }
+}
+
+function drawEpidemicProbability(gamma, N, I0) {
+  const container = document.getElementById('stoch-probability');
+  if (!container) return;
+  container.innerHTML = '';
+
+  const width = container.clientWidth || 700;
+  const height = 260;
+  const svg = d3.select(container).append('svg').attr('width', width).attr('height', height);
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+  const w = width - margin.left - margin.right;
+  const h = height - margin.top - margin.bottom;
+
+  // Theoretical probability of epidemic vs R0
+  // P(epidemic) ≈ 1 - (1/R0)^I0 for R0 > 1
+  const r0Values = [];
+  for (let r = 0.2; r <= 6; r += 0.05) {
+    const pEpi = r > 1 ? 1 - Math.pow(1 / r, I0) : 0;
+    r0Values.push({ r0: r, prob: pEpi });
+  }
+
+  // Also run quick Monte Carlo at a few R0 points for empirical comparison
+  const mcPoints = [];
+  const mcR0s = [0.5, 0.8, 1.0, 1.2, 1.5, 2.0, 2.5, 3.0, 4.0, 5.0];
+  const mcRuns = 100;
+  const threshold = N * 0.05;
+
+  for (const r0 of mcR0s) {
+    const beta = r0 * gamma;
+    let epiCount = 0;
+    for (let i = 0; i < mcRuns; i++) {
+      const traj = gillespieSIR(beta, gamma, N, I0, 500);
+      if (traj[traj.length - 1].R > threshold) epiCount++;
+    }
+    mcPoints.push({ r0, prob: epiCount / mcRuns });
+  }
+
+  const x = d3.scaleLinear().domain([0, 6]).range([0, w]);
+  const y = d3.scaleLinear().domain([0, 1]).range([h, 0]);
+
+  g.append('g').attr('class', 'grid').call(d3.axisLeft(y).tickSize(-w).tickFormat('').ticks(5));
+  g.append('g').attr('class', 'axis').attr('transform', `translate(0,${h})`)
+    .call(d3.axisBottom(x).ticks(8))
+    .append('text').attr('x', w / 2).attr('y', 38).attr('fill', '#555')
+    .attr('text-anchor', 'middle').style('font-size', '0.8rem').text('R₀');
+  g.append('g').attr('class', 'axis')
+    .call(d3.axisLeft(y).ticks(5).tickFormat(d3.format('.0%')))
+    .append('text').attr('transform', 'rotate(-90)').attr('x', -h / 2).attr('y', -45)
+    .attr('fill', '#555').attr('text-anchor', 'middle').style('font-size', '0.8rem').text('P(major epidemic)');
+
+  // R0 = 1 threshold
+  g.append('line')
+    .attr('x1', x(1)).attr('x2', x(1)).attr('y1', 0).attr('y2', h)
+    .attr('stroke', '#dc2626').attr('stroke-width', 1.5).attr('stroke-dasharray', '6,4');
+  g.append('text').attr('x', x(1) + 5).attr('y', 15)
+    .style('font-size', '0.72rem').attr('fill', '#dc2626')
+    .style('font-family', 'var(--font-heading)').text('R₀ = 1');
+
+  // Theoretical curve
+  const thLine = d3.line().x(d => x(d.r0)).y(d => y(d.prob)).curve(d3.curveBasis);
+  g.append('path').datum(r0Values)
+    .attr('fill', 'none').attr('stroke', '#2563eb').attr('stroke-width', 2.5)
+    .attr('d', thLine);
+
+  // Monte Carlo points
+  g.selectAll('.mc-dot').data(mcPoints).enter().append('circle')
+    .attr('cx', d => x(d.r0)).attr('cy', d => y(d.prob))
+    .attr('r', 5).attr('fill', '#e97319').attr('stroke', '#fff').attr('stroke-width', 1.5);
+
+  // Legend
+  const legend = svg.append('g').attr('transform', `translate(${width - margin.right + 10}, ${margin.top})`);
+  const row1 = legend.append('g');
+  row1.append('line').attr('x1', 0).attr('x2', 14).attr('y1', 6).attr('y2', 6)
+    .attr('stroke', '#2563eb').attr('stroke-width', 2.5);
+  row1.append('text').attr('x', 20).attr('y', 10).attr('class', 'chart-legend')
+    .attr('fill', '#555').text('Theory');
+  const row2 = legend.append('g').attr('transform', 'translate(0, 22)');
+  row2.append('circle').attr('cx', 7).attr('cy', 6).attr('r', 4)
+    .attr('fill', '#e97319').attr('stroke', '#fff').attr('stroke-width', 1);
+  row2.append('text').attr('x', 20).attr('y', 10).attr('class', 'chart-legend')
+    .attr('fill', '#555').text('Monte Carlo');
+}
+
+/* ============================================================
+   SECTION 15: Sensitivity Analysis
+   ============================================================ */
+
+function runSensitivityAnalysis() {
+  const diseaseKey = document.getElementById('sens-disease').value;
+  const preset = DISEASE_PRESETS[diseaseKey] || DISEASE_PRESETS.covid19;
+  const model = document.getElementById('sens-model').value;
+  const metric = document.getElementById('sens-metric').value;
+  const N = +document.getElementById('sens-pop-slider').value;
+  const range = +document.getElementById('sens-range-slider').value / 100;
+  const nPoints = +document.getElementById('sens-points-slider').value;
+  const I0 = 10;
+  const days = 365;
+  const dt = 0.5;
+
+  // Parameters to analyze
+  const paramDefs = [
+    { key: 'beta',  label: 'Transmission (β)', base: preset.beta },
+    { key: 'gamma', label: 'Recovery (γ)',      base: preset.gamma },
+  ];
+  if (model === 'SEIR') {
+    paramDefs.push({ key: 'sigma', label: 'Incubation (σ)', base: preset.sigma });
+  }
+  if (model === 'SIRD') {
+    paramDefs.push({ key: 'mu', label: 'Mortality (μ)', base: preset.mu });
+  }
+
+  // Helper: run simulation and extract metric
+  function runAndMeasure(params) {
+    const derivs = getDerivatives(model, { ...params, xi: preset.xi || 0 });
+    const y0 = getInitialConditions(model, N, I0);
+    const data = rk4(derivs, y0, [0, days], dt);
+    const compartments = getCompartmentNames(model);
+    const iIdx = compartments.indexOf('I');
+    const rIdx = compartments.indexOf('R');
+    const dIdx = compartments.indexOf('D');
+
+    let peakI = 0, peakDay = 0;
+    data.forEach(d => { if (d.y[iIdx] > peakI) { peakI = d.y[iIdx]; peakDay = d.t; } });
+
+    const last = data[data.length - 1];
+    let totalInf = 0;
+    if (rIdx >= 0) totalInf += last.y[rIdx];
+    if (dIdx >= 0) totalInf += last.y[dIdx];
+
+    switch (metric) {
+      case 'peakI': return peakI;
+      case 'totalInf': return totalInf;
+      case 'peakDay': return peakDay;
+      default: return peakI;
+    }
+  }
+
+  // Baseline
+  const baseParams = { beta: preset.beta, gamma: preset.gamma, sigma: preset.sigma, mu: preset.mu };
+  const baselineValue = runAndMeasure(baseParams);
+
+  // OAT tornado data
+  const tornadoData = paramDefs.map(pDef => {
+    const lowParams = { ...baseParams, [pDef.key]: pDef.base * (1 - range) };
+    const highParams = { ...baseParams, [pDef.key]: pDef.base * (1 + range) };
+    const lowVal = runAndMeasure(lowParams);
+    const highVal = runAndMeasure(highParams);
+    return {
+      label: pDef.label,
+      low: Math.min(lowVal, highVal),
+      high: Math.max(lowVal, highVal),
+      baseline: baselineValue,
+      spread: Math.abs(highVal - lowVal),
+    };
+  });
+
+  // Sort by spread (most sensitive first)
+  tornadoData.sort((a, b) => b.spread - a.spread);
+
+  // Spider plot data: sweep each parameter
+  const spiderData = paramDefs.map(pDef => {
+    const points = [];
+    for (let i = 0; i <= nPoints; i++) {
+      const frac = (1 - range) + (2 * range * i / nPoints);
+      const params = { ...baseParams, [pDef.key]: pDef.base * frac };
+      const val = runAndMeasure(params);
+      points.push({ fraction: frac, value: val });
+    }
+    return { label: pDef.label, key: pDef.key, points };
+  });
+
+  // R0 heatmap
+  const heatmapXKey = document.getElementById('heatmap-x').value;
+  const heatmapYKey = document.getElementById('heatmap-y').value;
+  const heatmapRes = 30;
+
+  const xBase = baseParams[heatmapXKey];
+  const yBase = baseParams[heatmapYKey];
+  const heatmapData = [];
+
+  for (let i = 0; i < heatmapRes; i++) {
+    for (let j = 0; j < heatmapRes; j++) {
+      const xVal = xBase * (0.3 + 2.0 * i / (heatmapRes - 1));
+      const yVal = yBase * (0.3 + 2.0 * j / (heatmapRes - 1));
+      const params = { ...baseParams, [heatmapXKey]: xVal, [heatmapYKey]: yVal };
+      const r0 = params.beta / params.gamma;
+      heatmapData.push({ xi: i, yi: j, xVal, yVal, r0 });
+    }
+  }
+
+  drawTornadoDiagram(tornadoData, baselineValue, metric);
+  drawSpiderPlot(spiderData, baselineValue, metric);
+  drawR0Heatmap(heatmapData, heatmapRes, heatmapXKey, heatmapYKey, xBase, yBase);
+
+  // Update metrics
+  document.getElementById('sens-most').textContent = tornadoData[0]?.label || '—';
+  document.getElementById('sens-baseline-peak').textContent = Math.round(baselineValue).toLocaleString();
+  const totalRange = tornadoData.reduce((sum, d) => sum + d.spread, 0);
+  document.getElementById('sens-range').textContent = Math.round(totalRange).toLocaleString();
+  document.getElementById('sens-r0').textContent = (preset.beta / preset.gamma).toFixed(2);
+}
+
+function drawTornadoDiagram(data, baseline, metricLabel) {
+  const container = document.getElementById('tornado-chart');
+  if (!container) return;
+  container.innerHTML = '';
+
+  const width = container.clientWidth || 700;
+  const height = Math.max(200, data.length * 50 + 80);
+  const svg = d3.select(container).append('svg').attr('width', width).attr('height', height);
+  const mLeft = 140;
+  const g = svg.append('g').attr('transform', `translate(${mLeft},${margin.top})`);
+  const w = width - mLeft - margin.right;
+  const h = height - margin.top - margin.bottom;
+
+  const allVals = data.flatMap(d => [d.low, d.high, d.baseline]);
+  const xMin = d3.min(allVals) * 0.9;
+  const xMax = d3.max(allVals) * 1.1;
+  const x = d3.scaleLinear().domain([xMin, xMax]).range([0, w]);
+  const y = d3.scaleBand().domain(data.map(d => d.label)).range([0, h]).padding(0.35);
+
+  g.append('g').attr('class', 'axis').attr('transform', `translate(0,${h})`)
+    .call(d3.axisBottom(x).ticks(6).tickFormat(d3.format('.2s')));
+  g.append('g').attr('class', 'axis').call(d3.axisLeft(y));
+
+  // Baseline reference line
+  g.append('line')
+    .attr('x1', x(baseline)).attr('x2', x(baseline))
+    .attr('y1', 0).attr('y2', h)
+    .attr('stroke', '#1e293b').attr('stroke-width', 2).attr('stroke-dasharray', '4,3');
+
+  // Tornado bars
+  const barColors = ['#2563eb', '#e97319', '#059669', '#dc2626', '#a78bfa'];
+  data.forEach((d, i) => {
+    const barY = y(d.label);
+    const barH = y.bandwidth();
+    g.append('rect')
+      .attr('x', x(d.low))
+      .attr('y', barY)
+      .attr('width', x(d.high) - x(d.low))
+      .attr('height', barH)
+      .attr('fill', barColors[i % barColors.length])
+      .attr('opacity', 0.75)
+      .attr('rx', 3);
+
+    // Value labels
+    g.append('text').attr('x', x(d.low) - 4).attr('y', barY + barH / 2 + 4)
+      .attr('text-anchor', 'end').style('font-size', '0.7rem').attr('fill', '#555')
+      .text(d3.format('.2s')(d.low));
+    g.append('text').attr('x', x(d.high) + 4).attr('y', barY + barH / 2 + 4)
+      .attr('text-anchor', 'start').style('font-size', '0.7rem').attr('fill', '#555')
+      .text(d3.format('.2s')(d.high));
+  });
+}
+
+function drawSpiderPlot(data, baseline, metricLabel) {
+  const container = document.getElementById('spider-chart');
+  if (!container) return;
+  container.innerHTML = '';
+
+  const width = container.clientWidth || 700;
+  const height = 320;
+  const svg = d3.select(container).append('svg').attr('width', width).attr('height', height);
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+  const w = width - margin.left - margin.right;
+  const h = height - margin.top - margin.bottom;
+
+  const allFracs = data.flatMap(d => d.points.map(p => p.fraction));
+  const allVals = data.flatMap(d => d.points.map(p => p.value));
+
+  const x = d3.scaleLinear().domain([d3.min(allFracs), d3.max(allFracs)]).range([0, w]);
+  const y = d3.scaleLinear().domain([0, d3.max(allVals) * 1.1]).range([h, 0]);
+
+  g.append('g').attr('class', 'grid').call(d3.axisLeft(y).tickSize(-w).tickFormat('').ticks(6));
+  g.append('g').attr('class', 'axis').attr('transform', `translate(0,${h})`)
+    .call(d3.axisBottom(x).ticks(8).tickFormat(d => d3.format('.0%')(d)))
+    .append('text').attr('x', w / 2).attr('y', 38).attr('fill', '#555')
+    .attr('text-anchor', 'middle').style('font-size', '0.8rem').text('Parameter multiplier (% of baseline)');
+  g.append('g').attr('class', 'axis')
+    .call(d3.axisLeft(y).ticks(6).tickFormat(d3.format('.2s')));
+
+  // Baseline cross
+  g.append('line')
+    .attr('x1', x(1)).attr('x2', x(1)).attr('y1', 0).attr('y2', h)
+    .attr('stroke', '#94a3b8').attr('stroke-width', 1).attr('stroke-dasharray', '4,4');
+
+  const spiderColors = ['#2563eb', '#e97319', '#059669', '#dc2626', '#a78bfa'];
+
+  data.forEach((series, i) => {
+    const line = d3.line().x(d => x(d.fraction)).y(d => y(d.value)).curve(d3.curveBasis);
+    g.append('path').datum(series.points)
+      .attr('fill', 'none')
+      .attr('stroke', spiderColors[i % spiderColors.length])
+      .attr('stroke-width', 2.5)
+      .attr('d', line);
+  });
+
+  // Legend
+  const legend = svg.append('g').attr('transform', `translate(${width - margin.right + 10}, ${margin.top})`);
+  data.forEach((series, i) => {
+    const row = legend.append('g').attr('transform', `translate(0, ${i * 20})`);
+    row.append('line').attr('x1', 0).attr('x2', 14).attr('y1', 6).attr('y2', 6)
+      .attr('stroke', spiderColors[i % spiderColors.length]).attr('stroke-width', 2.5);
+    row.append('text').attr('x', 20).attr('y', 10).attr('class', 'chart-legend')
+      .attr('fill', '#555').text(series.label);
+  });
+}
+
+function drawR0Heatmap(data, res, xKey, yKey, xBase, yBase) {
+  const container = document.getElementById('r0-heatmap');
+  if (!container) return;
+  container.innerHTML = '';
+
+  const width = container.clientWidth || 700;
+  const height = 360;
+  const svg = d3.select(container).append('svg').attr('width', width).attr('height', height);
+  const mLeft = 80;
+  const g = svg.append('g').attr('transform', `translate(${mLeft},${margin.top})`);
+  const w = width - mLeft - margin.right - 60; // leave room for color legend
+  const h = height - margin.top - margin.bottom;
+
+  const cellW = w / res;
+  const cellH = h / res;
+
+  const xExtent = [d3.min(data, d => d.xVal), d3.max(data, d => d.xVal)];
+  const yExtent = [d3.min(data, d => d.yVal), d3.max(data, d => d.yVal)];
+
+  const x = d3.scaleLinear().domain(xExtent).range([0, w]);
+  const y = d3.scaleLinear().domain(yExtent).range([h, 0]);
+
+  const r0Max = d3.max(data, d => d.r0);
+  const colorScale = d3.scaleSequential(d3.interpolateRdYlBu).domain([r0Max, 0]);
+
+  // Draw cells
+  data.forEach(d => {
+    g.append('rect')
+      .attr('x', d.xi * cellW)
+      .attr('y', (res - 1 - d.yi) * cellH)
+      .attr('width', cellW + 0.5)
+      .attr('height', cellH + 0.5)
+      .attr('fill', colorScale(d.r0));
+  });
+
+  // R0 = 1 contour line (approximate)
+  const contourPts = [];
+  for (let i = 0; i < res; i++) {
+    for (let j = 0; j < res - 1; j++) {
+      const idx1 = i * res + j;
+      const idx2 = i * res + j + 1;
+      if ((data[idx1].r0 - 1) * (data[idx2].r0 - 1) < 0) {
+        const frac = (1 - data[idx1].r0) / (data[idx2].r0 - data[idx1].r0);
+        contourPts.push({
+          px: i * cellW + cellW / 2,
+          py: (res - 1 - (j + frac)) * cellH,
+        });
+      }
+    }
+  }
+  if (contourPts.length > 1) {
+    contourPts.sort((a, b) => a.px - b.px);
+    const contourLine = d3.line().x(d => d.px).y(d => d.py).curve(d3.curveBasis);
+    g.append('path').datum(contourPts)
+      .attr('fill', 'none').attr('stroke', '#fff').attr('stroke-width', 2.5)
+      .attr('stroke-dasharray', '6,3').attr('d', contourLine);
+    g.append('text')
+      .attr('x', contourPts[Math.floor(contourPts.length / 2)].px + 5)
+      .attr('y', contourPts[Math.floor(contourPts.length / 2)].py - 8)
+      .style('font-size', '0.75rem').attr('fill', '#fff')
+      .style('font-family', 'var(--font-heading)').style('font-weight', '700')
+      .text('R₀ = 1');
+  }
+
+  // Axes
+  const paramLabels = {
+    beta: 'Transmission Rate (β)',
+    gamma: 'Recovery Rate (γ)',
+    sigma: 'Incubation Rate (σ)',
+    mu: 'Mortality Rate (μ)',
+  };
+
+  g.append('g').attr('class', 'axis').attr('transform', `translate(0,${h})`)
+    .call(d3.axisBottom(x).ticks(6).tickFormat(d3.format('.2f')))
+    .append('text').attr('x', w / 2).attr('y', 38).attr('fill', '#555')
+    .attr('text-anchor', 'middle').style('font-size', '0.8rem').text(paramLabels[xKey] || xKey);
+
+  g.append('g').attr('class', 'axis')
+    .call(d3.axisLeft(y).ticks(6).tickFormat(d3.format('.2f')))
+    .append('text').attr('transform', 'rotate(-90)').attr('x', -h / 2).attr('y', -60)
+    .attr('fill', '#555').attr('text-anchor', 'middle').style('font-size', '0.8rem').text(paramLabels[yKey] || yKey);
+
+  // Color bar
+  const cbW = 16;
+  const cbH = h;
+  const cbG = svg.append('g').attr('transform', `translate(${width - margin.right - 40}, ${margin.top})`);
+
+  const cbScale = d3.scaleLinear().domain([0, r0Max]).range([cbH, 0]);
+  const nStops = 50;
+  for (let i = 0; i < nStops; i++) {
+    const v = (r0Max * i) / nStops;
+    cbG.append('rect')
+      .attr('x', 0).attr('y', cbScale(v + r0Max / nStops))
+      .attr('width', cbW).attr('height', cbH / nStops + 1)
+      .attr('fill', colorScale(v));
+  }
+  cbG.append('g').attr('class', 'axis').attr('transform', `translate(${cbW}, 0)`)
+    .call(d3.axisRight(cbScale).ticks(5).tickFormat(d3.format('.1f')));
+  cbG.append('text').attr('x', cbW / 2).attr('y', -8)
+    .attr('text-anchor', 'middle').style('font-size', '0.72rem').attr('fill', '#555')
+    .style('font-family', 'var(--font-heading)').text('R₀');
+}
+
+/* ============================================================
+   SECTION 16: Event Binding & Initialization
    ============================================================ */
 function bindSliderDisplay(sliderId, displayId, formatter) {
   const slider = document.getElementById(sliderId);
@@ -1460,10 +2156,52 @@ function initControls() {
     drawDegreeDistribution();
     drawNetworkCurve();
   });
+
+  // Stochastic controls
+  const stochSliders = [
+    ['stoch-beta-slider', 'stoch-beta-display'],
+    ['stoch-gamma-slider', 'stoch-gamma-display'],
+    ['stoch-pop-slider', 'stoch-pop-display'],
+    ['stoch-i0-slider', 'stoch-i0-display'],
+    ['stoch-runs-slider', 'stoch-runs-display'],
+    ['stoch-show-slider', 'stoch-show-display'],
+  ];
+  stochSliders.forEach(([sid, did]) => bindSliderDisplay(sid, did));
+
+  document.getElementById('stoch-disease')?.addEventListener('change', (e) => {
+    const key = e.target.value;
+    const p = DISEASE_PRESETS[key];
+    if (p && key !== 'custom') {
+      document.getElementById('stoch-beta-slider').value = p.beta;
+      document.getElementById('stoch-gamma-slider').value = p.gamma;
+      document.getElementById('stoch-beta-display').textContent = p.beta.toFixed(2);
+      document.getElementById('stoch-gamma-display').textContent = p.gamma.toFixed(3);
+    }
+  });
+
+  document.getElementById('run-stochastic')?.addEventListener('click', runStochasticSimulation);
+  document.getElementById('reset-stochastic')?.addEventListener('click', () => {
+    ['stoch-trajectories', 'stoch-finalsize', 'stoch-probability'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.innerHTML = '';
+    });
+    ['stoch-r0', 'stoch-epi-prob', 'stoch-median-size', 'stoch-mean-size', 'stoch-fadeout', 'stoch-runs']
+      .forEach(id => { const el = document.getElementById(id); if (el) el.textContent = '—'; });
+  });
+
+  // Sensitivity controls
+  const sensSliders = [
+    ['sens-pop-slider', 'sens-pop-display'],
+    ['sens-range-slider', 'sens-range-display'],
+    ['sens-points-slider', 'sens-points-display'],
+  ];
+  sensSliders.forEach(([sid, did]) => bindSliderDisplay(sid, did));
+
+  document.getElementById('run-sensitivity')?.addEventListener('click', runSensitivityAnalysis);
 }
 
 /* ============================================================
-   SECTION 15: Bootstrap
+   SECTION 17: Bootstrap
    ============================================================ */
 document.addEventListener('DOMContentLoaded', () => {
   initTabs();
