@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SDE Solver Studio | Probability Education</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <link rel="stylesheet" href="../../assets/design-system.css">
+  <link rel="stylesheet" href="../../assets/module-template.css">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="module-page">
+    <header class="module-header">
+      <nav class="breadcrumb"><a href="../../../index.html">Home</a> / <a href="../../../index.html#stochastic-calculus">Stochastic Calculus</a> / SDE Solver</nav>
+      <h1>SDE Solver Studio</h1>
+      <p class="module-subtitle">Simulate and compare solutions of classical stochastic differential equations</p>
+    </header>
+    <div class="module-layout">
+      <div class="viz-area">
+        <div class="viz-container" id="paths-chart">
+          <div class="viz-title">Sample Paths</div>
+          <div class="viz-subtitle" id="sde-equation">dX<sub>t</sub> = &mu;X<sub>t</sub>dt + &sigma;X<sub>t</sub>dB<sub>t</sub></div>
+          <div id="paths-plot"></div>
+        </div>
+        <div class="secondary-panels">
+          <div class="viz-container" id="density-chart">
+            <div class="viz-title">Terminal Distribution X<sub>T</sub></div>
+            <div id="density-plot"></div>
+          </div>
+          <div class="viz-container" id="moments-chart">
+            <div class="viz-title">Mean &amp; Variance Over Time</div>
+            <div id="moments-plot"></div>
+          </div>
+        </div>
+      </div>
+      <aside class="control-panel" id="controls">
+        <h2>Parameters</h2>
+        <div id="sde-select"></div>
+        <div id="param-1"></div>
+        <div id="param-2"></div>
+        <div id="param-3"></div>
+        <div id="x0-slider"></div>
+        <div id="T-slider"></div>
+        <div id="dt-slider"></div>
+        <div id="num-paths-slider"></div>
+        <div id="seed-control"></div>
+        <div class="stats-grid" id="stats"></div>
+      </aside>
+    </div>
+    <div class="info-panel" id="info"></div>
+  </div>
+  <script type="module" src="./module.js"></script>
+</body>
+</html>

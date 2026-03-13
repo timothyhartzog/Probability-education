@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Entropy & KL Divergence | Probability Education</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <link rel="stylesheet" href="../../assets/design-system.css">
+  <link rel="stylesheet" href="../../assets/module-template.css">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="module-page">
+    <header class="module-header">
+      <nav class="breadcrumb"><a href="../../../index.html">Home</a> / <a href="../../../index.html#information-theory">Information Theory</a> / Entropy &amp; KL</nav>
+      <h1>Entropy &amp; KL Divergence</h1>
+      <p class="module-subtitle">Visualize information content, Shannon entropy, cross-entropy, and Kullback-Leibler divergence</p>
+    </header>
+    <div class="module-layout">
+      <div class="viz-area">
+        <div class="viz-container" id="distributions-chart">
+          <div class="viz-title">Distributions P and Q</div>
+          <div class="viz-subtitle" id="dist-subtitle">Drag bars to adjust probabilities</div>
+          <div id="distributions-plot"></div>
+        </div>
+        <div class="secondary-panels">
+          <div class="viz-container" id="entropy-chart">
+            <div class="viz-title">Entropy Decomposition</div>
+            <div id="entropy-plot"></div>
+          </div>
+          <div class="viz-container" id="kl-chart">
+            <div class="viz-title">KL Divergence D<sub>KL</sub>(P || Q)</div>
+            <div id="kl-plot"></div>
+          </div>
+        </div>
+        <div class="viz-container" id="coding-chart">
+          <div class="viz-title">Optimal Coding Interpretation</div>
+          <div class="viz-subtitle">Expected message length under different codes</div>
+          <div id="coding-plot"></div>
+        </div>
+      </div>
+      <aside class="control-panel" id="controls">
+        <h2>Parameters</h2>
+        <div id="preset-select"></div>
+        <div id="num-symbols"></div>
+        <div id="distribution-mode"></div>
+        <div id="param-sliders"></div>
+        <button class="btn btn-primary" id="randomize-btn">Randomize Q</button>
+        <button class="btn btn-secondary" id="match-btn">Set Q = P</button>
+        <div class="stats-grid" id="stats"></div>
+      </aside>
+    </div>
+    <div class="info-panel" id="info"></div>
+  </div>
+  <script type="module" src="./module.js"></script>
+</body>
+</html>

@@ -32,6 +32,12 @@ const MODULES = [
   'mq-5-diagnostic-testing',
   'mq-6-meta-analysis',
   'mq-7-clinical-statistics',
+  '7.1-ito-integral',
+  '7.2-sde-solver',
+  '8.1-prior-posterior',
+  '8.2-mcmc-explorer',
+  '9.1-entropy-kl',
+  '9.2-mutual-information',
 ];
 
 for (const mod of MODULES) {

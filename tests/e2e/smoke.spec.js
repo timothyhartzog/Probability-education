@@ -29,6 +29,12 @@ const MODULES = [
   { id: 'mq-5-diagnostic-testing',  title: 'Diagnostic Test Probability' },
   { id: 'mq-6-meta-analysis',       title: 'Meta-Analysis & Evidence Synthesis' },
   { id: 'mq-7-clinical-statistics', title: 'Clinical Trial Statistics' },
+  { id: '7.1-ito-integral',        title: 'Itô Integral & Stochastic Differentials' },
+  { id: '7.2-sde-solver',          title: 'SDE Solver Studio' },
+  { id: '8.1-prior-posterior',      title: 'Prior-to-Posterior Machine' },
+  { id: '8.2-mcmc-explorer',       title: 'MCMC Sampling Explorer' },
+  { id: '9.1-entropy-kl',          title: 'Entropy & KL Divergence' },
+  { id: '9.2-mutual-information',  title: 'Mutual Information & Channel Capacity' },
 ];
 
 for (const mod of MODULES) {

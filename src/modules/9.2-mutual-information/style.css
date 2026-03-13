@@ -1,0 +1,53 @@
+/* Mutual Information & Channel Capacity — Module Styles */
+
+.viz-area {
+  flex: 1 1 65%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.secondary-panels {
+  display: flex;
+  gap: var(--space-lg);
+}
+
+.secondary-panels .viz-container {
+  flex: 1 1 50%;
+  min-width: 0;
+}
+
+/* Joint distribution heatmap */
+.joint-cell { stroke: #fff; stroke-width: 1; transition: fill 200ms ease; }
+.joint-cell:hover { stroke: var(--color-text); stroke-width: 2; }
+.marginal-bar-x { fill: var(--color-primary); opacity: 0.6; }
+.marginal-bar-y { fill: var(--color-secondary); opacity: 0.6; }
+.cell-label { font-family: var(--font-mono); font-size: 9px; fill: var(--color-text); text-anchor: middle; pointer-events: none; }
+
+/* Venn diagram */
+.venn-circle { stroke-width: 2; fill-opacity: 0.2; }
+.venn-hx { fill: var(--color-primary); stroke: var(--color-primary); }
+.venn-hy { fill: var(--color-secondary); stroke: var(--color-secondary); }
+.venn-label { font-family: var(--font-heading); font-size: 13px; text-anchor: middle; }
+.venn-value { font-family: var(--font-mono); font-size: 14px; font-weight: 700; text-anchor: middle; }
+
+/* Channel diagram */
+.channel-node { stroke-width: 2; }
+.channel-input { fill: var(--color-primary); stroke: var(--color-primary); }
+.channel-output { fill: var(--color-secondary); stroke: var(--color-secondary); }
+.channel-edge { stroke: #94a3b8; fill: none; }
+.channel-edge-label { font-size: 10px; fill: var(--color-text-secondary); font-family: var(--font-mono); }
+
+/* Capacity curve */
+.capacity-curve { fill: none; stroke: var(--color-accent); stroke-width: 2.5; }
+.capacity-fill { fill: var(--color-accent); opacity: 0.1; }
+.current-marker { fill: var(--color-accent); stroke: #fff; stroke-width: 2; }
+.shannon-limit { stroke: var(--color-secondary); stroke-width: 1; stroke-dasharray: 6 3; }
+
+.axis path, .axis line { stroke: #cbd5e1; }
+.axis text { fill: var(--color-text-secondary); font-family: var(--font-heading); font-size: 11px; }
+
+@media (max-width: 900px) {
+  .secondary-panels { flex-direction: column; }
+}
