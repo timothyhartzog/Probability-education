@@ -3,7 +3,7 @@ import { resolve } from 'path';
 
 export default defineConfig({
   root: '.',
-  base: './',
+  base: process.env.GITHUB_ACTIONS ? '/Probability-education/' : './',
   resolve: {
     alias: {
       '@shared': resolve(__dirname, 'src/shared'),
