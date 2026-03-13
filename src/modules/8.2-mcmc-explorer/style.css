@@ -1,0 +1,58 @@
+/* MCMC Sampling Explorer — Module Styles */
+
+.viz-area {
+  flex: 1 1 65%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.secondary-panels {
+  display: flex;
+  gap: var(--space-lg);
+}
+
+.secondary-panels .viz-container {
+  flex: 1 1 50%;
+  min-width: 0;
+}
+
+/* Target contour */
+.contour-line { fill: none; stroke-width: 1; }
+.contour-fill { stroke: none; }
+
+/* MCMC samples */
+.mcmc-sample { r: 2; opacity: 0.4; transition: opacity 150ms; }
+.mcmc-sample.accepted { fill: var(--color-primary); }
+.mcmc-sample.rejected { fill: var(--color-secondary); opacity: 0.2; }
+.mcmc-sample.burnin { fill: #94a3b8; opacity: 0.15; }
+.mcmc-current { r: 5; fill: var(--color-accent); stroke: #fff; stroke-width: 2; }
+
+/* Proposal arrow */
+.proposal-arrow { stroke: var(--color-secondary); stroke-width: 1.5; stroke-dasharray: 4 2; marker-end: url(#arrowhead); }
+
+/* Trace plot */
+.trace-line { fill: none; stroke: var(--color-primary); stroke-width: 1; }
+.burnin-zone { fill: #fef2f2; }
+.burnin-label { font-size: 11px; fill: var(--color-secondary); }
+
+/* ACF bars */
+.acf-bar { fill: var(--color-primary); }
+.acf-bar.negative { fill: var(--color-secondary); }
+.acf-ci { stroke: var(--color-secondary); stroke-dasharray: 4 2; stroke-width: 1; }
+
+/* Histogram */
+.sample-bar { fill: var(--color-primary); opacity: 0.5; stroke: #fff; stroke-width: 0.5; }
+.target-curve { fill: none; stroke: var(--color-accent); stroke-width: 2; }
+
+/* Acceptance rate */
+.acceptance-line { fill: none; stroke: var(--color-accent); stroke-width: 2; }
+.optimal-line { stroke: var(--color-secondary); stroke-width: 1; stroke-dasharray: 6 3; }
+
+.axis path, .axis line { stroke: #cbd5e1; }
+.axis text { fill: var(--color-text-secondary); font-family: var(--font-heading); font-size: 11px; }
+
+@media (max-width: 900px) {
+  .secondary-panels { flex-direction: column; }
+}
