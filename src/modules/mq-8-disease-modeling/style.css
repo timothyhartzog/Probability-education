@@ -365,6 +365,30 @@
   stroke-dasharray: 6,4;
 }
 
+/* --- Stochastic histogram bars ----------------------------- */
+.hist-bar {
+  transition: opacity var(--transition-fast);
+}
+
+.hist-bar:hover {
+  opacity: 1 !important;
+}
+
+/* --- Tornado diagram --------------------------------------- */
+#tornado-chart .axis text {
+  font-size: 0.78rem;
+}
+
+/* --- Heatmap ----------------------------------------------- */
+#r0-heatmap rect {
+  shape-rendering: crispEdges;
+}
+
+/* --- Spider plot ------------------------------------------- */
+#spider-chart path {
+  transition: stroke-width var(--transition-fast);
+}
+
 /* --- Responsive -------------------------------------------- */
 @media (max-width: 768px) {
   .tab-nav {

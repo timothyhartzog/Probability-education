@@ -1,0 +1,235 @@
+/* ============================================================
+   Module FM-1 — Stochastic Processes in Finance
+   ============================================================ */
+
+/* --- Tab Navigation ---------------------------------------- */
+.tab-nav {
+  display: flex;
+  gap: 0;
+  background: var(--color-surface);
+  border-bottom: 2px solid #e2e8f0;
+  padding: 0 var(--space-xl);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.tab-btn {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  padding: var(--space-md) var(--space-lg);
+  border: none;
+  background: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  transition: color var(--transition-fast), border-color var(--transition-fast);
+  white-space: nowrap;
+}
+
+.tab-btn:hover {
+  color: var(--color-primary);
+}
+
+.tab-btn.active {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+  font-weight: 600;
+}
+
+/* --- Tab Content ------------------------------------------- */
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+/* --- Viz Area ---------------------------------------------- */
+.viz-area {
+  flex: 1 1 65%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+/* --- Metrics Row ------------------------------------------- */
+.metrics-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: var(--space-md);
+}
+
+.metric-card {
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: var(--space-md);
+  text-align: center;
+  border: 1px solid #e2e8f0;
+}
+
+.metric-label {
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-xs);
+}
+
+.metric-value {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+/* --- Parameter Help Text ----------------------------------- */
+.param-help {
+  font-family: var(--font-heading);
+  font-size: 0.72rem;
+  color: var(--color-text-secondary);
+  margin-top: 2px;
+  opacity: 0.8;
+}
+
+/* --- Control Section Title --------------------------------- */
+.control-section-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-primary);
+  padding-top: var(--space-sm);
+  border-top: 1px solid #e2e8f0;
+  margin-bottom: 0 !important;
+}
+
+/* --- Compact control groups for portfolio ------------------- */
+.control-group.compact {
+  margin-bottom: var(--space-xs);
+}
+
+.control-group.compact label {
+  font-size: 0.72rem;
+  margin-bottom: 0;
+}
+
+.input-sm {
+  width: 100%;
+  padding: var(--space-xs) var(--space-sm);
+  border: 1px solid #e2e8f0;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.input-sm:focus {
+  border-color: var(--color-primary);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.15);
+}
+
+/* --- Button Row -------------------------------------------- */
+.btn-row {
+  display: flex;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+.btn-sm {
+  font-size: 0.72rem !important;
+  padding: var(--space-xs) var(--space-sm) !important;
+}
+
+/* --- D3 Chart Styles -------------------------------------- */
+.chart-container svg {
+  width: 100%;
+}
+
+.axis text {
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  fill: var(--color-text-secondary);
+}
+
+.axis line,
+.axis path {
+  stroke: #e2e8f0;
+}
+
+.axis-label {
+  font-family: var(--font-heading);
+  font-size: 0.78rem;
+  fill: var(--color-text-secondary);
+}
+
+.grid line {
+  stroke: #f1f5f9;
+  stroke-dasharray: 2,2;
+}
+
+.grid path {
+  stroke: none;
+}
+
+/* --- Histogram bars ---------------------------------------- */
+.hist-bar {
+  transition: opacity var(--transition-fast);
+}
+
+.hist-bar:hover {
+  opacity: 1 !important;
+}
+
+/* --- Equation blocks --------------------------------------- */
+.equation-block {
+  margin: var(--space-md) 0;
+  padding: var(--space-md) var(--space-lg);
+  background: #f8fafc;
+  border-radius: var(--radius-md);
+  overflow-x: auto;
+  text-align: center;
+}
+
+/* --- Literature Panel -------------------------------------- */
+.literature-panel {
+  max-width: 900px;
+  margin: var(--space-xl) auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.references-list li {
+  margin-bottom: var(--space-sm);
+  line-height: 1.6;
+}
+
+/* --- Responsive -------------------------------------------- */
+@media (max-width: 768px) {
+  .tab-nav {
+    padding: 0 var(--space-md);
+  }
+
+  .tab-btn {
+    padding: var(--space-sm) var(--space-md);
+    font-size: 0.78rem;
+  }
+
+  .metrics-row {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .metrics-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

@@ -1,0 +1,380 @@
+/* ============================================================
+   Module MQ-9 — Vaccine-Preventable Disease Simulator
+   ============================================================ */
+
+/* --- Tab Navigation ---------------------------------------- */
+.tab-nav {
+  display: flex;
+  gap: 0;
+  background: var(--color-surface);
+  border-bottom: 2px solid #e2e8f0;
+  padding: 0 var(--space-xl);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.tab-btn {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  padding: var(--space-md) var(--space-lg);
+  border: none;
+  background: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  transition: color var(--transition-fast), border-color var(--transition-fast);
+  white-space: nowrap;
+}
+
+.tab-btn:hover { color: var(--color-primary); }
+
+.tab-btn.active {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+  font-weight: 600;
+}
+
+/* --- Tab Content ------------------------------------------- */
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* --- Viz Area ---------------------------------------------- */
+.viz-area {
+  flex: 1 1 65%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+/* --- Metrics Row ------------------------------------------- */
+.metrics-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: var(--space-md);
+}
+
+.metric-card {
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: var(--space-md);
+  text-align: center;
+  border: 1px solid #e2e8f0;
+}
+
+.metric-label {
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-xs);
+}
+
+.metric-value {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+/* --- Control helpers --------------------------------------- */
+.param-help {
+  font-family: var(--font-heading);
+  font-size: 0.72rem;
+  color: var(--color-text-secondary);
+  margin-top: 2px;
+  opacity: 0.8;
+}
+
+.btn-row {
+  display: flex;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+.control-section-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-primary);
+  padding-top: var(--space-sm);
+  border-top: 1px solid #e2e8f0;
+  margin-bottom: 0 !important;
+}
+
+/* --- Override params --------------------------------------- */
+.override-params {
+  border: 1px dashed #cbd5e1;
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  margin-top: var(--space-sm);
+  background: #f8fafc;
+}
+
+/* --- D3 Chart Styles --------------------------------------- */
+.epidemic-line {
+  fill: none;
+  stroke-width: 2.5;
+}
+
+.line-S { stroke: #60a5fa; }
+.line-E { stroke: #fbbf24; }
+.line-I { stroke: #ef4444; }
+.line-R { stroke: #34d399; }
+.line-D { stroke: #6b7280; }
+
+.chart-legend {
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+}
+
+.axis text {
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  fill: var(--color-text-secondary);
+}
+
+.axis line, .axis path { stroke: #e2e8f0; }
+
+.grid line {
+  stroke: #f1f5f9;
+  stroke-dasharray: 2,2;
+}
+
+.grid path { stroke: none; }
+
+.tooltip-line {
+  stroke: #94a3b8;
+  stroke-width: 1;
+  stroke-dasharray: 4,4;
+}
+
+/* --- Chart tooltip ----------------------------------------- */
+.chart-tooltip {
+  position: absolute;
+  pointer-events: none;
+  background: rgba(15, 23, 42, 0.92);
+  color: #fff;
+  font-family: var(--font-heading);
+  font-size: 0.78rem;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-md);
+  z-index: 100;
+  line-height: 1.5;
+  max-width: 220px;
+}
+
+.chart-tooltip .tt-title {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.chart-tooltip .tt-row {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+
+.chart-tooltip .tt-color {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+
+/* --- Comparison lines -------------------------------------- */
+.compare-novax { stroke: #ef4444; stroke-width: 2.5; fill: none; }
+.compare-vax { stroke: #34d399; stroke-width: 2.5; fill: none; }
+
+/* --- Disease info card ------------------------------------- */
+#disease-info-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-sm) var(--space-lg);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  padding: var(--space-md);
+}
+
+#disease-info-content .info-label {
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+#disease-info-content .info-value {
+  font-family: var(--font-mono);
+  color: var(--color-primary);
+}
+
+#disease-info-content .info-desc {
+  grid-column: 1 / -1;
+  color: var(--color-text-secondary);
+  font-style: italic;
+  line-height: 1.5;
+}
+
+/* --- Disease comparison bars ------------------------------- */
+.bar-label {
+  font-family: var(--font-heading);
+  font-size: 0.72rem;
+  fill: var(--color-text-primary);
+}
+
+.bar-value {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  fill: var(--color-text-secondary);
+}
+
+/* --- Bubble chart ------------------------------------------ */
+.bubble-node {
+  stroke: #fff;
+  stroke-width: 1.5;
+  cursor: pointer;
+  transition: opacity var(--transition-fast);
+}
+
+.bubble-node:hover { opacity: 0.8; }
+
+.bubble-label {
+  font-family: var(--font-heading);
+  font-size: 0.65rem;
+  fill: var(--color-text-primary);
+  pointer-events: none;
+}
+
+/* --- Threshold chart --------------------------------------- */
+.threshold-area {
+  fill: #ef4444;
+  opacity: 0.08;
+}
+
+.threshold-line {
+  stroke: #dc2626;
+  stroke-width: 1.5;
+  stroke-dasharray: 6,4;
+}
+
+.herd-line {
+  stroke: #059669;
+  stroke-width: 2;
+  stroke-dasharray: 8,4;
+}
+
+/* --- Timeline ---------------------------------------------- */
+.timeline-line {
+  stroke: var(--color-primary);
+  stroke-width: 2;
+}
+
+.timeline-dot {
+  fill: var(--color-primary);
+  stroke: #fff;
+  stroke-width: 2;
+  cursor: pointer;
+}
+
+.timeline-dot:hover { fill: var(--color-secondary); }
+
+.timeline-label {
+  font-family: var(--font-heading);
+  font-size: 0.68rem;
+  fill: var(--color-text-primary);
+}
+
+.timeline-year {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  fill: var(--color-text-secondary);
+}
+
+/* --- Disease table ----------------------------------------- */
+.disease-table-wrapper {
+  overflow-x: auto;
+  margin: var(--space-lg) 0;
+}
+
+.disease-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+}
+
+.disease-table th,
+.disease-table td {
+  padding: var(--space-sm) var(--space-md);
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.disease-table th {
+  font-weight: 600;
+  color: var(--color-primary);
+  background: #f8fafc;
+  white-space: nowrap;
+}
+
+.disease-table tr:hover td { background: #f8fafc; }
+
+/* --- Disease ref table (sidebar) --------------------------- */
+.disease-ref-table {
+  margin-top: var(--space-lg);
+  border-top: 1px solid #e2e8f0;
+  padding-top: var(--space-md);
+}
+
+.disease-ref-table h3 {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  margin-bottom: var(--space-sm);
+}
+
+#ref-table-content {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+#ref-table-content table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+#ref-table-content td {
+  padding: 2px 4px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+/* --- Literature panel -------------------------------------- */
+.literature-panel {
+  max-width: 900px;
+  margin: var(--space-xl) auto;
+}
+
+.references-list li {
+  margin-bottom: var(--space-sm);
+  line-height: 1.6;
+}
+
+/* --- Responsive -------------------------------------------- */
+@media (max-width: 768px) {
+  .tab-nav { padding: 0 var(--space-md); }
+  .tab-btn { padding: var(--space-sm) var(--space-md); font-size: 0.78rem; }
+  .metrics-row { grid-template-columns: repeat(3, 1fr); }
+  #disease-info-content { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 480px) {
+  .metrics-row { grid-template-columns: repeat(2, 1fr); }
+}

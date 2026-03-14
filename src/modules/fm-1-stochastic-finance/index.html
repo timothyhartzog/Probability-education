@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stochastic Processes in Finance — Interactive Simulator</title>
+
+  <!-- KaTeX CSS -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
+    integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV"
+    crossorigin="anonymous"
+  />
+
+  <!-- Platform styles -->
+  <link rel="stylesheet" href="../../assets/design-system.css" />
+  <link rel="stylesheet" href="../../assets/module-template.css" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="module-page">
+
+    <!-- Header -->
+    <header class="module-header">
+      <ul class="breadcrumb">
+        <li><a href="../../../index.html">Home</a></li>
+        <li><a href="#">Financial Modeling</a></li>
+        <li>Stochastic Processes in Finance</li>
+      </ul>
+      <h1>Stochastic Processes in Finance</h1>
+      <p class="module-subtitle">
+        From Geometric Brownian Motion to portfolio optimization — interactive
+        simulations of quantitative finance models with full parameter control.
+      </p>
+    </header>
+
+    <!-- Tab Navigation -->
+    <nav class="tab-nav" role="tablist">
+      <button class="tab-btn active" data-tab="gbm" role="tab">GBM &amp; Stock Paths</button>
+      <button class="tab-btn" data-tab="blackscholes" role="tab">Black-Scholes</button>
+      <button class="tab-btn" data-tab="portfolio" role="tab">Portfolio Optimization</button>
+      <button class="tab-btn" data-tab="var" role="tab">VaR &amp; Risk</button>
+      <button class="tab-btn" data-tab="interest" role="tab">Interest Rate Models</button>
+      <button class="tab-btn" data-tab="jump" role="tab">Jump-Diffusion</button>
+      <button class="tab-btn" data-tab="theory" role="tab">Theory &amp; Literature</button>
+    </nav>
+
+    <!-- ============================================================
+         TAB 1 — Geometric Brownian Motion & Stock Price Simulation
+         ============================================================ -->
+    <div id="tab-gbm" class="tab-content active">
+      <div class="module-layout">
+        <div class="viz-area">
+          <div class="card">
+            <h2 class="card-title">Simulated Stock Price Paths</h2>
+            <div id="gbm-chart" class="chart-container" style="height:420px;"></div>
+          </div>
+          <div class="metrics-row" id="gbm-metrics">
+            <div class="metric-card"><div class="metric-label">Mean Final</div><div class="metric-value" id="gbm-mean-final">—</div></div>
+            <div class="metric-card"><div class="metric-label">Median Final</div><div class="metric-value" id="gbm-median-final">—</div></div>
+            <div class="metric-card"><div class="metric-label">Std Dev</div><div class="metric-value" id="gbm-std">—</div></div>
+            <div class="metric-card"><div class="metric-label">Max Drawdown</div><div class="metric-value" id="gbm-maxdd">—</div></div>
+            <div class="metric-card"><div class="metric-label">P(Loss)</div><div class="metric-value" id="gbm-ploss">—</div></div>
+          </div>
+          <div class="card">
+            <h2 class="card-title">Final Price Distribution</h2>
+            <div id="gbm-dist-chart" class="chart-container" style="height:280px;"></div>
+          </div>
+        </div>
+        <aside class="control-panel">
+          <h2 class="panel-title">GBM Parameters</h2>
+          <div class="control-group">
+            <label>Initial Price S₀ ($)</label>
+            <input type="range" id="gbm-s0" min="10" max="500" value="100" step="5" />
+            <output id="gbm-s0-val">100</output>
+            <div class="param-help">Starting stock price</div>
+          </div>
+          <div class="control-group">
+            <label>Drift μ (annual)</label>
+            <input type="range" id="gbm-mu" min="-0.2" max="0.5" value="0.08" step="0.01" />
+            <output id="gbm-mu-val">0.08</output>
+            <div class="param-help">Expected annual return</div>
+          </div>
+          <div class="control-group">
+            <label>Volatility σ (annual)</label>
+            <input type="range" id="gbm-sigma" min="0.05" max="1.0" value="0.20" step="0.01" />
+            <output id="gbm-sigma-val">0.20</output>
+            <div class="param-help">Annual standard deviation of returns</div>
+          </div>
+          <div class="control-group">
+            <label>Time Horizon T (years)</label>
+            <input type="range" id="gbm-T" min="0.25" max="10" value="1" step="0.25" />
+            <output id="gbm-T-val">1</output>
+          </div>
+          <div class="control-group">
+            <label>Time Steps</label>
+            <input type="range" id="gbm-steps" min="50" max="1000" value="252" step="1" />
+            <output id="gbm-steps-val">252</output>
+            <div class="param-help">252 ≈ trading days/year</div>
+          </div>
+          <div class="control-group">
+            <label>Number of Paths</label>
+            <input type="range" id="gbm-paths" min="1" max="500" value="50" step="1" />
+            <output id="gbm-paths-val">50</output>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-primary" id="gbm-run">Simulate</button>
+            <button class="btn btn-outline" id="gbm-reset">Reset</button>
+          </div>
+          <div class="control-section-title">Presets</div>
+          <div class="btn-row">
+            <button class="btn btn-outline btn-sm" data-preset="sp500">S&amp;P 500</button>
+            <button class="btn btn-outline btn-sm" data-preset="crypto">Crypto</button>
+            <button class="btn btn-outline btn-sm" data-preset="bond">Gov Bond</button>
+            <button class="btn btn-outline btn-sm" data-preset="penny">Penny Stock</button>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         TAB 2 — Black-Scholes Options Pricing
+         ============================================================ -->
+    <div id="tab-blackscholes" class="tab-content">
+      <div class="module-layout">
+        <div class="viz-area">
+          <div class="card">
+            <h2 class="card-title">Option Price Surface</h2>
+            <div id="bs-surface-chart" class="chart-container" style="height:400px;"></div>
+          </div>
+          <div class="metrics-row" id="bs-metrics">
+            <div class="metric-card"><div class="metric-label">Call Price</div><div class="metric-value" id="bs-call">—</div></div>
+            <div class="metric-card"><div class="metric-label">Put Price</div><div class="metric-value" id="bs-put">—</div></div>
+            <div class="metric-card"><div class="metric-label">Delta (Δ)</div><div class="metric-value" id="bs-delta">—</div></div>
+            <div class="metric-card"><div class="metric-label">Gamma (Γ)</div><div class="metric-value" id="bs-gamma">—</div></div>
+            <div class="metric-card"><div class="metric-label">Vega (ν)</div><div class="metric-value" id="bs-vega">—</div></div>
+            <div class="metric-card"><div class="metric-label">Theta (Θ)</div><div class="metric-value" id="bs-theta">—</div></div>
+          </div>
+          <div class="card">
+            <h2 class="card-title">Greeks vs Spot Price</h2>
+            <div id="bs-greeks-chart" class="chart-container" style="height:320px;"></div>
+          </div>
+          <div class="card">
+            <h2 class="card-title">P&amp;L at Expiry</h2>
+            <div id="bs-pnl-chart" class="chart-container" style="height:280px;"></div>
+          </div>
+        </div>
+        <aside class="control-panel">
+          <h2 class="panel-title">Black-Scholes Parameters</h2>
+          <div class="control-group">
+            <label>Spot Price S ($)</label>
+            <input type="range" id="bs-S" min="10" max="300" value="100" step="1" />
+            <output id="bs-S-val">100</output>
+          </div>
+          <div class="control-group">
+            <label>Strike Price K ($)</label>
+            <input type="range" id="bs-K" min="10" max="300" value="100" step="1" />
+            <output id="bs-K-val">100</output>
+          </div>
+          <div class="control-group">
+            <label>Time to Expiry T (years)</label>
+            <input type="range" id="bs-T" min="0.01" max="3" value="0.5" step="0.01" />
+            <output id="bs-T-val">0.50</output>
+          </div>
+          <div class="control-group">
+            <label>Risk-Free Rate r</label>
+            <input type="range" id="bs-r" min="0" max="0.15" value="0.05" step="0.005" />
+            <output id="bs-r-val">0.050</output>
+          </div>
+          <div class="control-group">
+            <label>Volatility σ</label>
+            <input type="range" id="bs-sigma" min="0.05" max="1.0" value="0.20" step="0.01" />
+            <output id="bs-sigma-val">0.20</output>
+          </div>
+          <div class="control-group">
+            <label>Dividend Yield q</label>
+            <input type="range" id="bs-q" min="0" max="0.08" value="0" step="0.005" />
+            <output id="bs-q-val">0.000</output>
+          </div>
+          <div class="control-group">
+            <label>Greek to Plot</label>
+            <select id="bs-greek-select">
+              <option value="delta">Delta (Δ)</option>
+              <option value="gamma">Gamma (Γ)</option>
+              <option value="vega">Vega (ν)</option>
+              <option value="theta">Theta (Θ)</option>
+              <option value="rho">Rho (ρ)</option>
+            </select>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-primary" id="bs-run">Calculate</button>
+            <button class="btn btn-outline" id="bs-reset">Reset</button>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         TAB 3 — Portfolio Optimization (Markowitz)
+         ============================================================ -->
+    <div id="tab-portfolio" class="tab-content">
+      <div class="module-layout">
+        <div class="viz-area">
+          <div class="card">
+            <h2 class="card-title">Efficient Frontier</h2>
+            <div id="frontier-chart" class="chart-container" style="height:420px;"></div>
+          </div>
+          <div class="metrics-row" id="port-metrics">
+            <div class="metric-card"><div class="metric-label">Optimal Return</div><div class="metric-value" id="port-return">—</div></div>
+            <div class="metric-card"><div class="metric-label">Optimal Risk</div><div class="metric-value" id="port-risk">—</div></div>
+            <div class="metric-card"><div class="metric-label">Sharpe Ratio</div><div class="metric-value" id="port-sharpe">—</div></div>
+            <div class="metric-card"><div class="metric-label">Min Var σ</div><div class="metric-value" id="port-minvar">—</div></div>
+          </div>
+          <div class="card">
+            <h2 class="card-title">Optimal Allocation</h2>
+            <div id="allocation-chart" class="chart-container" style="height:280px;"></div>
+          </div>
+        </div>
+        <aside class="control-panel">
+          <h2 class="panel-title">Portfolio Parameters</h2>
+          <div class="control-group">
+            <label>Number of Assets</label>
+            <input type="range" id="port-n" min="2" max="8" value="4" step="1" />
+            <output id="port-n-val">4</output>
+          </div>
+          <div class="control-group">
+            <label>Risk-Free Rate</label>
+            <input type="range" id="port-rf" min="0" max="0.10" value="0.03" step="0.005" />
+            <output id="port-rf-val">0.030</output>
+          </div>
+          <div class="control-group">
+            <label>Monte Carlo Portfolios</label>
+            <input type="range" id="port-mc" min="1000" max="20000" value="5000" step="1000" />
+            <output id="port-mc-val">5000</output>
+          </div>
+          <div class="control-group">
+            <label>Allow Short Selling</label>
+            <select id="port-short">
+              <option value="no">No (long only)</option>
+              <option value="yes">Yes</option>
+            </select>
+          </div>
+          <div class="control-section-title">Asset Returns (μ)</div>
+          <div id="port-returns-inputs"></div>
+          <div class="control-section-title">Asset Volatilities (σ)</div>
+          <div id="port-vol-inputs"></div>
+          <div class="control-section-title">Correlations</div>
+          <div id="port-corr-inputs"></div>
+          <div class="btn-row">
+            <button class="btn btn-primary" id="port-run">Optimize</button>
+            <button class="btn btn-outline" id="port-reset">Reset</button>
+          </div>
+          <div class="control-section-title">Presets</div>
+          <div class="btn-row">
+            <button class="btn btn-outline btn-sm" data-port-preset="classic60_40">60/40 Stocks-Bonds</button>
+            <button class="btn btn-outline btn-sm" data-port-preset="tech">Tech Heavy</button>
+            <button class="btn btn-outline btn-sm" data-port-preset="diverse">Diversified</button>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         TAB 4 — Value at Risk & CVaR
+         ============================================================ -->
+    <div id="tab-var" class="tab-content">
+      <div class="module-layout">
+        <div class="viz-area">
+          <div class="card">
+            <h2 class="card-title">Portfolio Return Distribution with VaR / CVaR</h2>
+            <div id="var-chart" class="chart-container" style="height:380px;"></div>
+          </div>
+          <div class="metrics-row" id="var-metrics">
+            <div class="metric-card"><div class="metric-label">VaR (95%)</div><div class="metric-value" id="var-95">—</div></div>
+            <div class="metric-card"><div class="metric-label">VaR (99%)</div><div class="metric-value" id="var-99">—</div></div>
+            <div class="metric-card"><div class="metric-label">CVaR (95%)</div><div class="metric-value" id="cvar-95">—</div></div>
+            <div class="metric-card"><div class="metric-label">CVaR (99%)</div><div class="metric-value" id="cvar-99">—</div></div>
+            <div class="metric-card"><div class="metric-label">Skewness</div><div class="metric-value" id="var-skew">—</div></div>
+            <div class="metric-card"><div class="metric-label">Kurtosis</div><div class="metric-value" id="var-kurt">—</div></div>
+          </div>
+          <div class="card">
+            <h2 class="card-title">VaR Backtesting — Exceedance Over Time</h2>
+            <div id="var-backtest-chart" class="chart-container" style="height:280px;"></div>
+          </div>
+        </div>
+        <aside class="control-panel">
+          <h2 class="panel-title">Risk Parameters</h2>
+          <div class="control-group">
+            <label>Portfolio Value ($)</label>
+            <input type="range" id="var-portfolio" min="10000" max="10000000" value="1000000" step="10000" />
+            <output id="var-portfolio-val">1,000,000</output>
+          </div>
+          <div class="control-group">
+            <label>Daily Mean Return</label>
+            <input type="range" id="var-mu" min="-0.002" max="0.005" value="0.0003" step="0.0001" />
+            <output id="var-mu-val">0.0003</output>
+          </div>
+          <div class="control-group">
+            <label>Daily Volatility</label>
+            <input type="range" id="var-vol" min="0.005" max="0.08" value="0.015" step="0.001" />
+            <output id="var-vol-val">0.015</output>
+          </div>
+          <div class="control-group">
+            <label>Horizon (days)</label>
+            <input type="range" id="var-horizon" min="1" max="30" value="1" step="1" />
+            <output id="var-horizon-val">1</output>
+          </div>
+          <div class="control-group">
+            <label>Simulations</label>
+            <input type="range" id="var-sims" min="1000" max="100000" value="10000" step="1000" />
+            <output id="var-sims-val">10000</output>
+          </div>
+          <div class="control-group">
+            <label>Method</label>
+            <select id="var-method">
+              <option value="historical">Historical Simulation</option>
+              <option value="parametric">Parametric (Normal)</option>
+              <option value="mc" selected>Monte Carlo</option>
+              <option value="t">Student-t (fat tails)</option>
+            </select>
+          </div>
+          <div class="control-group">
+            <label>Degrees of Freedom (t-dist)</label>
+            <input type="range" id="var-df" min="3" max="30" value="5" step="1" />
+            <output id="var-df-val">5</output>
+            <div class="param-help">Lower = heavier tails</div>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-primary" id="var-run">Calculate</button>
+            <button class="btn btn-outline" id="var-reset">Reset</button>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         TAB 5 — Interest Rate Models
+         ============================================================ -->
+    <div id="tab-interest" class="tab-content">
+      <div class="module-layout">
+        <div class="viz-area">
+          <div class="card">
+            <h2 class="card-title">Interest Rate Paths</h2>
+            <div id="ir-chart" class="chart-container" style="height:400px;"></div>
+          </div>
+          <div class="metrics-row" id="ir-metrics">
+            <div class="metric-card"><div class="metric-label">Mean Final Rate</div><div class="metric-value" id="ir-mean">—</div></div>
+            <div class="metric-card"><div class="metric-label">Std Dev</div><div class="metric-value" id="ir-std">—</div></div>
+            <div class="metric-card"><div class="metric-label">Long-Run Mean</div><div class="metric-value" id="ir-longrun">—</div></div>
+            <div class="metric-card"><div class="metric-label">Half-Life</div><div class="metric-value" id="ir-halflife">—</div></div>
+          </div>
+          <div class="card">
+            <h2 class="card-title">Term Structure / Yield Curve</h2>
+            <div id="ir-yield-chart" class="chart-container" style="height:280px;"></div>
+          </div>
+        </div>
+        <aside class="control-panel">
+          <h2 class="panel-title">Interest Rate Model</h2>
+          <div class="control-group">
+            <label>Model</label>
+            <select id="ir-model">
+              <option value="vasicek">Vasicek</option>
+              <option value="cir">Cox-Ingersoll-Ross (CIR)</option>
+              <option value="hull-white">Hull-White</option>
+            </select>
+          </div>
+          <div class="control-group">
+            <label>Initial Rate r₀</label>
+            <input type="range" id="ir-r0" min="0.001" max="0.15" value="0.05" step="0.001" />
+            <output id="ir-r0-val">0.050</output>
+          </div>
+          <div class="control-group">
+            <label>Mean Reversion Speed κ</label>
+            <input type="range" id="ir-kappa" min="0.01" max="2.0" value="0.5" step="0.01" />
+            <output id="ir-kappa-val">0.50</output>
+          </div>
+          <div class="control-group">
+            <label>Long-Run Mean θ</label>
+            <input type="range" id="ir-theta" min="0.005" max="0.15" value="0.05" step="0.001" />
+            <output id="ir-theta-val">0.050</output>
+          </div>
+          <div class="control-group">
+            <label>Volatility σ</label>
+            <input type="range" id="ir-sigma" min="0.005" max="0.10" value="0.02" step="0.001" />
+            <output id="ir-sigma-val">0.020</output>
+          </div>
+          <div class="control-group">
+            <label>Time Horizon (years)</label>
+            <input type="range" id="ir-T" min="1" max="30" value="10" step="1" />
+            <output id="ir-T-val">10</output>
+          </div>
+          <div class="control-group">
+            <label>Number of Paths</label>
+            <input type="range" id="ir-paths" min="5" max="200" value="30" step="5" />
+            <output id="ir-paths-val">30</output>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-primary" id="ir-run">Simulate</button>
+            <button class="btn btn-outline" id="ir-reset">Reset</button>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         TAB 6 — Jump-Diffusion (Merton)
+         ============================================================ -->
+    <div id="tab-jump" class="tab-content">
+      <div class="module-layout">
+        <div class="viz-area">
+          <div class="card">
+            <h2 class="card-title">Jump-Diffusion Stock Paths</h2>
+            <div id="jd-chart" class="chart-container" style="height:400px;"></div>
+          </div>
+          <div class="metrics-row" id="jd-metrics">
+            <div class="metric-card"><div class="metric-label">Mean Final</div><div class="metric-value" id="jd-mean">—</div></div>
+            <div class="metric-card"><div class="metric-label">Std Dev</div><div class="metric-value" id="jd-std">—</div></div>
+            <div class="metric-card"><div class="metric-label">Avg Jumps/Path</div><div class="metric-value" id="jd-jumps">—</div></div>
+            <div class="metric-card"><div class="metric-label">Kurtosis</div><div class="metric-value" id="jd-kurt">—</div></div>
+          </div>
+          <div class="card">
+            <h2 class="card-title">Return Distribution: GBM vs Jump-Diffusion</h2>
+            <div id="jd-dist-chart" class="chart-container" style="height:280px;"></div>
+          </div>
+        </div>
+        <aside class="control-panel">
+          <h2 class="panel-title">Merton Jump-Diffusion</h2>
+          <div class="control-group">
+            <label>Initial Price S₀ ($)</label>
+            <input type="range" id="jd-s0" min="10" max="500" value="100" step="5" />
+            <output id="jd-s0-val">100</output>
+          </div>
+          <div class="control-group">
+            <label>Drift μ</label>
+            <input type="range" id="jd-mu" min="-0.1" max="0.3" value="0.08" step="0.01" />
+            <output id="jd-mu-val">0.08</output>
+          </div>
+          <div class="control-group">
+            <label>Diffusion Volatility σ</label>
+            <input type="range" id="jd-sigma" min="0.05" max="0.80" value="0.15" step="0.01" />
+            <output id="jd-sigma-val">0.15</output>
+          </div>
+          <div class="control-group">
+            <label>Jump Intensity λ (jumps/year)</label>
+            <input type="range" id="jd-lambda" min="0" max="10" value="2" step="0.5" />
+            <output id="jd-lambda-val">2.0</output>
+            <div class="param-help">Average number of jumps per year</div>
+          </div>
+          <div class="control-group">
+            <label>Mean Jump Size μ_J</label>
+            <input type="range" id="jd-muj" min="-0.3" max="0.3" value="-0.05" step="0.01" />
+            <output id="jd-muj-val">-0.05</output>
+            <div class="param-help">Mean of log-jump size (negative = crash)</div>
+          </div>
+          <div class="control-group">
+            <label>Jump Volatility σ_J</label>
+            <input type="range" id="jd-sigmaj" min="0.01" max="0.5" value="0.10" step="0.01" />
+            <output id="jd-sigmaj-val">0.10</output>
+          </div>
+          <div class="control-group">
+            <label>Time Horizon (years)</label>
+            <input type="range" id="jd-T" min="0.25" max="5" value="1" step="0.25" />
+            <output id="jd-T-val">1.00</output>
+          </div>
+          <div class="control-group">
+            <label>Number of Paths</label>
+            <input type="range" id="jd-paths" min="5" max="300" value="50" step="5" />
+            <output id="jd-paths-val">50</output>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-primary" id="jd-run">Simulate</button>
+            <button class="btn btn-outline" id="jd-reset">Reset</button>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         TAB 7 — Theory & Literature
+         ============================================================ -->
+    <div id="tab-theory" class="tab-content">
+      <div class="literature-panel">
+        <div class="card">
+          <h2 class="card-title">Geometric Brownian Motion</h2>
+          <p>The foundational model for stock price dynamics:</p>
+          <div class="equation-block" id="eq-gbm"></div>
+          <p>
+            The solution is log-normal: S(t) = S₀ exp[(μ − σ²/2)t + σW(t)], where W(t) is
+            a standard Wiener process. This implies returns are normally distributed but
+            prices are always positive.
+          </p>
+        </div>
+
+        <div class="card">
+          <h2 class="card-title">Black-Scholes Formula</h2>
+          <p>The closed-form solution for European option pricing:</p>
+          <div class="equation-block" id="eq-bs-call"></div>
+          <div class="equation-block" id="eq-bs-put"></div>
+          <div class="equation-block" id="eq-bs-d1d2"></div>
+          <p>
+            Key assumptions: constant volatility, no dividends (generalized with q),
+            continuous trading, no transaction costs, risk-neutral pricing.
+          </p>
+        </div>
+
+        <div class="card">
+          <h2 class="card-title">The Greeks</h2>
+          <p>Partial derivatives measuring option sensitivity:</p>
+          <div class="equation-block" id="eq-greeks"></div>
+          <p>
+            Delta (Δ) measures price sensitivity, Gamma (Γ) the rate of delta change,
+            Vega (ν) volatility sensitivity, Theta (Θ) time decay, and Rho (ρ) interest rate sensitivity.
+          </p>
+        </div>
+
+        <div class="card">
+          <h2 class="card-title">Portfolio Theory (Markowitz)</h2>
+          <p>Mean-variance optimization for an N-asset portfolio:</p>
+          <div class="equation-block" id="eq-portfolio"></div>
+          <p>
+            The efficient frontier is the set of portfolios achieving maximum return for a given
+            risk level. The tangency portfolio maximizes the Sharpe ratio (μ_p − r_f)/σ_p.
+          </p>
+        </div>
+
+        <div class="card">
+          <h2 class="card-title">Value at Risk (VaR) & CVaR</h2>
+          <div class="equation-block" id="eq-var"></div>
+          <p>
+            VaR gives the maximum loss at a confidence level over a time horizon.
+            CVaR (Expected Shortfall) is the expected loss given that the loss exceeds VaR —
+            it is a coherent risk measure unlike VaR.
+          </p>
+        </div>
+
+        <div class="card">
+          <h2 class="card-title">Interest Rate Models</h2>
+          <div class="equation-block" id="eq-vasicek"></div>
+          <div class="equation-block" id="eq-cir"></div>
+          <p>
+            <strong>Vasicek:</strong> mean-reverting with possible negative rates. Analytical bond pricing.
+            <br/>
+            <strong>CIR:</strong> Square-root diffusion ensures non-negative rates. Both are single-factor
+            short-rate models. The Feller condition 2κθ > σ² prevents zero being reached in CIR.
+          </p>
+        </div>
+
+        <div class="card">
+          <h2 class="card-title">Merton Jump-Diffusion</h2>
+          <div class="equation-block" id="eq-merton"></div>
+          <p>
+            Extends GBM with Poisson-driven jumps of random log-normal magnitude. Captures
+            fat tails, volatility smiles, and sudden crashes that GBM cannot reproduce.
+            λ is the jump intensity, J ~ N(μ_J, σ_J²) is the jump size in log-space.
+          </p>
+        </div>
+
+        <div class="card">
+          <h2 class="card-title">References</h2>
+          <ol class="references-list">
+            <li>Black, F. & Scholes, M. (1973). "The Pricing of Options and Corporate Liabilities." <em>Journal of Political Economy</em>, 81(3), 637–654.</li>
+            <li>Merton, R.C. (1976). "Option Pricing When Underlying Stock Returns Are Discontinuous." <em>Journal of Financial Economics</em>, 3, 125–144.</li>
+            <li>Markowitz, H. (1952). "Portfolio Selection." <em>The Journal of Finance</em>, 7(1), 77–91.</li>
+            <li>Vasicek, O. (1977). "An Equilibrium Characterization of the Term Structure." <em>Journal of Financial Economics</em>, 5(2), 177–188.</li>
+            <li>Cox, J.C., Ingersoll, J.E. & Ross, S.A. (1985). "A Theory of the Term Structure of Interest Rates." <em>Econometrica</em>, 53(2), 385–407.</li>
+            <li>Hull, J. (2022). <em>Options, Futures, and Other Derivatives</em> (11th ed.). Pearson.</li>
+            <li>Shreve, S.E. (2004). <em>Stochastic Calculus for Finance II: Continuous-Time Models</em>. Springer.</li>
+            <li>Glasserman, P. (2003). <em>Monte Carlo Methods in Financial Engineering</em>. Springer.</li>
+            <li>McNeil, A.J., Frey, R. & Embrechts, P. (2015). <em>Quantitative Risk Management</em> (2nd ed.). Princeton.</li>
+            <li>Jorion, P. (2006). <em>Value at Risk</em> (3rd ed.). McGraw-Hill.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- .module-page -->
+
+  <!-- D3.js -->
+  <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+  <!-- KaTeX -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"
+    integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Ez8jszBKY+yrz0w0R+01SXAPDRlQDUBH+pT1n3V"
+    crossorigin="anonymous"
+  ></script>
+  <!-- Module JS -->
+  <script type="module" src="./module.js"></script>
+</body>
+</html>
