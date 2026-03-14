@@ -4,6 +4,9 @@
    VaR/CVaR, Interest Rates, Jump-Diffusion
    ============================================================ */
 
+import * as d3 from 'd3';
+import '../../lib/copy-code.js';
+
 // ── Utility helpers ──────────────────────────────────────────
 function randn() {
   let u = 0, v = 0;

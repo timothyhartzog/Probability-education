@@ -1,5 +1,6 @@
 // Pareto Chart — Hospital Quality Root Cause Analysis
 import * as d3 from "d3";
+import '../../lib/copy-code.js';
 
 // ---------------------------------------------------------------------------
 // Seedable PRNG — xoshiro128** with splitmix32 seeding

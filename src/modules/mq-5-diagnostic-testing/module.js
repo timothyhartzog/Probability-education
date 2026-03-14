@@ -9,6 +9,7 @@
 
 import * as d3 from 'd3';
 import katex from 'katex';
+import '../../lib/copy-code.js';
 
 /* ---- Clinical scenario presets ------------------------------ */
 const SCENARIOS = {

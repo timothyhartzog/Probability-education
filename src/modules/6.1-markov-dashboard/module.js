@@ -5,6 +5,7 @@
 
 import * as d3 from 'd3';
 import katex from 'katex';
+import '../../lib/copy-code.js';
 
 // ─── Preset Chains ──────────────────────────────────────────
 
