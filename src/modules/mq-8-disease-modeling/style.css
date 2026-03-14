@@ -1,0 +1,417 @@
+/* ============================================================
+   Module MQ-8 — Infectious Disease Modeling
+   ============================================================ */
+
+/* --- Tab Navigation ---------------------------------------- */
+.tab-nav {
+  display: flex;
+  gap: 0;
+  background: var(--color-surface);
+  border-bottom: 2px solid #e2e8f0;
+  padding: 0 var(--space-xl);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.tab-btn {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  padding: var(--space-md) var(--space-lg);
+  border: none;
+  background: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  transition: color var(--transition-fast), border-color var(--transition-fast);
+  white-space: nowrap;
+}
+
+.tab-btn:hover {
+  color: var(--color-primary);
+}
+
+.tab-btn.active {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+  font-weight: 600;
+}
+
+/* --- Tab Content ------------------------------------------- */
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+/* --- Viz Area stacking ------------------------------------- */
+.viz-area {
+  flex: 1 1 65%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+/* --- Metrics Row ------------------------------------------- */
+.metrics-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: var(--space-md);
+}
+
+.metric-card {
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: var(--space-md);
+  text-align: center;
+  border: 1px solid #e2e8f0;
+}
+
+.metric-label {
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-xs);
+}
+
+.metric-value {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+/* --- Parameter Help Text ----------------------------------- */
+.param-help {
+  font-family: var(--font-heading);
+  font-size: 0.72rem;
+  color: var(--color-text-secondary);
+  margin-top: 2px;
+  opacity: 0.8;
+}
+
+/* --- Hidden param groups ----------------------------------- */
+.seir-param,
+.seirs-param,
+.sird-param {
+  display: none;
+}
+
+.seir-param.visible,
+.seirs-param.visible,
+.sird-param.visible {
+  display: flex;
+}
+
+/* --- Button Row -------------------------------------------- */
+.btn-row {
+  display: flex;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+/* --- Control Section Title --------------------------------- */
+.control-section-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-primary);
+  padding-top: var(--space-sm);
+  border-top: 1px solid #e2e8f0;
+  margin-bottom: 0 !important;
+}
+
+/* --- ABM Canvas -------------------------------------------- */
+#abm-canvas {
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-md);
+  background: #0f172a;
+}
+
+.abm-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+  margin-bottom: var(--space-md);
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+}
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.legend-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.legend-dot.susceptible { background: #60a5fa; }
+.legend-dot.exposed { background: #fbbf24; }
+.legend-dot.infected { background: #ef4444; }
+.legend-dot.recovered { background: #34d399; }
+.legend-dot.dead { background: #6b7280; }
+.legend-dot.vaccinated { background: #a78bfa; }
+.legend-dot.quarantined { background: #f97316; border: 2px solid #fff; }
+
+/* --- D3 Chart Styles -------------------------------------- */
+.epidemic-line {
+  fill: none;
+  stroke-width: 2.5;
+}
+
+.line-S { stroke: #60a5fa; }
+.line-E { stroke: #fbbf24; }
+.line-I { stroke: #ef4444; }
+.line-R { stroke: #34d399; }
+.line-D { stroke: #6b7280; }
+
+.chart-legend {
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+}
+
+.axis text {
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  fill: var(--color-text-secondary);
+}
+
+.axis line,
+.axis path {
+  stroke: #e2e8f0;
+}
+
+.grid line {
+  stroke: #f1f5f9;
+  stroke-dasharray: 2,2;
+}
+
+.grid path {
+  stroke: none;
+}
+
+.tooltip-line {
+  stroke: #94a3b8;
+  stroke-width: 1;
+  stroke-dasharray: 4,4;
+}
+
+/* --- Capacity line ----------------------------------------- */
+.capacity-line {
+  stroke: var(--color-error);
+  stroke-width: 2;
+  stroke-dasharray: 8,4;
+}
+
+.capacity-label {
+  font-family: var(--font-heading);
+  font-size: 0.72rem;
+  fill: var(--color-error);
+}
+
+.capacity-area {
+  fill: var(--color-error);
+  opacity: 0.08;
+}
+
+/* --- Network Graph ----------------------------------------- */
+.network-link {
+  stroke: #cbd5e1;
+  stroke-opacity: 0.5;
+  stroke-width: 1;
+}
+
+.network-node {
+  stroke: #fff;
+  stroke-width: 1.5;
+  cursor: pointer;
+  transition: r 0.2s;
+}
+
+.network-node:hover {
+  stroke-width: 2.5;
+}
+
+.node-susceptible { fill: #60a5fa; }
+.node-exposed { fill: #fbbf24; }
+.node-infected { fill: #ef4444; }
+.node-recovered { fill: #34d399; }
+.node-vaccinated { fill: #a78bfa; }
+
+/* --- Tooltip ----------------------------------------------- */
+.chart-tooltip {
+  position: absolute;
+  pointer-events: none;
+  background: rgba(15, 23, 42, 0.92);
+  color: #fff;
+  font-family: var(--font-heading);
+  font-size: 0.78rem;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-md);
+  z-index: 100;
+  line-height: 1.5;
+  max-width: 220px;
+}
+
+.chart-tooltip .tt-title {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.chart-tooltip .tt-row {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+
+.chart-tooltip .tt-color {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+
+/* --- Intervention comparison lines ------------------------- */
+.intervention-line {
+  fill: none;
+  stroke-width: 2;
+}
+
+.scenario-baseline { stroke: #ef4444; stroke-dasharray: none; }
+.scenario-vaccine { stroke: #a78bfa; stroke-dasharray: 6,3; }
+.scenario-distancing { stroke: #60a5fa; stroke-dasharray: 3,3; }
+.scenario-combined { stroke: #34d399; stroke-dasharray: 8,4,2,4; }
+
+/* --- Disease Table ----------------------------------------- */
+.disease-table-wrapper {
+  overflow-x: auto;
+  margin: var(--space-lg) 0;
+}
+
+.disease-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+}
+
+.disease-table th,
+.disease-table td {
+  padding: var(--space-sm) var(--space-md);
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.disease-table th {
+  font-weight: 600;
+  color: var(--color-primary);
+  background: #f8fafc;
+  white-space: nowrap;
+}
+
+.disease-table tr:hover td {
+  background: #f8fafc;
+}
+
+/* --- Literature Panel -------------------------------------- */
+.literature-panel {
+  max-width: 900px;
+  margin: var(--space-xl) auto;
+}
+
+.references-list li {
+  margin-bottom: var(--space-sm);
+  line-height: 1.6;
+}
+
+/* --- Phase portrait ---------------------------------------- */
+.phase-path {
+  fill: none;
+  stroke: var(--color-primary);
+  stroke-width: 2;
+}
+
+.phase-arrow {
+  fill: var(--color-primary);
+}
+
+/* --- R-effective ------------------------------------------- */
+.reff-line {
+  fill: none;
+  stroke: var(--color-secondary);
+  stroke-width: 2.5;
+}
+
+.reff-threshold {
+  stroke: var(--color-error);
+  stroke-width: 1.5;
+  stroke-dasharray: 6,4;
+}
+
+/* --- Stochastic histogram bars ----------------------------- */
+.hist-bar {
+  transition: opacity var(--transition-fast);
+}
+
+.hist-bar:hover {
+  opacity: 1 !important;
+}
+
+/* --- Tornado diagram --------------------------------------- */
+#tornado-chart .axis text {
+  font-size: 0.78rem;
+}
+
+/* --- Heatmap ----------------------------------------------- */
+#r0-heatmap rect {
+  shape-rendering: crispEdges;
+}
+
+/* --- Spider plot ------------------------------------------- */
+#spider-chart path {
+  transition: stroke-width var(--transition-fast);
+}
+
+/* --- Responsive -------------------------------------------- */
+@media (max-width: 768px) {
+  .tab-nav {
+    padding: 0 var(--space-md);
+  }
+
+  .tab-btn {
+    padding: var(--space-sm) var(--space-md);
+    font-size: 0.78rem;
+  }
+
+  .metrics-row {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .abm-legend {
+    gap: var(--space-sm);
+    font-size: 0.72rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .metrics-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
