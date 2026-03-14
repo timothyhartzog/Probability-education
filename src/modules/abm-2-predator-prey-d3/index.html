@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>D3 Agent-Based Predator-Prey Simulator</title>
+
+  <!-- Platform styles -->
+  <link rel="stylesheet" href="../../assets/design-system.css" />
+  <link rel="stylesheet" href="../../assets/module-template.css" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="module-page">
+
+    <!-- Header -->
+    <header class="module-header">
+      <ul class="breadcrumb">
+        <li><a href="../../../index.html">Home</a></li>
+        <li><a href="#">Simulation Methods</a></li>
+        <li>Predator-Prey ABM</li>
+      </ul>
+      <h1>D3.js Predator-Prey Agent-Based Model</h1>
+      <p class="text-secondary">
+        A pure D3.js predator-prey ecosystem simulator with three decision rule architectures
+        — reactive, bounded rationality, and BDI — rendered in real time with Canvas agents
+        and D3 SVG analytics. Observe Lotka-Volterra oscillations emerge from individual agent behavior.
+      </p>
+    </header>
+
+    <!-- The entire simulation UI is D3-constructed inside this root -->
+    <div id="abm-root"></div>
+
+  </div>
+
+  <script type="module" src="./module.js"></script>
+</body>
+</html>

@@ -1,0 +1,458 @@
+/* ============================================================
+   ABM-2 — D3.js Predator-Prey Simulator
+   Dark-theme simulation UI — all layout via D3 selections
+   ============================================================ */
+
+/* ── CSS Custom Properties (simulator scope) ──────────────── */
+.abm-app {
+  --abm-bg:           #0f172a;
+  --abm-surface:      #1e293b;
+  --abm-surface-2:    #0f172a;
+  --abm-border:       #334155;
+  --abm-text:         #e2e8f0;
+  --abm-muted:        #64748b;
+  --abm-accent:       #f59e0b;
+  --abm-prey:         #3b82f6;
+  --abm-predator:     #ef4444;
+  --abm-grass:        #4ade80;
+  --abm-error-bg:     #7f1d1d;
+  --abm-sidebar-w:    280px;
+  --abm-inspector-w:  240px;
+  --abm-statsbar-h:   44px;
+}
+
+/* ── App Shell ────────────────────────────────────────────── */
+.abm-app {
+  display: flex;
+  flex-direction: column;
+  background: var(--abm-bg);
+  color: var(--abm-text);
+  font-family: var(--font-heading, 'Inter', sans-serif);
+  font-size: 13px;
+  border-radius: var(--radius-lg, 12px);
+  overflow: hidden;
+  min-height: 700px;
+}
+
+/* ── Stats Bar ────────────────────────────────────────────── */
+.abm-stats-bar {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  height: var(--abm-statsbar-h);
+  padding: 0 16px;
+  background: var(--abm-surface);
+  border-bottom: 1px solid var(--abm-border);
+  overflow-x: auto;
+  flex-shrink: 0;
+}
+
+.abm-stat {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.abm-stat-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--abm-muted);
+}
+
+.abm-stat-value {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* ── Main Layout ──────────────────────────────────────────── */
+.abm-main {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+/* ── Sidebar ──────────────────────────────────────────────── */
+.abm-sidebar {
+  width: var(--abm-sidebar-w);
+  flex-shrink: 0;
+  background: var(--abm-surface);
+  border-right: 1px solid var(--abm-border);
+  overflow-y: auto;
+  padding: 12px;
+}
+
+.abm-control-section {
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--abm-border);
+}
+
+.abm-control-section:last-child {
+  border-bottom: none;
+}
+
+.abm-section-title {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--abm-muted);
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+/* ── Buttons ──────────────────────────────────────────────── */
+.abm-btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.abm-btn {
+  padding: 5px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid var(--abm-border);
+  border-radius: 6px;
+  background: var(--abm-surface-2);
+  color: var(--abm-text);
+  cursor: pointer;
+  transition: all 150ms ease;
+  font-family: inherit;
+}
+
+.abm-btn:hover {
+  background: var(--abm-border);
+}
+
+.abm-btn-primary {
+  background: var(--abm-prey);
+  border-color: var(--abm-prey);
+  color: #fff;
+}
+
+.abm-btn-primary:hover {
+  background: #2563eb;
+}
+
+.abm-btn-active {
+  background: var(--abm-accent);
+  border-color: var(--abm-accent);
+  color: #0f172a;
+}
+
+.abm-rule-btns {
+  margin-bottom: 6px;
+}
+
+.abm-preset-btn {
+  font-size: 11px;
+}
+
+/* ── Sliders ──────────────────────────────────────────────── */
+.abm-slider-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 6px;
+}
+
+.abm-slider-label {
+  font-size: 11px;
+  color: var(--abm-muted);
+  flex: 1;
+  min-width: 80px;
+}
+
+.abm-slider-badge {
+  font-family: var(--font-mono, monospace);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--abm-accent);
+  min-width: 45px;
+  text-align: right;
+}
+
+.abm-slider-wrap input[type="range"] {
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--abm-border);
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+}
+
+.abm-slider-wrap input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--abm-accent);
+  border: 2px solid var(--abm-bg);
+  cursor: pointer;
+}
+
+.abm-slider-wrap input[type="range"]::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--abm-accent);
+  border: 2px solid var(--abm-bg);
+  cursor: pointer;
+}
+
+/* ── Toggles ──────────────────────────────────────────────── */
+.abm-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  margin-bottom: 6px;
+}
+
+.abm-toggle input[type="checkbox"] {
+  display: none;
+}
+
+.abm-toggle-track {
+  width: 32px;
+  height: 18px;
+  border-radius: 9px;
+  background: var(--abm-border);
+  position: relative;
+  transition: background 200ms;
+  flex-shrink: 0;
+}
+
+.abm-toggle-track::after {
+  content: '';
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--abm-muted);
+  top: 2px;
+  left: 2px;
+  transition: transform 200ms, background 200ms;
+}
+
+.abm-toggle input:checked + .abm-toggle-track {
+  background: var(--abm-accent);
+}
+
+.abm-toggle input:checked + .abm-toggle-track::after {
+  transform: translateX(14px);
+  background: #0f172a;
+}
+
+.abm-toggle-label {
+  font-size: 11px;
+  color: var(--abm-text);
+}
+
+/* ── Pseudocode Panel ─────────────────────────────────────── */
+.abm-pseudocode {
+  font-family: var(--font-mono, monospace);
+  font-size: 10px;
+  line-height: 1.5;
+  background: var(--abm-surface-2);
+  color: var(--abm-muted);
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--abm-border);
+  white-space: pre-wrap;
+  max-height: 180px;
+  overflow-y: auto;
+  margin: 0;
+}
+
+/* ── Center Content ───────────────────────────────────────── */
+.abm-center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 12px;
+  gap: 12px;
+}
+
+/* ── Canvas ───────────────────────────────────────────────── */
+.abm-canvas-wrap {
+  background: #0f172a;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--abm-border);
+}
+
+#sim-canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  cursor: crosshair;
+}
+
+/* ── Charts Panel ─────────────────────────────────────────── */
+.abm-charts-panel {
+  background: var(--abm-surface);
+  border-radius: 8px;
+  border: 1px solid var(--abm-border);
+  overflow: hidden;
+}
+
+.abm-chart-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--abm-border);
+  overflow-x: auto;
+}
+
+.abm-chart-tab {
+  padding: 8px 14px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--abm-muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 150ms;
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+.abm-chart-tab:hover {
+  color: var(--abm-text);
+}
+
+.abm-chart-tab.active {
+  color: var(--abm-accent);
+  border-bottom-color: var(--abm-accent);
+}
+
+.abm-chart-content {
+  padding: 12px;
+}
+
+.abm-chart-container {
+  width: 100%;
+  min-height: 200px;
+}
+
+.abm-chart-container svg {
+  display: block;
+  width: 100%;
+}
+
+/* ── Agent Inspector ──────────────────────────────────────── */
+.abm-inspector {
+  width: var(--abm-inspector-w);
+  flex-shrink: 0;
+  background: var(--abm-surface);
+  border-left: 1px solid var(--abm-border);
+  padding: 12px;
+  overflow-y: auto;
+}
+
+.abm-inspector-empty {
+  color: var(--abm-muted);
+  font-size: 12px;
+  text-align: center;
+  padding: 24px 8px;
+}
+
+.abm-insp-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 3px 0;
+  border-bottom: 1px solid rgba(51, 65, 85, 0.4);
+}
+
+.abm-insp-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  color: var(--abm-muted);
+  letter-spacing: 0.04em;
+}
+
+.abm-insp-value {
+  font-family: var(--font-mono, monospace);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--abm-text);
+}
+
+.abm-insp-sublabel {
+  font-size: 10px;
+  text-transform: uppercase;
+  color: var(--abm-muted);
+  margin-top: 8px;
+  margin-bottom: 2px;
+}
+
+/* Energy bar */
+.abm-energy-bar-wrap {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.abm-energy-bar {
+  height: 8px;
+  border-radius: 4px;
+  background: var(--abm-prey);
+  transition: width 200ms ease;
+  min-width: 2px;
+}
+
+.abm-energy-pct {
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+  color: var(--abm-muted);
+  min-width: 30px;
+}
+
+.abm-bdi-panel {
+  margin-top: 8px;
+}
+
+/* ── D3 Chart Axis Styles ─────────────────────────────────── */
+.abm-chart-container .axis text,
+.abm-chart-container text {
+  font-family: var(--font-heading, 'Inter', sans-serif);
+}
+
+.abm-chart-container .axis path,
+.abm-chart-container .axis line {
+  stroke: #334155;
+}
+
+.abm-chart-container .grid path {
+  stroke: none;
+}
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 1100px) {
+  .abm-inspector {
+    display: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .abm-main {
+    flex-direction: column;
+  }
+
+  .abm-sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--abm-border);
+    max-height: 300px;
+  }
+}
