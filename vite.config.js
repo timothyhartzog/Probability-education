@@ -47,6 +47,7 @@ export default defineConfig({
         diseaseModeling: resolve(__dirname, 'src/modules/mq-8-disease-modeling/index.html'),
         vaccinePreventable: resolve(__dirname, 'src/modules/mq-9-vaccine-preventable/index.html'),
         stochasticFinance: resolve(__dirname, 'src/modules/fm-1-stochastic-finance/index.html'),
+        agentSimulation: resolve(__dirname, 'src/modules/abm-1-agent-simulation/index.html'),
       },
     },
   },
