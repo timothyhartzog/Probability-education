@@ -1,5 +1,6 @@
 import * as d3 from 'd3';
 import katex from 'katex';
+import '../../lib/copy-code.js';
 
 /* ============================================================
    Module 5.1 — Donsker's Theorem: Random Walk to Brownian Motion
