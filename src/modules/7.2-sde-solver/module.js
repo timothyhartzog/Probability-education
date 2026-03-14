@@ -6,6 +6,7 @@
 
 import * as d3 from 'd3';
 import katex from 'katex';
+import '../../lib/copy-code.js';
 
 /* ---- Seedable PRNG (mulberry32) -------------------------------- */
 function mulberry32(seed) {

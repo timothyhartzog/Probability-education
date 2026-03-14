@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vaccine-Preventable Disease Outbreak Simulator</title>
+
+  <!-- KaTeX CSS -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
+    integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV"
+    crossorigin="anonymous"
+  />
+
+  <!-- Platform styles -->
+  <link rel="stylesheet" href="../../assets/design-system.css" />
+  <link rel="stylesheet" href="../../assets/module-template.css" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="module-page">
+
+    <!-- Header -->
+    <header class="module-header">
+      <ul class="breadcrumb">
+        <li><a href="../../../index.html">Home</a></li>
+        <li><a href="#">Medical Quality</a></li>
+        <li>Vaccine-Preventable Disease Modeling</li>
+      </ul>
+      <h1>Vaccine-Preventable Disease Outbreak Simulator</h1>
+      <p class="text-secondary">
+        Model outbreaks for all major US vaccine-preventable diseases with historical parameters,
+        vaccination coverage scenarios, and interactive epidemic simulations
+      </p>
+    </header>
+
+    <!-- Tab Navigation -->
+    <nav class="tab-nav" id="tab-nav">
+      <button class="tab-btn active" data-tab="outbreak">Outbreak Simulator</button>
+      <button class="tab-btn" data-tab="comparison">Disease Comparison</button>
+      <button class="tab-btn" data-tab="coverage">Vaccination Coverage</button>
+      <button class="tab-btn" data-tab="historical">Historical Impact</button>
+      <button class="tab-btn" data-tab="literature">Theory &amp; Data Sources</button>
+    </nav>
+
+    <!-- ============================================================
+         TAB 1: Outbreak Simulator
+         ============================================================ -->
+    <div class="tab-content active" id="tab-outbreak">
+      <div class="module-body">
+        <div class="module-layout">
+
+          <div class="viz-area">
+            <!-- Equations display -->
+            <div class="viz-container" id="vpd-equations-panel">
+              <div class="viz-title">SEIR Model Equations</div>
+              <div id="vpd-equations"></div>
+            </div>
+
+            <!-- Main epidemic curve -->
+            <div class="viz-container" id="vpd-curve-panel">
+              <div class="viz-title">Epidemic Dynamics — <span id="curve-disease-label">Measles</span></div>
+              <div id="vpd-curve"></div>
+            </div>
+
+            <!-- With vs Without vaccine comparison -->
+            <div class="viz-container" id="vpd-compare-panel">
+              <div class="viz-title">With vs Without Vaccination — Infected Over Time</div>
+              <div id="vpd-compare"></div>
+            </div>
+
+            <!-- Key metrics -->
+            <div class="metrics-row" id="vpd-metrics-row">
+              <div class="metric-card">
+                <div class="metric-label">R<sub>0</sub></div>
+                <div class="metric-value" id="vpd-r0">—</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">R<sub>eff</sub></div>
+                <div class="metric-value" id="vpd-reff">—</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Peak Infected</div>
+                <div class="metric-value" id="vpd-peak">—</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Total Cases</div>
+                <div class="metric-value" id="vpd-total">—</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Deaths</div>
+                <div class="metric-value" id="vpd-deaths">—</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Herd Immunity</div>
+                <div class="metric-value" id="vpd-herd">—</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Lives Saved by Vaccine</div>
+                <div class="metric-value" id="vpd-saved">—</div>
+              </div>
+            </div>
+
+            <!-- Disease info card -->
+            <div class="viz-container" id="disease-info-card">
+              <div class="viz-title">Disease Profile — <span id="info-disease-label">Measles</span></div>
+              <div id="disease-info-content"></div>
+            </div>
+          </div>
+
+          <!-- Controls -->
+          <div class="control-panel" id="outbreak-controls">
+            <h2>Outbreak Parameters</h2>
+
+            <!-- Disease selector -->
+            <div class="control-group dropdown-control">
+              <label>Disease</label>
+              <select id="vpd-disease">
+                <option value="measles">Measles</option>
+                <option value="pertussis">Pertussis (Whooping Cough)</option>
+                <option value="polio">Polio</option>
+                <option value="smallpox">Smallpox</option>
+                <option value="diphtheria">Diphtheria</option>
+                <option value="mumps">Mumps</option>
+                <option value="rubella">Rubella (German Measles)</option>
+                <option value="varicella">Varicella (Chickenpox)</option>
+                <option value="hepatitisA">Hepatitis A</option>
+                <option value="hepatitisB">Hepatitis B</option>
+                <option value="rotavirus">Rotavirus</option>
+                <option value="hib">Haemophilus influenzae (Hib)</option>
+                <option value="pneumococcal">Pneumococcal Disease</option>
+                <option value="meningococcal">Meningococcal Disease</option>
+                <option value="tetanus">Tetanus</option>
+                <option value="influenza">Seasonal Influenza</option>
+                <option value="hpv">HPV (Cervical Cancer)</option>
+              </select>
+            </div>
+
+            <h3 class="control-section-title">Vaccination</h3>
+            <div class="control-group slider-control">
+              <label>Vaccination Coverage: <span class="value-display" id="vpd-vax-display">92</span>%</label>
+              <input type="range" id="vpd-vax-slider" min="0" max="99" step="1" value="92" />
+              <div class="param-help">Current US rate: <span id="vpd-current-rate">92</span>%</div>
+            </div>
+
+            <div class="control-group slider-control">
+              <label>Vaccine Efficacy: <span class="value-display" id="vpd-eff-display">97</span>%</label>
+              <input type="range" id="vpd-eff-slider" min="50" max="100" step="1" value="97" />
+              <div class="param-help">Disease-specific default: <span id="vpd-default-eff">97</span>%</div>
+            </div>
+
+            <h3 class="control-section-title">Population</h3>
+            <div class="control-group slider-control">
+              <label>Population: <span class="value-display" id="vpd-pop-display">100,000</span></label>
+              <input type="range" id="vpd-pop-slider" min="10000" max="1000000" step="10000" value="100000" />
+            </div>
+
+            <div class="control-group slider-control">
+              <label>Initial Infected: <span class="value-display" id="vpd-i0-display">5</span></label>
+              <input type="range" id="vpd-i0-slider" min="1" max="50" step="1" value="5" />
+            </div>
+
+            <div class="control-group slider-control">
+              <label>Simulation Days: <span class="value-display" id="vpd-days-display">365</span></label>
+              <input type="range" id="vpd-days-slider" min="60" max="730" step="10" value="365" />
+            </div>
+
+            <h3 class="control-section-title">Override Parameters</h3>
+            <div class="control-group">
+              <label class="toggle-control">
+                <input type="checkbox" id="vpd-override-toggle" />
+                <span class="toggle-track"></span>
+                <span class="toggle-label">Manual parameter override</span>
+              </label>
+            </div>
+
+            <div class="override-params" id="override-params" style="display:none;">
+              <div class="control-group slider-control">
+                <label>R<sub>0</sub>: <span class="value-display" id="vpd-r0-display">15.0</span></label>
+                <input type="range" id="vpd-r0-slider" min="0.5" max="20" step="0.1" value="15.0" />
+              </div>
+              <div class="control-group slider-control">
+                <label>Incubation (days): <span class="value-display" id="vpd-incub-display">10</span></label>
+                <input type="range" id="vpd-incub-slider" min="1" max="30" step="0.5" value="10" />
+              </div>
+              <div class="control-group slider-control">
+                <label>Infectious (days): <span class="value-display" id="vpd-infect-display">8</span></label>
+                <input type="range" id="vpd-infect-slider" min="1" max="30" step="0.5" value="8" />
+              </div>
+              <div class="control-group slider-control">
+                <label>CFR: <span class="value-display" id="vpd-cfr-display">0.2</span>%</label>
+                <input type="range" id="vpd-cfr-slider" min="0" max="50" step="0.1" value="0.2" />
+              </div>
+            </div>
+
+            <div class="btn-row">
+              <button class="btn btn-primary" id="run-outbreak">Run Outbreak</button>
+              <button class="btn" id="reset-outbreak">Reset</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         TAB 2: Disease Comparison Dashboard
+         ============================================================ -->
+    <div class="tab-content" id="tab-comparison">
+      <div class="module-body">
+        <div class="module-layout">
+
+          <div class="viz-area">
+            <!-- R0 comparison bar chart -->
+            <div class="viz-container" id="r0-bar-panel">
+              <div class="viz-title">Basic Reproduction Number (R<sub>0</sub>) — All Vaccine-Preventable Diseases</div>
+              <div id="r0-bar-chart"></div>
+            </div>
+
+            <!-- CFR comparison -->
+            <div class="viz-container" id="cfr-bar-panel">
+              <div class="viz-title">Case Fatality Rate (%) — Pre-Vaccine Era</div>
+              <div id="cfr-bar-chart"></div>
+            </div>
+
+            <!-- Bubble chart: R0 vs CFR vs annual cases -->
+            <div class="viz-container" id="bubble-panel">
+              <div class="viz-title">Disease Landscape — R<sub>0</sub> vs Case Fatality Rate (bubble size = pre-vaccine cases)</div>
+              <div id="bubble-chart"></div>
+            </div>
+
+            <!-- Herd immunity thresholds -->
+            <div class="viz-container" id="herd-bar-panel">
+              <div class="viz-title">Herd Immunity Threshold vs Current Vaccination Coverage</div>
+              <div id="herd-bar-chart"></div>
+            </div>
+          </div>
+
+          <div class="control-panel" id="comparison-controls">
+            <h2>Display Options</h2>
+
+            <div class="control-group dropdown-control">
+              <label>Sort By</label>
+              <select id="comp-sort">
+                <option value="r0">R₀ (highest first)</option>
+                <option value="cfr">Case Fatality Rate</option>
+                <option value="cases">Pre-vaccine Cases</option>
+                <option value="alpha">Alphabetical</option>
+              </select>
+            </div>
+
+            <div class="control-group dropdown-control">
+              <label>Bubble Y-Axis</label>
+              <select id="comp-bubble-y">
+                <option value="cfr">Case Fatality Rate</option>
+                <option value="incubation">Incubation Period</option>
+                <option value="infectious">Infectious Period</option>
+              </select>
+            </div>
+
+            <div class="btn-row">
+              <button class="btn btn-primary" id="run-comparison">Update Charts</button>
+            </div>
+
+            <!-- Disease reference table -->
+            <div class="disease-ref-table" id="disease-ref-table">
+              <h3>Quick Reference</h3>
+              <div id="ref-table-content"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         TAB 3: Vaccination Coverage Explorer
+         ============================================================ -->
+    <div class="tab-content" id="tab-coverage">
+      <div class="module-body">
+        <div class="module-layout">
+
+          <div class="viz-area">
+            <!-- Coverage vs outbreak size -->
+            <div class="viz-container" id="coverage-sweep-panel">
+              <div class="viz-title">Outbreak Size vs Vaccination Coverage</div>
+              <div id="coverage-sweep"></div>
+            </div>
+
+            <!-- Critical threshold visualization -->
+            <div class="viz-container" id="threshold-panel">
+              <div class="viz-title">R<sub>eff</sub> vs Vaccination Coverage — Epidemic Threshold</div>
+              <div id="threshold-chart"></div>
+            </div>
+
+            <!-- Multi-disease coverage comparison -->
+            <div class="viz-container" id="multi-coverage-panel">
+              <div class="viz-title">Impact of Coverage Drop — Multiple Diseases</div>
+              <div id="multi-coverage"></div>
+            </div>
+
+            <!-- Coverage metrics -->
+            <div class="metrics-row" id="coverage-metrics-row">
+              <div class="metric-card">
+                <div class="metric-label">Critical Threshold</div>
+                <div class="metric-value" id="cov-threshold">—</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Current Coverage</div>
+                <div class="metric-value" id="cov-current">—</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Safety Margin</div>
+                <div class="metric-value" id="cov-margin">—</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Cases at 80%</div>
+                <div class="metric-value" id="cov-80">—</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Cases at 50%</div>
+                <div class="metric-value" id="cov-50">—</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="control-panel" id="coverage-controls">
+            <h2>Coverage Analysis</h2>
+
+            <div class="control-group dropdown-control">
+              <label>Disease</label>
+              <select id="cov-disease">
+                <option value="measles">Measles</option>
+                <option value="pertussis">Pertussis</option>
+                <option value="polio">Polio</option>
+                <option value="smallpox">Smallpox</option>
+                <option value="diphtheria">Diphtheria</option>
+                <option value="mumps">Mumps</option>
+                <option value="rubella">Rubella</option>
+                <option value="varicella">Varicella</option>
+              </select>
+            </div>
+
+            <div class="control-group slider-control">
+              <label>Population: <span class="value-display" id="cov-pop-display">100,000</span></label>
+              <input type="range" id="cov-pop-slider" min="10000" max="1000000" step="10000" value="100000" />
+            </div>
+
+            <div class="control-group slider-control">
+              <label>Sweep Resolution: <span class="value-display" id="cov-res-display">50</span> points</label>
+              <input type="range" id="cov-res-slider" min="10" max="100" step="5" value="50" />
+            </div>
+
+            <h3 class="control-section-title">Multi-Disease Drop</h3>
+            <div class="control-group slider-control">
+              <label>Coverage Drop: <span class="value-display" id="cov-drop-display">10</span>%</label>
+              <input type="range" id="cov-drop-slider" min="5" max="50" step="5" value="10" />
+              <div class="param-help">Simulates uniform drop in vaccination rates</div>
+            </div>
+
+            <div class="btn-row">
+              <button class="btn btn-primary" id="run-coverage">Run Analysis</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         TAB 4: Historical Impact
+         ============================================================ -->
+    <div class="tab-content" id="tab-historical">
+      <div class="module-body">
+        <div class="module-layout">
+
+          <div class="viz-area">
+            <!-- Pre vs post vaccine cases -->
+            <div class="viz-container" id="historical-bar-panel">
+              <div class="viz-title">Annual US Cases — Pre-Vaccine vs Current Era</div>
+              <div id="historical-bar"></div>
+            </div>
+
+            <!-- Cumulative lives saved -->
+            <div class="viz-container" id="lives-saved-panel">
+              <div class="viz-title">Estimated Annual Lives Saved by Vaccination in the US</div>
+              <div id="lives-saved-chart"></div>
+            </div>
+
+            <!-- Timeline -->
+            <div class="viz-container" id="timeline-panel">
+              <div class="viz-title">US Vaccine Introduction Timeline</div>
+              <div id="vaccine-timeline"></div>
+            </div>
+
+            <!-- Historical metrics -->
+            <div class="metrics-row" id="historical-metrics-row">
+              <div class="metric-card">
+                <div class="metric-label">Total Pre-Vaccine Cases/yr</div>
+                <div class="metric-value" id="hist-pre-cases">—</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Total Current Cases/yr</div>
+                <div class="metric-value" id="hist-cur-cases">—</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Reduction</div>
+                <div class="metric-value" id="hist-reduction">—</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Annual Lives Saved</div>
+                <div class="metric-value" id="hist-lives">—</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="control-panel" id="historical-controls">
+            <h2>Display Options</h2>
+
+            <div class="control-group dropdown-control">
+              <label>Sort By</label>
+              <select id="hist-sort">
+                <option value="reduction">% Reduction (greatest)</option>
+                <option value="prevaccine">Pre-vaccine Cases</option>
+                <option value="year">Year Introduced</option>
+                <option value="alpha">Alphabetical</option>
+              </select>
+            </div>
+
+            <div class="control-group dropdown-control">
+              <label>Scale</label>
+              <select id="hist-scale">
+                <option value="log">Logarithmic</option>
+                <option value="linear">Linear</option>
+              </select>
+            </div>
+
+            <div class="btn-row">
+              <button class="btn btn-primary" id="run-historical">Update View</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         TAB 5: Theory & Data Sources
+         ============================================================ -->
+    <div class="tab-content" id="tab-literature">
+      <div class="module-body">
+        <div class="info-panel literature-panel">
+
+          <h2>Vaccine-Preventable Disease Modeling</h2>
+
+          <h3>1. The SEIRD Model for Vaccine-Preventable Diseases</h3>
+          <p>
+            This simulator uses the SEIRD (Susceptible-Exposed-Infectious-Recovered-Dead)
+            compartmental model with vaccination. The susceptible pool is reduced by the fraction
+            of the population that is effectively immunized:
+          </p>
+          <div class="math-block" id="lit-seird-eq"></div>
+          <p>
+            Where the effective susceptible population accounts for vaccination:
+            S<sub>0</sub> = N × (1 − v × e), with v = vaccination coverage and e = vaccine efficacy.
+          </p>
+
+          <h3>2. R<sub>0</sub> and the Herd Immunity Threshold</h3>
+          <p>
+            The basic reproduction number R<sub>0</sub> determines how contagious a disease is in
+            a fully susceptible population. The <strong>herd immunity threshold</strong> (HIT)
+            is the minimum fraction of the population that must be immune to prevent sustained
+            transmission:
+          </p>
+          <div class="math-block" id="lit-hit-eq"></div>
+          <p>
+            For measles (R<sub>0</sub> ≈ 12-18), HIT ≈ 92-95%. For polio (R<sub>0</sub> ≈ 5-7), HIT ≈ 80-86%.
+            This is why measles is the first disease to resurge when vaccination rates drop.
+          </p>
+
+          <h3>3. Effective Reproduction Number Under Vaccination</h3>
+          <p>
+            Vaccination reduces R<sub>0</sub> to the effective reproduction number R<sub>eff</sub>.
+            An epidemic can only sustain when R<sub>eff</sub> > 1:
+          </p>
+          <div class="math-block" id="lit-reff-eq"></div>
+
+          <h3>4. Disease Parameter Sources</h3>
+          <p>
+            All disease parameters in this module are drawn from peer-reviewed epidemiological
+            literature and CDC surveillance data. Key parameters for each disease:
+          </p>
+          <ul>
+            <li><strong>R<sub>0</sub></strong>: Basic reproduction number — from systematic reviews and historical outbreak analyses</li>
+            <li><strong>Incubation period</strong>: Time from exposure to symptom onset (1/σ)</li>
+            <li><strong>Infectious period</strong>: Duration of contagiousness (1/γ)</li>
+            <li><strong>Case fatality rate (CFR)</strong>: Pre-vaccine era mortality rate</li>
+            <li><strong>Vaccine efficacy</strong>: From clinical trial and real-world effectiveness data</li>
+            <li><strong>Pre-vaccine annual cases</strong>: US estimates from CDC historical surveillance</li>
+          </ul>
+
+          <h3>5. Complete Disease Parameter Table</h3>
+          <div class="disease-table-wrapper">
+            <table class="disease-table" id="full-disease-table">
+              <thead>
+                <tr>
+                  <th>Disease</th>
+                  <th>R<sub>0</sub></th>
+                  <th>Incubation (d)</th>
+                  <th>Infectious (d)</th>
+                  <th>CFR (%)</th>
+                  <th>Vaccine Eff. (%)</th>
+                  <th>US Vax Rate (%)</th>
+                  <th>Pre-vax Cases/yr</th>
+                  <th>Current Cases/yr</th>
+                  <th>Vaccine Year</th>
+                </tr>
+              </thead>
+              <tbody id="full-disease-tbody"></tbody>
+            </table>
+          </div>
+
+          <h3>6. Historical Context</h3>
+          <p>
+            Before vaccines, these diseases caused immense suffering in the United States.
+            Measles infected 3-4 million Americans annually, killing 400-500 and causing
+            thousands of cases of encephalitis. Polio paralyzed 15,000-20,000 children each year.
+            Smallpox killed approximately 30% of those infected until its eradication in 1980.
+            Diphtheria killed over 15,000 Americans annually in the early 1920s.
+          </p>
+          <p>
+            The CDC estimates that vaccines will prevent more than 21 million deaths and 732 million
+            cases of disease among children born in the last 20 years in the United States alone
+            (CDC, 2014). Globally, WHO estimates vaccines prevent 3.5-5 million deaths every year.
+          </p>
+
+          <h3>7. Key References</h3>
+          <ul class="references-list">
+            <li>Anderson, R.M. & May, R.M. (1991). <em>Infectious Diseases of Humans: Dynamics and Control</em>. Oxford University Press.</li>
+            <li>CDC (2024). "Epidemiology and Prevention of Vaccine-Preventable Diseases" (The Pink Book). <a href="https://www.cdc.gov/pinkbook/" target="_blank">cdc.gov/pinkbook</a></li>
+            <li>Guerra, F.M. et al. (2017). "The basic reproduction number (R0) of measles: a systematic review." <em>The Lancet Infectious Diseases</em>, 17(12), e420-e428.</li>
+            <li>van Panhuis, W.G. et al. (2013). "Contagious Diseases in the United States from 1888 to the Present." <em>New England Journal of Medicine</em>, 369, 2152-2158.</li>
+            <li>Orenstein, W.A. et al. (2005). "Immunizations in the United States: Success, Structure, and Stress." <em>Health Affairs</em>, 24(3), 599-610.</li>
+            <li>Fine, P., Eames, K. & Heymann, D.L. (2011). "'Herd Immunity': A Rough Guide." <em>Clinical Infectious Diseases</em>, 52(7), 911-916.</li>
+            <li>Patel, M. et al. (2019). "National update on measles cases and outbreaks — United States, January 1 – October 1, 2019." <em>MMWR</em>, 68(40), 893-896.</li>
+            <li>Roush, S.W. & Murphy, T.V. (2007). "Historical comparisons of morbidity and mortality for vaccine-preventable diseases in the United States." <em>JAMA</em>, 298(18), 2155-2163.</li>
+            <li>Plans-Rubio, P. (2012). "The vaccination coverage required to establish herd immunity against influenza viruses." <em>Preventive Medicine</em>, 55, 72-77.</li>
+            <li>Keeling, M.J. & Rohani, P. (2008). <em>Modeling Infectious Diseases in Humans and Animals</em>. Princeton University Press.</li>
+          </ul>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script type="module" src="./module.js"></script>
+</body>
+</html>

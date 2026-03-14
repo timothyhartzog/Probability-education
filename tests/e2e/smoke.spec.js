@@ -35,6 +35,9 @@ const MODULES = [
   { id: '8.2-mcmc-explorer',       title: 'MCMC Sampling Explorer' },
   { id: '9.1-entropy-kl',          title: 'Entropy & KL Divergence' },
   { id: '9.2-mutual-information',  title: 'Mutual Information & Channel Capacity' },
+  { id: 'mq-8-disease-modeling',   title: 'Infectious Disease Modeling' },
+  { id: 'mq-9-vaccine-preventable', title: 'Vaccine-Preventable Disease Simulator' },
+  { id: 'fm-1-stochastic-finance', title: 'Stochastic Finance Modeling' },
 ];
 
 for (const mod of MODULES) {

@@ -7,6 +7,7 @@
    ============================================================ */
 
 import * as d3 from 'd3';
+import '../../lib/copy-code.js';
 
 /* ---- Seedable xoshiro128** PRNG ----------------------------- */
 function xoshiro128ss(a, b, c, d) {

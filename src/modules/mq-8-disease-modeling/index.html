@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Infectious Disease Modeling — Interactive Epidemiological Simulations</title>
+
+  <!-- KaTeX CSS -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
+    integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV"
+    crossorigin="anonymous"
+  />
+
+  <!-- Platform styles -->
+  <link rel="stylesheet" href="../../assets/design-system.css" />
+  <link rel="stylesheet" href="../../assets/module-template.css" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="module-page">
+
+    <!-- Header -->
+    <header class="module-header">
+      <ul class="breadcrumb">
+        <li><a href="../../../index.html">Home</a></li>
+        <li><a href="#">Medical Quality</a></li>
+        <li>Infectious Disease Modeling</li>
+      </ul>
+      <h1>Infectious Disease Modeling</h1>
+      <p class="text-secondary">
+        Explore compartmental models (SIR, SEIR, SIS, SEIRS), agent-based simulations, and intervention strategies for understanding epidemic dynamics
+      </p>
+    </header>
+
+    <!-- Tab Navigation -->
+    <nav class="tab-nav" id="tab-nav">
+      <button class="tab-btn active" data-tab="compartmental">Compartmental Models</button>
+      <button class="tab-btn" data-tab="abm">Agent-Based Model</button>
+      <button class="tab-btn" data-tab="interventions">Interventions</button>
+      <button class="tab-btn" data-tab="network">Network Epidemics</button>
+      <button class="tab-btn" data-tab="stochastic">Stochastic Simulation</button>
+      <button class="tab-btn" data-tab="sensitivity">Sensitivity Analysis</button>
+      <button class="tab-btn" data-tab="literature">Theory &amp; Literature</button>
+    </nav>
+
+    <!-- ============================================================
+         TAB 1: Compartmental Models (SIR / SEIR / SIS / SEIRS)
+         ============================================================ -->
+    <div class="tab-content active" id="tab-compartmental">
+      <div class="module-body">
+        <div class="module-layout">
+
+          <!-- Visualization area -->
+          <div class="viz-area">
+            <!-- Equations display -->
+            <div class="viz-container" id="equations-panel">
+              <div class="viz-title">Model Equations</div>
+              <div id="model-equations"></div>
+            </div>
+
+            <!-- Main epidemic curve chart -->
+            <div class="viz-container" id="epidemic-curve-panel">
+              <div class="viz-title">Epidemic Dynamics Over Time</div>
+              <div id="epidemic-curve"></div>
+            </div>
+
+            <!-- Phase portrait -->
+            <div class="viz-container" id="phase-portrait-panel">
+              <div class="viz-title">Phase Portrait (S vs I)</div>
+              <div id="phase-portrait"></div>
+            </div>
+
+            <!-- R-effective over time -->
+            <div class="viz-container" id="r-effective-panel">
+              <div class="viz-title">Effective Reproduction Number R<sub>eff</sub>(t)</div>
+              <div id="r-effective-chart"></div>
+            </div>
+
+            <!-- Key metrics -->
+            <div class="metrics-row" id="metrics-row">
+              <div class="metric-card">
+                <div class="metric-label">R<sub>0</sub></div>
+                <div class="metric-value" id="metric-r0">—</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Peak Infected</div>
+                <div class="metric-value" id="metric-peak">—</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Peak Day</div>
+                <div class="metric-value" id="metric-peak-day">—</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Total Infected</div>
+                <div class="metric-value" id="metric-total">—</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Herd Immunity</div>
+                <div class="metric-value" id="metric-herd">—</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Deaths</div>
+                <div class="metric-value" id="metric-deaths">—</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Controls -->
+          <div class="control-panel" id="compartmental-controls">
+            <h2>Parameters</h2>
+
+            <!-- Model Type -->
+            <div class="control-group dropdown-control">
+              <label>Model Type</label>
+              <select id="model-type">
+                <option value="SIR">SIR — Susceptible-Infected-Recovered</option>
+                <option value="SEIR">SEIR — with Exposed compartment</option>
+                <option value="SIS">SIS — Susceptible-Infected-Susceptible</option>
+                <option value="SEIRS">SEIRS — with waning immunity</option>
+                <option value="SIRD">SIRD — with Deaths compartment</option>
+              </select>
+            </div>
+
+            <!-- Disease Presets -->
+            <div class="control-group dropdown-control">
+              <label>Disease Preset</label>
+              <select id="disease-preset">
+                <option value="custom">Custom Parameters</option>
+                <option value="covid19">COVID-19 (Original)</option>
+                <option value="covid-delta">COVID-19 (Delta Variant)</option>
+                <option value="covid-omicron">COVID-19 (Omicron)</option>
+                <option value="influenza">Seasonal Influenza</option>
+                <option value="measles">Measles</option>
+                <option value="ebola">Ebola</option>
+                <option value="smallpox">Smallpox</option>
+                <option value="sars">SARS (2003)</option>
+                <option value="mers">MERS</option>
+                <option value="h1n1">H1N1 (2009 Pandemic)</option>
+              </select>
+            </div>
+
+            <!-- Beta (transmission rate) -->
+            <div class="control-group slider-control">
+              <label>Transmission Rate (beta): <span class="value-display" id="beta-display">0.30</span></label>
+              <input type="range" id="beta-slider" min="0.01" max="1.5" step="0.01" value="0.30" />
+              <div class="param-help">Contact rate x probability of transmission per contact</div>
+            </div>
+
+            <!-- Gamma (recovery rate) -->
+            <div class="control-group slider-control">
+              <label>Recovery Rate (gamma): <span class="value-display" id="gamma-display">0.10</span></label>
+              <input type="range" id="gamma-slider" min="0.01" max="0.5" step="0.005" value="0.10" />
+              <div class="param-help">1/gamma = <span id="infectious-period">10.0</span> days infectious period</div>
+            </div>
+
+            <!-- Sigma (exposed rate, for SEIR) -->
+            <div class="control-group slider-control seir-param" id="sigma-group">
+              <label>Incubation Rate (sigma): <span class="value-display" id="sigma-display">0.20</span></label>
+              <input type="range" id="sigma-slider" min="0.05" max="1.0" step="0.01" value="0.20" />
+              <div class="param-help">1/sigma = <span id="incubation-period">5.0</span> days incubation period</div>
+            </div>
+
+            <!-- Xi (waning immunity, for SEIRS) -->
+            <div class="control-group slider-control seirs-param" id="xi-group">
+              <label>Immunity Waning Rate (xi): <span class="value-display" id="xi-display">0.005</span></label>
+              <input type="range" id="xi-slider" min="0.001" max="0.05" step="0.001" value="0.005" />
+              <div class="param-help">1/xi = <span id="immunity-duration">200</span> days immunity duration</div>
+            </div>
+
+            <!-- Mu (mortality rate, for SIRD) -->
+            <div class="control-group slider-control sird-param" id="mu-group">
+              <label>Mortality Rate (mu): <span class="value-display" id="mu-display">0.01</span></label>
+              <input type="range" id="mu-slider" min="0.001" max="0.15" step="0.001" value="0.01" />
+              <div class="param-help">Case fatality rate: <span id="cfr-display">1.0</span>%</div>
+            </div>
+
+            <!-- Initial conditions -->
+            <div class="control-group slider-control">
+              <label>Population: <span class="value-display" id="pop-display">10000</span></label>
+              <input type="range" id="pop-slider" min="1000" max="1000000" step="1000" value="10000" />
+            </div>
+
+            <div class="control-group slider-control">
+              <label>Initial Infected: <span class="value-display" id="i0-display">10</span></label>
+              <input type="range" id="i0-slider" min="1" max="100" step="1" value="10" />
+            </div>
+
+            <div class="control-group slider-control">
+              <label>Simulation Days: <span class="value-display" id="days-display">300</span></label>
+              <input type="range" id="days-slider" min="30" max="730" step="10" value="300" />
+            </div>
+
+            <!-- Action buttons -->
+            <div class="btn-row">
+              <button class="btn btn-primary" id="run-compartmental">Run Simulation</button>
+              <button class="btn" id="reset-compartmental">Reset</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         TAB 2: Agent-Based Model
+         ============================================================ -->
+    <div class="tab-content" id="tab-abm">
+      <div class="module-body">
+        <div class="module-layout">
+
+          <div class="viz-area">
+            <div class="viz-container" id="abm-canvas-panel">
+              <div class="viz-title">Agent-Based Epidemic Simulation</div>
+              <div class="abm-legend" id="abm-legend">
+                <span class="legend-item"><span class="legend-dot susceptible"></span> Susceptible</span>
+                <span class="legend-item"><span class="legend-dot exposed"></span> Exposed</span>
+                <span class="legend-item"><span class="legend-dot infected"></span> Infected</span>
+                <span class="legend-item"><span class="legend-dot recovered"></span> Recovered</span>
+                <span class="legend-item"><span class="legend-dot dead"></span> Dead</span>
+                <span class="legend-item"><span class="legend-dot vaccinated"></span> Vaccinated</span>
+                <span class="legend-item"><span class="legend-dot quarantined"></span> Quarantined</span>
+              </div>
+              <canvas id="abm-canvas" width="700" height="500"></canvas>
+            </div>
+
+            <div class="viz-container" id="abm-curve-panel">
+              <div class="viz-title">Population Dynamics</div>
+              <div id="abm-curve"></div>
+            </div>
+
+            <!-- ABM metrics -->
+            <div class="metrics-row" id="abm-metrics-row">
+              <div class="metric-card">
+                <div class="metric-label">Day</div>
+                <div class="metric-value" id="abm-day">0</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Susceptible</div>
+                <div class="metric-value" id="abm-susceptible">—</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Infected</div>
+                <div class="metric-value" id="abm-infected">—</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Recovered</div>
+                <div class="metric-value" id="abm-recovered">—</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Dead</div>
+                <div class="metric-value" id="abm-dead">—</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">R<sub>eff</sub></div>
+                <div class="metric-value" id="abm-reff">—</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="control-panel" id="abm-controls">
+            <h2>Agent Parameters</h2>
+
+            <div class="control-group slider-control">
+              <label>Number of Agents: <span class="value-display" id="abm-n-display">500</span></label>
+              <input type="range" id="abm-n-slider" min="50" max="2000" step="50" value="500" />
+            </div>
+
+            <div class="control-group slider-control">
+              <label>Infection Radius: <span class="value-display" id="abm-radius-display">15</span> px</label>
+              <input type="range" id="abm-radius-slider" min="5" max="50" step="1" value="15" />
+            </div>
+
+            <div class="control-group slider-control">
+              <label>Transmission Prob: <span class="value-display" id="abm-trans-display">0.30</span></label>
+              <input type="range" id="abm-trans-slider" min="0.01" max="1.0" step="0.01" value="0.30" />
+            </div>
+
+            <div class="control-group slider-control">
+              <label>Recovery Time: <span class="value-display" id="abm-recovery-display">100</span> ticks</label>
+              <input type="range" id="abm-recovery-slider" min="20" max="500" step="10" value="100" />
+            </div>
+
+            <div class="control-group slider-control">
+              <label>Incubation Time: <span class="value-display" id="abm-incubation-display">50</span> ticks</label>
+              <input type="range" id="abm-incubation-slider" min="0" max="200" step="5" value="50" />
+            </div>
+
+            <div class="control-group slider-control">
+              <label>Mortality Rate: <span class="value-display" id="abm-mortality-display">0.02</span></label>
+              <input type="range" id="abm-mortality-slider" min="0" max="0.2" step="0.005" value="0.02" />
+            </div>
+
+            <div class="control-group slider-control">
+              <label>Agent Speed: <span class="value-display" id="abm-speed-display">1.0</span></label>
+              <input type="range" id="abm-speed-slider" min="0.1" max="3.0" step="0.1" value="1.0" />
+            </div>
+
+            <div class="control-group slider-control">
+              <label>Social Distancing: <span class="value-display" id="abm-distancing-display">0</span>%</label>
+              <input type="range" id="abm-distancing-slider" min="0" max="100" step="5" value="0" />
+              <div class="param-help">Percentage of agents that stay stationary</div>
+            </div>
+
+            <div class="control-group slider-control">
+              <label>Vaccination Rate: <span class="value-display" id="abm-vaccine-display">0</span>%</label>
+              <input type="range" id="abm-vaccine-slider" min="0" max="95" step="5" value="0" />
+            </div>
+
+            <div class="control-group">
+              <label class="toggle-control">
+                <input type="checkbox" id="abm-quarantine-toggle" />
+                <span class="toggle-track"></span>
+                <span class="toggle-label">Enable Quarantine</span>
+              </label>
+              <div class="param-help">Infected agents are isolated after detection</div>
+            </div>
+
+            <div class="control-group">
+              <label class="toggle-control">
+                <input type="checkbox" id="abm-superspreader-toggle" />
+                <span class="toggle-track"></span>
+                <span class="toggle-label">Superspreader Events</span>
+              </label>
+              <div class="param-help">5% of agents have 10x contact radius</div>
+            </div>
+
+            <div class="btn-row">
+              <button class="btn btn-primary" id="abm-start">Start</button>
+              <button class="btn" id="abm-pause">Pause</button>
+              <button class="btn" id="abm-reset">Reset</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         TAB 3: Intervention Strategies
+         ============================================================ -->
+    <div class="tab-content" id="tab-interventions">
+      <div class="module-body">
+        <div class="module-layout">
+
+          <div class="viz-area">
+            <div class="viz-container" id="intervention-curve-panel">
+              <div class="viz-title">Comparing Intervention Strategies</div>
+              <div id="intervention-curve"></div>
+            </div>
+
+            <div class="viz-container" id="intervention-bar-panel">
+              <div class="viz-title">Outcome Comparison</div>
+              <div id="intervention-bar"></div>
+            </div>
+
+            <div class="viz-container" id="flatten-curve-panel">
+              <div class="viz-title">"Flatten the Curve" — Healthcare Capacity Analysis</div>
+              <div id="flatten-curve"></div>
+            </div>
+          </div>
+
+          <div class="control-panel" id="intervention-controls">
+            <h2>Intervention Setup</h2>
+
+            <div class="control-group dropdown-control">
+              <label>Base Disease</label>
+              <select id="intervention-disease">
+                <option value="covid19">COVID-19</option>
+                <option value="influenza">Influenza</option>
+                <option value="measles">Measles</option>
+                <option value="ebola">Ebola</option>
+              </select>
+            </div>
+
+            <h3 class="control-section-title">Vaccination</h3>
+            <div class="control-group slider-control">
+              <label>Vaccination Coverage: <span class="value-display" id="iv-vaccine-display">0</span>%</label>
+              <input type="range" id="iv-vaccine-slider" min="0" max="99" step="1" value="0" />
+            </div>
+
+            <div class="control-group slider-control">
+              <label>Vaccine Efficacy: <span class="value-display" id="iv-efficacy-display">90</span>%</label>
+              <input type="range" id="iv-efficacy-slider" min="50" max="100" step="1" value="90" />
+            </div>
+
+            <h3 class="control-section-title">Social Distancing</h3>
+            <div class="control-group slider-control">
+              <label>Contact Reduction: <span class="value-display" id="iv-contact-display">0</span>%</label>
+              <input type="range" id="iv-contact-slider" min="0" max="90" step="5" value="0" />
+            </div>
+
+            <div class="control-group slider-control">
+              <label>Start Day: <span class="value-display" id="iv-start-display">30</span></label>
+              <input type="range" id="iv-start-slider" min="0" max="120" step="5" value="30" />
+            </div>
+
+            <div class="control-group slider-control">
+              <label>Duration (days): <span class="value-display" id="iv-duration-display">60</span></label>
+              <input type="range" id="iv-duration-slider" min="14" max="365" step="7" value="60" />
+            </div>
+
+            <h3 class="control-section-title">Healthcare</h3>
+            <div class="control-group slider-control">
+              <label>Hospital Capacity: <span class="value-display" id="iv-capacity-display">5</span>% of pop.</label>
+              <input type="range" id="iv-capacity-slider" min="1" max="20" step="0.5" value="5" />
+            </div>
+
+            <div class="btn-row">
+              <button class="btn btn-primary" id="run-intervention">Compare Scenarios</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         TAB 4: Network Epidemics
+         ============================================================ -->
+    <div class="tab-content" id="tab-network">
+      <div class="module-body">
+        <div class="module-layout">
+
+          <div class="viz-area">
+            <div class="viz-container" id="network-graph-panel">
+              <div class="viz-title">Contact Network — Disease Spread</div>
+              <div id="network-graph"></div>
+            </div>
+
+            <div class="viz-container" id="network-curve-panel">
+              <div class="viz-title">Network Epidemic Curve</div>
+              <div id="network-curve"></div>
+            </div>
+
+            <div class="viz-container" id="degree-dist-panel">
+              <div class="viz-title">Degree Distribution</div>
+              <div id="degree-distribution"></div>
+            </div>
+          </div>
+
+          <div class="control-panel" id="network-controls">
+            <h2>Network Parameters</h2>
+
+            <div class="control-group dropdown-control">
+              <label>Network Topology</label>
+              <select id="network-type">
+                <option value="random">Erdos-Renyi Random</option>
+                <option value="small-world">Watts-Strogatz Small-World</option>
+                <option value="scale-free">Barabasi-Albert Scale-Free</option>
+                <option value="lattice">Lattice / Grid</option>
+              </select>
+            </div>
+
+            <div class="control-group slider-control">
+              <label>Nodes: <span class="value-display" id="net-nodes-display">100</span></label>
+              <input type="range" id="net-nodes-slider" min="20" max="300" step="10" value="100" />
+            </div>
+
+            <div class="control-group slider-control">
+              <label>Avg Connections: <span class="value-display" id="net-edges-display">4</span></label>
+              <input type="range" id="net-edges-slider" min="2" max="12" step="1" value="4" />
+            </div>
+
+            <div class="control-group slider-control" id="rewire-group">
+              <label>Rewiring Prob: <span class="value-display" id="net-rewire-display">0.10</span></label>
+              <input type="range" id="net-rewire-slider" min="0" max="1" step="0.05" value="0.10" />
+              <div class="param-help">For small-world networks</div>
+            </div>
+
+            <div class="control-group slider-control">
+              <label>Transmission Prob: <span class="value-display" id="net-trans-display">0.15</span></label>
+              <input type="range" id="net-trans-slider" min="0.01" max="0.5" step="0.01" value="0.15" />
+            </div>
+
+            <div class="control-group slider-control">
+              <label>Recovery Prob: <span class="value-display" id="net-recovery-display">0.05</span></label>
+              <input type="range" id="net-recovery-slider" min="0.01" max="0.3" step="0.01" value="0.05" />
+            </div>
+
+            <div class="control-group">
+              <label class="toggle-control">
+                <input type="checkbox" id="net-targeted-toggle" />
+                <span class="toggle-track"></span>
+                <span class="toggle-label">Targeted vaccination (hubs first)</span>
+              </label>
+            </div>
+
+            <div class="control-group slider-control">
+              <label>Vaccination: <span class="value-display" id="net-vaccine-display">0</span>%</label>
+              <input type="range" id="net-vaccine-slider" min="0" max="80" step="5" value="0" />
+            </div>
+
+            <div class="btn-row">
+              <button class="btn btn-primary" id="run-network">Run Network Epidemic</button>
+              <button class="btn" id="step-network">Step</button>
+              <button class="btn" id="reset-network">Reset</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         TAB 5: Stochastic Simulation (Gillespie Algorithm)
+         ============================================================ -->
+    <div class="tab-content" id="tab-stochastic">
+      <div class="module-body">
+        <div class="module-layout">
+
+          <div class="viz-area">
+            <!-- Stochastic trajectories vs deterministic -->
+            <div class="viz-container" id="stoch-trajectories-panel">
+              <div class="viz-title">Stochastic SIR Trajectories vs Deterministic Solution</div>
+              <div id="stoch-trajectories"></div>
+            </div>
+
+            <!-- Final size distribution -->
+            <div class="viz-container" id="stoch-finalsize-panel">
+              <div class="viz-title">Final Epidemic Size Distribution (Monte Carlo)</div>
+              <div id="stoch-finalsize"></div>
+            </div>
+
+            <!-- Epidemic probability -->
+            <div class="viz-container" id="stoch-probability-panel">
+              <div class="viz-title">Probability of Major Epidemic vs R<sub>0</sub></div>
+              <div id="stoch-probability"></div>
+            </div>
+
+            <!-- Stochastic metrics -->
+            <div class="metrics-row" id="stoch-metrics-row">
+              <div class="metric-card">
+                <div class="metric-label">R<sub>0</sub></div>
+                <div class="metric-value" id="stoch-r0">—</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Epidemic Prob</div>
+                <div class="metric-value" id="stoch-epi-prob">—</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Median Final Size</div>
+                <div class="metric-value" id="stoch-median-size">—</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Mean Final Size</div>
+                <div class="metric-value" id="stoch-mean-size">—</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Fade-out Rate</div>
+                <div class="metric-value" id="stoch-fadeout">—</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Runs Complete</div>
+                <div class="metric-value" id="stoch-runs">—</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="control-panel" id="stochastic-controls">
+            <h2>Stochastic Parameters</h2>
+
+            <div class="control-group dropdown-control">
+              <label>Disease Preset</label>
+              <select id="stoch-disease">
+                <option value="custom">Custom Parameters</option>
+                <option value="covid19">COVID-19</option>
+                <option value="influenza">Influenza</option>
+                <option value="measles">Measles</option>
+                <option value="ebola">Ebola</option>
+              </select>
+            </div>
+
+            <div class="control-group slider-control">
+              <label>Transmission Rate (beta): <span class="value-display" id="stoch-beta-display">0.30</span></label>
+              <input type="range" id="stoch-beta-slider" min="0.05" max="1.5" step="0.01" value="0.30" />
+            </div>
+
+            <div class="control-group slider-control">
+              <label>Recovery Rate (gamma): <span class="value-display" id="stoch-gamma-display">0.10</span></label>
+              <input type="range" id="stoch-gamma-slider" min="0.01" max="0.5" step="0.005" value="0.10" />
+            </div>
+
+            <div class="control-group slider-control">
+              <label>Population: <span class="value-display" id="stoch-pop-display">500</span></label>
+              <input type="range" id="stoch-pop-slider" min="50" max="5000" step="50" value="500" />
+              <div class="param-help">Smaller populations show stronger stochastic effects</div>
+            </div>
+
+            <div class="control-group slider-control">
+              <label>Initial Infected: <span class="value-display" id="stoch-i0-display">3</span></label>
+              <input type="range" id="stoch-i0-slider" min="1" max="20" step="1" value="3" />
+            </div>
+
+            <div class="control-group slider-control">
+              <label>Monte Carlo Runs: <span class="value-display" id="stoch-runs-display">200</span></label>
+              <input type="range" id="stoch-runs-slider" min="20" max="500" step="10" value="200" />
+              <div class="param-help">More runs = smoother distributions, slower</div>
+            </div>
+
+            <div class="control-group slider-control">
+              <label>Displayed Trajectories: <span class="value-display" id="stoch-show-display">30</span></label>
+              <input type="range" id="stoch-show-slider" min="5" max="100" step="5" value="30" />
+            </div>
+
+            <div class="btn-row">
+              <button class="btn btn-primary" id="run-stochastic">Run Monte Carlo</button>
+              <button class="btn" id="reset-stochastic">Reset</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         TAB 6: Sensitivity Analysis
+         ============================================================ -->
+    <div class="tab-content" id="tab-sensitivity">
+      <div class="module-body">
+        <div class="module-layout">
+
+          <div class="viz-area">
+            <!-- Tornado diagram -->
+            <div class="viz-container" id="tornado-panel">
+              <div class="viz-title">Tornado Diagram — Parameter Impact on Peak Infected</div>
+              <div id="tornado-chart"></div>
+            </div>
+
+            <!-- Spider/parameter sweep -->
+            <div class="viz-container" id="spider-panel">
+              <div class="viz-title">Parameter Sweep — Peak Infected vs Parameter Variation</div>
+              <div id="spider-chart"></div>
+            </div>
+
+            <!-- R0 heatmap -->
+            <div class="viz-container" id="heatmap-panel">
+              <div class="viz-title">R<sub>0</sub> Heatmap — Transmission Rate vs Recovery Rate</div>
+              <div id="r0-heatmap"></div>
+            </div>
+
+            <!-- Sensitivity metrics -->
+            <div class="metrics-row" id="sensitivity-metrics-row">
+              <div class="metric-card">
+                <div class="metric-label">Most Sensitive</div>
+                <div class="metric-value" id="sens-most">—</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Baseline Peak</div>
+                <div class="metric-value" id="sens-baseline-peak">—</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Peak Range</div>
+                <div class="metric-value" id="sens-range">—</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Baseline R<sub>0</sub></div>
+                <div class="metric-value" id="sens-r0">—</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="control-panel" id="sensitivity-controls">
+            <h2>Sensitivity Setup</h2>
+
+            <div class="control-group dropdown-control">
+              <label>Base Disease</label>
+              <select id="sens-disease">
+                <option value="covid19">COVID-19</option>
+                <option value="influenza">Influenza</option>
+                <option value="measles">Measles</option>
+                <option value="ebola">Ebola</option>
+                <option value="covid-delta">COVID-19 (Delta)</option>
+              </select>
+            </div>
+
+            <div class="control-group dropdown-control">
+              <label>Model Type</label>
+              <select id="sens-model">
+                <option value="SIR">SIR</option>
+                <option value="SEIR">SEIR</option>
+                <option value="SIRD">SIRD</option>
+              </select>
+            </div>
+
+            <div class="control-group dropdown-control">
+              <label>Output Metric</label>
+              <select id="sens-metric">
+                <option value="peakI">Peak Infected</option>
+                <option value="totalInf">Total Infected</option>
+                <option value="peakDay">Peak Day</option>
+              </select>
+            </div>
+
+            <div class="control-group slider-control">
+              <label>Population: <span class="value-display" id="sens-pop-display">100000</span></label>
+              <input type="range" id="sens-pop-slider" min="10000" max="1000000" step="10000" value="100000" />
+            </div>
+
+            <div class="control-group slider-control">
+              <label>Variation Range: ±<span class="value-display" id="sens-range-display">50</span>%</label>
+              <input type="range" id="sens-range-slider" min="10" max="90" step="5" value="50" />
+              <div class="param-help">Each parameter swept from (1-range) to (1+range) of baseline</div>
+            </div>
+
+            <div class="control-group slider-control">
+              <label>Sweep Points: <span class="value-display" id="sens-points-display">25</span></label>
+              <input type="range" id="sens-points-slider" min="10" max="50" step="5" value="25" />
+            </div>
+
+            <h3 class="control-section-title">Heatmap Axes</h3>
+            <div class="control-group dropdown-control">
+              <label>X-Axis Parameter</label>
+              <select id="heatmap-x">
+                <option value="beta">Transmission Rate (beta)</option>
+                <option value="gamma">Recovery Rate (gamma)</option>
+              </select>
+            </div>
+            <div class="control-group dropdown-control">
+              <label>Y-Axis Parameter</label>
+              <select id="heatmap-y">
+                <option value="gamma">Recovery Rate (gamma)</option>
+                <option value="beta">Transmission Rate (beta)</option>
+              </select>
+            </div>
+
+            <div class="btn-row">
+              <button class="btn btn-primary" id="run-sensitivity">Run Analysis</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         TAB 7: Theory & Literature
+         ============================================================ -->
+    <div class="tab-content" id="tab-literature">
+      <div class="module-body">
+        <div class="info-panel literature-panel">
+
+          <h2>Mathematical Foundations of Epidemic Modeling</h2>
+
+          <h3>1. Compartmental Models (Kermack-McKendrick, 1927)</h3>
+          <p>
+            The foundational work by Kermack and McKendrick (1927) established the mathematical
+            framework for epidemic modeling using ordinary differential equations (ODEs). The
+            population is divided into compartments representing disease states, and transition
+            rates between compartments capture the dynamics of disease spread.
+          </p>
+
+          <div class="math-block" id="lit-sir-equations"></div>
+
+          <p>
+            <strong>Key Parameters:</strong>
+          </p>
+          <ul>
+            <li><strong>Beta (transmission rate)</strong>: Product of contact rate (c) and transmission probability per contact (p). beta = c * p</li>
+            <li><strong>Gamma (recovery rate)</strong>: Inverse of the average infectious period. gamma = 1/D where D is the duration of infectiousness</li>
+            <li><strong>R<sub>0</sub> (basic reproduction number)</strong>: Average number of secondary infections from a single infected individual in a fully susceptible population. R<sub>0</sub> = beta/gamma</li>
+            <li><strong>Herd immunity threshold</strong>: 1 - 1/R<sub>0</sub>. The proportion of the population that must be immune to prevent sustained transmission</li>
+          </ul>
+
+          <h3>2. The SIR Model and Epidemic Threshold</h3>
+          <p>
+            The SIR model demonstrates a fundamental result: an epidemic can only occur when
+            R<sub>0</sub> > 1. When R<sub>0</sub> &lt; 1, the disease dies out. This <em>epidemic
+            threshold theorem</em> provides the theoretical basis for vaccination programs — if
+            enough people are vaccinated to push R<sub>eff</sub> below 1, the epidemic cannot sustain itself.
+          </p>
+
+          <div class="math-block" id="lit-threshold"></div>
+
+          <h3>3. SEIR Model — Incorporating Latency</h3>
+          <p>
+            Many diseases have an incubation period where individuals are infected but not yet
+            infectious. The SEIR model adds an Exposed (E) compartment. The rate sigma (1/incubation period)
+            governs transition from E to I. This is critical for diseases like COVID-19 (incubation
+            ~5.2 days), Ebola (~8-10 days), and measles (~10-14 days).
+          </p>
+
+          <div class="math-block" id="lit-seir-equations"></div>
+
+          <h3>4. SIS Model — Endemic Diseases</h3>
+          <p>
+            For diseases that do not confer lasting immunity (e.g., gonorrhea, common cold),
+            the SIS model allows recovered individuals to become susceptible again. This produces
+            endemic equilibria where the disease persists indefinitely in the population at a
+            steady-state prevalence of I* = 1 - 1/R<sub>0</sub>.
+          </p>
+
+          <h3>5. SEIRS Model — Waning Immunity</h3>
+          <p>
+            When immunity wanes over time (as with seasonal coronaviruses or influenza), the SEIRS
+            model adds a rate xi governing the loss of immunity. This produces oscillatory dynamics
+            and recurrent epidemic waves, matching the observed seasonality of many respiratory infections.
+          </p>
+
+          <h3>6. Agent-Based Models (ABMs)</h3>
+          <p>
+            While compartmental models assume a well-mixed population, agent-based models (ABMs)
+            simulate individual agents with heterogeneous properties, spatial locations, and contact
+            patterns. ABMs can capture:
+          </p>
+          <ul>
+            <li><strong>Spatial heterogeneity</strong>: Disease spreads locally, creating spatial clusters</li>
+            <li><strong>Individual variation</strong>: Age, immunity, behavior differences</li>
+            <li><strong>Superspreader events</strong>: A small fraction of infected individuals cause disproportionate transmission (80/20 rule observed in SARS, COVID-19)</li>
+            <li><strong>Stochastic effects</strong>: Important when case counts are small (early/late epidemic, or small populations)</li>
+            <li><strong>Complex interventions</strong>: Contact tracing, targeted quarantine, ring vaccination</li>
+          </ul>
+          <p>
+            Notable ABM frameworks include EpiSimdemics (Barrett et al., 2008), FRED (Grefenstette et al., 2013),
+            and Covasim (Kerr et al., 2021) used extensively for COVID-19 policy analysis.
+          </p>
+
+          <h3>7. Network Epidemiology</h3>
+          <p>
+            The structure of contact networks profoundly affects epidemic dynamics. Key network types include:
+          </p>
+          <ul>
+            <li><strong>Erdos-Renyi Random Networks</strong>: Homogeneous degree distribution. Epidemic threshold depends on mean degree.</li>
+            <li><strong>Watts-Strogatz Small-World</strong>: High clustering with short path lengths. Models social networks with local contacts and occasional long-range links. Accelerates epidemic spread compared to lattices.</li>
+            <li><strong>Barabasi-Albert Scale-Free</strong>: Power-law degree distribution with hubs. Highly vulnerable to epidemic spread (very low epidemic threshold) but also highly responsive to targeted vaccination of hubs.</li>
+            <li><strong>Lattice Networks</strong>: Regular grid contacts. Disease spreads as a spatial wave front.</li>
+          </ul>
+          <p>
+            Pastor-Satorras and Vespignani (2001) showed that on scale-free networks, the epidemic
+            threshold vanishes — even diseases with very low transmissibility can spread. This contrasts
+            sharply with random networks where a clear threshold exists.
+          </p>
+
+          <h3>8. Real-World Disease Parameters</h3>
+          <div class="disease-table-wrapper">
+            <table class="disease-table">
+              <thead>
+                <tr>
+                  <th>Disease</th>
+                  <th>R<sub>0</sub></th>
+                  <th>Incubation (days)</th>
+                  <th>Infectious (days)</th>
+                  <th>CFR</th>
+                  <th>Herd Immunity</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>Measles</td><td>12-18</td><td>10-14</td><td>4-8</td><td>0.1-0.2%</td><td>92-95%</td></tr>
+                <tr><td>COVID-19 (Original)</td><td>2.5-3.0</td><td>5-6</td><td>7-10</td><td>~1%</td><td>60-67%</td></tr>
+                <tr><td>COVID-19 (Delta)</td><td>5-8</td><td>4-5</td><td>7-10</td><td>~1.5%</td><td>80-88%</td></tr>
+                <tr><td>COVID-19 (Omicron)</td><td>8-15</td><td>3-4</td><td>5-7</td><td>~0.3%</td><td>88-93%</td></tr>
+                <tr><td>Influenza (Seasonal)</td><td>1.3-1.8</td><td>1-4</td><td>5-7</td><td>~0.1%</td><td>23-44%</td></tr>
+                <tr><td>H1N1 (2009)</td><td>1.4-1.6</td><td>1-4</td><td>5-7</td><td>0.01-0.03%</td><td>29-38%</td></tr>
+                <tr><td>Ebola</td><td>1.5-2.5</td><td>8-10</td><td>7-14</td><td>25-90%</td><td>33-60%</td></tr>
+                <tr><td>Smallpox</td><td>5-7</td><td>12-14</td><td>14-21</td><td>~30%</td><td>80-86%</td></tr>
+                <tr><td>SARS (2003)</td><td>2-5</td><td>4-6</td><td>10-14</td><td>~10%</td><td>50-80%</td></tr>
+                <tr><td>MERS</td><td>0.3-0.8</td><td>5-6</td><td>7-14</td><td>~35%</td><td>N/A (R<sub>0</sub>&lt;1)</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3>9. Stochastic Epidemic Models</h3>
+          <p>
+            Deterministic ODE models assume continuous populations and produce identical outcomes
+            for fixed parameters. In reality, disease transmission is inherently stochastic — each
+            contact is a random event. The <strong>Gillespie algorithm</strong> (stochastic simulation
+            algorithm, SSA) exactly simulates continuous-time Markov chains by sampling event times
+            from exponential distributions.
+          </p>
+          <p>
+            Key insight: when R<sub>0</sub> > 1, there is still a nonzero probability that the
+            outbreak dies out by chance (especially when starting from few cases). For the stochastic
+            SIR model with I<sub>0</sub> = 1, the probability of a major epidemic is approximately
+            1 − 1/R<sub>0</sub>. With small populations, individual-level randomness creates wide
+            variation in epidemic trajectories — some die out quickly while others produce large epidemics.
+          </p>
+
+          <div class="math-block" id="lit-gillespie-equations"></div>
+
+          <h3>10. Sensitivity Analysis in Epidemiology</h3>
+          <p>
+            Epidemic model outputs are sensitive to parameter values that are often uncertain. Sensitivity
+            analysis quantifies how uncertainty in parameters translates to uncertainty in outcomes (peak
+            infections, total attack rate, timing). Two common approaches:
+          </p>
+          <ul>
+            <li><strong>One-at-a-time (OAT)</strong>: Vary one parameter while holding others fixed. Tornado diagrams rank parameters by their impact on the output.</li>
+            <li><strong>Global sensitivity</strong>: Vary all parameters simultaneously. Spider plots show how the output changes across the parameter range.</li>
+          </ul>
+          <p>
+            For SIR-type models, R<sub>0</sub> = β/γ means the output is equally sensitive to
+            proportional changes in β and γ but in opposite directions. The transmission rate β
+            typically dominates because it determines the speed and scale of the initial exponential growth.
+          </p>
+
+          <h3>11. Intervention Modeling</h3>
+          <p>
+            Interventions modify the effective reproduction number R<sub>eff</sub>:
+          </p>
+          <ul>
+            <li><strong>Vaccination</strong>: R<sub>eff</sub> = R<sub>0</sub> * (1 - vaccine_coverage * vaccine_efficacy). Reduces the susceptible pool.</li>
+            <li><strong>Social distancing</strong>: Reduces the contact rate c, thereby reducing beta. A 50% contact reduction halves R<sub>eff</sub>.</li>
+            <li><strong>Quarantine/isolation</strong>: Removes infectious individuals from the mixing population, reducing the effective infectious period.</li>
+            <li><strong>Contact tracing</strong>: Identifies and isolates exposed individuals before they become infectious, breaking transmission chains.</li>
+          </ul>
+
+          <h3>12. Key References</h3>
+          <ul class="references-list">
+            <li>Kermack, W.O. & McKendrick, A.G. (1927). "A contribution to the mathematical theory of epidemics." <em>Proceedings of the Royal Society of London A</em>, 115(772), 700-721.</li>
+            <li>Anderson, R.M. & May, R.M. (1991). <em>Infectious Diseases of Humans: Dynamics and Control</em>. Oxford University Press.</li>
+            <li>Hethcote, H.W. (2000). "The mathematics of infectious diseases." <em>SIAM Review</em>, 42(4), 599-653.</li>
+            <li>Pastor-Satorras, R. & Vespignani, A. (2001). "Epidemic spreading in scale-free networks." <em>Physical Review Letters</em>, 86(14), 3200.</li>
+            <li>Watts, D.J. & Strogatz, S.H. (1998). "Collective dynamics of 'small-world' networks." <em>Nature</em>, 393(6684), 440-442.</li>
+            <li>Keeling, M.J. & Rohani, P. (2008). <em>Modeling Infectious Diseases in Humans and Animals</em>. Princeton University Press.</li>
+            <li>Lloyd-Smith, J.O. et al. (2005). "Superspreading and the effect of individual variation on disease emergence." <em>Nature</em>, 438(7066), 355-359.</li>
+            <li>Kerr, C.C. et al. (2021). "Covasim: an agent-based model of COVID-19 dynamics and interventions." <em>PLOS Computational Biology</em>, 17(7), e1009149.</li>
+            <li>Ferguson, N.M. et al. (2020). "Impact of non-pharmaceutical interventions to reduce COVID-19 mortality and healthcare demand." Imperial College COVID-19 Response Team, Report 9.</li>
+            <li>Brauer, F. & Castillo-Chavez, C. (2012). <em>Mathematical Models in Population Biology and Epidemiology</em>. Springer.</li>
+            <li>Gillespie, D.T. (1977). "Exact stochastic simulation of coupled chemical reactions." <em>The Journal of Physical Chemistry</em>, 81(25), 2340-2361.</li>
+            <li>Allen, L.J.S. (2008). "An introduction to stochastic epidemic models." <em>Mathematical Epidemiology</em>, Springer, 81-130.</li>
+          </ul>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script type="module" src="./module.js"></script>
+</body>
+</html>

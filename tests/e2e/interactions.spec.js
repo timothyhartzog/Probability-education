@@ -182,3 +182,125 @@ test.describe('Brownian Motion interactions', () => {
     expect(errors).toEqual([]);
   });
 });
+
+test.describe('Disease Modeling (MQ-8) interactions', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/src/modules/mq-8-disease-modeling/index.html');
+    await page.waitForSelector('svg', { timeout: 10_000 });
+  });
+
+  test('renders SIR/SEIR model visualization', async ({ page }) => {
+    const svg = page.locator('svg').first();
+    await expect(svg).toBeVisible();
+  });
+
+  test('parameter sliders update without errors', async ({ page }) => {
+    const errors = [];
+    page.on('pageerror', (err) => errors.push(err.message));
+
+    const slider = page.locator('input[type="range"]').first();
+    if (await slider.isVisible()) {
+      const min = Number(await slider.getAttribute('min') ?? '0');
+      const max = Number(await slider.getAttribute('max') ?? '100');
+      const step = Number(await slider.getAttribute('step') ?? '1');
+      const mid = Math.round((min + max) / 2 / step) * step;
+      await slider.fill(String(mid));
+      await page.waitForTimeout(1500);
+    }
+
+    expect(errors).toEqual([]);
+  });
+
+  test('tab switching works without errors', async ({ page }) => {
+    const errors = [];
+    page.on('pageerror', (err) => errors.push(err.message));
+
+    const tabs = page.locator('button, .tab, [role="tab"]');
+    const tabCount = await tabs.count();
+    for (let i = 0; i < Math.min(tabCount, 5); i++) {
+      const tab = tabs.nth(i);
+      if (await tab.isVisible()) {
+        await tab.click();
+        await page.waitForTimeout(800);
+      }
+    }
+
+    expect(errors).toEqual([]);
+  });
+});
+
+test.describe('Vaccine-Preventable Disease (MQ-9) interactions', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/src/modules/mq-9-vaccine-preventable/index.html');
+    await page.waitForSelector('svg', { timeout: 10_000 });
+  });
+
+  test('renders outbreak simulation visualization', async ({ page }) => {
+    const svg = page.locator('svg').first();
+    await expect(svg).toBeVisible();
+  });
+
+  test('controls update simulation without errors', async ({ page }) => {
+    const errors = [];
+    page.on('pageerror', (err) => errors.push(err.message));
+
+    const slider = page.locator('input[type="range"]').first();
+    if (await slider.isVisible()) {
+      const min = Number(await slider.getAttribute('min') ?? '0');
+      const max = Number(await slider.getAttribute('max') ?? '100');
+      const step = Number(await slider.getAttribute('step') ?? '1');
+      const mid = Math.round((min + max) / 2 / step) * step;
+      await slider.fill(String(mid));
+      await page.waitForTimeout(1500);
+    }
+
+    expect(errors).toEqual([]);
+    await expect(page.locator('svg').first()).toBeVisible();
+  });
+});
+
+test.describe('Stochastic Finance (FM-1) interactions', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/src/modules/fm-1-stochastic-finance/index.html');
+    await page.waitForSelector('svg', { timeout: 10_000 });
+  });
+
+  test('renders Monte Carlo simulation chart', async ({ page }) => {
+    const svg = page.locator('svg').first();
+    await expect(svg).toBeVisible();
+  });
+
+  test('parameter changes update without errors', async ({ page }) => {
+    const errors = [];
+    page.on('pageerror', (err) => errors.push(err.message));
+
+    const slider = page.locator('input[type="range"]').first();
+    if (await slider.isVisible()) {
+      const min = Number(await slider.getAttribute('min') ?? '0');
+      const max = Number(await slider.getAttribute('max') ?? '100');
+      const step = Number(await slider.getAttribute('step') ?? '1');
+      const mid = Math.round((min + max) / 2 / step) * step;
+      await slider.fill(String(mid));
+      await page.waitForTimeout(1500);
+    }
+
+    expect(errors).toEqual([]);
+  });
+
+  test('tab navigation works without errors', async ({ page }) => {
+    const errors = [];
+    page.on('pageerror', (err) => errors.push(err.message));
+
+    const tabs = page.locator('button, .tab, [role="tab"]');
+    const tabCount = await tabs.count();
+    for (let i = 0; i < Math.min(tabCount, 5); i++) {
+      const tab = tabs.nth(i);
+      if (await tab.isVisible()) {
+        await tab.click();
+        await page.waitForTimeout(800);
+      }
+    }
+
+    expect(errors).toEqual([]);
+  });
+});
