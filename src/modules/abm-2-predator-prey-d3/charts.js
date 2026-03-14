@@ -107,6 +107,55 @@ export function drawPopulationChart(container, history, isRunning) {
   svg.append('text').attr('x', width / 2).attr('y', height - 2)
     .attr('text-anchor', 'middle').attr('fill', CHART_COLORS.muted).attr('font-size', 10)
     .text('Tick');
+
+  // ── Interactive tooltip ────────────────────────────────────
+  const tooltip = d3.select(container).append('div')
+    .style('position', 'absolute').style('pointer-events', 'none')
+    .style('background', '#1e293b').style('border', '1px solid #475569')
+    .style('border-radius', '6px').style('padding', '6px 10px')
+    .style('font-size', '11px').style('color', '#e2e8f0')
+    .style('box-shadow', '0 4px 12px rgba(0,0,0,0.4)')
+    .style('opacity', 0).style('z-index', 10);
+
+  const bisect = d3.bisector(d => d.tick).left;
+  const focusLine = g.append('line')
+    .attr('y1', 0).attr('y2', h)
+    .attr('stroke', '#475569').attr('stroke-dasharray', '3,3').style('opacity', 0);
+  const focusDotPrey = g.append('circle').attr('r', 4)
+    .attr('fill', CHART_COLORS.prey).attr('stroke', '#fff').attr('stroke-width', 1.5).style('opacity', 0);
+  const focusDotPred = g.append('circle').attr('r', 4)
+    .attr('fill', CHART_COLORS.predator).attr('stroke', '#fff').attr('stroke-width', 1.5).style('opacity', 0);
+
+  svg.append('rect').attr('width', width).attr('height', height)
+    .attr('fill', 'none').attr('pointer-events', 'all')
+    .on('mousemove', function(event) {
+      const [mx] = d3.pointer(event, g.node());
+      const tick0 = x.invert(mx);
+      const i = Math.min(bisect(history, tick0), history.length - 1);
+      const d = history[i];
+      if (!d) return;
+
+      focusLine.attr('x1', x(d.tick)).attr('x2', x(d.tick)).style('opacity', 1);
+      focusDotPrey.attr('cx', x(d.tick)).attr('cy', y(d.prey)).style('opacity', 1);
+      focusDotPred.attr('cx', x(d.tick)).attr('cy', y(d.predator)).style('opacity', 1);
+
+      tooltip
+        .html(`<strong>Tick ${d.tick}</strong><br>` +
+          `<span style="color:${CHART_COLORS.prey}">Prey: ${d.prey}</span><br>` +
+          `<span style="color:${CHART_COLORS.predator}">Pred: ${d.predator}</span>`)
+        .style('opacity', 1)
+        .style('left', (event.offsetX + 14) + 'px')
+        .style('top', (event.offsetY - 10) + 'px');
+    })
+    .on('mouseleave', () => {
+      focusLine.style('opacity', 0);
+      focusDotPrey.style('opacity', 0);
+      focusDotPred.style('opacity', 0);
+      tooltip.style('opacity', 0);
+    });
+
+  // Make container relative for tooltip positioning
+  d3.select(container).style('position', 'relative');
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -181,6 +230,48 @@ export function drawPhasePortrait(container, history) {
     .attr('transform', `translate(12,${height / 2}) rotate(-90)`)
     .attr('text-anchor', 'middle').attr('fill', CHART_COLORS.muted).attr('font-size', 10)
     .text('Predator Population');
+
+  // ── Tooltip on hover near data points ─────────────────────
+  const tooltip = d3.select(container).append('div')
+    .style('position', 'absolute').style('pointer-events', 'none')
+    .style('background', '#1e293b').style('border', '1px solid #475569')
+    .style('border-radius', '6px').style('padding', '6px 10px')
+    .style('font-size', '11px').style('color', '#e2e8f0')
+    .style('box-shadow', '0 4px 12px rgba(0,0,0,0.4)')
+    .style('opacity', 0).style('z-index', 10);
+
+  const focusDot = g.append('circle').attr('r', 5)
+    .attr('fill', CHART_COLORS.phase).attr('stroke', '#fff').attr('stroke-width', 1.5).style('opacity', 0);
+
+  svg.append('rect').attr('width', width).attr('height', height)
+    .attr('fill', 'none').attr('pointer-events', 'all')
+    .on('mousemove', function(event) {
+      const [mx, my] = d3.pointer(event, g.node());
+      // Find nearest history point
+      let minDist = Infinity, nearest = null;
+      history.forEach(d => {
+        const dx = x(d.prey) - mx, dy = y(d.predator) - my;
+        const dist = dx * dx + dy * dy;
+        if (dist < minDist) { minDist = dist; nearest = d; }
+      });
+      if (!nearest || Math.sqrt(minDist) > 30) {
+        focusDot.style('opacity', 0);
+        tooltip.style('opacity', 0);
+        return;
+      }
+      focusDot.attr('cx', x(nearest.prey)).attr('cy', y(nearest.predator)).style('opacity', 1);
+      tooltip
+        .html(`<strong>Tick ${nearest.tick}</strong><br>Prey: ${nearest.prey} | Pred: ${nearest.predator}`)
+        .style('opacity', 1)
+        .style('left', (event.offsetX + 14) + 'px')
+        .style('top', (event.offsetY - 10) + 'px');
+    })
+    .on('mouseleave', () => {
+      focusDot.style('opacity', 0);
+      tooltip.style('opacity', 0);
+    });
+
+  d3.select(container).style('position', 'relative');
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -340,4 +431,31 @@ export function drawGrassHeatmap(container, grid, gridW, gridH) {
     .attr('y', d => d.gy * cellSize)
     .attr('width', cellSize).attr('height', cellSize)
     .attr('fill', d => colorScale(d.val));
+
+  // ── Color legend ──────────────────────────────────────────
+  const legendW = Math.min(200, cellSize * gridW * 0.6);
+  const legendH = 12;
+  const legendG = d3.select(container).append('svg')
+    .attr('width', cellSize * gridW).attr('height', 30)
+    .append('g').attr('transform', `translate(${(cellSize * gridW - legendW) / 2}, 4)`);
+
+  // Gradient bar
+  const defs = legendG.append('defs');
+  const grad = defs.append('linearGradient').attr('id', 'grass-legend-grad');
+  grad.append('stop').attr('offset', '0%').attr('stop-color', colorScale(0));
+  grad.append('stop').attr('offset', '50%').attr('stop-color', colorScale(0.5));
+  grad.append('stop').attr('offset', '100%').attr('stop-color', colorScale(1));
+
+  legendG.append('rect')
+    .attr('width', legendW).attr('height', legendH)
+    .attr('rx', 3)
+    .style('fill', 'url(#grass-legend-grad)');
+
+  // Labels
+  legendG.append('text').attr('x', 0).attr('y', legendH + 12)
+    .attr('fill', CHART_COLORS.muted).attr('font-size', 9).attr('text-anchor', 'start')
+    .text('0 (bare)');
+  legendG.append('text').attr('x', legendW).attr('y', legendH + 12)
+    .attr('fill', CHART_COLORS.muted).attr('font-size', 9).attr('text-anchor', 'end')
+    .text('1 (full)');
 }

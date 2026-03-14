@@ -61,6 +61,7 @@ const ParamStore = {
 
 // ── SimStore ────────────────────────────────────────────────
 let simState = null;
+let canvasRef = null;
 let simRunning = false;
 
 const SimStore = {
@@ -93,6 +94,23 @@ const uiState = {
   selectedId: null,
   activeChart: 'population',
   speed: 1,
+  zoomTransform: d3.zoomIdentity,
+};
+
+// ── FPS Monitor ─────────────────────────────────────────────
+const fpsMonitor = {
+  frames: [],
+  fps: 0,
+  record() {
+    const now = performance.now();
+    this.frames.push(now);
+    // Keep last 60 frames
+    while (this.frames.length > 60) this.frames.shift();
+    if (this.frames.length > 1) {
+      const elapsed = now - this.frames[0];
+      this.fps = Math.round((this.frames.length - 1) / (elapsed / 1000));
+    }
+  },
 };
 
 // ════════════════════════════════════════════════════════════════
@@ -112,6 +130,7 @@ function startLoop() {
     const dt = elapsed - lastElapsed;
     lastElapsed = elapsed;
     tickAccum += dt * uiState.speed;
+    fpsMonitor.record();
 
     while (tickAccum >= TICK_INTERVAL) {
       tickAccum -= TICK_INTERVAL;
@@ -154,6 +173,7 @@ function buildLayout() {
     { id: 'stat-predator', label: 'Predators', value: '0', color: '#ef4444' },
     { id: 'stat-grass', label: 'Grass', value: '0%', color: '#4ade80' },
     { id: 'stat-gini', label: 'Gini', value: '—' },
+    { id: 'stat-fps', label: 'FPS', value: '—', color: '#94a3b8' },
     { id: 'stat-rule', label: 'Rule', value: 'bounded' },
   ];
 
@@ -591,6 +611,9 @@ function updateStatsBar(state) {
     d3.select('[data-testid="stat-gini"]').text(giniCoefficient(stats.preyEnergies).toFixed(3));
   }
 
+  // FPS
+  d3.select('[data-testid="stat-fps"]').text(fpsMonitor.fps || '—');
+
   return stats;
 }
 
@@ -660,7 +683,32 @@ function updateCharts() {
 function renderCanvas(canvas) {
   if (!simState) return;
   const ctx = canvas.getContext('2d');
+  const t = uiState.zoomTransform;
+
+  // Clear entire canvas
+  ctx.save();
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.fillStyle = '#0f172a';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.restore();
+
+  // Apply zoom transform
+  ctx.save();
+  ctx.setTransform(t.k, 0, 0, t.k, t.x, t.y);
   drawFrame(ctx, simState, paramState, uiState);
+  ctx.restore();
+
+  // Overlay: zoom level indicator (when zoomed)
+  if (t.k !== 1) {
+    ctx.save();
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.fillStyle = 'rgba(15,23,42,0.7)';
+    ctx.fillRect(canvas.width - 60, 4, 56, 20);
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = '11px monospace';
+    ctx.fillText(`${t.k.toFixed(1)}×`, canvas.width - 52, 17);
+    ctx.restore();
+  }
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -668,13 +716,35 @@ function renderCanvas(canvas) {
 // ════════════════════════════════════════════════════════════════
 
 function setupCanvasInteraction(canvas) {
-  d3.select(canvas).on('click', function(event) {
+  // ── D3 Zoom ───────────────────────────────────────────────
+  const zoomBehavior = d3.zoom()
+    .scaleExtent([0.5, 6])
+    .on('zoom', (event) => {
+      uiState.zoomTransform = event.transform;
+      // Re-render immediately on zoom
+      if (simState) renderCanvas(canvas);
+    });
+
+  d3.select(canvas).call(zoomBehavior);
+
+  // Double-click to reset zoom
+  d3.select(canvas).on('dblclick.zoom', () => {
+    d3.select(canvas).transition().duration(400)
+      .call(zoomBehavior.transform, d3.zoomIdentity);
+    uiState.zoomTransform = d3.zoomIdentity;
+  });
+
+  // Click to select agent (with zoom-corrected coordinates)
+  d3.select(canvas).on('click.select', function(event) {
     if (!simState) return;
     const rect = canvas.getBoundingClientRect();
     const px = event.clientX - rect.left;
     const py = event.clientY - rect.top;
 
-    const agent = hitTest(simState.agents, px, py, canvas.width, canvas.height, 1.5);
+    // Invert zoom transform to get canvas coords
+    const [cx, cy] = uiState.zoomTransform.invert([px, py]);
+
+    const agent = hitTest(simState.agents, cx, cy, canvas.width, canvas.height, 1.5 / uiState.zoomTransform.k);
     if (agent) {
       uiState.selectedId = agent.id;
       dispatch.call('agent:select', null, { id: agent.id });
@@ -684,6 +754,25 @@ function setupCanvasInteraction(canvas) {
       dispatch.call('agent:deselect', null, {});
     }
   });
+
+  // ── Responsive canvas resizing ────────────────────────────
+  const resizeObserver = new ResizeObserver(entries => {
+    for (const entry of entries) {
+      const { width } = entry.contentRect;
+      if (width > 0) {
+        const ratio = 540 / 720; // maintain aspect ratio
+        const newW = Math.floor(width);
+        const newH = Math.floor(newW * ratio);
+        canvas.width = newW;
+        canvas.height = newH;
+        if (simState) renderCanvas(canvas);
+      }
+    }
+  });
+  resizeObserver.observe(canvas.parentElement);
+
+  // Store zoom behavior for keyboard reset
+  canvas._zoomBehavior = zoomBehavior;
 }
 
 // ── Keyboard Shortcuts ──────────────────────────────────────
@@ -741,8 +830,76 @@ function setupKeyboard() {
         d3.select('[data-testid="slider-speed"]').text(uiState.speed + '×');
         d3.select('[data-testid="input-speed"]').property('value', uiState.speed);
         break;
+      case 'z': case 'Z':
+        if (event.ctrlKey || event.metaKey) {
+          event.preventDefault();
+          if (canvasRef && canvasRef._zoomBehavior) {
+            d3.select(canvasRef).transition().duration(400)
+              .call(canvasRef._zoomBehavior.transform, d3.zoomIdentity);
+            uiState.zoomTransform = d3.zoomIdentity;
+          }
+        }
+        break;
+      case '?':
+        toggleHelpPanel();
+        break;
     }
   });
+}
+
+// ════════════════════════════════════════════════════════════════
+//  KEYBOARD SHORTCUT HELP PANEL
+// ════════════════════════════════════════════════════════════════
+
+function toggleHelpPanel() {
+  let panel = d3.select('.abm-help-overlay');
+  if (!panel.empty()) {
+    panel.remove();
+    return;
+  }
+
+  const shortcuts = [
+    ['Space', 'Play / Pause simulation'],
+    ['R', 'Reset simulation'],
+    ['→', 'Step forward one tick'],
+    ['1 / 2 / 3', 'Switch decision rule'],
+    ['T', 'Toggle agent trails'],
+    ['V', 'Toggle vision circles'],
+    ['+ / −', 'Increase / decrease speed'],
+    ['Esc', 'Deselect agent'],
+    ['Ctrl+Z', 'Reset zoom to 100%'],
+    ['?', 'Toggle this help panel'],
+    ['Scroll', 'Zoom in/out on canvas'],
+    ['Drag', 'Pan canvas viewport'],
+    ['Dbl-click', 'Reset zoom on canvas'],
+    ['Click', 'Select agent on canvas'],
+  ];
+
+  const overlay = d3.select('.abm-app').append('div')
+    .attr('class', 'abm-help-overlay')
+    .on('click', function(event) {
+      if (event.target === this) d3.select(this).remove();
+    });
+
+  const modal = overlay.append('div')
+    .attr('class', 'abm-help-modal');
+
+  modal.append('div')
+    .attr('class', 'abm-help-title')
+    .text('Keyboard Shortcuts');
+
+  const table = modal.append('div')
+    .attr('class', 'abm-help-table');
+
+  shortcuts.forEach(([key, desc]) => {
+    const row = table.append('div').attr('class', 'abm-help-row');
+    row.append('kbd').attr('class', 'abm-help-key').text(key);
+    row.append('span').attr('class', 'abm-help-desc').text(desc);
+  });
+
+  modal.append('div')
+    .attr('class', 'abm-help-footer')
+    .text('Press ? or click outside to close');
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -778,6 +935,7 @@ function wireDispatch(canvas) {
 
 function init() {
   const { canvas } = buildLayout();
+  canvasRef = canvas;
   setupCanvasInteraction(canvas);
   setupKeyboard();
   wireDispatch(canvas);
