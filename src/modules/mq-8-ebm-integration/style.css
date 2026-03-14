@@ -1,0 +1,382 @@
+/* ============================================================
+   Module MQ-8 — Evidence-Based Medicine Integration Hub
+   ============================================================ */
+
+/* -- Venn diagram container ---------------------------------- */
+#venn-chart {
+  position: relative;
+  width: 100%;
+  min-height: 420px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#venn-chart svg {
+  width: 100%;
+  max-width: 600px;
+  height: auto;
+}
+
+/* -- Tooltip ------------------------------------------------- */
+.ebm-tooltip {
+  position: absolute;
+  background: var(--surface, #fff);
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  max-width: 280px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  pointer-events: none;
+  z-index: 100;
+  transition: opacity 0.15s;
+}
+
+.ebm-tooltip .tooltip-title {
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+/* -- Module panels ------------------------------------------- */
+.module-panel {
+  animation: panelSlideIn 0.25s ease-out;
+}
+
+@keyframes panelSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.panel-close {
+  background: none;
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: 6px;
+  width: 32px;
+  height: 32px;
+  font-size: 1.25rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted, #64748b);
+  transition: background 0.15s, color 0.15s;
+}
+
+.panel-close:hover {
+  background: var(--danger, #ef4444);
+  color: #fff;
+  border-color: var(--danger, #ef4444);
+}
+
+/* -- Evidence Pyramid ---------------------------------------- */
+#pyramid-chart {
+  width: 100%;
+  min-height: 320px;
+}
+
+#pyramid-chart svg {
+  width: 100%;
+  height: auto;
+}
+
+.pyramid-level {
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.pyramid-level:hover {
+  opacity: 0.85;
+}
+
+.pyramid-level.active {
+  stroke: var(--text, #1e293b);
+  stroke-width: 2;
+}
+
+/* -- Detail box ---------------------------------------------- */
+.detail-box {
+  background: var(--surface-alt, #f8fafc);
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 12px;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  min-height: 60px;
+}
+
+.detail-box h4 {
+  margin: 0 0 8px;
+  font-size: 0.95rem;
+}
+
+.detail-box ul {
+  margin: 8px 0;
+  padding-left: 20px;
+}
+
+.detail-box li {
+  margin-bottom: 4px;
+}
+
+/* -- Expertise profiles -------------------------------------- */
+#expertise-profiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.profile-card {
+  border: 2px solid var(--border, #e2e8f0);
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.profile-card:hover {
+  border-color: var(--primary, #2563eb);
+}
+
+.profile-card.active {
+  border-color: var(--primary, #2563eb);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.profile-icon {
+  font-size: 2rem;
+  margin-bottom: 8px;
+}
+
+.profile-card h4 {
+  margin: 0 0 4px;
+  font-size: 0.875rem;
+}
+
+.profile-card p {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--text-muted, #64748b);
+}
+
+/* -- Patient persona cards ----------------------------------- */
+#persona-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.persona-card {
+  border: 2px solid var(--border, #e2e8f0);
+  border-radius: 8px;
+  padding: 16px;
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.persona-card:hover {
+  border-color: var(--accent, #f59e0b);
+}
+
+.persona-card.active {
+  border-color: var(--accent, #f59e0b);
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
+}
+
+.persona-card h4 {
+  margin: 0 0 4px;
+  font-size: 0.875rem;
+}
+
+.persona-card .persona-desc {
+  font-size: 0.75rem;
+  color: var(--text-muted, #64748b);
+  margin: 0;
+}
+
+/* -- Values sliders ------------------------------------------ */
+#values-sliders {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.value-slider-group label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.value-slider-group input[type="range"] {
+  width: 100%;
+}
+
+/* -- Process flow -------------------------------------------- */
+#process-flow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  flex-wrap: wrap;
+  padding: 20px 0;
+}
+
+.process-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  padding: 12px 16px;
+  border-radius: 8px;
+  transition: background 0.15s;
+  min-width: 90px;
+  text-align: center;
+}
+
+.process-step:hover {
+  background: var(--surface-alt, #f8fafc);
+}
+
+.process-step.active {
+  background: var(--primary, #2563eb);
+  color: #fff;
+}
+
+.process-step.active .step-number {
+  background: #fff;
+  color: var(--primary, #2563eb);
+}
+
+.step-number {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--primary, #2563eb);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.875rem;
+  margin-bottom: 6px;
+}
+
+.step-label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.process-arrow {
+  font-size: 1.25rem;
+  color: var(--text-muted, #64748b);
+  margin: 0 2px;
+  align-self: center;
+}
+
+/* -- Decision simulator -------------------------------------- */
+#decision-config {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+#decision-viz {
+  width: 100%;
+  min-height: 200px;
+}
+
+#decision-viz svg {
+  width: 100%;
+  height: auto;
+}
+
+#decision-output {
+  font-size: 0.875rem;
+}
+
+.decision-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.decision-bar-label {
+  min-width: 80px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.decision-bar-track {
+  flex: 1;
+  height: 24px;
+  background: var(--border, #e2e8f0);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.decision-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.4s ease-out;
+}
+
+.decision-bar-value {
+  min-width: 40px;
+  font-size: 0.8125rem;
+  text-align: right;
+}
+
+/* -- Layout overrides for EBM module ------------------------- */
+.ebm-layout .viz-area {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg, 24px);
+}
+
+/* -- Responsive ---------------------------------------------- */
+@media (max-width: 768px) {
+  #venn-chart {
+    min-height: 300px;
+  }
+
+  #process-flow {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .process-arrow {
+    transform: rotate(90deg);
+  }
+
+  #decision-config {
+    grid-template-columns: 1fr;
+  }
+
+  #expertise-profiles,
+  #persona-cards {
+    grid-template-columns: 1fr;
+  }
+}

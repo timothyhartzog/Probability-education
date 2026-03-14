@@ -43,6 +43,7 @@ export default defineConfig({
         mcmcExplorer: resolve(__dirname, 'src/modules/8.2-mcmc-explorer/index.html'),
         entropyKl: resolve(__dirname, 'src/modules/9.1-entropy-kl/index.html'),
         mutualInformation: resolve(__dirname, 'src/modules/9.2-mutual-information/index.html'),
+        ebmIntegration: resolve(__dirname, 'src/modules/mq-8-ebm-integration/index.html'),
         diseaseModeling: resolve(__dirname, 'src/modules/mq-8-disease-modeling/index.html'),
         vaccinePreventable: resolve(__dirname, 'src/modules/mq-9-vaccine-preventable/index.html'),
         stochasticFinance: resolve(__dirname, 'src/modules/fm-1-stochastic-finance/index.html'),
