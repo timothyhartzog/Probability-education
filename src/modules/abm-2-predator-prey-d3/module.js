@@ -27,6 +27,7 @@ const dispatch = d3.dispatch(
   'param:change', 'param:preset',
   'agent:select', 'agent:deselect',
   'rule:change',
+  'engine:error',
 );
 
 // ════════════════════════════════════════════════════════════════
@@ -71,9 +72,14 @@ const SimStore = {
   },
   tick(dt) {
     if (!simRunning || !simState) return;
-    const params = ParamStore.get();
-    simState = stepSim(simState, params);
-    dispatch.call('sim:tick', null, { state: simState, dt });
+    try {
+      const params = ParamStore.get();
+      simState = stepSim(simState, params);
+      dispatch.call('sim:tick', null, { state: simState, dt });
+    } catch (err) {
+      simRunning = false;
+      dispatch.call('engine:error', null, { error: err, state: simState });
+    }
   },
   start()    { simRunning = true;  dispatch.call('sim:start', null, {}); },
   pause()    { simRunning = false; dispatch.call('sim:pause', null, {}); },
@@ -173,6 +179,24 @@ function buildLayout() {
   buildRuleSelector(sidebar);
   buildParamSliders(sidebar);
   buildPresetSelector(sidebar);
+  buildExportControls(sidebar);
+
+  // ── Error Banner ──────────────────────────────────────────
+  const errorBanner = app.append('div')
+    .attr('class', 'abm-error-banner')
+    .attr('data-testid', 'error-banner')
+    .style('display', 'none');
+  errorBanner.append('span').attr('class', 'abm-error-text');
+  errorBanner.append('button')
+    .attr('class', 'abm-btn abm-error-dismiss')
+    .attr('data-testid', 'btn-dismiss-error')
+    .text('Dismiss')
+    .on('click', () => { errorBanner.style('display', 'none'); });
+
+  dispatch.on('engine:error.display', ({ error }) => {
+    errorBanner.style('display', 'flex');
+    errorBanner.select('.abm-error-text').text('Engine error: ' + (error?.message || error));
+  });
 
   // ── Center: Canvas + Charts ───────────────────────────────
   const center = main.append('div').attr('class', 'abm-center');
@@ -395,6 +419,57 @@ function buildPresetSelector(sidebar) {
         SimStore.init();
       });
   }
+}
+
+// ── Export Controls ──────────────────────────────────────────
+function buildExportControls(sidebar) {
+  const section = sidebar.append('div').attr('class', 'abm-control-section');
+  section.append('div').attr('class', 'abm-section-title').text('Export');
+
+  section.append('button')
+    .attr('class', 'abm-btn')
+    .attr('data-testid', 'btn-export-csv')
+    .text('Download CSV')
+    .on('click', () => {
+      if (!simState || !simState.history || simState.history.length === 0) return;
+      const header = 'tick,prey,predator,grass\n';
+      const rows = simState.history.map(h =>
+        `${h.tick},${h.prey},${h.predator},${h.grass.toFixed(4)}`
+      ).join('\n');
+      const csv = header + rows;
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `abm-simulation-${Date.now()}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+  section.append('button')
+    .attr('class', 'abm-btn')
+    .attr('data-testid', 'btn-export-snapshot')
+    .text('Download Snapshot')
+    .on('click', () => {
+      if (!simState) return;
+      const snapshot = {
+        tick: simState.tick,
+        params: ParamStore.get(),
+        agents: simState.agents.map(a => ({
+          id: a.id, type: a.type, x: +a.x.toFixed(2), y: +a.y.toFixed(2),
+          energy: +a.energy.toFixed(1), action: a.action, age: a.age, kills: a.kills,
+        })),
+        history: simState.history,
+      };
+      const json = JSON.stringify(snapshot, null, 2);
+      const blob = new Blob([json], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `abm-snapshot-tick${simState.tick}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    });
 }
 
 // ── Chart Tabs ──────────────────────────────────────────────

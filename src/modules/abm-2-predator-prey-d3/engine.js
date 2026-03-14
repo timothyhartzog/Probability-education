@@ -20,13 +20,13 @@ export const DEFAULT_PARAMS = {
   predatorSpeed:           0.45,
   visionRadius:            8,
   maxEnergy:               100,
-  preyMetabolism:          0.08,
-  predatorMetabolism:      0.12,
-  preyReproductionRate:    0.003,
-  predatorReproductionRate:0.001,
-  preyGrassGain:           25,
-  predatorHuntGain:        40,
-  grassRegrowRate:         0.003,
+  preyMetabolism:          0.015,
+  predatorMetabolism:      0.02,
+  preyReproductionRate:    0.006,
+  predatorReproductionRate:0.003,
+  preyGrassGain:           30,
+  predatorHuntGain:        50,
+  grassRegrowRate:         0.006,
   fleeThreshold:          0.3,
   decisionRule:            'bounded',
   showTrails:              true,
@@ -54,27 +54,27 @@ export const PARAM_LIMITS = {
 export const PRESETS = {
   stable: {
     label: 'Stable Ecosystem',
-    params: { preyCount: 80, predatorCount: 15, preyReproductionRate: 0.003,
-              predatorReproductionRate: 0.001, grassRegrowRate: 0.003,
-              preyMetabolism: 0.08, predatorMetabolism: 0.12 }
+    params: { preyCount: 80, predatorCount: 15, preyReproductionRate: 0.006,
+              predatorReproductionRate: 0.003, grassRegrowRate: 0.006,
+              preyMetabolism: 0.015, predatorMetabolism: 0.02 }
   },
   preyBoom: {
     label: 'Prey Boom',
-    params: { preyCount: 120, predatorCount: 8, preyReproductionRate: 0.008,
-              predatorReproductionRate: 0.001, grassRegrowRate: 0.006,
-              preyMetabolism: 0.05, predatorMetabolism: 0.15 }
+    params: { preyCount: 120, predatorCount: 8, preyReproductionRate: 0.012,
+              predatorReproductionRate: 0.002, grassRegrowRate: 0.010,
+              preyMetabolism: 0.01, predatorMetabolism: 0.025 }
   },
   collapse: {
     label: 'Ecosystem Collapse',
-    params: { preyCount: 60, predatorCount: 30, preyReproductionRate: 0.002,
-              predatorReproductionRate: 0.003, grassRegrowRate: 0.002,
-              preyMetabolism: 0.10, predatorMetabolism: 0.08 }
+    params: { preyCount: 60, predatorCount: 30, preyReproductionRate: 0.003,
+              predatorReproductionRate: 0.005, grassRegrowRate: 0.003,
+              preyMetabolism: 0.03, predatorMetabolism: 0.015 }
   },
   highEnergy: {
     label: 'High Energy',
     params: { preyCount: 100, predatorCount: 20, preyGrassGain: 60,
-              predatorHuntGain: 80, preyMetabolism: 0.04, predatorMetabolism: 0.06,
-              grassRegrowRate: 0.008 }
+              predatorHuntGain: 80, preyMetabolism: 0.01, predatorMetabolism: 0.015,
+              grassRegrowRate: 0.012 }
   },
 };
 
@@ -283,11 +283,11 @@ function reactiveDecision(agent, neighbors, grid, params, rng) {
     }
     // Forage — eat grass at current position or move to richer patch
     const grassHere = getGrassAt(grid, agent.x, agent.y);
-    if (grassHere > 0.3) {
+    if (grassHere > 0.1) {
       return { action: 'eat', vx: agent.vx * 0.2, vy: agent.vy * 0.2 };
     }
-    const richest = findRichestGrass(grid, agent.x, agent.y, params.visionRadius * 0.5);
-    if (richest.value > 0.3) {
+    const richest = findRichestGrass(grid, agent.x, agent.y, params.visionRadius * 0.6);
+    if (richest.value > 0.1) {
       const dx = richest.x - agent.x;
       const dy = richest.y - agent.y;
       const d = Math.hypot(dx, dy) || 1;
