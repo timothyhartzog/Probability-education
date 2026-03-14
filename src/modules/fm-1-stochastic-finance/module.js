@@ -4,6 +4,8 @@
    VaR/CVaR, Interest Rates, Jump-Diffusion
    ============================================================ */
 
+import * as d3 from 'd3';
+
 // ── Utility helpers ──────────────────────────────────────────
 function randn() {
   let u = 0, v = 0;
