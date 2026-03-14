@@ -38,6 +38,8 @@ const MODULES = [
   { id: 'mq-8-disease-modeling',   title: 'Infectious Disease Modeling' },
   { id: 'mq-9-vaccine-preventable', title: 'Vaccine-Preventable Disease Simulator' },
   { id: 'fm-1-stochastic-finance', title: 'Stochastic Finance Modeling' },
+  { id: 'abm-1-agent-simulation', title: 'Agent-Based Modeling & Simulation' },
+  { id: 'abm-2-predator-prey-d3', title: 'D3.js Predator-Prey Agent-Based Model' },
 ];
 
 for (const mod of MODULES) {
