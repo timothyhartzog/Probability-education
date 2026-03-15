@@ -65,29 +65,45 @@ def _(mo):
 def _(example_dropdown, mo):
     descriptions = {
         "indicator": r"""
-        **Example:** $X_n = Z \cdot \mathbf{1}_{\{U > 1/n\}}$ where $Z \sim N(0,1)$, $U \sim \text{Uniform}(0,1)$.
+**Example:** $X_n = Z \cdot \mathbf{1}_{\{U > 1/n\}}$ where $Z \sim N(0,1)$, $U \sim \text{Uniform}(0,1)$.
 
-        For each $\omega$, once $n > 1/U(\omega)$ (which happens for all $U > 0$), we have $X_n(\omega) = Z(\omega)$.
-        So $X_n \to Z$ **almost surely** (and hence in probability, in $L^p$, and in distribution).
+For each $\omega$, once $n > 1/U(\omega)$ (which happens for all $U > 0$), we have $X_n(\omega) = Z(\omega)$.
+So $X_n \to Z$ **almost surely** (and hence in probability, in $L^p$, and in distribution).
+
+| a.s. | in prob | $L^p$ | in dist |
+|:----:|:-------:|:-----:|:-------:|
+| YES | YES | YES | YES |
         """,
         "sliding_bump": r"""
-        **Example: Sliding Bump.** Partition $[0,1)$ into successive intervals of length $1/1, 1/2, 1/3, \ldots$
-        Define $X_n(\omega) = 1$ if $\omega$ falls in the $n$-th interval, else $0$.
+**Example: Sliding Bump.** Partition $[0,1)$ into successive intervals of length $1/1, 1/2, 1/2, 1/3, 1/3, 1/3, \ldots$
+Define $X_n(\omega) = 1$ if $\omega$ falls in the $n$-th interval, else $0$.
 
-        Then $P(|X_n| > \varepsilon) \to 0$ (convergence **in probability** to 0),
-        but for every $\omega$, $X_n(\omega) = 1$ infinitely often, so **NOT a.s.** convergent.
+Then $P(|X_n| > \varepsilon) \to 0$ (convergence **in probability** to 0),
+but for every $\omega$, $X_n(\omega) = 1$ infinitely often, so **NOT a.s.** convergent.
+
+| a.s. | in prob | $L^p$ | in dist |
+|:----:|:-------:|:-----:|:-------:|
+| NO | YES | YES | YES |
         """,
         "spike": r"""
-        **Example:** $X_n = n \cdot \mathbf{1}_{\{U < 1/n\}}$ where $U \sim \text{Uniform}(0,1)$.
+**Example:** $X_n = n \cdot \mathbf{1}_{\{U < 1/n\}}$ where $U \sim \text{Uniform}(0,1)$.
 
-        $P(X_n \neq 0) = 1/n \to 0$, so $X_n \xrightarrow{P} 0$. But $E[X_n] = 1$ for all $n$,
-        so $X_n$ does **not** converge in $L^1$. It does converge **in distribution** to 0.
+$P(X_n \neq 0) = 1/n \to 0$, so $X_n \xrightarrow{P} 0$. But $E[X_n] = 1$ for all $n$,
+so $X_n$ does **not** converge in $L^1$. It does converge **in distribution** to 0.
+
+| a.s. | in prob | $L^p$ | in dist |
+|:----:|:-------:|:-----:|:-------:|
+| YES | YES | NO | YES |
         """,
         "normal_shrink": r"""
-        **Example:** $X_n \sim N(0, 1/n)$.
+**Example:** $X_n \sim N(0, 1/n)$.
 
-        As $n \to \infty$, the variance $\to 0$, so $X_n \to 0$ in **all four modes**:
-        a.s., in probability, in $L^p$ (for all $p$), and in distribution.
+As $n \to \infty$, the variance $\to 0$, so $X_n \to 0$ in **all four modes**:
+a.s., in probability, in $L^p$ (for all $p$), and in distribution.
+
+| a.s. | in prob | $L^p$ | in dist |
+|:----:|:-------:|:-----:|:-------:|
+| YES | YES | YES | YES |
         """,
     }
     key = {v: k for k, v in example_dropdown.options.items()}[example_dropdown.value]
@@ -122,11 +138,10 @@ def _(COLORS, eps_slider, example_dropdown, go, make_subplots, mo, np, n_slider,
         k = 1
         while idx < n_max:
             seg_len = 1.0 / k
-            start = 0.0
             for j in range(k):
                 if idx >= n_max:
                     break
-                lo = start + j * seg_len
+                lo = j * seg_len
                 hi = lo + seg_len
                 for i in range(n_paths):
                     paths[i, idx] = 1.0 if lo <= omega[i] < hi else 0.0
@@ -166,7 +181,7 @@ def _(COLORS, eps_slider, example_dropdown, go, make_subplots, mo, np, n_slider,
     # --- Plot ---
     _fig = make_subplots(
         rows=1, cols=2,
-        subplot_titles=["Sample Paths X_n(ω)", "P(|X_n − X| > ε)"],
+        subplot_titles=["Sample Paths X_n(w)", "P(|X_n - X| > epsilon)"],
         column_widths=[0.55, 0.45],
     )
     _fig.update_layout(
@@ -194,12 +209,15 @@ def _(COLORS, eps_slider, example_dropdown, go, make_subplots, mo, np, n_slider,
             x=[1, _n_max], y=[_limits[0], _limits[0]],
             mode='lines',
             line=dict(color='#dc2626', width=2, dash='dash'),
-            name='Limit Z(ω₁)',
+            name='Limit Z(w1)',
             showlegend=True,
         ), row=1, col=1)
+    else:
+        _fig.add_hline(y=0, line_dash="dash", line_color="#dc2626",
+                       line_width=2, row=1, col=1)
 
     _fig.update_xaxes(title_text="n", row=1, col=1)
-    _fig.update_yaxes(title_text="X_n(ω)", row=1, col=1)
+    _fig.update_yaxes(title_text="X_n(w)", row=1, col=1)
 
     # Probability of deviation
     _fig.add_trace(go.Scatter(
@@ -213,7 +231,7 @@ def _(COLORS, eps_slider, example_dropdown, go, make_subplots, mo, np, n_slider,
 
     _fig.add_hline(y=0, line_dash="dash", line_color="#999", row=1, col=2)
     _fig.update_xaxes(title_text="n", row=1, col=2)
-    _fig.update_yaxes(title_text=f"P(|X_n − X| > {_eps})", range=[-0.05, 1.05], row=1, col=2)
+    _fig.update_yaxes(title_text=f"P(|X_n - X| > {_eps})", range=[-0.05, 1.05], row=1, col=2)
 
     mo.ui.plotly(_fig)
     return
@@ -282,17 +300,17 @@ def _(COLORS, eps_slider, example_dropdown, go, mo, np, n_slider, seed_slider):
         template='plotly_white',
         font=dict(family='Inter, Helvetica Neue, sans-serif', size=13),
         height=380,
-        title="L^p Norms: E[|X_n − X|^p]^{1/p}",
+        title="L^p Norms: E[|X_n - X|^p]^{1/p}",
         xaxis_title="n",
         yaxis_title="Norm value",
         margin=dict(l=60, r=30, t=60, b=50),
     )
     _fig2.add_trace(go.Scatter(
-        x=_ns, y=_l1, mode='lines', name='L¹ norm',
+        x=_ns, y=_l1, mode='lines', name='L1 norm',
         line=dict(color=COLORS[2], width=2),
     ))
     _fig2.add_trace(go.Scatter(
-        x=_ns, y=_l2, mode='lines', name='L² norm',
+        x=_ns, y=_l2, mode='lines', name='L2 norm',
         line=dict(color=COLORS[3], width=2),
     ))
     _fig2.update_yaxes(rangemode="tozero")
@@ -313,6 +331,10 @@ def _(mo):
 
     Try the **sliding bump** example to see a sequence that converges in probability but *not* almost surely:
     every sample path revisits 1 infinitely often, yet for each fixed $n$, only a small fraction of paths are at 1.
+
+    ---
+    *Module 2.1 --- Convergence Mode Comparator*
+    *Probability Education Platform*
     """)
     return
 
