@@ -177,6 +177,10 @@ def _(go, np, VIZ_COLORS, DEFAULT_LAYOUT, H_X, H_Y, H_XY, H_X_given_Y,
 @app.cell
 def _(mo, H_X, H_Y, H_XY, H_X_given_Y, H_Y_given_X, I_XY, capacity,
       channel_label, eps):
+    if channel_label == "BSC":
+        cap_formula = "$C_{\\mathrm{BSC}} = 1 - H(\\varepsilon) = 1 - H(" + str(eps) + ") = " + f"{capacity:.4f}" + "$"
+    else:
+        cap_formula = "$C_{\\mathrm{BEC}} = 1 - \\varepsilon = 1 - " + str(eps) + " = " + f"{capacity:.4f}" + "$"
     mo.md(rf"""
     ## Information Measures (bits)
 
@@ -193,7 +197,7 @@ def _(mo, H_X, H_Y, H_XY, H_X_given_Y, H_Y_given_X, I_XY, capacity,
 
     $$C = {capacity:.4f} \text{{ bits/use}}$$
 
-    {"$C_{\\mathrm{BSC}} = 1 - H(\\varepsilon) = 1 - H(" + f"{eps}" + ") = " + f"{capacity:.4f}" + "$" if channel_label == "BSC" else "$C_{\\mathrm{BEC}} = 1 - \\varepsilon = 1 - " + f"{eps}" + " = " + f"{capacity:.4f}" + "$"}
+    {cap_formula}
 
     The capacity is achieved when $P(X=0) = P(X=1) = 0.5$ (uniform input).
     """)
