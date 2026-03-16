@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
+    "build:wasm": "cd src/modules/abm-3-predator-prey-wasm && npx asc assembly/engine.ts --outFile pkg/engine.wasm --textFile pkg/engine.wat --exportRuntime --runtime stub --optimize",
     "test": "vitest run && npx playwright test --grep-invert visual",
     "test:unit": "vitest run",
     "test:e2e": "npx playwright test --grep-invert visual",
@@ -23,6 +24,7 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.56.0",
+    "assemblyscript": "^0.27.0",
     "vitest": "^4.1.0"
   }
 }

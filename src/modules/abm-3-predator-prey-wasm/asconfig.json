@@ -1,0 +1,28 @@
+{
+  "entries": ["assembly/engine.ts"],
+  "options": {
+    "exportRuntime": true,
+    "exportStart": false,
+    "runtime": "stub",
+    "outFile": "pkg/engine.wasm",
+    "textFile": "pkg/engine.wat",
+    "sourceMap": false,
+    "optimize": true,
+    "optimizeLevel": 3,
+    "shrinkLevel": 1
+  },
+  "targets": {
+    "debug": {
+      "outFile": "pkg/engine.debug.wasm",
+      "textFile": "pkg/engine.debug.wat",
+      "debug": true,
+      "optimize": false
+    },
+    "release": {
+      "outFile": "pkg/engine.wasm",
+      "optimize": true,
+      "optimizeLevel": 3,
+      "shrinkLevel": 1
+    }
+  }
+}
