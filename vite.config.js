@@ -49,6 +49,7 @@ export default defineConfig({
         stochasticFinance: resolve(__dirname, 'src/modules/fm-1-stochastic-finance/index.html'),
         agentSimulation: resolve(__dirname, 'src/modules/abm-1-agent-simulation/index.html'),
         predatorPreyD3: resolve(__dirname, 'src/modules/abm-2-predator-prey-d3/index.html'),
+        predatorPreyWasm: resolve(__dirname, 'src/modules/abm-3-predator-prey-wasm/index.html'),
       },
     },
   },
