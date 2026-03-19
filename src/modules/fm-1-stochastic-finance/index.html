@@ -71,36 +71,36 @@
         <aside class="control-panel">
           <h2 class="panel-title">GBM Parameters</h2>
           <div class="control-group">
-            <label>Initial Price S₀ ($)</label>
+            <label for="gbm-s0">Initial Price S₀ ($)</label>
             <input type="range" id="gbm-s0" min="10" max="500" value="100" step="5" />
             <output id="gbm-s0-val">100</output>
             <div class="param-help">Starting stock price</div>
           </div>
           <div class="control-group">
-            <label>Drift μ (annual)</label>
+            <label for="gbm-mu">Drift μ (annual)</label>
             <input type="range" id="gbm-mu" min="-0.2" max="0.5" value="0.08" step="0.01" />
             <output id="gbm-mu-val">0.08</output>
             <div class="param-help">Expected annual return</div>
           </div>
           <div class="control-group">
-            <label>Volatility σ (annual)</label>
+            <label for="gbm-sigma">Volatility σ (annual)</label>
             <input type="range" id="gbm-sigma" min="0.05" max="1.0" value="0.20" step="0.01" />
             <output id="gbm-sigma-val">0.20</output>
             <div class="param-help">Annual standard deviation of returns</div>
           </div>
           <div class="control-group">
-            <label>Time Horizon T (years)</label>
+            <label for="gbm-T">Time Horizon T (years)</label>
             <input type="range" id="gbm-T" min="0.25" max="10" value="1" step="0.25" />
             <output id="gbm-T-val">1</output>
           </div>
           <div class="control-group">
-            <label>Time Steps</label>
+            <label for="gbm-steps">Time Steps</label>
             <input type="range" id="gbm-steps" min="50" max="1000" value="252" step="1" />
             <output id="gbm-steps-val">252</output>
             <div class="param-help">252 ≈ trading days/year</div>
           </div>
           <div class="control-group">
-            <label>Number of Paths</label>
+            <label for="gbm-paths">Number of Paths</label>
             <input type="range" id="gbm-paths" min="1" max="500" value="50" step="1" />
             <output id="gbm-paths-val">50</output>
           </div>
@@ -149,37 +149,37 @@
         <aside class="control-panel">
           <h2 class="panel-title">Black-Scholes Parameters</h2>
           <div class="control-group">
-            <label>Spot Price S ($)</label>
+            <label for="bs-S">Spot Price S ($)</label>
             <input type="range" id="bs-S" min="10" max="300" value="100" step="1" />
             <output id="bs-S-val">100</output>
           </div>
           <div class="control-group">
-            <label>Strike Price K ($)</label>
+            <label for="bs-K">Strike Price K ($)</label>
             <input type="range" id="bs-K" min="10" max="300" value="100" step="1" />
             <output id="bs-K-val">100</output>
           </div>
           <div class="control-group">
-            <label>Time to Expiry T (years)</label>
+            <label for="bs-T">Time to Expiry T (years)</label>
             <input type="range" id="bs-T" min="0.01" max="3" value="0.5" step="0.01" />
             <output id="bs-T-val">0.50</output>
           </div>
           <div class="control-group">
-            <label>Risk-Free Rate r</label>
+            <label for="bs-r">Risk-Free Rate r</label>
             <input type="range" id="bs-r" min="0" max="0.15" value="0.05" step="0.005" />
             <output id="bs-r-val">0.050</output>
           </div>
           <div class="control-group">
-            <label>Volatility σ</label>
+            <label for="bs-sigma">Volatility σ</label>
             <input type="range" id="bs-sigma" min="0.05" max="1.0" value="0.20" step="0.01" />
             <output id="bs-sigma-val">0.20</output>
           </div>
           <div class="control-group">
-            <label>Dividend Yield q</label>
+            <label for="bs-q">Dividend Yield q</label>
             <input type="range" id="bs-q" min="0" max="0.08" value="0" step="0.005" />
             <output id="bs-q-val">0.000</output>
           </div>
           <div class="control-group">
-            <label>Greek to Plot</label>
+            <label for="bs-greek-select">Greek to Plot</label>
             <select id="bs-greek-select">
               <option value="delta">Delta (Δ)</option>
               <option value="gamma">Gamma (Γ)</option>
@@ -220,22 +220,22 @@
         <aside class="control-panel">
           <h2 class="panel-title">Portfolio Parameters</h2>
           <div class="control-group">
-            <label>Number of Assets</label>
+            <label for="port-n">Number of Assets</label>
             <input type="range" id="port-n" min="2" max="8" value="4" step="1" />
             <output id="port-n-val">4</output>
           </div>
           <div class="control-group">
-            <label>Risk-Free Rate</label>
+            <label for="port-rf">Risk-Free Rate</label>
             <input type="range" id="port-rf" min="0" max="0.10" value="0.03" step="0.005" />
             <output id="port-rf-val">0.030</output>
           </div>
           <div class="control-group">
-            <label>Monte Carlo Portfolios</label>
+            <label for="port-mc">Monte Carlo Portfolios</label>
             <input type="range" id="port-mc" min="1000" max="20000" value="5000" step="1000" />
             <output id="port-mc-val">5000</output>
           </div>
           <div class="control-group">
-            <label>Allow Short Selling</label>
+            <label for="port-short">Allow Short Selling</label>
             <select id="port-short">
               <option value="no">No (long only)</option>
               <option value="yes">Yes</option>
@@ -287,32 +287,32 @@
         <aside class="control-panel">
           <h2 class="panel-title">Risk Parameters</h2>
           <div class="control-group">
-            <label>Portfolio Value ($)</label>
+            <label for="var-portfolio">Portfolio Value ($)</label>
             <input type="range" id="var-portfolio" min="10000" max="10000000" value="1000000" step="10000" />
             <output id="var-portfolio-val">1,000,000</output>
           </div>
           <div class="control-group">
-            <label>Daily Mean Return</label>
+            <label for="var-mu">Daily Mean Return</label>
             <input type="range" id="var-mu" min="-0.002" max="0.005" value="0.0003" step="0.0001" />
             <output id="var-mu-val">0.0003</output>
           </div>
           <div class="control-group">
-            <label>Daily Volatility</label>
+            <label for="var-vol">Daily Volatility</label>
             <input type="range" id="var-vol" min="0.005" max="0.08" value="0.015" step="0.001" />
             <output id="var-vol-val">0.015</output>
           </div>
           <div class="control-group">
-            <label>Horizon (days)</label>
+            <label for="var-horizon">Horizon (days)</label>
             <input type="range" id="var-horizon" min="1" max="30" value="1" step="1" />
             <output id="var-horizon-val">1</output>
           </div>
           <div class="control-group">
-            <label>Simulations</label>
+            <label for="var-sims">Simulations</label>
             <input type="range" id="var-sims" min="1000" max="100000" value="10000" step="1000" />
             <output id="var-sims-val">10000</output>
           </div>
           <div class="control-group">
-            <label>Method</label>
+            <label for="var-method">Method</label>
             <select id="var-method">
               <option value="historical">Historical Simulation</option>
               <option value="parametric">Parametric (Normal)</option>
@@ -321,7 +321,7 @@
             </select>
           </div>
           <div class="control-group">
-            <label>Degrees of Freedom (t-dist)</label>
+            <label for="var-df">Degrees of Freedom (t-dist)</label>
             <input type="range" id="var-df" min="3" max="30" value="5" step="1" />
             <output id="var-df-val">5</output>
             <div class="param-help">Lower = heavier tails</div>
@@ -358,7 +358,7 @@
         <aside class="control-panel">
           <h2 class="panel-title">Interest Rate Model</h2>
           <div class="control-group">
-            <label>Model</label>
+            <label for="ir-model">Model</label>
             <select id="ir-model">
               <option value="vasicek">Vasicek</option>
               <option value="cir">Cox-Ingersoll-Ross (CIR)</option>
@@ -366,32 +366,32 @@
             </select>
           </div>
           <div class="control-group">
-            <label>Initial Rate r₀</label>
+            <label for="ir-r0">Initial Rate r₀</label>
             <input type="range" id="ir-r0" min="0.001" max="0.15" value="0.05" step="0.001" />
             <output id="ir-r0-val">0.050</output>
           </div>
           <div class="control-group">
-            <label>Mean Reversion Speed κ</label>
+            <label for="ir-kappa">Mean Reversion Speed κ</label>
             <input type="range" id="ir-kappa" min="0.01" max="2.0" value="0.5" step="0.01" />
             <output id="ir-kappa-val">0.50</output>
           </div>
           <div class="control-group">
-            <label>Long-Run Mean θ</label>
+            <label for="ir-theta">Long-Run Mean θ</label>
             <input type="range" id="ir-theta" min="0.005" max="0.15" value="0.05" step="0.001" />
             <output id="ir-theta-val">0.050</output>
           </div>
           <div class="control-group">
-            <label>Volatility σ</label>
+            <label for="ir-sigma">Volatility σ</label>
             <input type="range" id="ir-sigma" min="0.005" max="0.10" value="0.02" step="0.001" />
             <output id="ir-sigma-val">0.020</output>
           </div>
           <div class="control-group">
-            <label>Time Horizon (years)</label>
+            <label for="ir-T">Time Horizon (years)</label>
             <input type="range" id="ir-T" min="1" max="30" value="10" step="1" />
             <output id="ir-T-val">10</output>
           </div>
           <div class="control-group">
-            <label>Number of Paths</label>
+            <label for="ir-paths">Number of Paths</label>
             <input type="range" id="ir-paths" min="5" max="200" value="30" step="5" />
             <output id="ir-paths-val">30</output>
           </div>
@@ -427,44 +427,44 @@
         <aside class="control-panel">
           <h2 class="panel-title">Merton Jump-Diffusion</h2>
           <div class="control-group">
-            <label>Initial Price S₀ ($)</label>
+            <label for="jd-s0">Initial Price S₀ ($)</label>
             <input type="range" id="jd-s0" min="10" max="500" value="100" step="5" />
             <output id="jd-s0-val">100</output>
           </div>
           <div class="control-group">
-            <label>Drift μ</label>
+            <label for="jd-mu">Drift μ</label>
             <input type="range" id="jd-mu" min="-0.1" max="0.3" value="0.08" step="0.01" />
             <output id="jd-mu-val">0.08</output>
           </div>
           <div class="control-group">
-            <label>Diffusion Volatility σ</label>
+            <label for="jd-sigma">Diffusion Volatility σ</label>
             <input type="range" id="jd-sigma" min="0.05" max="0.80" value="0.15" step="0.01" />
             <output id="jd-sigma-val">0.15</output>
           </div>
           <div class="control-group">
-            <label>Jump Intensity λ (jumps/year)</label>
+            <label for="jd-lambda">Jump Intensity λ (jumps/year)</label>
             <input type="range" id="jd-lambda" min="0" max="10" value="2" step="0.5" />
             <output id="jd-lambda-val">2.0</output>
             <div class="param-help">Average number of jumps per year</div>
           </div>
           <div class="control-group">
-            <label>Mean Jump Size μ_J</label>
+            <label for="jd-muj">Mean Jump Size μ_J</label>
             <input type="range" id="jd-muj" min="-0.3" max="0.3" value="-0.05" step="0.01" />
             <output id="jd-muj-val">-0.05</output>
             <div class="param-help">Mean of log-jump size (negative = crash)</div>
           </div>
           <div class="control-group">
-            <label>Jump Volatility σ_J</label>
+            <label for="jd-sigmaj">Jump Volatility σ_J</label>
             <input type="range" id="jd-sigmaj" min="0.01" max="0.5" value="0.10" step="0.01" />
             <output id="jd-sigmaj-val">0.10</output>
           </div>
           <div class="control-group">
-            <label>Time Horizon (years)</label>
+            <label for="jd-T">Time Horizon (years)</label>
             <input type="range" id="jd-T" min="0.25" max="5" value="1" step="0.25" />
             <output id="jd-T-val">1.00</output>
           </div>
           <div class="control-group">
-            <label>Number of Paths</label>
+            <label for="jd-paths">Number of Paths</label>
             <input type="range" id="jd-paths" min="5" max="300" value="50" step="5" />
             <output id="jd-paths-val">50</output>
           </div>
@@ -573,6 +573,38 @@
         </div>
       </div>
     </div>
+
+  <div class="info-panel" style="margin: 2rem 1rem 1rem;">
+    <h2>Stochastic Processes in Finance — Key Concepts</h2>
+    <details open>
+      <summary>The Fundamental Tension: Return vs. Risk</summary>
+      <div class="detail-body">
+        <p>All of quantitative finance rests on one observation: higher expected returns require accepting higher risk. The <strong>Sharpe ratio</strong> (μ − r<sub>f</sub>)/σ measures risk-adjusted return — how much excess return you earn per unit of volatility. No model can reliably produce high Sharpe ratios because any persistent alpha is arbitraged away in efficient markets.</p>
+        <p>The Itô correction term −σ²/2 in GBM is the mathematical manifestation of this tension: for a fixed drift μ, higher volatility σ reduces the median path even as it widens the distribution. Compounding amplifies losses asymmetrically — a 50% loss requires a 100% gain to recover.</p>
+      </div>
+    </details>
+    <details>
+      <summary>No-Arbitrage and Risk-Neutral Pricing</summary>
+      <div class="detail-body">
+        <p>The Black-Scholes framework is built on a <strong>no-arbitrage principle</strong>: any two assets with identical payoffs must have identical prices. By constructing a delta-hedged portfolio (long option, short Δ shares) that is instantaneously riskless, the drift μ drops out of the pricing equation, leaving only the risk-free rate r.</p>
+        <p>This is the <strong>risk-neutral measure Q</strong>: under Q, all assets grow at the risk-free rate, and option prices equal E<sup>Q</sup>[payoff · e<sup>−rT</sup>]. The real-world probability measure P determines what actually happens; Q is a mathematical tool for pricing. The Girsanov theorem transforms between the two by shifting the drift of Brownian motion.</p>
+      </div>
+    </details>
+    <details>
+      <summary>Volatility — Implied vs. Historical</summary>
+      <div class="detail-body">
+        <p><strong>Historical volatility</strong> is estimated from past returns: σ̂ = std(daily log-returns) × √252. <strong>Implied volatility</strong> is backed out from observed option prices by inverting Black-Scholes. The two differ because options markets price <em>future</em> expected volatility, which includes a risk premium.</p>
+        <p>The <strong>volatility smile</strong> (implied vol varies with strike K) shows that Black-Scholes's constant-σ assumption is violated in practice: out-of-the-money puts are more expensive than BS predicts (crash risk premium). Jump-diffusion models and stochastic volatility models (Heston) reproduce the smile by allowing the volatility itself to be random or allowing sudden jumps.</p>
+      </div>
+    </details>
+    <details>
+      <summary>Coherent Risk Measures — CVaR vs. VaR</summary>
+      <div class="detail-body">
+        <p><strong>Value at Risk (VaR)</strong> at level α is the loss threshold exceeded with probability 1 − α. It fails a key property of coherent risk measures: it is <em>not sub-additive</em> — the VaR of a portfolio can exceed the sum of individual VaRs, perversely penalizing diversification.</p>
+        <p><strong>CVaR (Conditional VaR or Expected Shortfall)</strong> is the expected loss given that the loss exceeds VaR. It is sub-additive (diversification never increases CVaR), convex, and monotone — all properties of <strong>coherent risk measures</strong> (Artzner et al. 1999). Regulators under Basel III now require CVaR for internal model capital requirements.</p>
+      </div>
+    </details>
+  </div>
 
   </div><!-- .module-page -->
 

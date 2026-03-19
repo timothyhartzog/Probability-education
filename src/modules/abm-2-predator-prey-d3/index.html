@@ -31,6 +31,39 @@
     <!-- The entire simulation UI is D3-constructed inside this root -->
     <div id="abm-root"></div>
 
+    <div class="info-panel">
+      <h2>Predator-Prey Dynamics and Agent Decision Architectures</h2>
+      <details open>
+        <summary>Lotka-Volterra Equations</summary>
+        <div class="detail-body">
+          <p>The classical Lotka-Volterra ODEs describe predator-prey population dynamics:</p>
+          <ul>
+            <li><strong>Prey</strong>: dN/dt = αN − βNP — prey grow at rate α, predation reduces them at rate βP</li>
+            <li><strong>Predators</strong>: dP/dt = δNP − γP — predators gain from prey at rate δN, die at rate γ</li>
+          </ul>
+          <p>The system has a conserved quantity (no dissipation), producing closed orbits in the phase plane. In the ABM, stochastic fluctuations and spatial effects cause the orbits to drift, potentially spiraling to extinction or to a noisy limit cycle, depending on population sizes and parameters.</p>
+        </div>
+      </details>
+      <details>
+        <summary>Three Decision Rule Architectures</summary>
+        <div class="detail-body">
+          <p>This simulation compares three architectures for agent decision-making:</p>
+          <ul>
+            <li><strong>Reactive</strong>: Stimulus-response only — agents react immediately to sensory input with fixed rules (e.g., flee if predator nearby). Fast and predictable but brittle.</li>
+            <li><strong>Bounded Rationality</strong>: Agents evaluate a finite set of heuristic options and choose the locally best one. Captures satisficing behavior (Simon 1957): agents aim for "good enough" solutions rather than global optima.</li>
+            <li><strong>BDI (Belief-Desire-Intention)</strong>: Agents maintain internal state — beliefs about the world, desires (goals), and committed intentions (plans). The most cognitively realistic architecture, capable of planning, goal revision, and social coordination.</li>
+          </ul>
+        </div>
+      </details>
+      <details>
+        <summary>Emergent Dynamics and Phase Portrait</summary>
+        <div class="detail-body">
+          <p>The phase portrait (predator count vs. prey count over time) reveals the qualitative dynamics: a stable limit cycle appears as a closed loop; a spiral inward means the system reaches equilibrium; a spiral outward or erratic path signals instability leading to extinction.</p>
+          <p>ABM predator-prey models show richer behavior than ODEs because: (1) demographic stochasticity can drive small populations to extinction; (2) spatial clustering allows prey to survive in refugia even when globally rare; (3) different decision architectures change the efficiency of predation, shifting the equilibrium point and the amplitude of oscillations.</p>
+        </div>
+      </details>
+    </div>
+
   </div>
 
   <script type="module" src="./module.js"></script>

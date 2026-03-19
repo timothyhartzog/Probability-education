@@ -85,6 +85,11 @@ export default class ResponsiveHistogram {
     }
 
     const extent = d3.extent(data);
+    // Guard degenerate domain: all values identical → expand by ±1 to avoid binWidth=0
+    if (extent[0] === extent[1]) {
+      extent[0] = extent[0] - 1;
+      extent[1] = extent[1] + 1;
+    }
     this.xScale.domain(extent).nice();
 
     const binner = d3
@@ -101,7 +106,8 @@ export default class ResponsiveHistogram {
     const densityBins = binnedData.map((b) => ({
       x0: b.x0,
       x1: b.x1,
-      density: b.length / (n * binWidth),
+      // Guard against binWidth=0 (can happen if domain is still degenerate after nice())
+      density: binWidth > 0 ? b.length / (n * binWidth) : 0,
     }));
 
     const maxDensity = d3.max(densityBins, (d) => d.density) || 0;

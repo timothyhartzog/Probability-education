@@ -50,7 +50,50 @@
         <div class="stats-grid" id="stats"></div>
       </aside>
     </div>
-    <div class="info-panel" id="info"></div>
+    <div class="info-panel" id="info">
+      <h2>Bayesian Inference and Conjugate Priors</h2>
+      <details open>
+        <summary>Bayes' Theorem as a Learning Rule</summary>
+        <div class="detail-body">
+          <p>Bayesian inference treats the unknown parameter θ as a random variable. Before observing data, we encode our beliefs as the <strong>prior</strong> p(θ). After observing data x, Bayes' theorem updates this to the <strong>posterior</strong>:</p>
+          <p style="text-align:center"><strong>p(θ | x) = p(x | θ) · p(θ) / p(x)</strong></p>
+          <p>The <strong>likelihood</strong> p(x | θ) measures how probable the observed data is under each parameter value. The denominator p(x) = ∫ p(x|θ)p(θ)dθ is the marginal likelihood, a normalizing constant. As more data arrives, the posterior concentrates around the true θ — the data "overwhelms" the prior.</p>
+        </div>
+      </details>
+      <details>
+        <summary>Conjugate Families</summary>
+        <div class="detail-body">
+          <p>A prior is <strong>conjugate</strong> to a likelihood if the posterior is in the same parametric family as the prior. This gives closed-form updating rules.</p>
+          <ul>
+            <li><strong>Beta-Binomial</strong>: Beta(α, β) prior + Binomial(n, p) likelihood → Beta(α + k, β + n − k) posterior, where k successes are observed.</li>
+            <li><strong>Gamma-Poisson</strong>: Gamma(α, β) prior + Poisson(λ) likelihood → Gamma(α + Σx<sub>i</sub>, β + n) posterior.</li>
+            <li><strong>Normal-Normal</strong>: N(μ₀, τ₀²) prior + N(θ, σ²) likelihood (known σ) → Normal posterior with precision equal to the sum of prior and data precisions.</li>
+          </ul>
+          <p>The Normal-Normal update has a beautiful form: the posterior mean is a precision-weighted average of prior mean and sample mean.</p>
+        </div>
+      </details>
+      <details>
+        <summary>Credible Intervals vs Confidence Intervals</summary>
+        <div class="detail-body">
+          <p>A <strong>95% Bayesian credible interval</strong> [a, b] satisfies P(θ ∈ [a, b] | x) = 0.95 — there is a 95% probability the parameter lies in the interval, given the data. This is the natural interpretation most people mistakenly assign to frequentist confidence intervals.</p>
+          <p>A <strong>frequentist 95% confidence interval</strong> means: if we repeated the experiment many times, 95% of the intervals constructed by this procedure would contain the true θ. The parameter itself is fixed — it is the interval that is random. The two intervals often coincide numerically under flat priors but have fundamentally different interpretations.</p>
+        </div>
+      </details>
+      <details>
+        <summary>Sequential Updating — Order Invariance</summary>
+        <div class="detail-body">
+          <p>A key property of Bayesian inference: sequential updating gives the same posterior as batch updating. If you observe x<sub>1</sub>, then x<sub>2</sub>, the posterior after both observations equals the posterior from seeing both at once.</p>
+          <p>This is because the posterior after x<sub>1</sub> serves as the prior for x<sub>2</sub>: p(θ|x<sub>1</sub>, x<sub>2</sub>) ∝ p(x<sub>2</sub>|θ) · p(θ|x<sub>1</sub>) ∝ p(x<sub>1</sub>|θ)p(x<sub>2</sub>|θ)p(θ). This is ideal for online learning, where data arrives one observation at a time.</p>
+        </div>
+      </details>
+      <details>
+        <summary>Prior Choice and Sensitivity</summary>
+        <div class="detail-body">
+          <p>The choice of prior matters most when data is scarce. With large n, the likelihood dominates and the posterior is insensitive to reasonable priors (Bernstein-von Mises theorem: the posterior is asymptotically normal around the MLE with variance equal to the inverse Fisher information).</p>
+          <p><strong>Jeffreys priors</strong> are invariant under reparameterization: p(θ) ∝ √det I(θ), where I(θ) is the Fisher information matrix. They represent "uninformative" priors in a precise sense. For the Binomial with parameter p, the Jeffreys prior is Beta(½, ½) — a U-shaped distribution that is more diffuse than the uniform Beta(1,1).</p>
+        </div>
+      </details>
+    </div>
   </div>
   <script type="module" src="./module.js"></script>
 </body>

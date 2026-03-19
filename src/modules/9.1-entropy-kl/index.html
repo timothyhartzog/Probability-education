@@ -50,7 +50,47 @@
         <div class="stats-grid" id="stats"></div>
       </aside>
     </div>
-    <div class="info-panel" id="info"></div>
+    <div class="info-panel" id="info">
+      <h2>Entropy and Information Theory</h2>
+      <details open>
+        <summary>Shannon Entropy — Measuring Uncertainty</summary>
+        <div class="detail-body">
+          <p>The <strong>Shannon entropy</strong> of a discrete distribution P = (p<sub>1</sub>, …, p<sub>k</sub>) is:</p>
+          <p style="text-align:center"><strong>H(P) = −Σ p<sub>i</sub> log<sub>2</sub> p<sub>i</sub></strong></p>
+          <p>Entropy measures the average number of bits needed to encode a symbol drawn from P under the optimal code. A uniform distribution over k outcomes has maximum entropy H = log<sub>2</sub> k bits — maximum uncertainty. A deterministic distribution (p<sub>i</sub> = 1 for one outcome) has H = 0 bits — no uncertainty. The convention 0 log 0 = 0 is enforced by continuity.</p>
+        </div>
+      </details>
+      <details>
+        <summary>KL Divergence — Measuring Distributional Distance</summary>
+        <div class="detail-body">
+          <p>The <strong>Kullback-Leibler divergence</strong> from Q to P measures the extra bits needed when coding P-distributed symbols using a code optimized for Q:</p>
+          <p style="text-align:center"><strong>D<sub>KL</sub>(P ∥ Q) = Σ p<sub>i</sub> log(p<sub>i</sub> / q<sub>i</sub>)</strong></p>
+          <p>Properties: D<sub>KL</sub> ≥ 0 always (Gibbs' inequality), with equality iff P = Q. It is <em>not</em> symmetric — D<sub>KL</sub>(P ∥ Q) ≠ D<sub>KL</sub>(Q ∥ P) in general. It is not a metric. In Bayesian inference, D<sub>KL</sub>(posterior ∥ prior) measures information gained from observing data. In variational inference, minimizing D<sub>KL</sub>(q ∥ p) approximates a complex posterior p with a tractable q.</p>
+        </div>
+      </details>
+      <details>
+        <summary>Cross-Entropy and the Coding Interpretation</summary>
+        <div class="detail-body">
+          <p>The <strong>cross-entropy</strong> H(P, Q) = −Σ p<sub>i</sub> log q<sub>i</sub> is the expected code length when symbols drawn from P are encoded with a code optimal for Q. It decomposes as:</p>
+          <p style="text-align:center"><strong>H(P, Q) = H(P) + D<sub>KL</sub>(P ∥ Q)</strong></p>
+          <p>The KL divergence is thus the <em>excess</em> cost of using the wrong distribution Q. This decomposition explains why cross-entropy loss is used in machine learning classification: minimizing H(P, Q) over parameters of Q is equivalent to minimizing D<sub>KL</sub>(P ∥ Q) since H(P) is independent of Q.</p>
+        </div>
+      </details>
+      <details>
+        <summary>Jensen's Inequality and Information Inequalities</summary>
+        <div class="detail-body">
+          <p>Most fundamental inequalities in information theory follow from <strong>Jensen's inequality</strong>: for a convex function φ, E[φ(X)] ≥ φ(E[X]). Since −log is convex, applying Jensen to the ratio p/q gives D<sub>KL</sub>(P ∥ Q) = E<sub>P</sub>[log(p/q)] ≥ log(E<sub>P</sub>[p/q]) = log 1 = 0.</p>
+          <p>The <strong>data processing inequality</strong> states that applying any function f to a random variable X can only reduce or preserve information: H(f(X)) ≤ H(X). This is the formal reason why lossy compression cannot be undone and why transforming data cannot increase its information content.</p>
+        </div>
+      </details>
+      <details>
+        <summary>Differential Entropy for Continuous Distributions</summary>
+        <div class="detail-body">
+          <p>For continuous distributions, the discrete sum becomes an integral: h(X) = −∫ f(x) log f(x) dx. Unlike discrete entropy, differential entropy can be negative and is not invariant under reparameterization. Adding a constant c to X increases h by log|c| (for scaling by c).</p>
+          <p>The Gaussian distribution N(μ, σ²) maximizes differential entropy among all distributions with fixed variance: h = ½ log(2πeσ²). This is the maximum entropy principle — the Gaussian makes no additional assumptions beyond mean and variance, which is why it arises naturally in so many contexts.</p>
+        </div>
+      </details>
+    </div>
   </div>
   <script type="module" src="./module.js"></script>
 </body>

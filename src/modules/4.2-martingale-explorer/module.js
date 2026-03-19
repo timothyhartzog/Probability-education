@@ -111,7 +111,9 @@ function generatePaths(rng) {
       let sn = 0;
       for (let n = 1; n <= T; n++) {
         sn += rng.random() < 0.5 ? 1 : -1;
-        path[n] = Math.exp(theta * sn - n * logCosh);
+        const val = Math.exp(theta * sn - n * logCosh);
+        // Cap at a finite ceiling to prevent Infinity from breaking the y-scale
+        path[n] = isFinite(val) ? val : 1e15;
       }
       // M_0 = exp(0) = 1; shift so M_0 = 0 for consistent display?
       // Actually keep it natural: M_0 = 1 for exponential martingale.

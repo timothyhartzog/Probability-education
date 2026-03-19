@@ -35,7 +35,41 @@
       </div>
       <aside class="control-panel" id="controls"></aside>
     </div>
-    <div class="info-panel" id="info"></div>
+    <div class="info-panel" id="info">
+      <h2>Laws of Large Numbers</h2>
+      <details open>
+        <summary>The Weak and Strong Laws</summary>
+        <div class="detail-body">
+          <p>Both laws concern the running average S<sub>n</sub>/n = (X<sub>1</sub> + … + X<sub>n</sub>)/n of i.i.d. random variables with mean μ.</p>
+          <ul>
+            <li><strong>Weak Law (WLLN)</strong>: For any ε > 0, P(|S<sub>n</sub>/n − μ| > ε) → 0. The probability of being far from μ vanishes — convergence in probability.</li>
+            <li><strong>Strong Law (SLLN)</strong>: P(lim<sub>n→∞</sub> S<sub>n</sub>/n = μ) = 1. Almost every sample path converges — a much stronger statement.</li>
+          </ul>
+          <p>The SLLN requires only that E[|X|] < ∞ (finite first moment). The WLLN can hold under even weaker conditions. Neither requires finite variance — but without finite variance, the running average can oscillate dramatically before settling.</p>
+        </div>
+      </details>
+      <details>
+        <summary>Convergence Rate — √n Fluctuations</summary>
+        <div class="detail-body">
+          <p>The error S<sub>n</sub>/n − μ shrinks at rate 1/√n. More precisely, by the CLT, √n (S<sub>n</sub>/n − μ) converges in distribution to N(0, σ²). This means the fluctuations of the running average scale as σ/√n.</p>
+          <p>On the log-log convergence rate chart you should see the error track a slope of −½: doubling n reduces the error by a factor of √2 ≈ 1.41. For distributions with infinite variance (Cauchy, Pareto α ≤ 2), the running average never converges because E[X] does not exist — the "average" itself is undefined.</p>
+        </div>
+      </details>
+      <details>
+        <summary>Heavy Tails — When the LLN Breaks Down</summary>
+        <div class="detail-body">
+          <p>The Cauchy distribution has no finite mean. Its running average does not converge — it continues to fluctuate wildly because each new extreme observation shifts the average dramatically. A single large observation can dominate the sum.</p>
+          <p>Distributions with power-law tails P(X > x) ∝ x<sup>−α</sup> have finite mean only when α > 1 and finite variance only when α > 2. The simulator lets you explore this boundary: near α = 1 or α = 2, convergence is slow and erratic even with many samples.</p>
+        </div>
+      </details>
+      <details>
+        <summary>Borel-Cantelli and Almost Sure Convergence</summary>
+        <div class="detail-body">
+          <p>The proof of the SLLN for bounded variables uses the <strong>Borel-Cantelli lemma</strong>: if Σ P(A<sub>n</sub>) < ∞, then P(A<sub>n</sub> infinitely often) = 0. Applying Chebyshev's inequality and summing over suitable subsequences gives P(|S<sub>n</sub>/n − μ| > ε i.o.) = 0.</p>
+          <p>Etemadi's proof (1981) obtains the full SLLN from E[|X|] < ∞ alone, without requiring finite variance or independence beyond pairwise independence. The key insight is to work along the subsequence ⌊αk⌋ and interpolate.</p>
+        </div>
+      </details>
+    </div>
   </div>
   <script type="module" src="./module.js"></script>
 </body>

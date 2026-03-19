@@ -114,7 +114,7 @@
             <h2>Epidemic Controls</h2>
 
             <div class="control-group dropdown-control">
-              <label>Scenario Preset</label>
+              <label for="epidemic-preset">Scenario Preset</label>
               <select id="epidemic-preset">
                 <option value="custom">Custom Parameters</option>
                 <option value="covid">COVID-19-like</option>
@@ -127,45 +127,45 @@
             <hr class="control-divider" />
 
             <div class="control-group slider-control">
-              <label>Population: <span class="value-display" id="epid-pop-display">300</span></label>
+              <label for="epid-pop-slider">Population: <span class="value-display" id="epid-pop-display">300</span></label>
               <input type="range" id="epid-pop-slider" min="50" max="800" step="10" value="300" />
             </div>
 
             <div class="control-group slider-control">
-              <label>Initial Infected: <span class="value-display" id="epid-init-display">3</span></label>
+              <label for="epid-init-slider">Initial Infected: <span class="value-display" id="epid-init-display">3</span></label>
               <input type="range" id="epid-init-slider" min="1" max="20" step="1" value="3" />
             </div>
 
             <div class="control-group slider-control">
-              <label>&beta; (transmission): <span class="value-display" id="epid-beta-display">0.40</span></label>
+              <label for="epid-beta-slider">&beta; (transmission): <span class="value-display" id="epid-beta-display">0.40</span></label>
               <input type="range" id="epid-beta-slider" min="0.05" max="1.0" step="0.05" value="0.40" />
               <div class="param-help">Probability of transmission per contact</div>
             </div>
 
             <div class="control-group slider-control">
-              <label>Infection Radius: <span class="value-display" id="epid-radius-display">25</span></label>
+              <label for="epid-radius-slider">Infection Radius: <span class="value-display" id="epid-radius-display">25</span></label>
               <input type="range" id="epid-radius-slider" min="10" max="60" step="5" value="25" />
               <div class="param-help">Spatial proximity for transmission (px)</div>
             </div>
 
             <div class="control-group slider-control">
-              <label>Incubation (days): <span class="value-display" id="epid-incub-display">5</span></label>
+              <label for="epid-incub-slider">Incubation (days): <span class="value-display" id="epid-incub-display">5</span></label>
               <input type="range" id="epid-incub-slider" min="0" max="14" step="1" value="5" />
               <div class="param-help">0 = no exposed state (SIR model)</div>
             </div>
 
             <div class="control-group slider-control">
-              <label>Recovery (days): <span class="value-display" id="epid-recov-display">14</span></label>
+              <label for="epid-recov-slider">Recovery (days): <span class="value-display" id="epid-recov-display">14</span></label>
               <input type="range" id="epid-recov-slider" min="3" max="30" step="1" value="14" />
             </div>
 
             <div class="control-group slider-control">
-              <label>Mortality Rate: <span class="value-display" id="epid-mort-display">0.02</span></label>
+              <label for="epid-mort-slider">Mortality Rate: <span class="value-display" id="epid-mort-display">0.02</span></label>
               <input type="range" id="epid-mort-slider" min="0" max="0.30" step="0.01" value="0.02" />
             </div>
 
             <div class="control-group slider-control">
-              <label>Agent Speed: <span class="value-display" id="epid-speed-display">1.5</span></label>
+              <label for="epid-speed-slider">Agent Speed: <span class="value-display" id="epid-speed-display">1.5</span></label>
               <input type="range" id="epid-speed-slider" min="0.5" max="4.0" step="0.5" value="1.5" />
             </div>
 
@@ -243,35 +243,35 @@
             <h2>Flocking Controls</h2>
 
             <div class="control-group slider-control">
-              <label>Boid Count: <span class="value-display" id="flock-count-display">150</span></label>
+              <label for="flock-count-slider">Boid Count: <span class="value-display" id="flock-count-display">150</span></label>
               <input type="range" id="flock-count-slider" min="20" max="400" step="10" value="150" />
             </div>
 
             <div class="control-group slider-control">
-              <label>Separation: <span class="value-display" id="flock-sep-display">1.5</span></label>
+              <label for="flock-sep-slider">Separation: <span class="value-display" id="flock-sep-display">1.5</span></label>
               <input type="range" id="flock-sep-slider" min="0" max="5" step="0.1" value="1.5" />
               <div class="param-help">Avoidance strength</div>
             </div>
 
             <div class="control-group slider-control">
-              <label>Alignment: <span class="value-display" id="flock-ali-display">1.0</span></label>
+              <label for="flock-ali-slider">Alignment: <span class="value-display" id="flock-ali-display">1.0</span></label>
               <input type="range" id="flock-ali-slider" min="0" max="5" step="0.1" value="1.0" />
               <div class="param-help">Heading matching strength</div>
             </div>
 
             <div class="control-group slider-control">
-              <label>Cohesion: <span class="value-display" id="flock-coh-display">1.0</span></label>
+              <label for="flock-coh-slider">Cohesion: <span class="value-display" id="flock-coh-display">1.0</span></label>
               <input type="range" id="flock-coh-slider" min="0" max="5" step="0.1" value="1.0" />
               <div class="param-help">Group centering strength</div>
             </div>
 
             <div class="control-group slider-control">
-              <label>Perception Radius: <span class="value-display" id="flock-radius-display">60</span></label>
+              <label for="flock-radius-slider">Perception Radius: <span class="value-display" id="flock-radius-display">60</span></label>
               <input type="range" id="flock-radius-slider" min="20" max="150" step="5" value="60" />
             </div>
 
             <div class="control-group slider-control">
-              <label>Max Speed: <span class="value-display" id="flock-speed-display">3.0</span></label>
+              <label for="flock-speed-slider">Max Speed: <span class="value-display" id="flock-speed-display">3.0</span></label>
               <input type="range" id="flock-speed-slider" min="1" max="8" step="0.5" value="3.0" />
             </div>
 
@@ -355,24 +355,24 @@
             <h2>Segregation Controls</h2>
 
             <div class="control-group slider-control">
-              <label>Grid Size: <span class="value-display" id="seg-grid-display">50</span></label>
+              <label for="seg-grid-slider">Grid Size: <span class="value-display" id="seg-grid-display">50</span></label>
               <input type="range" id="seg-grid-slider" min="20" max="80" step="5" value="50" />
             </div>
 
             <div class="control-group slider-control">
-              <label>Occupancy: <span class="value-display" id="seg-density-display">0.80</span></label>
+              <label for="seg-density-slider">Occupancy: <span class="value-display" id="seg-density-display">0.80</span></label>
               <input type="range" id="seg-density-slider" min="0.50" max="0.95" step="0.05" value="0.80" />
               <div class="param-help">Fraction of cells occupied</div>
             </div>
 
             <div class="control-group slider-control">
-              <label>Similarity Threshold: <span class="value-display" id="seg-thresh-display">0.35</span></label>
+              <label for="seg-thresh-slider">Similarity Threshold: <span class="value-display" id="seg-thresh-display">0.35</span></label>
               <input type="range" id="seg-thresh-slider" min="0.0" max="0.80" step="0.05" value="0.35" />
               <div class="param-help">Min fraction of same-type neighbors to stay</div>
             </div>
 
             <div class="control-group slider-control">
-              <label>Type Ratio: <span class="value-display" id="seg-ratio-display">0.50</span></label>
+              <label for="seg-ratio-slider">Type Ratio: <span class="value-display" id="seg-ratio-display">0.50</span></label>
               <input type="range" id="seg-ratio-slider" min="0.20" max="0.80" step="0.05" value="0.50" />
               <div class="param-help">Fraction of type A vs type B</div>
             </div>
@@ -439,35 +439,35 @@
             <h2>Predator-Prey Controls</h2>
 
             <div class="control-group slider-control">
-              <label>Initial Prey: <span class="value-display" id="pp-prey-display">80</span></label>
+              <label for="pp-prey-slider">Initial Prey: <span class="value-display" id="pp-prey-display">80</span></label>
               <input type="range" id="pp-prey-slider" min="10" max="200" step="5" value="80" />
             </div>
 
             <div class="control-group slider-control">
-              <label>Initial Predators: <span class="value-display" id="pp-pred-display">20</span></label>
+              <label for="pp-pred-slider">Initial Predators: <span class="value-display" id="pp-pred-display">20</span></label>
               <input type="range" id="pp-pred-slider" min="5" max="80" step="5" value="20" />
             </div>
 
             <div class="control-group slider-control">
-              <label>Prey Reproduce: <span class="value-display" id="pp-prey-repro-display">0.04</span></label>
+              <label for="pp-prey-repro-slider">Prey Reproduce: <span class="value-display" id="pp-prey-repro-display">0.04</span></label>
               <input type="range" id="pp-prey-repro-slider" min="0.01" max="0.15" step="0.01" value="0.04" />
               <div class="param-help">Probability per step when fed</div>
             </div>
 
             <div class="control-group slider-control">
-              <label>Predator Reproduce: <span class="value-display" id="pp-pred-repro-display">0.03</span></label>
+              <label for="pp-pred-repro-slider">Predator Reproduce: <span class="value-display" id="pp-pred-repro-display">0.03</span></label>
               <input type="range" id="pp-pred-repro-slider" min="0.01" max="0.10" step="0.01" value="0.03" />
               <div class="param-help">Probability per step after eating</div>
             </div>
 
             <div class="control-group slider-control">
-              <label>Predator Starve: <span class="value-display" id="pp-starve-display">30</span></label>
+              <label for="pp-starve-slider">Predator Starve: <span class="value-display" id="pp-starve-display">30</span></label>
               <input type="range" id="pp-starve-slider" min="10" max="80" step="5" value="30" />
               <div class="param-help">Steps without food before death</div>
             </div>
 
             <div class="control-group slider-control">
-              <label>Grass Regrowth: <span class="value-display" id="pp-grass-display">0.03</span></label>
+              <label for="pp-grass-slider">Grass Regrowth: <span class="value-display" id="pp-grass-display">0.03</span></label>
               <input type="range" id="pp-grass-slider" min="0.01" max="0.10" step="0.01" value="0.03" />
               <div class="param-help">Probability empty patch regrows</div>
             </div>
@@ -480,6 +480,50 @@
         </div>
       </div>
     </div>
+
+  <div class="info-panel">
+    <h2>Agent-Based Modeling</h2>
+    <details open>
+      <summary>What is an Agent-Based Model?</summary>
+      <div class="detail-body">
+        <p>An <strong>agent-based model (ABM)</strong> is a computational simulation where autonomous agents follow local rules, and macro-level patterns emerge from their collective interactions. Unlike equation-based models (ODEs, PDEs) that describe population-level averages, ABMs track each individual and their interactions explicitly.</p>
+        <p>ABMs are especially powerful when: heterogeneity matters (agents differ), spatial structure is important, nonlinear feedback loops exist, or the system has discrete units (people, animals, firms) that don't behave like continuous quantities.</p>
+      </div>
+    </details>
+    <details>
+      <summary>Epidemic ABM — SEIRD vs. ODE Models</summary>
+      <div class="detail-body">
+        <p>The epidemic ABM implements an SEIRD model (Susceptible → Exposed → Infected → Recovered/Deceased) at the individual level. Transmission occurs when an infectious agent is within the infection radius of a susceptible one, with probability β per contact per step — a <strong>contact process</strong>.</p>
+        <p>The key difference from ODE models: the ABM captures <strong>stochastic extinction</strong> (outbreaks that fizzle before spreading), <strong>spatial clustering</strong> (clusters of unvaccinated individuals enabling local spread), and <strong>superspreaders</strong> (high-contact individuals who drive disproportionate transmission). All of these are invisible in mean-field ODE compartmental models.</p>
+      </div>
+    </details>
+    <details>
+      <summary>Flocking (Reynolds' Boids Algorithm)</summary>
+      <div class="detail-body">
+        <p>Craig Reynolds (1987) showed that three simple local rules produce realistic flocking behavior without any central coordination:</p>
+        <ul>
+          <li><strong>Separation</strong>: Avoid crowding — steer away from neighbors within a close range.</li>
+          <li><strong>Alignment</strong>: Match velocity — steer toward the average heading of neighbors.</li>
+          <li><strong>Cohesion</strong>: Stay together — steer toward the average position of neighbors.</li>
+        </ul>
+        <p>This is a canonical example of <strong>emergence</strong>: complex collective behavior (coordinated flocking, milling, V-formations) arising entirely from local rules with no global blueprint. The same algorithm models fish schools, pedestrian crowds, and distributed robotic swarms.</p>
+      </div>
+    </details>
+    <details>
+      <summary>Schelling Segregation Model</summary>
+      <div class="detail-body">
+        <p>Thomas Schelling (1971) showed that even mild individual preferences for same-type neighbors produce extreme macro-level residential segregation. An agent is "happy" if at least a threshold fraction t of its neighbors share its type. Unhappy agents move to random empty cells.</p>
+        <p>For t ≈ 0.3 (agents only want 30% similar neighbors — not even a majority), the system converges to a nearly fully segregated state. This is a profound lesson about the <strong>fallacy of composition</strong>: individual preferences that seem mild produce aggregate patterns that are far more extreme than any individual intends. The final segregation index depends nonlinearly on t, with a sharp transition around a critical threshold.</p>
+      </div>
+    </details>
+    <details>
+      <summary>Predator-Prey — Lotka-Volterra from Agent Rules</summary>
+      <div class="detail-body">
+        <p>The predator-prey ABM implements the Lotka-Volterra system at the individual level. Prey eat grass and reproduce; predators hunt prey and starve if unfed. The population dynamics exhibit the classic Lotka-Volterra oscillations: prey peak first, then predators peak as they benefit from abundant prey, causing prey to collapse, causing predator starvation, allowing prey to recover.</p>
+        <p>The ABM differs from the ODE in key ways: populations can go extinct (ODE cycles never do), individual variability creates amplitude drift, and spatial structure enables coexistence even when mean-field theory predicts extinction. The phase portrait (predator vs. prey populations) reveals whether the system spirals inward, outward, or maintains a stable cycle.</p>
+      </div>
+    </details>
+  </div>
 
   </div>
 

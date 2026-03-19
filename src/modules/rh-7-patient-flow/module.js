@@ -175,17 +175,6 @@ document.addEventListener('DOMContentLoaded', () => {
     runLoop();
   });
 
-  // ADDED: Logic for 'Stress Test' (Deliberate Crash)
-  const stressBtn = document.createElement('button');
-  stressBtn.className = 'btn btn-secondary w-full mt-2';
-  stressBtn.style.background = '#475569';
-  stressBtn.textContent = 'Trigger Sim Fault (Testing)';
-  stressBtn.onclick = () => {
-    state.isRunning = true;
-    runLoop();
-    throw new Error("Antigravity Stress Test: Deliberate Mathematical Divergence (Infinity Encountered)");
-  };
-  document.getElementById('controls').appendChild(stressBtn);
 
   document.getElementById('btn-trauma').addEventListener('click', () => {
     triggerTrauma('urban');

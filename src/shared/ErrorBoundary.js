@@ -46,26 +46,32 @@ export class ErrorBoundary {
     }
 
     display.style.display = 'block';
-    display.innerHTML = `
-      <div style="color: #991b1b; font-weight: 700; font-size: 14px; margin-bottom: 8px;">
-        ⚠️ Simulator Exception Detected
-      </div>
-      <div style="font-size: 12px; color: #7f1d1d; line-height: 1.4; margin-bottom: 12px;">
-        ${errorRecord.message}
-      </div>
-      <div style="display: flex; gap: 8px;">
-        <button onclick="location.reload()" style="
-          background: #ef4444; color: white; border: none; padding: 4px 12px;
-          border-radius: 4px; font-size: 11px; cursor: pointer;
-        ">Reload System</button>
-        <button onclick="this.parentElement.parentElement.style.display='none'" style="
-          background: transparent; border: 1px solid #ef4444; color: #ef4444;
-          padding: 4px 12px; border-radius: 4px; font-size: 11px; cursor: pointer;
-        ">Dismiss</button>
-      </div>
-      <div style="margin-top: 12px; font-size: 10px; color: #b91c1c; opacity: 0.7;">
-        Reported to Antigravity v1.0. ID: ${Math.random().toString(36).substr(2, 9)}
-      </div>
-    `;
+    // Build DOM nodes manually to avoid XSS from error message content
+    display.innerHTML = '';
+    const title = document.createElement('div');
+    title.style.cssText = 'color:#991b1b;font-weight:700;font-size:14px;margin-bottom:8px';
+    title.textContent = '⚠️ Simulator Exception Detected';
+    const msg = document.createElement('div');
+    msg.style.cssText = 'font-size:12px;color:#7f1d1d;line-height:1.4;margin-bottom:12px';
+    msg.textContent = errorRecord.message;
+    const actions = document.createElement('div');
+    actions.style.cssText = 'display:flex;gap:8px';
+    const reloadBtn = document.createElement('button');
+    reloadBtn.style.cssText = 'background:#ef4444;color:white;border:none;padding:4px 12px;border-radius:4px;font-size:11px;cursor:pointer';
+    reloadBtn.textContent = 'Reload System';
+    reloadBtn.addEventListener('click', () => location.reload());
+    const dismissBtn = document.createElement('button');
+    dismissBtn.style.cssText = 'background:transparent;border:1px solid #ef4444;color:#ef4444;padding:4px 12px;border-radius:4px;font-size:11px;cursor:pointer';
+    dismissBtn.textContent = 'Dismiss';
+    dismissBtn.addEventListener('click', () => { display.style.display = 'none'; });
+    actions.appendChild(reloadBtn);
+    actions.appendChild(dismissBtn);
+    const footer = document.createElement('div');
+    footer.style.cssText = 'margin-top:12px;font-size:10px;color:#b91c1c;opacity:0.7';
+    footer.textContent = `Reported to Antigravity v1.0. ID: ${Math.random().toString(36).substr(2, 9)}`;
+    display.appendChild(title);
+    display.appendChild(msg);
+    display.appendChild(actions);
+    display.appendChild(footer);
   }
 }

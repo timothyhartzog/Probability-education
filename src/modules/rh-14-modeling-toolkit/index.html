@@ -112,6 +112,47 @@
       </section>
 
     </div>
+
+    <!-- Educational Reference Panel -->
+    <section class="module-intro" style="margin-top: 2rem;">
+      <h2>Modeling Methods Reference</h2>
+      <details open>
+        <summary>Queuing Theory — Erlang-C Model</summary>
+        <div class="detail-body">
+          <p>The <strong>Erlang-C formula</strong> models a multi-server queue (M/M/c) — Poisson arrivals, exponential service times, c servers, infinite queue. Key metrics:</p>
+          <ul>
+            <li><strong>Traffic intensity</strong>: ρ = λ/(cμ) — must be &lt; 1 for stability</li>
+            <li><strong>P(wait) = C(c, λ/μ)</strong>: probability an arrival must wait (the Erlang-C value)</li>
+            <li><strong>Mean wait</strong>: W<sub>q</sub> = C(c, λ/μ) / (cμ − λ)</li>
+          </ul>
+          <p>For rural hospitals with few beds (c is small), the system is highly sensitive to utilization: moving from 70% to 85% occupancy can double mean wait times. The coefficient of variation of service time further inflates waiting when CV &gt; 1 (Pollaczek-Khinchine formula for M/G/1).</p>
+        </div>
+      </details>
+      <details>
+        <summary>Survival Analysis — Kaplan-Meier Estimator</summary>
+        <div class="detail-body">
+          <p>The <strong>Kaplan-Meier estimator</strong> non-parametrically estimates the survival function S(t) = P(T &gt; t) from censored event-time data:</p>
+          <p style="text-align:center"><strong>Ŝ(t) = Π<sub>ti ≤ t</sub> (1 − d<sub>i</sub>/n<sub>i</sub>)</strong></p>
+          <p>where d<sub>i</sub> is the number of events at time t<sub>i</sub> and n<sub>i</sub> is the at-risk count. The KM curve applied to nurse retention treats voluntary departures as "events" and gives unbiased estimates even when some nurses are still employed at the end of observation (right censoring). The log-rank test compares KM curves between groups (urban vs. rural facilities).</p>
+        </div>
+      </details>
+      <details>
+        <summary>Agent Cascade Effects — Staffing Failures</summary>
+        <div class="detail-body">
+          <p>In healthcare operations, a <strong>cascade failure</strong> occurs when a staffing shortage forces remaining staff to work longer hours, increasing fatigue and error rates, causing additional departures, further increasing load on the remaining staff. This positive feedback loop is especially dangerous in small rural hospitals where staff cannot be easily replaced.</p>
+          <p>ABM cascade models capture this nonlinear feedback that ODE models miss: below a critical staffing level, the system is stable; above that threshold, it enters a runaway depletion process. The threshold depends on the interaction strength (how much one departure affects workload) and the recovery rate (how quickly new hires can be made).</p>
+        </div>
+      </details>
+      <details>
+        <summary>Financial ROI and Break-Even Analysis</summary>
+        <div class="detail-body">
+          <p>The 5-year financial model uses <strong>discounted cash flow (DCF)</strong> analysis: all future cash flows are discounted to present value using a discount rate r, reflecting the time value of money. Net Present Value (NPV) = Σ CF<sub>t</sub>/(1+r)<sup>t</sup> − Initial Investment. A positive NPV indicates a financially viable intervention.</p>
+          <p>For rural hospital interventions, the key uncertainties are: (1) occupancy response to quality improvements, (2) payer mix changes over time, (3) staffing retention rates, and (4) regulatory reimbursement changes. Sensitivity analysis on these parameters (tornado chart) identifies which assumptions most drive NPV uncertainty.</p>
+        </div>
+      </details>
+    </section>
+
+    </div>
   </main>
 
   <!-- Error Boundary Portal -->

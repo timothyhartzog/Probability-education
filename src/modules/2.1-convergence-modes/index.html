@@ -39,7 +39,43 @@
       </div>
       <aside class="control-panel" id="controls"></aside>
     </div>
-    <div class="info-panel" id="info"></div>
+    <div class="info-panel" id="info">
+      <h2>Modes of Convergence</h2>
+      <details open>
+        <summary>The Four Modes — Strongest to Weakest</summary>
+        <div class="detail-body">
+          <p>A sequence of random variables X<sub>n</sub> can converge to a limit X in several genuinely distinct senses. From strongest to weakest:</p>
+          <ul>
+            <li><strong>Almost sure (a.s.) convergence</strong> — X<sub>n</sub>(ω) → X(ω) for almost every sample path ω. The set of paths that fail to converge has probability zero.</li>
+            <li><strong>L<sup>p</sup> convergence</strong> — E[|X<sub>n</sub> − X|<sup>p</sup>] → 0. The p-th moment of the error vanishes. Implies convergence in probability.</li>
+            <li><strong>Convergence in probability</strong> — P(|X<sub>n</sub> − X| &gt; ε) → 0 for every ε &gt; 0. The <em>chance</em> of being far from the limit vanishes, but individual paths can still oscillate.</li>
+            <li><strong>Convergence in distribution</strong> — F<sub>n</sub>(x) → F(x) at all continuity points of F. Only the <em>law</em> converges; X<sub>n</sub> and X need not live on the same space.</li>
+          </ul>
+          <p>The hierarchy is: a.s. ⟹ in probability ⟹ in distribution. L<sup>p</sup> convergence also implies convergence in probability. <strong>None of the converses hold in general.</strong></p>
+        </div>
+      </details>
+      <details>
+        <summary>Typewriter Sequence — A Key Counterexample</summary>
+        <div class="detail-body">
+          <p>The <strong>typewriter sequence</strong> shows that convergence in probability does not imply almost sure convergence. Encode each integer n as a pair (m, k) where n corresponds to the k-th interval of length 1/2<sup>m</sup> in [0,1]. Let X<sub>n</sub> = 1 on that interval, 0 elsewhere.</p>
+          <p>Then P(X<sub>n</sub> = 1) = 1/2<sup>m</sup> → 0, so X<sub>n</sub> → 0 in probability. But for any fixed ω ∈ [0,1], X<sub>n</sub>(ω) = 1 infinitely often as the intervals sweep back and forth — so X<sub>n</sub>(ω) does <em>not</em> converge to 0 for any ω.</p>
+        </div>
+      </details>
+      <details>
+        <summary>Almost Sure vs. In Probability</summary>
+        <div class="detail-body">
+          <p>Convergence in probability says: at each time n, the set {|X<sub>n</sub> − X| &gt; ε} shrinks. But new bad sets can keep appearing at later times.</p>
+          <p>Almost sure convergence requires P(lim sup<sub>n</sub> {|X<sub>n</sub> − X| &gt; ε}) = 0 — the bad sets eventually stop appearing. A sufficient condition via Borel-Cantelli: if Σ P(|X<sub>n</sub> − X| &gt; ε) &lt; ∞, then X<sub>n</sub> → X almost surely.</p>
+        </div>
+      </details>
+      <details>
+        <summary>Uniform Integrability and L<sup>p</sup></summary>
+        <div class="detail-body">
+          <p>L<sup>p</sup> convergence requires not just that values concentrate near X, but that the tails of the distribution also go to zero. The technical condition is <strong>uniform integrability</strong>: sup<sub>n</sub> E[|X<sub>n</sub>|<sup>p</sup> 1{|X<sub>n</sub>| &gt; M}] → 0 as M → ∞.</p>
+          <p>Vitali's convergence theorem: if X<sub>n</sub> → X in probability and {X<sub>n</sub>} is uniformly integrable, then X<sub>n</sub> → X in L<sup>1</sup>. This generalises the Dominated Convergence Theorem, which provides a sufficient condition for uniform integrability via a dominating function.</p>
+        </div>
+      </details>
+    </div>
   </div>
   <script type="module" src="./module.js"></script>
 </body>

@@ -187,6 +187,8 @@ export class Poisson {
   pmf(x) {
     const k = Math.round(x);
     if (k < 0) return 0;
+    // Guard: 0 * log(0) = NaN in JS when lambda=0, k=0; mathematically PMF(0) = 1
+    if (this.lambda === 0) return k === 0 ? 1 : 0;
     return Math.exp(k * Math.log(this.lambda) - this.lambda - lnFactorial(k));
   }
 
@@ -242,6 +244,9 @@ export class Binomial {
   pmf(k) {
     k = Math.round(k);
     if (k < 0 || k > this.n) return 0;
+    // Guard boundary cases: 0 * log(0) = NaN in JS, but mathematically = 0
+    if (this.p === 0) return k === 0 ? 1 : 0;
+    if (this.p === 1) return k === this.n ? 1 : 0;
     return Math.exp(
       lnBinom(this.n, k) +
         k * Math.log(this.p) +
@@ -521,8 +526,9 @@ export class Pareto {
   }
 
   sample(rng) {
-    // Inverse CDF: xm / U^(1/alpha)
-    return this.xm / Math.pow(rng.random(), 1 / this.alpha);
+    // Inverse CDF: xm / U^(1/alpha). Clamp U away from 0 to avoid Infinity.
+    const u = Math.max(rng.random(), Number.EPSILON);
+    return this.xm / Math.pow(u, 1 / this.alpha);
   }
 
   pdf(x) {

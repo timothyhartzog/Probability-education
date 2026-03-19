@@ -31,10 +31,14 @@ export class SimulationEngine {
     try {
       // 1. Snapshot the state (for telemetry and debugging)
       if (this.stateLog.length > this.maxLogSize) this.stateLog.shift();
-      this.stateLog.push({
-        timestamp: Date.now(),
-        state: JSON.parse(JSON.stringify(stateSnapshot))
-      });
+      let snapshotClone;
+      try {
+        snapshotClone = JSON.parse(JSON.stringify(stateSnapshot));
+      } catch (_e) {
+        // stateSnapshot may contain circular references or non-serializable values
+        snapshotClone = { _snapshotError: 'non-serializable state' };
+      }
+      this.stateLog.push({ timestamp: Date.now(), state: snapshotClone });
 
       // 2. Execute the user-provided update logic
       await this.onUpdate();

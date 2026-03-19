@@ -457,6 +457,9 @@ function bdiDecision(agent, neighbors, grid, params, rng) {
   agent.desires = desires.map(d => d.name);
 
   // ── Select Intention ──
+  if (desires.length === 0) {
+    return { action: 'wander', vx: agent.vx + rng.range(-0.1, 0.1), vy: agent.vy + rng.range(-0.1, 0.1) };
+  }
   const topDesire = desires[0];
   // Commitment: stick with current intention unless a higher priority arises
   if (agent.intention && topDesire.priority < 0.8) {

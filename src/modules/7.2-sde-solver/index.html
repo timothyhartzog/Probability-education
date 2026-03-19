@@ -48,7 +48,49 @@
         <div class="stats-grid" id="stats"></div>
       </aside>
     </div>
-    <div class="info-panel" id="info"></div>
+    <div class="info-panel" id="info">
+      <h2>Stochastic Differential Equations</h2>
+      <details open>
+        <summary>What is an SDE?</summary>
+        <div class="detail-body">
+          <p>A stochastic differential equation (SDE) has the form:</p>
+          <p style="text-align:center"><strong>dX<sub>t</sub> = μ(X<sub>t</sub>, t) dt + σ(X<sub>t</sub>, t) dB<sub>t</sub></strong></p>
+          <p>The <strong>drift</strong> μ governs the deterministic tendency of the process; the <strong>diffusion coefficient</strong> σ governs the amplitude of random fluctuations. The dB<sub>t</sub> term is formal notation for Gaussian white noise — the Brownian increment over an infinitesimal time step.</p>
+          <p>An SDE solution is a stochastic process X<sub>t</sub> satisfying the integral form X<sub>t</sub> = X<sub>0</sub> + ∫μ ds + ∫σ dB. Existence and uniqueness are guaranteed under Lipschitz growth conditions on μ and σ (the Itô existence theorem).</p>
+        </div>
+      </details>
+      <details>
+        <summary>Geometric Brownian Motion — The Black-Scholes Model</summary>
+        <div class="detail-body">
+          <p>GBM has the form dX<sub>t</sub> = μX<sub>t</sub> dt + σX<sub>t</sub> dB<sub>t</sub>. Applying Itô's formula to log(X<sub>t</sub>), the exact solution is:</p>
+          <p style="text-align:center"><strong>X<sub>t</sub> = X<sub>0</sub> exp((μ − σ²/2)t + σB<sub>t</sub>)</strong></p>
+          <p>The log of X<sub>t</sub> is normally distributed — X<sub>t</sub> is lognormal. The mean grows as X<sub>0</sub>e<sup>μt</sup> but the median (most likely path) grows as X<sub>0</sub>e<sup>(μ−σ²/2)t</sup>. The term −σ²/2 is the <strong>Itô correction</strong>: higher volatility actually lowers the typical path due to Jensen's inequality applied to the log.</p>
+        </div>
+      </details>
+      <details>
+        <summary>Ornstein-Uhlenbeck — Mean Reversion</summary>
+        <div class="detail-body">
+          <p>The OU process dX<sub>t</sub> = θ(μ − X<sub>t</sub>) dt + σ dB<sub>t</sub> describes mean-reverting dynamics. The parameter θ > 0 is the <strong>speed of reversion</strong>, μ is the long-run mean. The exact solution is:</p>
+          <p style="text-align:center"><strong>X<sub>t</sub> = μ + (X<sub>0</sub> − μ)e<sup>−θt</sup> + σ ∫₀ᵗ e<sup>−θ(t−s)</sup> dB<sub>s</sub></strong></p>
+          <p>The stationary distribution is N(μ, σ²/2θ). OU processes model interest rates (Vasicek model), temperatures, and any quantity that fluctuates around an equilibrium. The half-life of deviations is log(2)/θ.</p>
+        </div>
+      </details>
+      <details>
+        <summary>Euler-Maruyama Numerical Method</summary>
+        <div class="detail-body">
+          <p>The <strong>Euler-Maruyama</strong> scheme discretizes the SDE as:</p>
+          <p style="text-align:center"><strong>X<sub>t+Δt</sub> = X<sub>t</sub> + μ(X<sub>t</sub>, t)Δt + σ(X<sub>t</sub>, t)√Δt · Z</strong></p>
+          <p>where Z ~ N(0,1). This is the stochastic analogue of the Euler method for ODEs. It has <strong>strong order ½</strong> (pathwise error ~ √Δt) and <strong>weak order 1</strong> (distributional error ~ Δt). For better pathwise accuracy, the Milstein scheme adds a correction term: + ½σσ'((√Δt·Z)² − Δt), achieving strong order 1.</p>
+        </div>
+      </details>
+      <details>
+        <summary>Cox-Ingersoll-Ross — Non-Negative Processes</summary>
+        <div class="detail-body">
+          <p>The CIR process dX<sub>t</sub> = κ(θ − X<sub>t</sub>) dt + σ√X<sub>t</sub> dB<sub>t</sub> is used to model interest rates and volatility because X<sub>t</sub> ≥ 0. The <strong>Feller condition</strong> 2κθ ≥ σ² ensures the process never hits zero.</p>
+          <p>The diffusion coefficient σ√X<sub>t</sub> vanishes at zero, creating a reflecting boundary. The stationary distribution is a scaled Gamma distribution: X<sub>∞</sub> ~ Gamma(2κθ/σ², σ²/2κ). This is the basis of the Heston stochastic volatility model in quantitative finance.</p>
+        </div>
+      </details>
+    </div>
   </div>
   <script type="module" src="./module.js"></script>
 </body>

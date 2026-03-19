@@ -75,7 +75,8 @@ const DISTRIBUTIONS = {
     hasFiniteMean: true,
     hasFiniteVariance: true,
     sample(rng) {
-      return -Math.log(rng());
+      // Clamp away from 0 to avoid Math.log(0) = -Infinity
+      return -Math.log(Math.max(rng(), Number.EPSILON));
     },
   },
   poisson: {

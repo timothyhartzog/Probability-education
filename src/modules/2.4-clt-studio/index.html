@@ -35,7 +35,47 @@
       </div>
       <aside class="control-panel" id="controls"></aside>
     </div>
-    <div class="info-panel" id="info"></div>
+    <div class="info-panel" id="info">
+      <h2>Central Limit Theorem</h2>
+      <details open>
+        <summary>The Theorem and What It Says</summary>
+        <div class="detail-body">
+          <p>Let X<sub>1</sub>, X<sub>2</sub>, … be i.i.d. random variables with mean μ and finite variance σ². Define the standardized sum:</p>
+          <p style="text-align:center"><strong>Z<sub>n</sub> = (S<sub>n</sub> − nμ) / (σ√n)</strong></p>
+          <p>The CLT states that Z<sub>n</sub> converges in distribution to N(0,1) as n → ∞. Crucially, this holds regardless of the shape of the underlying distribution — heavy-tailed, skewed, discrete, or continuous — as long as the variance is finite.</p>
+          <p>The CLT does <em>not</em> say the individual X<sub>i</sub> become normal. It says the <em>rescaled sum</em> of many independent contributions approaches Gaussian shape.</p>
+        </div>
+      </details>
+      <details>
+        <summary>Rate of Convergence — Berry-Esseen Theorem</summary>
+        <div class="detail-body">
+          <p>The Berry-Esseen theorem quantifies how quickly the CLT kicks in. If E[|X|³] < ∞ (finite third moment), then:</p>
+          <p style="text-align:center"><strong>sup<sub>x</sub> |F<sub>n</sub>(x) − Φ(x)| ≤ C ρ / (σ³ √n)</strong></p>
+          <p>where ρ = E[|X − μ|³] and C ≈ 0.4748. The convergence rate is O(1/√n). For symmetric distributions the skewness term vanishes and convergence is faster — effectively O(1/n). This is why a coin-flip sum looks normal much sooner than a heavily skewed distribution.</p>
+        </div>
+      </details>
+      <details>
+        <summary>When the CLT Fails — Heavy Tails</summary>
+        <div class="detail-body">
+          <p>If the variance is infinite (e.g., Cauchy distribution, Pareto with α ≤ 2), the CLT does not apply. Instead, appropriately normalized sums converge to a <strong>stable distribution</strong> with heavier-than-Gaussian tails.</p>
+          <p>The Cauchy is the most famous example: the average of n Cauchy(0,1) random variables is itself Cauchy(0,1), so the distribution never changes shape no matter how many samples you average — the standard 1/√n normalization does nothing. The Lévy-Khintchine representation characterizes all possible limit laws for sums of i.i.d. variables.</p>
+        </div>
+      </details>
+      <details>
+        <summary>Q-Q Plots as a Diagnostic Tool</summary>
+        <div class="detail-body">
+          <p>A <strong>quantile-quantile (Q-Q) plot</strong> compares the empirical quantiles of Z<sub>n</sub> against the theoretical quantiles of N(0,1). If the points lie on the diagonal y = x, the distribution is normal.</p>
+          <p>Deviations reveal the character of the underlying distribution: S-shaped curves indicate light tails; points curving upward at both ends indicate heavy tails; asymmetric deviations indicate skewness. Even with large n, a heavy-tailed parent distribution produces noticeable bow-out in the Q-Q plot because the extreme order statistics are far from Gaussian.</p>
+        </div>
+      </details>
+      <details>
+        <summary>Practical Uses — Confidence Intervals and Hypothesis Tests</summary>
+        <div class="detail-body">
+          <p>Nearly every standard statistical procedure exploits the CLT. The 95% confidence interval x̄ ± 1.96 σ/√n works because x̄ is approximately normal. The z-test and t-test both rely on the sample mean being approximately normal.</p>
+          <p>The key practical question is: how large does n need to be? As a rough rule: n ≥ 30 suffices for mildly skewed distributions; n may need to be in the hundreds for highly skewed or discrete distributions. The moments panel in this simulation lets you track skewness and kurtosis of Z<sub>n</sub> to see when they reach their Gaussian values (0 and 3).</p>
+        </div>
+      </details>
+    </div>
   </div>
   <script type="module" src="./module.js"></script>
 </body>

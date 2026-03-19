@@ -87,28 +87,33 @@ function gammaPDF(x, alpha, beta) {
   return Math.pow(beta, alpha) * Math.pow(x, alpha - 1) * Math.exp(-beta * x) / Math.exp(lnGamma(alpha));
 }
 
-/** Regularized incomplete beta function via continued fraction (for CDF). */
+/** Regularized incomplete beta function via Lentz continued fraction. */
 function betaIncomplete(x, a, b) {
   if (x <= 0) return 0;
   if (x >= 1) return 1;
+  // Use symmetry to keep x in the region where the CF converges faster
   if (x > (a + 1) / (a + b + 2)) return 1 - betaIncomplete(1 - x, b, a);
   const lnPre = a * Math.log(x) + b * Math.log(1 - x) - Math.log(a) - lnGamma(a) - lnGamma(b) + lnGamma(a + b);
-  let num = 1, den = 1;
-  for (let m = 1; m <= 200; m++) {
-    let d = m * (b - m) * x / ((a + 2 * m - 1) * (a + 2 * m));
-    num = 1 + d / num; den = 1 + d / den;
-    if (Math.abs(num) < 1e-30) num = 1e-30;
-    if (Math.abs(den) < 1e-30) den = 1e-30;
-    const c1 = num / den;
+  // Lentz's method: accumulate the continued fraction product
+  const tiny = 1e-30;
+  let f = tiny;
+  let C = f, D = 0;
+  for (let m = 0; m <= 200; m++) {
+    // Even step (d_{2m})
+    let d = m === 0 ? 1
+      : m * (b - m) * x / ((a + 2 * m - 1) * (a + 2 * m));
+    D = 1 + d * D; if (Math.abs(D) < tiny) D = tiny; D = 1 / D;
+    C = 1 + d / C; if (Math.abs(C) < tiny) C = tiny;
+    f *= C * D;
+    // Odd step (d_{2m+1})
     d = -(a + m) * (a + b + m) * x / ((a + 2 * m) * (a + 2 * m + 1));
-    num = 1 + d / num; den = 1 + d / den;
-    if (Math.abs(num) < 1e-30) num = 1e-30;
-    if (Math.abs(den) < 1e-30) den = 1e-30;
-    const c2 = num / den;
-    if (Math.abs(c1 * c2 - 1) < 1e-10) break;
+    D = 1 + d * D; if (Math.abs(D) < tiny) D = tiny; D = 1 / D;
+    C = 1 + d / C; if (Math.abs(C) < tiny) C = tiny;
+    const delta = C * D;
+    f *= delta;
+    if (Math.abs(delta - 1) < 1e-10) break;
   }
-  // Simple numerical integration fallback for stability
-  return betaCDFNumeric(x, a, b);
+  return Math.exp(lnPre) * f;
 }
 
 function betaCDFNumeric(x, a, b) {

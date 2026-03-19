@@ -49,7 +49,53 @@
         <div class="stats-grid" id="stats"></div>
       </aside>
     </div>
-    <div class="info-panel" id="info"></div>
+    <div class="info-panel" id="info">
+      <h2>Mutual Information and Channel Capacity</h2>
+      <details open>
+        <summary>Mutual Information — Shared Uncertainty</summary>
+        <div class="detail-body">
+          <p>The <strong>mutual information</strong> I(X; Y) measures how much knowing Y tells us about X (and vice versa):</p>
+          <p style="text-align:center"><strong>I(X; Y) = H(X) − H(X | Y) = H(Y) − H(Y | X)</strong></p>
+          <p>Equivalently, I(X; Y) = D<sub>KL</sub>(P<sub>XY</sub> ∥ P<sub>X</sub> ⊗ P<sub>Y</sub>) — it is the KL divergence between the joint distribution and the product of marginals. I(X; Y) = 0 if and only if X and Y are independent. Mutual information is symmetric: I(X; Y) = I(Y; X). It is always non-negative.</p>
+        </div>
+      </details>
+      <details>
+        <summary>The Information Venn Diagram</summary>
+        <div class="detail-body">
+          <p>The entropy quantities form a Venn-diagram structure:</p>
+          <ul>
+            <li><strong>H(X)</strong> — total uncertainty about X</li>
+            <li><strong>H(Y)</strong> — total uncertainty about Y</li>
+            <li><strong>H(X, Y)</strong> — joint entropy; uncertainty about both together</li>
+            <li><strong>H(X | Y) = H(X, Y) − H(Y)</strong> — remaining uncertainty about X after observing Y</li>
+            <li><strong>I(X; Y) = H(X) + H(Y) − H(X, Y)</strong> — the overlap: information shared between X and Y</li>
+          </ul>
+          <p>The chain rule H(X, Y) = H(X) + H(Y | X) generalizes: H(X<sub>1</sub>, …, X<sub>n</sub>) = Σ H(X<sub>i</sub> | X<sub>1</sub>, …, X<sub>i-1</sub>).</p>
+        </div>
+      </details>
+      <details>
+        <summary>Noisy Channels and Shannon's Channel Capacity Theorem</summary>
+        <div class="detail-body">
+          <p>A <strong>discrete memoryless channel</strong> maps input X to output Y with transition probabilities P(Y | X). The <strong>channel capacity</strong> is:</p>
+          <p style="text-align:center"><strong>C = max<sub>P(X)</sub> I(X; Y)</strong></p>
+          <p>Shannon's noisy channel coding theorem (1948): it is possible to transmit information reliably at any rate R < C bits per channel use, using sufficiently long block codes. Reliable transmission at rates R > C is impossible. For the binary symmetric channel with error probability p, C = 1 − H(p, 1−p) bits, where H is binary entropy.</p>
+        </div>
+      </details>
+      <details>
+        <summary>Mutual Information vs. Correlation</summary>
+        <div class="detail-body">
+          <p>Pearson correlation measures linear dependence only. Mutual information captures <em>any</em> statistical dependence, linear or nonlinear. Two variables can have zero correlation but high mutual information (e.g., Y = X² with X symmetric around zero: Corr(X, Y) = 0 but I(X; Y) > 0).</p>
+          <p>This makes mutual information valuable in feature selection, causal inference, and neuroscience — wherever the relationship between variables might be nonlinear. However, MI estimation from data is harder than estimating correlation, especially in continuous high-dimensional settings.</p>
+        </div>
+      </details>
+      <details>
+        <summary>Applications — Feature Selection and Neural Codes</summary>
+        <div class="detail-body">
+          <p>In machine learning, <strong>mutual information feature selection</strong> ranks features by I(feature; label), keeping features that share the most information with the target. Methods like mRMR (minimum Redundancy Maximum Relevance) also subtract mutual information between features to reduce redundancy.</p>
+          <p>In neuroscience, the <strong>neural coding efficiency</strong> question asks how much of the theoretical channel capacity H(stimulus) is actually transmitted by spike trains. Efficient coding theory (Barlow, 1961) predicts that sensory neurons should minimize redundancy and maximize information transmission — equivalent to maximizing I(response; stimulus) subject to metabolic constraints.</p>
+        </div>
+      </details>
+    </div>
   </div>
   <script type="module" src="./module.js"></script>
 </body>

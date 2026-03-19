@@ -50,7 +50,45 @@
         <div class="stats-grid" id="stats"></div>
       </aside>
     </div>
-    <div class="info-panel" id="info"></div>
+    <div class="info-panel" id="info">
+      <h2>Itô Calculus and Stochastic Integration</h2>
+      <details open>
+        <summary>Why Ordinary Calculus Fails for Brownian Motion</summary>
+        <div class="detail-body">
+          <p>Brownian motion B<sub>t</sub> has infinite total variation on any interval — the sum of |B<sub>ti+1</sub> − B<sub>ti</sub>| diverges as the partition is refined. This means the Riemann-Stieltjes integral ∫ f dB cannot be defined path-by-path in the classical sense.</p>
+          <p>Instead, the <strong>Itô integral</strong> is defined as a limit in mean square: ∫₀ᵀ f(t) dB<sub>t</sub> = lim Σ f(t<sub>i</sub>)(B<sub>ti+1</sub> − B<sub>ti</sub>), where f is evaluated at the <em>left endpoint</em> of each interval. This left-endpoint rule makes the integral an honest martingale and gives it zero expectation when f is adapted.</p>
+        </div>
+      </details>
+      <details>
+        <summary>Quadratic Variation — [B]<sub>t</sub> = t</summary>
+        <div class="detail-body">
+          <p>The <strong>quadratic variation</strong> of Brownian motion is [B]<sub>t</sub> = t. This is the fundamental fact of stochastic calculus: Σ (ΔB)² → t as mesh → 0. Because ordinary smooth functions have zero quadratic variation, this extra "dt" term is invisible in classical calculus but crucial here.</p>
+          <p>Heuristically, (dB<sub>t</sub>)² = dt. This is why Itô's formula has an extra second-derivative term that classical chain rules do not. The quadratic variation chart shows the running sum of (ΔB)² tracking the diagonal line y = t.</p>
+        </div>
+      </details>
+      <details>
+        <summary>Itô's Formula — The Stochastic Chain Rule</summary>
+        <div class="detail-body">
+          <p>For a smooth function g and Brownian motion B<sub>t</sub>, Itô's formula states:</p>
+          <p style="text-align:center"><strong>dg(B<sub>t</sub>) = g'(B<sub>t</sub>) dB<sub>t</sub> + ½ g''(B<sub>t</sub>) dt</strong></p>
+          <p>The extra ½ g'' dt term arises from quadratic variation. For example, g(x) = x²: d(B<sub>t</sub>²) = 2B<sub>t</sub> dB<sub>t</sub> + dt, so B<sub>t</sub>² − t is a martingale. Without the correction term, you would incorrectly write d(B²) = 2B dB and conclude B<sub>t</sub>² is a martingale — but E[B<sub>t</sub>²] = t ≠ 0.</p>
+        </div>
+      </details>
+      <details>
+        <summary>Itô vs Stratonovich Convention</summary>
+        <div class="detail-body">
+          <p>The <strong>Stratonovich integral</strong> uses the midpoint rule: ∫ f ∘ dB = lim Σ f((t<sub>i</sub>+t<sub>i+1</sub>)/2)(ΔB). It satisfies the classical chain rule — the stochastic correction term cancels. The conversion between conventions is: f ∘ dB = f dB + ½ f' dt.</p>
+          <p>Itô is preferred in probability theory (adapted integrands, martingale property). Stratonovich appears naturally in physics and geometry (e.g., Riemannian manifolds, limits of smooth noise). When modeling real physical systems with colored noise that becomes white in a limit, the Stratonovich convention typically gives the correct limiting SDE.</p>
+        </div>
+      </details>
+      <details>
+        <summary>Isometry and Martingale Properties</summary>
+        <div class="detail-body">
+          <p>The <strong>Itô isometry</strong> is E[(∫₀ᵀ f dB)²] = ∫₀ᵀ E[f²] dt. This is the key identity used to compute variances of stochastic integrals and to prove the integral is well-defined. It mirrors the L² norm identity for ordinary integrals but holds in expectation rather than path-by-path.</p>
+          <p>The Itô integral M<sub>t</sub> = ∫₀ᵗ f dB is a <strong>local martingale</strong> whenever f is adapted and square-integrable. Under the additional condition E[∫ f² dt] < ∞ it is a true martingale with E[M<sub>t</sub>] = 0 for all t.</p>
+        </div>
+      </details>
+    </div>
   </div>
   <script type="module" src="./module.js"></script>
 </body>

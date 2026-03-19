@@ -113,7 +113,7 @@
 
             <!-- Model Type -->
             <div class="control-group dropdown-control">
-              <label>Model Type</label>
+              <label for="model-type-select">Model Type</label>
               <select id="model-type">
                 <option value="SIR">SIR — Susceptible-Infected-Recovered</option>
                 <option value="SEIR">SEIR — with Exposed compartment</option>
@@ -125,7 +125,7 @@
 
             <!-- Disease Presets -->
             <div class="control-group dropdown-control">
-              <label>Disease Preset</label>
+              <label for="disease-preset">Disease Preset</label>
               <select id="disease-preset">
                 <option value="custom">Custom Parameters</option>
                 <option value="covid19">COVID-19 (Original)</option>
@@ -143,52 +143,52 @@
 
             <!-- Beta (transmission rate) -->
             <div class="control-group slider-control">
-              <label>Transmission Rate (beta): <span class="value-display" id="beta-display">0.30</span></label>
+              <label for="beta-slider">Transmission Rate (beta): <span class="value-display" id="beta-display">0.30</span></label>
               <input type="range" id="beta-slider" min="0.01" max="1.5" step="0.01" value="0.30" />
               <div class="param-help">Contact rate x probability of transmission per contact</div>
             </div>
 
             <!-- Gamma (recovery rate) -->
             <div class="control-group slider-control">
-              <label>Recovery Rate (gamma): <span class="value-display" id="gamma-display">0.10</span></label>
+              <label for="gamma-slider">Recovery Rate (gamma): <span class="value-display" id="gamma-display">0.10</span></label>
               <input type="range" id="gamma-slider" min="0.01" max="0.5" step="0.005" value="0.10" />
               <div class="param-help">1/gamma = <span id="infectious-period">10.0</span> days infectious period</div>
             </div>
 
             <!-- Sigma (exposed rate, for SEIR) -->
             <div class="control-group slider-control seir-param" id="sigma-group">
-              <label>Incubation Rate (sigma): <span class="value-display" id="sigma-display">0.20</span></label>
+              <label for="sigma-slider">Incubation Rate (sigma): <span class="value-display" id="sigma-display">0.20</span></label>
               <input type="range" id="sigma-slider" min="0.05" max="1.0" step="0.01" value="0.20" />
               <div class="param-help">1/sigma = <span id="incubation-period">5.0</span> days incubation period</div>
             </div>
 
             <!-- Xi (waning immunity, for SEIRS) -->
             <div class="control-group slider-control seirs-param" id="xi-group">
-              <label>Immunity Waning Rate (xi): <span class="value-display" id="xi-display">0.005</span></label>
+              <label for="xi-slider">Immunity Waning Rate (xi): <span class="value-display" id="xi-display">0.005</span></label>
               <input type="range" id="xi-slider" min="0.001" max="0.05" step="0.001" value="0.005" />
               <div class="param-help">1/xi = <span id="immunity-duration">200</span> days immunity duration</div>
             </div>
 
             <!-- Mu (mortality rate, for SIRD) -->
             <div class="control-group slider-control sird-param" id="mu-group">
-              <label>Mortality Rate (mu): <span class="value-display" id="mu-display">0.01</span></label>
+              <label for="mu-slider">Mortality Rate (mu): <span class="value-display" id="mu-display">0.01</span></label>
               <input type="range" id="mu-slider" min="0.001" max="0.15" step="0.001" value="0.01" />
               <div class="param-help">Case fatality rate: <span id="cfr-display">1.0</span>%</div>
             </div>
 
             <!-- Initial conditions -->
             <div class="control-group slider-control">
-              <label>Population: <span class="value-display" id="pop-display">10000</span></label>
+              <label for="pop-slider">Population: <span class="value-display" id="pop-display">10000</span></label>
               <input type="range" id="pop-slider" min="1000" max="1000000" step="1000" value="10000" />
             </div>
 
             <div class="control-group slider-control">
-              <label>Initial Infected: <span class="value-display" id="i0-display">10</span></label>
+              <label for="i0-slider">Initial Infected: <span class="value-display" id="i0-display">10</span></label>
               <input type="range" id="i0-slider" min="1" max="100" step="1" value="10" />
             </div>
 
             <div class="control-group slider-control">
-              <label>Simulation Days: <span class="value-display" id="days-display">300</span></label>
+              <label for="days-slider">Simulation Days: <span class="value-display" id="days-display">300</span></label>
               <input type="range" id="days-slider" min="30" max="730" step="10" value="300" />
             </div>
 
@@ -263,48 +263,48 @@
             <h2>Agent Parameters</h2>
 
             <div class="control-group slider-control">
-              <label>Number of Agents: <span class="value-display" id="abm-n-display">500</span></label>
+              <label for="abm-n-slider">Number of Agents: <span class="value-display" id="abm-n-display">500</span></label>
               <input type="range" id="abm-n-slider" min="50" max="2000" step="50" value="500" />
             </div>
 
             <div class="control-group slider-control">
-              <label>Infection Radius: <span class="value-display" id="abm-radius-display">15</span> px</label>
+              <label for="abm-radius-slider">Infection Radius: <span class="value-display" id="abm-radius-display">15</span> px</label>
               <input type="range" id="abm-radius-slider" min="5" max="50" step="1" value="15" />
             </div>
 
             <div class="control-group slider-control">
-              <label>Transmission Prob: <span class="value-display" id="abm-trans-display">0.30</span></label>
+              <label for="abm-trans-slider">Transmission Prob: <span class="value-display" id="abm-trans-display">0.30</span></label>
               <input type="range" id="abm-trans-slider" min="0.01" max="1.0" step="0.01" value="0.30" />
             </div>
 
             <div class="control-group slider-control">
-              <label>Recovery Time: <span class="value-display" id="abm-recovery-display">100</span> ticks</label>
+              <label for="abm-recovery-slider">Recovery Time: <span class="value-display" id="abm-recovery-display">100</span> ticks</label>
               <input type="range" id="abm-recovery-slider" min="20" max="500" step="10" value="100" />
             </div>
 
             <div class="control-group slider-control">
-              <label>Incubation Time: <span class="value-display" id="abm-incubation-display">50</span> ticks</label>
+              <label for="abm-incubation-slider">Incubation Time: <span class="value-display" id="abm-incubation-display">50</span> ticks</label>
               <input type="range" id="abm-incubation-slider" min="0" max="200" step="5" value="50" />
             </div>
 
             <div class="control-group slider-control">
-              <label>Mortality Rate: <span class="value-display" id="abm-mortality-display">0.02</span></label>
+              <label for="abm-mortality-slider">Mortality Rate: <span class="value-display" id="abm-mortality-display">0.02</span></label>
               <input type="range" id="abm-mortality-slider" min="0" max="0.2" step="0.005" value="0.02" />
             </div>
 
             <div class="control-group slider-control">
-              <label>Agent Speed: <span class="value-display" id="abm-speed-display">1.0</span></label>
+              <label for="abm-speed-slider">Agent Speed: <span class="value-display" id="abm-speed-display">1.0</span></label>
               <input type="range" id="abm-speed-slider" min="0.1" max="3.0" step="0.1" value="1.0" />
             </div>
 
             <div class="control-group slider-control">
-              <label>Social Distancing: <span class="value-display" id="abm-distancing-display">0</span>%</label>
+              <label for="abm-distancing-slider">Social Distancing: <span class="value-display" id="abm-distancing-display">0</span>%</label>
               <input type="range" id="abm-distancing-slider" min="0" max="100" step="5" value="0" />
               <div class="param-help">Percentage of agents that stay stationary</div>
             </div>
 
             <div class="control-group slider-control">
-              <label>Vaccination Rate: <span class="value-display" id="abm-vaccine-display">0</span>%</label>
+              <label for="abm-vaccine-slider">Vaccination Rate: <span class="value-display" id="abm-vaccine-display">0</span>%</label>
               <input type="range" id="abm-vaccine-slider" min="0" max="95" step="5" value="0" />
             </div>
 
@@ -364,7 +364,7 @@
             <h2>Intervention Setup</h2>
 
             <div class="control-group dropdown-control">
-              <label>Base Disease</label>
+              <label for="base-disease-select">Base Disease</label>
               <select id="intervention-disease">
                 <option value="covid19">COVID-19</option>
                 <option value="influenza">Influenza</option>
@@ -375,34 +375,34 @@
 
             <h3 class="control-section-title">Vaccination</h3>
             <div class="control-group slider-control">
-              <label>Vaccination Coverage: <span class="value-display" id="iv-vaccine-display">0</span>%</label>
+              <label for="iv-vaccine-slider">Vaccination Coverage: <span class="value-display" id="iv-vaccine-display">0</span>%</label>
               <input type="range" id="iv-vaccine-slider" min="0" max="99" step="1" value="0" />
             </div>
 
             <div class="control-group slider-control">
-              <label>Vaccine Efficacy: <span class="value-display" id="iv-efficacy-display">90</span>%</label>
+              <label for="iv-efficacy-slider">Vaccine Efficacy: <span class="value-display" id="iv-efficacy-display">90</span>%</label>
               <input type="range" id="iv-efficacy-slider" min="50" max="100" step="1" value="90" />
             </div>
 
             <h3 class="control-section-title">Social Distancing</h3>
             <div class="control-group slider-control">
-              <label>Contact Reduction: <span class="value-display" id="iv-contact-display">0</span>%</label>
+              <label for="iv-contact-slider">Contact Reduction: <span class="value-display" id="iv-contact-display">0</span>%</label>
               <input type="range" id="iv-contact-slider" min="0" max="90" step="5" value="0" />
             </div>
 
             <div class="control-group slider-control">
-              <label>Start Day: <span class="value-display" id="iv-start-display">30</span></label>
+              <label for="iv-start-slider">Start Day: <span class="value-display" id="iv-start-display">30</span></label>
               <input type="range" id="iv-start-slider" min="0" max="120" step="5" value="30" />
             </div>
 
             <div class="control-group slider-control">
-              <label>Duration (days): <span class="value-display" id="iv-duration-display">60</span></label>
+              <label for="iv-duration-slider">Duration (days): <span class="value-display" id="iv-duration-display">60</span></label>
               <input type="range" id="iv-duration-slider" min="14" max="365" step="7" value="60" />
             </div>
 
             <h3 class="control-section-title">Healthcare</h3>
             <div class="control-group slider-control">
-              <label>Hospital Capacity: <span class="value-display" id="iv-capacity-display">5</span>% of pop.</label>
+              <label for="iv-capacity-slider">Hospital Capacity: <span class="value-display" id="iv-capacity-display">5</span>% of pop.</label>
               <input type="range" id="iv-capacity-slider" min="1" max="20" step="0.5" value="5" />
             </div>
 
@@ -452,28 +452,28 @@
             </div>
 
             <div class="control-group slider-control">
-              <label>Nodes: <span class="value-display" id="net-nodes-display">100</span></label>
+              <label for="net-nodes-slider">Nodes: <span class="value-display" id="net-nodes-display">100</span></label>
               <input type="range" id="net-nodes-slider" min="20" max="300" step="10" value="100" />
             </div>
 
             <div class="control-group slider-control">
-              <label>Avg Connections: <span class="value-display" id="net-edges-display">4</span></label>
+              <label for="net-edges-slider">Avg Connections: <span class="value-display" id="net-edges-display">4</span></label>
               <input type="range" id="net-edges-slider" min="2" max="12" step="1" value="4" />
             </div>
 
             <div class="control-group slider-control" id="rewire-group">
-              <label>Rewiring Prob: <span class="value-display" id="net-rewire-display">0.10</span></label>
+              <label for="net-rewire-slider">Rewiring Prob: <span class="value-display" id="net-rewire-display">0.10</span></label>
               <input type="range" id="net-rewire-slider" min="0" max="1" step="0.05" value="0.10" />
               <div class="param-help">For small-world networks</div>
             </div>
 
             <div class="control-group slider-control">
-              <label>Transmission Prob: <span class="value-display" id="net-trans-display">0.15</span></label>
+              <label for="net-trans-slider">Transmission Prob: <span class="value-display" id="net-trans-display">0.15</span></label>
               <input type="range" id="net-trans-slider" min="0.01" max="0.5" step="0.01" value="0.15" />
             </div>
 
             <div class="control-group slider-control">
-              <label>Recovery Prob: <span class="value-display" id="net-recovery-display">0.05</span></label>
+              <label for="net-recovery-slider">Recovery Prob: <span class="value-display" id="net-recovery-display">0.05</span></label>
               <input type="range" id="net-recovery-slider" min="0.01" max="0.3" step="0.01" value="0.05" />
             </div>
 
@@ -486,7 +486,7 @@
             </div>
 
             <div class="control-group slider-control">
-              <label>Vaccination: <span class="value-display" id="net-vaccine-display">0</span>%</label>
+              <label for="net-vaccine-slider">Vaccination: <span class="value-display" id="net-vaccine-display">0</span>%</label>
               <input type="range" id="net-vaccine-slider" min="0" max="80" step="5" value="0" />
             </div>
 
@@ -570,34 +570,34 @@
             </div>
 
             <div class="control-group slider-control">
-              <label>Transmission Rate (beta): <span class="value-display" id="stoch-beta-display">0.30</span></label>
+              <label for="stoch-beta-slider">Transmission Rate (beta): <span class="value-display" id="stoch-beta-display">0.30</span></label>
               <input type="range" id="stoch-beta-slider" min="0.05" max="1.5" step="0.01" value="0.30" />
             </div>
 
             <div class="control-group slider-control">
-              <label>Recovery Rate (gamma): <span class="value-display" id="stoch-gamma-display">0.10</span></label>
+              <label for="stoch-gamma-slider">Recovery Rate (gamma): <span class="value-display" id="stoch-gamma-display">0.10</span></label>
               <input type="range" id="stoch-gamma-slider" min="0.01" max="0.5" step="0.005" value="0.10" />
             </div>
 
             <div class="control-group slider-control">
-              <label>Population: <span class="value-display" id="stoch-pop-display">500</span></label>
+              <label for="stoch-pop-slider">Population: <span class="value-display" id="stoch-pop-display">500</span></label>
               <input type="range" id="stoch-pop-slider" min="50" max="5000" step="50" value="500" />
               <div class="param-help">Smaller populations show stronger stochastic effects</div>
             </div>
 
             <div class="control-group slider-control">
-              <label>Initial Infected: <span class="value-display" id="stoch-i0-display">3</span></label>
+              <label for="stoch-i0-slider">Initial Infected: <span class="value-display" id="stoch-i0-display">3</span></label>
               <input type="range" id="stoch-i0-slider" min="1" max="20" step="1" value="3" />
             </div>
 
             <div class="control-group slider-control">
-              <label>Monte Carlo Runs: <span class="value-display" id="stoch-runs-display">200</span></label>
+              <label for="stoch-runs-slider">Monte Carlo Runs: <span class="value-display" id="stoch-runs-display">200</span></label>
               <input type="range" id="stoch-runs-slider" min="20" max="500" step="10" value="200" />
               <div class="param-help">More runs = smoother distributions, slower</div>
             </div>
 
             <div class="control-group slider-control">
-              <label>Displayed Trajectories: <span class="value-display" id="stoch-show-display">30</span></label>
+              <label for="stoch-show-slider">Displayed Trajectories: <span class="value-display" id="stoch-show-display">30</span></label>
               <input type="range" id="stoch-show-slider" min="5" max="100" step="5" value="30" />
             </div>
 
@@ -690,18 +690,18 @@
             </div>
 
             <div class="control-group slider-control">
-              <label>Population: <span class="value-display" id="sens-pop-display">100000</span></label>
+              <label for="sens-pop-slider">Population: <span class="value-display" id="sens-pop-display">100000</span></label>
               <input type="range" id="sens-pop-slider" min="10000" max="1000000" step="10000" value="100000" />
             </div>
 
             <div class="control-group slider-control">
-              <label>Variation Range: ±<span class="value-display" id="sens-range-display">50</span>%</label>
+              <label for="sens-range-slider">Variation Range: ±<span class="value-display" id="sens-range-display">50</span>%</label>
               <input type="range" id="sens-range-slider" min="10" max="90" step="5" value="50" />
               <div class="param-help">Each parameter swept from (1-range) to (1+range) of baseline</div>
             </div>
 
             <div class="control-group slider-control">
-              <label>Sweep Points: <span class="value-display" id="sens-points-display">25</span></label>
+              <label for="sens-points-slider">Sweep Points: <span class="value-display" id="sens-points-display">25</span></label>
               <input type="range" id="sens-points-slider" min="10" max="50" step="5" value="25" />
             </div>
 

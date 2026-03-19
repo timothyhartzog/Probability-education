@@ -115,7 +115,7 @@
 
             <!-- Disease selector -->
             <div class="control-group dropdown-control">
-              <label>Disease</label>
+              <label for="vpd-disease">Disease</label>
               <select id="vpd-disease">
                 <option value="measles">Measles</option>
                 <option value="pertussis">Pertussis (Whooping Cough)</option>
@@ -139,30 +139,30 @@
 
             <h3 class="control-section-title">Vaccination</h3>
             <div class="control-group slider-control">
-              <label>Vaccination Coverage: <span class="value-display" id="vpd-vax-display">92</span>%</label>
+              <label for="vpd-vax-slider">Vaccination Coverage: <span class="value-display" id="vpd-vax-display">92</span>%</label>
               <input type="range" id="vpd-vax-slider" min="0" max="99" step="1" value="92" />
               <div class="param-help">Current US rate: <span id="vpd-current-rate">92</span>%</div>
             </div>
 
             <div class="control-group slider-control">
-              <label>Vaccine Efficacy: <span class="value-display" id="vpd-eff-display">97</span>%</label>
+              <label for="vpd-eff-slider">Vaccine Efficacy: <span class="value-display" id="vpd-eff-display">97</span>%</label>
               <input type="range" id="vpd-eff-slider" min="50" max="100" step="1" value="97" />
               <div class="param-help">Disease-specific default: <span id="vpd-default-eff">97</span>%</div>
             </div>
 
             <h3 class="control-section-title">Population</h3>
             <div class="control-group slider-control">
-              <label>Population: <span class="value-display" id="vpd-pop-display">100,000</span></label>
+              <label for="vpd-pop-slider">Population: <span class="value-display" id="vpd-pop-display">100,000</span></label>
               <input type="range" id="vpd-pop-slider" min="10000" max="1000000" step="10000" value="100000" />
             </div>
 
             <div class="control-group slider-control">
-              <label>Initial Infected: <span class="value-display" id="vpd-i0-display">5</span></label>
+              <label for="vpd-i0-slider">Initial Infected: <span class="value-display" id="vpd-i0-display">5</span></label>
               <input type="range" id="vpd-i0-slider" min="1" max="50" step="1" value="5" />
             </div>
 
             <div class="control-group slider-control">
-              <label>Simulation Days: <span class="value-display" id="vpd-days-display">365</span></label>
+              <label for="vpd-days-slider">Simulation Days: <span class="value-display" id="vpd-days-display">365</span></label>
               <input type="range" id="vpd-days-slider" min="60" max="730" step="10" value="365" />
             </div>
 
@@ -181,15 +181,15 @@
                 <input type="range" id="vpd-r0-slider" min="0.5" max="20" step="0.1" value="15.0" />
               </div>
               <div class="control-group slider-control">
-                <label>Incubation (days): <span class="value-display" id="vpd-incub-display">10</span></label>
+                <label for="vpd-incub-slider">Incubation (days): <span class="value-display" id="vpd-incub-display">10</span></label>
                 <input type="range" id="vpd-incub-slider" min="1" max="30" step="0.5" value="10" />
               </div>
               <div class="control-group slider-control">
-                <label>Infectious (days): <span class="value-display" id="vpd-infect-display">8</span></label>
+                <label for="vpd-infect-slider">Infectious (days): <span class="value-display" id="vpd-infect-display">8</span></label>
                 <input type="range" id="vpd-infect-slider" min="1" max="30" step="0.5" value="8" />
               </div>
               <div class="control-group slider-control">
-                <label>CFR: <span class="value-display" id="vpd-cfr-display">0.2</span>%</label>
+                <label for="vpd-cfr-slider">CFR: <span class="value-display" id="vpd-cfr-display">0.2</span>%</label>
                 <input type="range" id="vpd-cfr-slider" min="0" max="50" step="0.1" value="0.2" />
               </div>
             </div>
@@ -251,7 +251,7 @@
             </div>
 
             <div class="control-group dropdown-control">
-              <label>Bubble Y-Axis</label>
+              <label for="vpd-bubble-y">Bubble Y-Axis</label>
               <select id="comp-bubble-y">
                 <option value="cfr">Case Fatality Rate</option>
                 <option value="incubation">Incubation Period</option>
@@ -328,7 +328,7 @@
             <h2>Coverage Analysis</h2>
 
             <div class="control-group dropdown-control">
-              <label>Disease</label>
+              <label for="cov-disease">Disease</label>
               <select id="cov-disease">
                 <option value="measles">Measles</option>
                 <option value="pertussis">Pertussis</option>
@@ -342,18 +342,18 @@
             </div>
 
             <div class="control-group slider-control">
-              <label>Population: <span class="value-display" id="cov-pop-display">100,000</span></label>
+              <label for="cov-pop-slider">Population: <span class="value-display" id="cov-pop-display">100,000</span></label>
               <input type="range" id="cov-pop-slider" min="10000" max="1000000" step="10000" value="100000" />
             </div>
 
             <div class="control-group slider-control">
-              <label>Sweep Resolution: <span class="value-display" id="cov-res-display">50</span> points</label>
+              <label for="cov-res-slider">Sweep Resolution: <span class="value-display" id="cov-res-display">50</span> points</label>
               <input type="range" id="cov-res-slider" min="10" max="100" step="5" value="50" />
             </div>
 
             <h3 class="control-section-title">Multi-Disease Drop</h3>
             <div class="control-group slider-control">
-              <label>Coverage Drop: <span class="value-display" id="cov-drop-display">10</span>%</label>
+              <label for="cov-drop-slider">Coverage Drop: <span class="value-display" id="cov-drop-display">10</span>%</label>
               <input type="range" id="cov-drop-slider" min="5" max="50" step="5" value="10" />
               <div class="param-help">Simulates uniform drop in vaccination rates</div>
             </div>
@@ -427,7 +427,7 @@
             </div>
 
             <div class="control-group dropdown-control">
-              <label>Scale</label>
+              <label for="cov-scale">Scale</label>
               <select id="hist-scale">
                 <option value="log">Logarithmic</option>
                 <option value="linear">Linear</option>

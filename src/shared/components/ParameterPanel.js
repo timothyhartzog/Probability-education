@@ -225,6 +225,13 @@ export default class ParameterPanel {
       if (!el) throw new Error(`Container not found: ${container}`);
       return el;
     }
+    // Handle D3 selections — .node() returns the underlying DOM element
+    if (container && typeof container.node === 'function') {
+      const el = container.node();
+      if (!el) throw new Error('D3 selection is empty — no matching element found');
+      return el;
+    }
+    if (!container) throw new Error('Container must be a CSS selector string, DOM element, or D3 selection');
     return container;
   }
 }

@@ -57,7 +57,50 @@
         <div class="stats-grid" id="stats"></div>
       </aside>
     </div>
-    <div class="info-panel" id="info"></div>
+    <div class="info-panel" id="info">
+      <h2>Markov Chain Monte Carlo</h2>
+      <details open>
+        <summary>Why MCMC? The Curse of Dimensionality</summary>
+        <div class="detail-body">
+          <p>Exact Bayesian inference requires evaluating the normalizing constant p(x) = ∫ p(x|θ)p(θ) dθ. In high dimensions, this integral is intractable. A d-dimensional grid with 100 points per dimension requires 100<sup>d</sup> evaluations — 10<sup>200</sup> for d = 100.</p>
+          <p>MCMC circumvents this by constructing a Markov chain whose <strong>stationary distribution</strong> is the target posterior p(θ|x). We run the chain long enough to explore the posterior, then treat the chain's samples as approximate draws from it — all without computing the normalizing constant.</p>
+        </div>
+      </details>
+      <details>
+        <summary>Metropolis-Hastings Algorithm</summary>
+        <div class="detail-body">
+          <p>Given current state θ<sub>t</sub>, the Metropolis-Hastings algorithm proposes a move θ* ~ q(·|θ<sub>t</sub>) and accepts it with probability:</p>
+          <p style="text-align:center"><strong>α = min(1, [π(θ*)q(θ<sub>t</sub>|θ*)] / [π(θ<sub>t</sub>)q(θ*|θ<sub>t</sub>)])</strong></p>
+          <p>where π is the unnormalized target. If the proposal is symmetric (q(a|b) = q(b|a)), this simplifies to α = min(1, π(θ*)/π(θ<sub>t</sub>)). The acceptance criterion ensures <strong>detailed balance</strong>: the chain satisfies π(a)P(a→b) = π(b)P(b→a), guaranteeing π is stationary.</p>
+        </div>
+      </details>
+      <details>
+        <summary>Burn-in, Thinning, and Mixing</summary>
+        <div class="detail-body">
+          <p><strong>Burn-in</strong> refers to the initial samples discarded while the chain moves from its starting state toward the target distribution. The chain converges to stationarity after sufficient burn-in, but "sufficient" is hard to define rigorously.</p>
+          <p><strong>Thinning</strong> keeps every k-th sample to reduce autocorrelation between successive samples. While it reduces effective sample size, it lowers storage requirements and the samples look more like independent draws.</p>
+          <p><strong>Mixing</strong> describes how quickly the chain explores the target distribution. A poorly mixing chain gets stuck in local regions. The <strong>effective sample size</strong> (ESS) equals n / (1 + 2Σ<sub>k≥1</sub> ρ<sub>k</sub>), where ρ<sub>k</sub> is the lag-k autocorrelation. ESS much less than n signals poor mixing.</p>
+        </div>
+      </details>
+      <details>
+        <summary>Optimal Proposal Scaling</summary>
+        <div class="detail-body">
+          <p>For a Gaussian random-walk proposal in d dimensions, the optimal acceptance rate is approximately 23.4% (Roberts, Gelman, Gilks 1997). Targeting this rate via adaptive scaling of the proposal variance gives near-optimal mixing.</p>
+          <p>Too small a proposal σ: almost every proposal is accepted, but the chain moves slowly (small steps, high autocorrelation). Too large a σ: proposals often land in low-probability regions and are rejected, leaving the chain stuck. The 23.4% rule balances these: the proposal σ should scale as 2.38/√d times the posterior standard deviation.</p>
+        </div>
+      </details>
+      <details>
+        <summary>MCMC Convergence Diagnostics</summary>
+        <div class="detail-body">
+          <p>Unlike optimization, MCMC has no convergence criterion that can be checked exactly. Diagnostics can detect non-convergence but cannot prove convergence.</p>
+          <ul>
+            <li><strong>Trace plots</strong>: should look like white noise around a stable mean, with no trends or long runs at extreme values.</li>
+            <li><strong>ACF (autocorrelation function)</strong>: should decay rapidly to zero. Slow decay indicates high serial correlation and poor mixing.</li>
+            <li><strong>Gelman-Rubin R̂ statistic</strong>: compares within-chain and between-chain variance across multiple parallel chains. Values near 1.0 (< 1.1 conventionally) indicate convergence.</li>
+          </ul>
+        </div>
+      </details>
+    </div>
   </div>
   <script type="module" src="./module.js"></script>
 </body>
