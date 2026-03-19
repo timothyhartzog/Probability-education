@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 8: Workforce Optimization | Rural Nexus</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <link rel="stylesheet" href="../../assets/design-system.css">
+  <link rel="stylesheet" href="../../assets/module-template.css">
+  <style>
+    .staff-viz { height: 350px; background: #f8fafc; border-radius: var(--radius-lg); position: relative; }
+    .m-card { margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <div class="module-page">
+    <header class="module-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">Home</a> /
+        <a href="../../index.html#rural-healthcare">Rural Healthcare</a> /
+        Chapter 8
+      </nav>
+      <h1>Workforce Optimization & Retention</h1>
+      <p class="module-subtitle">Economic and Stochastic Modeling of the "Generalist" Specialist.</p>
+    </header>
+
+    <div class="module-layout">
+      <div class="viz-area">
+        <div class="staff-viz" id="staffing-chart"></div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:15px;">
+          <div class="m-card text-center"><div class="m-label">Staff Count</div><div id="staff-n" class="m-val">--</div></div>
+          <div class="m-card text-center"><div class="m-label">Daily Cost</div><div id="total-cost" class="m-val text-error">--</div></div>
+        </div>
+      </div>
+
+      <aside class="control-panel">
+        <div class="control-section">
+          <h3>Staffing Model</h3>
+          <div id="work-inputs"></div>
+          <button id="add-locum" class="btn btn-primary w-full mt-4">Hire Locum Tenens (Temp)</button>
+        </div>
+        <div class="control-section">
+          <h3>Efficiency Metrics</h3>
+          <p class="text-xs text-slate-500">Cross-training (Generalists) reduces the need for expensive transfers.</p>
+          <div class="m-card mt-2"><div class="m-label">Service Efficacy</div><div id="effic-val" class="m-val">--%</div></div>
+        </div>
+      </aside>
+    </div>
+
+    <div class="info-panel">
+      <section>
+        <h2>The Cost of Rural Staffing</h2>
+        <p>
+          Critical Access Hospitals often spend 30-50% more per hour for **Locum Tenens** providers due to recruitment 
+          scarcity. However, the model show that investing in **Generalist Training** (e.g., ER physicians who can 
+          handle basic inpatient rounding) creates a "buffer" that stabilizes quality when permanent staff leave.
+        </p>
+        <div id="math-workforce"></div>
+      </section>
+    </div>
+  </div>
+  <script type="module" src="./module.js"></script>
+</body>
+</html>

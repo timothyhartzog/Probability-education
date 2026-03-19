@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 3: Migration Modeling | Rural Nexus</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <link rel="stylesheet" href="../../assets/design-system.css">
+  <link rel="stylesheet" href="../../assets/module-template.css">
+  <style>
+    .pyramid-container { height: 400px; background: var(--color-surface); border-radius: var(--radius-lg); padding: var(--space-md); position: relative; }
+    .projection-chart { height: 250px; margin-top: var(--space-lg); background: var(--color-surface); border-radius: var(--radius-lg); padding: var(--space-md); }
+  </style>
+</head>
+<body>
+  <div class="module-page">
+    <header class="module-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">Home</a> /
+        <a href="../../index.html#rural-healthcare">Rural Healthcare</a> /
+        Chapter 3
+      </nav>
+      <h1>Migration & Demographic Forecasting</h1>
+      <p class="module-subtitle">Modeling the "Silver Tsunami" and Youth Out-Migration in Rural Catchments.</p>
+    </header>
+
+    <div class="module-layout">
+      <div class="viz-area">
+        <div class="pyramid-container" id="pyramid-viz"></div>
+        <div class="projection-chart" id="projection-viz"></div>
+      </div>
+
+      <aside class="control-panel" id="controls">
+        <div class="control-section">
+          <h3>Migration Drivers</h3>
+          <div id="migration-inputs"></div>
+        </div>
+        <div class="control-section">
+          <div class="m-card">
+            <div class="m-label">Dependency Ratio</div>
+            <div id="dep-ratio" class="m-val">--</div>
+            <div class="text-xs text-slate-500 mt-1">(65+ / 15-64)</div>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <div class="info-panel">
+      <section>
+        <h2>The Rural Demographic Paradox</h2>
+        <p>
+          Rural areas often face two simultaneous migration pressures: **Youth Out-Migration** (loss of 
+          tax base and caregivers) and **Amenity Migration** (urban retirees moving to scenic rural areas). 
+          This creates a "top-heavy" population pyramid with high clinical demand but shrinking support infrastructure.
+        </p>
+        <div id="math-dependency"></div>
+      </section>
+    </div>
+  </div>
+  <script type="module" src="./module.js"></script>
+</body>
+</html>

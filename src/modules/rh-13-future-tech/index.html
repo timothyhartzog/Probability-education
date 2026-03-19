@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 13: Future Tech (RPM) | Rural Nexus</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <link rel="stylesheet" href="../../assets/design-system.css">
+  <link rel="stylesheet" href="../../assets/module-template.css">
+  <style>
+    .iot-viz { height: 400px; background: #fdfdfd; border-radius: var(--radius-lg); border: 1px solid #e2e8f0; position: relative; overflow: hidden; display: flex; flex-wrap: wrap; gap: 8px; padding: 10px; }
+    .patient-monitor { width: 80px; height: 100px; background: #fff; border: 1px solid #e2e8f0; border-radius: 4px; padding: 5px; position: relative; }
+    .telemetry { height: 30px; background: #f8fafc; margin-top: 5px; border-radius: 2px; position: relative; overflow: hidden; }
+    .sparkline { stroke: #3b82f6; fill: none; stroke-width: 1.5px; }
+    .status-dot { width: 6px; height: 6px; border-radius: 50%; background: #10b981; position: absolute; top: 5px; right: 5px; }
+    .status-dot.alert { background: #ef4444; animation: pulse 1s infinite; }
+  </style>
+</head>
+<body>
+  <div class="module-page">
+    <header class="module-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">Home</a> /
+        <a href="../../index.html#rural-healthcare">Rural Healthcare</a> /
+        Chapter 13
+      </nav>
+      <h1>Remote Patient Monitoring (RPM) Efficacy</h1>
+      <p class="module-subtitle">Modeling "Hospital at Home" and Virtual Ward Extensions.</p>
+    </header>
+
+    <div class="module-layout">
+      <div class="viz-area">
+        <div class="iot-viz" id="iot-grid"></div>
+        <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; margin-top:15px;">
+          <div class="m-card text-center"><div class="m-label">Avoided Admissions</div><div id="adm-avoid" class="m-val text-success">0</div></div>
+          <div class="m-card text-center"><div class="m-label">Active Alerts</div><div id="active-alert" class="m-val text-error">0</div></div>
+          <div class="m-card text-center"><div class="m-label">Monitoring Reach</div><div id="reach-perc" class="m-val">--%</div></div>
+        </div>
+      </div>
+
+      <aside class="control-panel">
+        <div class="control-section">
+          <h3>Future State Parameters</h3>
+          <div id="future-inputs"></div>
+          <button id="add-monitor" class="btn btn-secondary w-full mt-4">Enroll New Remote Patient</button>
+        </div>
+        <div class="m-card"><div class="m-label">Clinical Margin (Future)</div><div id="future-margin" class="m-val">--%</div></div>
+        <p class="text-xs text-slate-500 mt-2">RPM reduces high-cost readmissions by identifying subtle physiological shifts early.</p>
+      </aside>
+    </div>
+
+    <div class="info-panel">
+      <section>
+        <h2>The Virtual Rural Hub</h2>
+        <p>
+          "Hospital at Home" models transform the physical constraints of a 25-bed CAH into a 
+          **Distributed clinical Network**. When monitoring sensitivity is high, early 
+          interventions (IV diuretics at home, nurse home visits) can prevent the 
+          saturated arrival surges seen in Chapter 7, effectively creating "Synthetic Beds."
+        </p>
+        <div id="math-rpm"></div>
+      </section>
+    </div>
+  </div>
+  <script type="module" src="./module.js"></script>
+</body>
+</html>

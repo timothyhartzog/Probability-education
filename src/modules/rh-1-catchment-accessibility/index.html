@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 5: Geospatial Accessibility | Rural Nexus</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <link rel="stylesheet" href="../../assets/design-system.css">
+  <link rel="stylesheet" href="../../assets/module-template.css">
+  <style>
+    .geo-layout {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: var(--space-xl);
+    }
+    .map-container {
+      background: #f8fafc;
+      border-radius: var(--radius-lg);
+      border: 1px solid #e2e8f0;
+      overflow: hidden;
+      height: 600px;
+      position: relative;
+    }
+    #accessibility-map { width: 100%; height: 100%; }
+    
+    .map-overlay {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 12px;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid #e2e8f0;
+      pointer-events: none;
+    }
+    
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.75rem;
+      margin-bottom: 4px;
+    }
+    .legend-color { width: 12px; height: 12px; border-radius: 2px; }
+    
+    .coverage-stats {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--space-sm);
+    }
+    
+    .coverage-bar-container {
+      background: #e2e8f0;
+      height: 8px;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 4px;
+    }
+    .coverage-bar {
+      height: 100%;
+      background: var(--color-primary);
+      transition: width 0.5s ease;
+    }
+  </style>
+</head>
+<body>
+  <div class="module-page">
+    <header class="module-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">Home</a> /
+        <a href="../../index.html#rural-healthcare">Rural Healthcare</a> /
+        Chapter 5
+      </nav>
+      <h1>Geospatial Catchment & Accessibility</h1>
+      <p class="module-subtitle">Modeling "Medical Deserts" and the 2-Step Floating Catchment Area (2SFCA).</p>
+    </header>
+
+    <div class="module-layout">
+      <div class="viz-area">
+        <div class="map-container">
+          <div id="accessibility-map"></div>
+          <div class="map-overlay">
+            <div class="legend-item"><div class="legend-color" style="background: #2563eb;"></div> Town (Population)</div>
+            <div class="legend-item"><div class="legend-color" style="background: #e11d48; border-radius: 50%;"></div> Urban Hub</div>
+            <div class="legend-item"><div class="legend-color" style="background: #ea580c; border-radius: 50%;"></div> Critical Access (CAH)</div>
+            <div class="legend-item" style="margin-top: 10px; font-weight: 600;">Travel Time Gradient</div>
+            <div class="legend-item"><div class="legend-color" style="background: #dcfce7;"></div> Under 30 mins</div>
+            <div class="legend-item"><div class="legend-color" style="background: #fee2e2;"></div> Over 60 mins ("Desert")</div>
+          </div>
+        </div>
+      </div>
+
+      <aside class="control-panel">
+        <div class="control-section">
+          <h3>Regional Modeling</h3>
+          <div id="region-controls"></div>
+        </div>
+        <div class="control-section">
+          <h3>Coverage Statistics</h3>
+          <div class="coverage-stats">
+            <div class="m-card">
+              <div class="m-label">Population in Medical Desert</div>
+              <div id="desert-pop" class="m-val text-error">--%</div>
+              <div class="coverage-bar-container">
+                <div id="desert-bar" class="coverage-bar" style="background: var(--color-error); width: 0%"></div>
+              </div>
+            </div>
+            <div class="m-card">
+              <div class="m-label">Access Score (Mean)</div>
+              <div id="access-score" class="m-val">--</div>
+            </div>
+          </div>
+        </div>
+        <button id="re-randomize" class="btn btn-secondary w-full mt-4">Generate New Region</button>
+      </aside>
+    </div>
+
+    <div class="info-panel">
+      <section>
+        <h2>The Gravity Model of Patient Flow</h2>
+        <p>
+          In rural systems, patients do not always go to the nearest hospital. Their choice is dictated by 
+          <strong>Gravity</strong>: a function of the facility's weight (quality/services) and the geographic 
+          friction (travel time).
+        </p>
+        <div id="math-gravity"></div>
+        <p>
+          <strong>2-Step Floating Catchment Area (2SFCA):</strong> This model calculates a ratio of 
+          beds-to-population for every facility, then sums these ratios for every town based on travel thresholds. 
+          It allows us to identify regions where demand far exceeds supply, even if a facility is "nearby."
+        </p>
+      </section>
+    </div>
+  </div>
+
+  <script type="module" src="./module.js"></script>
+</body>
+</html>

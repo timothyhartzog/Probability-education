@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RH-5: Bed Occupancy Calculator | Rural Nexus</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <link rel="stylesheet" href="../../assets/design-system.css">
+  <link rel="stylesheet" href="../../assets/module-template.css">
+  <style>
+    .calc-layout {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: var(--space-xl);
+    }
+    .viz-window {
+      background: var(--color-surface);
+      border-radius: var(--radius-lg);
+      padding: var(--space-lg);
+      box-shadow: var(--shadow-md);
+      height: 500px;
+    }
+    #bed-occupancy-chart { width: 100%; height: 100%; }
+    .stat-overlay {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      padding: 15px;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(4px);
+      border: 1px solid #e5e7eb;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+    }
+    .status-pill {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .status-safe { background: #dcfce7; color: #166534; }
+    .status-warning { background: #fef9c3; color: #854d0e; }
+    .status-critical { background: #fee2e2; color: #991b1b; }
+  </style>
+</head>
+<body>
+  <div class="module-page">
+    <header class="module-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">Home</a> /
+        <a href="../../index.html#rural-healthcare">Rural Healthcare</a> /
+        RH-5 Calculator
+      </nav>
+      <h1>Bed Occupancy Forecasting</h1>
+      <p class="module-subtitle">Interactive Operations Tool: Mapping Demand to Resource Utilization.</p>
+    </header>
+
+    <div class="module-layout">
+      <div class="viz-area">
+        <div class="viz-window">
+          <div id="bed-occupancy-chart"></div>
+        </div>
+      </div>
+
+      <aside class="control-panel">
+        <div class="control-section">
+          <h3>Facility Parameters</h3>
+          <div id="controls-inputs"></div>
+        </div>
+        <div class="control-section">
+          <div class="m-card">
+            <div class="m-label">Expected Active Beds (L)</div>
+            <div id="res-expected-l" class="m-val text-blue-600">--</div>
+            <div class="text-xs text-slate-500 mt-1">L = λ × W</div>
+          </div>
+          <div class="m-card mt-2">
+            <div class="m-label">Utilization (ρ)</div>
+            <div id="res-utilization" class="m-val">--%</div>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <div class="info-panel">
+      <section>
+        <h2>The Operational Formula: Little's Law</h2>
+        <p>
+          In hospital operations, the **Fundamental Relation** is Little's Law. It states that, 
+          under steady-state conditions, the long-term average number of items (L) in a 
+          stationary system is equal to the long-term average effective arrival rate (λ) 
+          multiplied by the average time (W) that an item spends in the system.
+        </p>
+        <div id="math-littles"></div>
+        <p>
+          <strong>Rural Impact:</strong> In Critical Access settings, where the bed capacity (C) is 
+          extremely low (often 25), a utilization rate exceeding 80% exponentially increases 
+          the probability of "blocking" (when there is no bed for an incoming patient), even if 
+          the average occupancy remains within theoretical limits.
+        </p>
+      </section>
+    </div>
+  </div>
+
+  <script type="module" src="./module.js"></script>
+</body>
+</html>

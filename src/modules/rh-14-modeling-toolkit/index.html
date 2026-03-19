@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rural Hospital Modeling Toolkit | Probability Education</title>
+  <link rel="stylesheet" href="../../../css/main.css">
+  <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.38/dist/katex.min.css">
+</head>
+<body class="nexus-theme">
+  <nav class="top-nav">
+    <div class="nav-content">
+      <a href="../../../index.html" class="back-link">← Back to Platform</a>
+      <div class="nav-title">Rural Hospital Operations Modeling Toolkit</div>
+      <div class="nav-meta">Synthesis & Methodology Chapter</div>
+    </div>
+  </nav>
+
+  <main class="dashboard-container">
+    <!-- Sidebar: Global Config -->
+    <aside class="config-sidebar" id="hospital-config">
+      <div class="config-header">
+        <h3>⚙️ Hospital Configuration</h3>
+        <p>Set your facility baseline</p>
+      </div>
+      <div class="config-groups" id="config-controls">
+        <!-- Sliders injected by JS -->
+      </div>
+      <div class="config-footer">
+        <button id="btn-reset" class="btn btn-secondary w-full">Reset to CAH Defaults</button>
+      </div>
+    </aside>
+
+    <!-- Main Content: Scrollable Sections -->
+    <div class="content-view">
+      
+      <!-- Summary Header -->
+      <section class="module-intro">
+        <h1>Operations Modeling Dashboard</h1>
+        <p>
+          This toolkit implements every core modeling method from <em>Modeling Methods for Healthcare Operations in Rural Hospitals</em>. 
+          Adjust the parameters in the sidebar to see how operational changes ripple through your facility's statistics, 
+          queues, and financial outcomes.
+        </p>
+      </section>
+
+      <!-- Grid of Mini-Simulators -->
+      <div class="sim-grid">
+        
+        <!-- Section 1: Distribution Analysis -->
+        <div class="sim-card" id="card-distributions">
+          <div class="card-header">
+            <h4>📊 Demand Distributions</h4>
+            <span class="m-label">Chapter 2</span>
+          </div>
+          <div class="viz-area" id="viz-ed-dist"></div>
+          <div class="card-footer" id="stats-dist">
+            <!-- Stats injected by JS -->
+          </div>
+        </div>
+
+        <!-- Section 2: Queuing Theory -->
+        <div class="sim-card" id="card-queues">
+          <div class="card-header">
+            <h4>🚦 Erlang-C Queuing</h4>
+            <span class="m-label">Chapter 6</span>
+          </div>
+          <div class="viz-area" id="viz-queue-curve"></div>
+          <div class="card-footer" id="stats-queue"></div>
+        </div>
+
+        <!-- Section 3: Agent Based Cascade -->
+        <div class="sim-card wide" id="card-abm">
+          <div class="card-header">
+            <h4>🤖 Agent Cascade Effect</h4>
+            <span class="m-label">Chapter 9</span>
+          </div>
+          <div class="viz-area" id="viz-abm-cascade"></div>
+          <div class="card-footer" id="stats-abm"></div>
+        </div>
+
+        <!-- Section 4: Survival Analysis -->
+        <div class="sim-card" id="card-survival">
+          <div class="card-header">
+            <h4>⏱️ Nurse Retention (KM)</h4>
+            <span class="m-label">Chapter 5</span>
+          </div>
+          <div class="viz-area" id="viz-km-curve"></div>
+          <div class="card-footer" id="stats-survival"></div>
+        </div>
+
+        <!-- Section 5: Financial Model -->
+        <div class="sim-card" id="card-finance">
+          <div class="card-header">
+            <h4>💰 5-Year Financial ROI</h4>
+            <span class="m-label">Synthesis</span>
+          </div>
+          <div class="viz-area" id="viz-fin-roi"></div>
+          <div class="card-footer" id="stats-finance"></div>
+        </div>
+
+      </div>
+
+      <!-- Anomaly Detection Stream -->
+      <section class="anomaly-section">
+        <div class="card-header">
+          <h4>🔍 Operational Surveillance (Anomaly Detection)</h4>
+          <button id="btn-inject-anomaly" class="btn btn-sm btn-error">Inject Spike</button>
+        </div>
+        <div id="viz-anomalies" class="viz-full"></div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Error Boundary Portal -->
+  <div id="antigravity-error-overlay"></div>
+
+  <script type="module" src="./module.js"></script>
+</body>
+</html>

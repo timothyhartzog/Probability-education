@@ -139,6 +139,32 @@
       margin-bottom: var(--space-lg);
     }
 
+    .header-content-flex {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      gap: 2rem;
+    }
+
+    .btn-launch {
+      white-space: nowrap;
+      padding: 0.75rem 1.5rem;
+      font-weight: 700;
+      border-radius: 999px;
+      background: var(--color-primary);
+      color: white;
+      text-decoration: none;
+      transition: all 0.2s;
+      box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+    }
+
+    .btn-launch:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3);
+      filter: brightness(1.1);
+    }
+
     .references ul {
       list-style: none;
       padding: 0;
@@ -169,9 +195,74 @@
       font-size: var(--font-size-sm);
     }
 
+    .search-container {
+      margin-bottom: var(--space-xl);
+      background: var(--color-surface);
+      padding: var(--space-md);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      border: 1px solid #e5e7eb;
+      display: flex;
+      gap: var(--space-sm);
+      align-items: center;
+      position: sticky;
+      top: var(--space-md);
+      z-index: 100;
+    }
+
+    .search-input {
+      flex: 1;
+      border: 1px solid #d1d5db;
+      padding: var(--space-sm) var(--space-md);
+      border-radius: var(--radius-md);
+      font-family: var(--font-heading);
+      font-size: 1rem;
+      outline: none;
+      transition: border-color var(--transition-fast);
+    }
+
+    .search-input:focus {
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    .filter-pills {
+      display: flex;
+      gap: var(--space-xs);
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+
+    .filter-pill {
+      white-space: nowrap;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: #f3f4f6;
+      border: 1px solid #e5e7eb;
+      font-size: 0.85rem;
+      color: var(--color-text-secondary);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .filter-pill.active {
+      background: var(--color-primary);
+      color: white;
+      border-color: var(--color-primary);
+    }
+
+    .module-card.hidden {
+      display: none;
+    }
+
+    .section-header.hidden {
+      display: none;
+    }
+
     @media (max-width: 768px) {
       .hero h1 { font-size: 1.75rem; }
       .module-grid { grid-template-columns: 1fr; }
+      .search-container { flex-direction: column; align-items: stretch; }
     }
   </style>
 </head>
@@ -187,6 +278,21 @@
       <p class="tagline">
         Based on Billingsley, Durrett, Feller, Grimmett &amp; Stirzaker, and Shiryaev
       </p>
+
+      <div class="search-container">
+        <input type="text" id="moduleSearch" class="search-input" placeholder="Search modules by name, description, or tag...">
+        <div class="filter-pills" id="categoryFilters">
+          <button class="filter-pill active" data-filter="all">All</button>
+          <button class="filter-pill" data-filter="foundations">Foundations</button>
+          <button class="filter-pill" data-filter="convergence">Convergence</button>
+          <button class="filter-pill" data-filter="stochastic">Stochastic</button>
+          <button class="filter-pill" data-filter="bayesian">Bayesian</button>
+          <button class="filter-pill" data-filter="information">Information</button>
+          <button class="filter-pill" data-filter="medical">Medical</button>
+          <button class="filter-pill" data-filter="rural">Rural Health</button>
+          <button class="filter-pill" data-filter="abm">Simulation/ABM</button>
+        </div>
+      </div>
     </header>
 
     <section class="pillar-section" id="foundations">
@@ -734,6 +840,120 @@
             <span class="tag">outbreak simulation</span>
           </div>
         </a>
+
+        <a href="./src/modules/mq-10-vaccine-impact/index.html" class="module-card">
+          <div class="module-id">MQ-10</div>
+          <h3>Vaccine Impact Simulator</h3>
+          <p>
+            Interactive epidemiological simulations showing the impact of vaccination on 
+            disease prevalence. Explore R0, herd immunity thresholds, and compare 
+            scenarios with/without immunization programs.
+          </p>
+          <div class="tags">
+            <span class="tag">R0</span>
+            <span class="tag">herd immunity</span>
+            <span class="tag">vaccine efficacy</span>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <section class="pillar-section" id="rural-healthcare">
+      <header class="section-header">
+        <div class="pillar-icon">🏥</div>
+        <div class="header-content-flex">
+          <div>
+            <h2>Rural Healthcare Modeling</h2>
+            <p>Analyzing healthcare delivery, accessibility, and quality in resource-constrained or geographically isolated environments.</p>
+          </div>
+          <a href="./src/modules/rh-textbook/index.html" class="btn btn-primary btn-launch">📖 Launch Interactive Textbook</a>
+        </div>
+      </header>
+
+      <div class="module-grid">
+        <a href="./src/modules/rh-1-catchment-accessibility/index.html" class="module-card">
+          <div class="module-id">CH-5</div>
+          <h3>Accessibility (Catchment)</h3>
+          <p>Modeling 'Medical Deserts' and the 2-Step Floating Catchment Area (2SFCA).</p>
+          <div class="tags"><span class="tag">GIS</span><span class="tag">Gravity Model</span></div>
+        </a>
+
+        <a href="./src/modules/rh-3-migration-modeling/index.html" class="module-card">
+          <div class="module-id">CH-3</div>
+          <h3>Migration Modeling</h3>
+          <p>Simulation of youth out-migration and retiree 'amenity migration' on regional access.</p>
+          <div class="tags"><span class="tag">Demographics</span><span class="tag">Aging</span></div>
+        </a>
+
+        <a href="./src/modules/rh-4-disease-burden/index.html" class="module-card">
+          <div class="module-id">CH-4</div>
+          <h3>Disease Burden Mapping</h3>
+          <p>Modeling chronic and infectious disease spread in low-density catchment areas.</p>
+          <div class="tags"><span class="tag">Epidemiology</span><span class="tag">R0</span></div>
+        </a>
+
+        <a href="./src/modules/rh-5-occupancy-calculator/index.html" class="module-card">
+          <div class="module-id">CH-6</div>
+          <h3>Occupancy Forecasting</h3>
+          <p>Operational calculator using Little's Law to predict bed utilization and saturation.</p>
+          <div class="tags"><span class="tag">Operations</span><span class="tag">Queue</span></div>
+        </a>
+
+        <a href="./src/modules/rh-7-patient-flow/index.html" class="module-card">
+          <div class="module-id">CH-7</div>
+          <h3>Small-N Patient Flow</h3>
+          <p>Why the Law of Large Numbers fails in Rural EDs. Stochastic surge simulation.</p>
+          <div class="tags"><span class="tag">Probability</span><span class="tag">Surge</span></div>
+        </a>
+
+        <a href="./src/modules/rh-8-workforce-optimization/index.html" class="module-card">
+          <div class="module-id">CH-8</div>
+          <h3>Workforce Planning</h3>
+          <p>Optimization of locum tenens and the 'Generalist' efficiency model in rural CAHs.</p>
+          <div class="tags"><span class="tag">Staffing</span><span class="tag">BDI</span></div>
+        </a>
+
+        <a href="./src/modules/rh-9-supply-chain/index.html" class="module-card">
+          <div class="module-id">CH-9</div>
+          <h3>Supply Chain Logistics</h3>
+          <p>The 'Last Mile' Challenge: Modeling blood, oxygen, and pharmaceutical delivery simulations.</p>
+          <div class="tags"><span class="tag">Logistics</span><span class="tag">Drones</span></div>
+        </a>
+
+        <a href="./src/modules/rh-10-financial-risk/index.html" class="module-card">
+          <div class="module-id">CH-10</div>
+          <h3>Financial Risk Modeling</h3>
+          <p>Modeling clinical revenue volatility against agricultural economic cycles and payer mix.</p>
+          <div class="tags"><span class="tag">Risk</span><span class="tag">Economics</span></div>
+        </a>
+
+        <a href="./src/modules/rh-11-digital-twin/index.html" class="module-card">
+          <div class="module-id">CH-11</div>
+          <h3>The Hospital Digital Twin</h3>
+          <p>Discrete Event Simulation (DES) of a 25-bed facility: Lab, Imaging, and Transport bottlenecks.</p>
+          <div class="tags"><span class="tag">Twin</span><span class="tag">DES</span></div>
+        </a>
+
+        <a href="./src/modules/rh-12-disaster-resilience/index.html" class="module-card">
+          <div class="module-id">CH-12</div>
+          <h3>Disaster Resilience</h3>
+          <p>Mass casualty response simulation in resource-limited rural environments.</p>
+          <div class="tags"><span class="tag">Resilience</span><span class="tag">Emergency</span></div>
+        </a>
+
+        <a href="./src/modules/rh-13-future-tech/index.html" class="module-card">
+          <div class="module-id">CH-13</div>
+          <h3>Future Horizons (RPM)</h3>
+          <p>Modeling efficacy of Remote Patient Monitoring (RPM) and 'Hospital at Home' extensions.</p>
+          <div class="tags"><span class="tag">IoT</span><span class="tag">HomeCare</span></div>
+        </a>
+
+        <a href="./src/modules/rh-14-modeling-toolkit/index.html" class="module-card accent-card">
+          <div class="module-id">CH-14+</div>
+          <h3>Operations Modeling Toolkit</h3>
+          <p>The Complete Digital Twin: Integrated dashboard for operations, finance, and cascade simulation.</p>
+          <div class="tags"><span class="tag">Synthesis</span><span class="tag">Toolkit</span><span class="tag">Dashboard</span></div>
+        </a>
       </div>
     </section>
 
@@ -849,5 +1069,76 @@
       <p>An open educational resource for graduate-level probability theory</p>
     </footer>
   </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const searchInput = document.getElementById('moduleSearch');
+      const filterPills = document.querySelectorAll('.filter-pill');
+      const cards = document.querySelectorAll('.module-card');
+      const sections = document.querySelectorAll('.pillar-section');
+
+      function filterModules() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const activeFilter = document.querySelector('.filter-pill.active').dataset.filter;
+
+        sections.forEach(section => {
+          let hasVisibleCards = false;
+          const sectionCards = section.querySelectorAll('.module-card');
+          const sectionId = section.id;
+
+          // Mapping section IDs to categories if needed
+          const categoryMap = {
+            'foundations': 'foundations',
+            'convergence': 'convergence',
+            'fourier': 'stochastic',
+            'martingales': 'stochastic',
+            'brownian': 'stochastic',
+            'markov': 'stochastic',
+            'stochastic-calculus': 'stochastic',
+            'bayesian': 'bayesian',
+            'information-theory': 'information',
+            'medical-quality': 'medical',
+            'rural-healthcare': 'rural',
+            'financial-modeling': 'stochastic',
+            'simulation-methods': 'abm'
+          };
+
+          const sectionCategory = categoryMap[sectionId] || 'other';
+
+          sectionCards.forEach(card => {
+            const title = card.querySelector('h3').textContent.toLowerCase();
+            const desc = card.querySelector('p').textContent.toLowerCase();
+            const tags = Array.from(card.querySelectorAll('.tag')).map(t => t.textContent.toLowerCase()).join(' ');
+            
+            const matchesSearch = title.includes(searchTerm) || desc.includes(searchTerm) || tags.includes(searchTerm);
+            const matchesFilter = activeFilter === 'all' || sectionCategory === activeFilter;
+
+            if (matchesSearch && matchesFilter) {
+              card.classList.remove('hidden');
+              hasVisibleCards = true;
+            } else {
+              card.classList.add('hidden');
+            }
+          });
+
+          if (hasVisibleCards) {
+            section.classList.remove('hidden');
+          } else {
+            section.classList.add('hidden');
+          }
+        });
+      }
+
+      searchInput.addEventListener('input', filterModules);
+
+      filterPills.forEach(pill => {
+        pill.addEventListener('click', () => {
+          filterPills.forEach(p => p.classList.remove('active'));
+          pill.classList.add('active');
+          filterModules();
+        });
+      });
+    });
+  </script>
 </body>
 </html>
