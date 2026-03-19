@@ -42,7 +42,7 @@
         <div class="viz-area">
 
           <!-- Panel 1: State Diagram -->
-          <div class="viz-container" id="state-diagram-panel">
+          <div class="viz-container" id="state-diagram-panel" aria-label="State Diagram chart">
             <div class="viz-title">State Diagram</div>
             <div class="viz-subtitle" id="state-diagram-subtitle">
               Force-directed graph &mdash; node color encodes current probability mass
@@ -54,7 +54,7 @@
           <div class="sub-panels">
 
             <!-- Panel 2: Transition Matrix Heatmap -->
-            <div class="viz-container" id="heatmap-panel">
+            <div class="viz-container" id="heatmap-panel" aria-label="Heatmap chart">
               <div class="viz-title">Transition Matrix <span id="heatmap-title-label">P</span></div>
               <div class="viz-subtitle" id="heatmap-subtitle">
                 Color intensity encodes transition probability
@@ -63,7 +63,7 @@
             </div>
 
             <!-- Panel 3: Distribution Evolution -->
-            <div class="viz-container" id="distribution-panel">
+            <div class="viz-container" id="distribution-panel" aria-label="Distribution chart">
               <div class="viz-title">Distribution Evolution</div>
               <div class="viz-subtitle" id="distribution-subtitle">
                 Current distribution &mu;<sub>n</sub> = &mu;<sub>0</sub> P<sup>n</sup>
@@ -138,7 +138,7 @@
           <hr class="control-divider" />
 
           <!-- Stats -->
-          <div class="stats-grid" id="stats-grid">
+          <div class="stats-grid" aria-live="polite" id="stats-grid">
             <div class="stat-card">
               <div class="stat-value" id="stat-step">0</div>
               <div class="stat-label">Step</div>

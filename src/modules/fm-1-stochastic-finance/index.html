@@ -54,9 +54,9 @@
         <div class="viz-area">
           <div class="card">
             <h2 class="card-title">Simulated Stock Price Paths</h2>
-            <div id="gbm-chart" class="chart-container" style="height:420px;"></div>
+            <div id="gbm-chart" class="chart-container" aria-label="Gbm chart" style="height:420px;"></div>
           </div>
-          <div class="metrics-row" id="gbm-metrics">
+          <div class="metrics-row" aria-live="polite" id="gbm-metrics">
             <div class="metric-card"><div class="metric-label">Mean Final</div><div class="metric-value" id="gbm-mean-final">—</div></div>
             <div class="metric-card"><div class="metric-label">Median Final</div><div class="metric-value" id="gbm-median-final">—</div></div>
             <div class="metric-card"><div class="metric-label">Std Dev</div><div class="metric-value" id="gbm-std">—</div></div>
@@ -65,7 +65,7 @@
           </div>
           <div class="card">
             <h2 class="card-title">Final Price Distribution</h2>
-            <div id="gbm-dist-chart" class="chart-container" style="height:280px;"></div>
+            <div id="gbm-dist-chart" class="chart-container" aria-label="Gbm Dist chart" style="height:280px;"></div>
           </div>
         </div>
         <aside class="control-panel">
@@ -127,9 +127,9 @@
         <div class="viz-area">
           <div class="card">
             <h2 class="card-title">Option Price Surface</h2>
-            <div id="bs-surface-chart" class="chart-container" style="height:400px;"></div>
+            <div id="bs-surface-chart" class="chart-container" aria-label="Bs Surface chart" style="height:400px;"></div>
           </div>
-          <div class="metrics-row" id="bs-metrics">
+          <div class="metrics-row" aria-live="polite" id="bs-metrics">
             <div class="metric-card"><div class="metric-label">Call Price</div><div class="metric-value" id="bs-call">—</div></div>
             <div class="metric-card"><div class="metric-label">Put Price</div><div class="metric-value" id="bs-put">—</div></div>
             <div class="metric-card"><div class="metric-label">Delta (Δ)</div><div class="metric-value" id="bs-delta">—</div></div>
@@ -139,11 +139,11 @@
           </div>
           <div class="card">
             <h2 class="card-title">Greeks vs Spot Price</h2>
-            <div id="bs-greeks-chart" class="chart-container" style="height:320px;"></div>
+            <div id="bs-greeks-chart" class="chart-container" aria-label="Bs Greeks chart" style="height:320px;"></div>
           </div>
           <div class="card">
             <h2 class="card-title">P&amp;L at Expiry</h2>
-            <div id="bs-pnl-chart" class="chart-container" style="height:280px;"></div>
+            <div id="bs-pnl-chart" class="chart-container" aria-label="Bs Pnl chart" style="height:280px;"></div>
           </div>
         </div>
         <aside class="control-panel">
@@ -204,9 +204,9 @@
         <div class="viz-area">
           <div class="card">
             <h2 class="card-title">Efficient Frontier</h2>
-            <div id="frontier-chart" class="chart-container" style="height:420px;"></div>
+            <div id="frontier-chart" class="chart-container" aria-label="Frontier chart" style="height:420px;"></div>
           </div>
-          <div class="metrics-row" id="port-metrics">
+          <div class="metrics-row" aria-live="polite" id="port-metrics">
             <div class="metric-card"><div class="metric-label">Optimal Return</div><div class="metric-value" id="port-return">—</div></div>
             <div class="metric-card"><div class="metric-label">Optimal Risk</div><div class="metric-value" id="port-risk">—</div></div>
             <div class="metric-card"><div class="metric-label">Sharpe Ratio</div><div class="metric-value" id="port-sharpe">—</div></div>
@@ -214,7 +214,7 @@
           </div>
           <div class="card">
             <h2 class="card-title">Optimal Allocation</h2>
-            <div id="allocation-chart" class="chart-container" style="height:280px;"></div>
+            <div id="allocation-chart" class="chart-container" aria-label="Allocation chart" style="height:280px;"></div>
           </div>
         </div>
         <aside class="control-panel">
@@ -269,9 +269,9 @@
         <div class="viz-area">
           <div class="card">
             <h2 class="card-title">Portfolio Return Distribution with VaR / CVaR</h2>
-            <div id="var-chart" class="chart-container" style="height:380px;"></div>
+            <div id="var-chart" class="chart-container" aria-label="Var chart" style="height:380px;"></div>
           </div>
-          <div class="metrics-row" id="var-metrics">
+          <div class="metrics-row" aria-live="polite" id="var-metrics">
             <div class="metric-card"><div class="metric-label">VaR (95%)</div><div class="metric-value" id="var-95">—</div></div>
             <div class="metric-card"><div class="metric-label">VaR (99%)</div><div class="metric-value" id="var-99">—</div></div>
             <div class="metric-card"><div class="metric-label">CVaR (95%)</div><div class="metric-value" id="cvar-95">—</div></div>
@@ -281,7 +281,7 @@
           </div>
           <div class="card">
             <h2 class="card-title">VaR Backtesting — Exceedance Over Time</h2>
-            <div id="var-backtest-chart" class="chart-container" style="height:280px;"></div>
+            <div id="var-backtest-chart" class="chart-container" aria-label="Var Backtest chart" style="height:280px;"></div>
           </div>
         </div>
         <aside class="control-panel">
@@ -342,9 +342,9 @@
         <div class="viz-area">
           <div class="card">
             <h2 class="card-title">Interest Rate Paths</h2>
-            <div id="ir-chart" class="chart-container" style="height:400px;"></div>
+            <div id="ir-chart" class="chart-container" aria-label="Ir chart" style="height:400px;"></div>
           </div>
-          <div class="metrics-row" id="ir-metrics">
+          <div class="metrics-row" aria-live="polite" id="ir-metrics">
             <div class="metric-card"><div class="metric-label">Mean Final Rate</div><div class="metric-value" id="ir-mean">—</div></div>
             <div class="metric-card"><div class="metric-label">Std Dev</div><div class="metric-value" id="ir-std">—</div></div>
             <div class="metric-card"><div class="metric-label">Long-Run Mean</div><div class="metric-value" id="ir-longrun">—</div></div>
@@ -352,7 +352,7 @@
           </div>
           <div class="card">
             <h2 class="card-title">Term Structure / Yield Curve</h2>
-            <div id="ir-yield-chart" class="chart-container" style="height:280px;"></div>
+            <div id="ir-yield-chart" class="chart-container" aria-label="Ir Yield chart" style="height:280px;"></div>
           </div>
         </div>
         <aside class="control-panel">
@@ -411,9 +411,9 @@
         <div class="viz-area">
           <div class="card">
             <h2 class="card-title">Jump-Diffusion Stock Paths</h2>
-            <div id="jd-chart" class="chart-container" style="height:400px;"></div>
+            <div id="jd-chart" class="chart-container" aria-label="Jd chart" style="height:400px;"></div>
           </div>
-          <div class="metrics-row" id="jd-metrics">
+          <div class="metrics-row" aria-live="polite" id="jd-metrics">
             <div class="metric-card"><div class="metric-label">Mean Final</div><div class="metric-value" id="jd-mean">—</div></div>
             <div class="metric-card"><div class="metric-label">Std Dev</div><div class="metric-value" id="jd-std">—</div></div>
             <div class="metric-card"><div class="metric-label">Avg Jumps/Path</div><div class="metric-value" id="jd-jumps">—</div></div>
@@ -421,7 +421,7 @@
           </div>
           <div class="card">
             <h2 class="card-title">Return Distribution: GBM vs Jump-Diffusion</h2>
-            <div id="jd-dist-chart" class="chart-container" style="height:280px;"></div>
+            <div id="jd-dist-chart" class="chart-container" aria-label="Jd Dist chart" style="height:280px;"></div>
           </div>
         </div>
         <aside class="control-panel">

@@ -53,25 +53,25 @@
 
           <div class="viz-area">
             <!-- Equations display -->
-            <div class="viz-container" id="vpd-equations-panel">
+            <div class="viz-container" id="vpd-equations-panel" aria-label="Vpd Equations chart">
               <div class="viz-title">SEIR Model Equations</div>
               <div id="vpd-equations"></div>
             </div>
 
             <!-- Main epidemic curve -->
-            <div class="viz-container" id="vpd-curve-panel">
+            <div class="viz-container" id="vpd-curve-panel" aria-label="Vpd Curve chart">
               <div class="viz-title">Epidemic Dynamics — <span id="curve-disease-label">Measles</span></div>
               <div id="vpd-curve"></div>
             </div>
 
             <!-- With vs Without vaccine comparison -->
-            <div class="viz-container" id="vpd-compare-panel">
+            <div class="viz-container" id="vpd-compare-panel" aria-label="Vpd Compare chart">
               <div class="viz-title">With vs Without Vaccination — Infected Over Time</div>
               <div id="vpd-compare"></div>
             </div>
 
             <!-- Key metrics -->
-            <div class="metrics-row" id="vpd-metrics-row">
+            <div class="metrics-row" aria-live="polite" id="vpd-metrics-row">
               <div class="metric-card">
                 <div class="metric-label">R<sub>0</sub></div>
                 <div class="metric-value" id="vpd-r0">—</div>
@@ -103,7 +103,7 @@
             </div>
 
             <!-- Disease info card -->
-            <div class="viz-container" id="disease-info-card">
+            <div class="viz-container" id="disease-info-card" aria-label="Disease Info chart">
               <div class="viz-title">Disease Profile — <span id="info-disease-label">Measles</span></div>
               <div id="disease-info-content"></div>
             </div>
@@ -213,25 +213,25 @@
 
           <div class="viz-area">
             <!-- R0 comparison bar chart -->
-            <div class="viz-container" id="r0-bar-panel">
+            <div class="viz-container" id="r0-bar-panel" aria-label="R0 Bar chart">
               <div class="viz-title">Basic Reproduction Number (R<sub>0</sub>) — All Vaccine-Preventable Diseases</div>
               <div id="r0-bar-chart"></div>
             </div>
 
             <!-- CFR comparison -->
-            <div class="viz-container" id="cfr-bar-panel">
+            <div class="viz-container" id="cfr-bar-panel" aria-label="Cfr Bar chart">
               <div class="viz-title">Case Fatality Rate (%) — Pre-Vaccine Era</div>
               <div id="cfr-bar-chart"></div>
             </div>
 
             <!-- Bubble chart: R0 vs CFR vs annual cases -->
-            <div class="viz-container" id="bubble-panel">
+            <div class="viz-container" id="bubble-panel" aria-label="Bubble chart">
               <div class="viz-title">Disease Landscape — R<sub>0</sub> vs Case Fatality Rate (bubble size = pre-vaccine cases)</div>
               <div id="bubble-chart"></div>
             </div>
 
             <!-- Herd immunity thresholds -->
-            <div class="viz-container" id="herd-bar-panel">
+            <div class="viz-container" id="herd-bar-panel" aria-label="Herd Bar chart">
               <div class="viz-title">Herd Immunity Threshold vs Current Vaccination Coverage</div>
               <div id="herd-bar-chart"></div>
             </div>
@@ -282,25 +282,25 @@
 
           <div class="viz-area">
             <!-- Coverage vs outbreak size -->
-            <div class="viz-container" id="coverage-sweep-panel">
+            <div class="viz-container" id="coverage-sweep-panel" aria-label="Coverage Sweep chart">
               <div class="viz-title">Outbreak Size vs Vaccination Coverage</div>
               <div id="coverage-sweep"></div>
             </div>
 
             <!-- Critical threshold visualization -->
-            <div class="viz-container" id="threshold-panel">
+            <div class="viz-container" id="threshold-panel" aria-label="Threshold chart">
               <div class="viz-title">R<sub>eff</sub> vs Vaccination Coverage — Epidemic Threshold</div>
               <div id="threshold-chart"></div>
             </div>
 
             <!-- Multi-disease coverage comparison -->
-            <div class="viz-container" id="multi-coverage-panel">
+            <div class="viz-container" id="multi-coverage-panel" aria-label="Multi Coverage chart">
               <div class="viz-title">Impact of Coverage Drop — Multiple Diseases</div>
               <div id="multi-coverage"></div>
             </div>
 
             <!-- Coverage metrics -->
-            <div class="metrics-row" id="coverage-metrics-row">
+            <div class="metrics-row" aria-live="polite" id="coverage-metrics-row">
               <div class="metric-card">
                 <div class="metric-label">Critical Threshold</div>
                 <div class="metric-value" id="cov-threshold">—</div>
@@ -375,25 +375,25 @@
 
           <div class="viz-area">
             <!-- Pre vs post vaccine cases -->
-            <div class="viz-container" id="historical-bar-panel">
+            <div class="viz-container" id="historical-bar-panel" aria-label="Historical Bar chart">
               <div class="viz-title">Annual US Cases — Pre-Vaccine vs Current Era</div>
               <div id="historical-bar"></div>
             </div>
 
             <!-- Cumulative lives saved -->
-            <div class="viz-container" id="lives-saved-panel">
+            <div class="viz-container" id="lives-saved-panel" aria-label="Lives Saved chart">
               <div class="viz-title">Estimated Annual Lives Saved by Vaccination in the US</div>
               <div id="lives-saved-chart"></div>
             </div>
 
             <!-- Timeline -->
-            <div class="viz-container" id="timeline-panel">
+            <div class="viz-container" id="timeline-panel" aria-label="Timeline chart">
               <div class="viz-title">US Vaccine Introduction Timeline</div>
               <div id="vaccine-timeline"></div>
             </div>
 
             <!-- Historical metrics -->
-            <div class="metrics-row" id="historical-metrics-row">
+            <div class="metrics-row" aria-live="polite" id="historical-metrics-row">
               <div class="metric-card">
                 <div class="metric-label">Total Pre-Vaccine Cases/yr</div>
                 <div class="metric-value" id="hist-pre-cases">—</div>

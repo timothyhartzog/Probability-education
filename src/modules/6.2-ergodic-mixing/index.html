@@ -27,7 +27,7 @@
       <div class="module-layout">
         <div class="viz-area">
           <!-- Main: Total Variation Distance -->
-          <div class="viz-container" id="tv-panel">
+          <div class="viz-container" id="tv-panel" aria-label="Tv chart">
             <div class="viz-title">Total Variation Distance</div>
             <div class="viz-subtitle" id="tv-subtitle">
               d<sub>TV</sub>(P<sup>n</sup>(x, &middot;), &pi;) vs step n for each starting state &mdash; mixing time marked at threshold 1/4
@@ -37,7 +37,7 @@
 
           <div class="secondary-panels">
             <!-- Secondary Left: Ergodic Average -->
-            <div class="viz-container" id="ergodic-panel">
+            <div class="viz-container" id="ergodic-panel" aria-label="Ergodic chart">
               <div class="viz-title">Time Average vs Space Average</div>
               <div class="viz-subtitle" id="ergodic-subtitle">
                 Running average (1/n)&Sigma;f(X<sub>k</sub>) converging to E<sub>&pi;</sub>[f]
@@ -46,7 +46,7 @@
             </div>
 
             <!-- Secondary Right: Distribution Evolution -->
-            <div class="viz-container" id="dist-panel">
+            <div class="viz-container" id="dist-panel" aria-label="Dist chart">
               <div class="viz-title">Distribution Evolution</div>
               <div class="viz-subtitle" id="dist-subtitle">
                 P<sup>n</sup>(x<sub>0</sub>, &middot;) converging to stationary &pi; (dashed)
@@ -121,7 +121,7 @@
             <button class="btn" id="reset-btn">Reset</button>
           </div>
 
-          <div class="stats-grid" id="stats-grid">
+          <div class="stats-grid" aria-live="polite" id="stats-grid">
             <div class="stat-card">
               <div class="stat-value" id="stat-tmix">--</div>
               <div class="stat-label">t<sub>mix</sub></div>

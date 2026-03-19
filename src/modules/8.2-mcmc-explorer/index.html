@@ -18,27 +18,27 @@
     </header>
     <div class="module-layout">
       <div class="viz-area">
-        <div class="viz-container" id="target-chart">
+        <div class="viz-container" id="target-chart" aria-label="Target chart">
           <div class="viz-title">Target Distribution &amp; MCMC Samples</div>
           <div class="viz-subtitle" id="target-subtitle">2D target with sample overlay</div>
           <div id="target-plot"></div>
         </div>
         <div class="secondary-panels">
-          <div class="viz-container" id="trace-chart">
+          <div class="viz-container" id="trace-chart" aria-label="Trace chart">
             <div class="viz-title">Trace Plot</div>
             <div id="trace-plot"></div>
           </div>
-          <div class="viz-container" id="acf-chart">
+          <div class="viz-container" id="acf-chart" aria-label="Acf chart">
             <div class="viz-title">Autocorrelation</div>
             <div id="acf-plot"></div>
           </div>
         </div>
         <div class="secondary-panels">
-          <div class="viz-container" id="histogram-chart">
+          <div class="viz-container" id="histogram-chart" aria-label="Histogram chart">
             <div class="viz-title">Marginal Histogram</div>
             <div id="histogram-plot"></div>
           </div>
-          <div class="viz-container" id="acceptance-chart">
+          <div class="viz-container" id="acceptance-chart" aria-label="Acceptance chart">
             <div class="viz-title">Running Acceptance Rate</div>
             <div id="acceptance-plot"></div>
           </div>
@@ -54,7 +54,7 @@
         <div id="thin-slider"></div>
         <button class="btn btn-primary" id="run-btn">Run Sampler</button>
         <button class="btn btn-secondary" id="step-btn">Step Forward</button>
-        <div class="stats-grid" id="stats"></div>
+        <div class="stats-grid" aria-live="polite" id="stats"></div>
       </aside>
     </div>
     <div class="info-panel" id="info">

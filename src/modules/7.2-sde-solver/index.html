@@ -18,17 +18,17 @@
     </header>
     <div class="module-layout">
       <div class="viz-area">
-        <div class="viz-container" id="paths-chart">
+        <div class="viz-container" id="paths-chart" aria-label="Paths chart">
           <div class="viz-title">Sample Paths</div>
           <div class="viz-subtitle" id="sde-equation">dX<sub>t</sub> = &mu;X<sub>t</sub>dt + &sigma;X<sub>t</sub>dB<sub>t</sub></div>
           <div id="paths-plot"></div>
         </div>
         <div class="secondary-panels">
-          <div class="viz-container" id="density-chart">
+          <div class="viz-container" id="density-chart" aria-label="Density chart">
             <div class="viz-title">Terminal Distribution X<sub>T</sub></div>
             <div id="density-plot"></div>
           </div>
-          <div class="viz-container" id="moments-chart">
+          <div class="viz-container" id="moments-chart" aria-label="Moments chart">
             <div class="viz-title">Mean &amp; Variance Over Time</div>
             <div id="moments-plot"></div>
           </div>
@@ -45,7 +45,7 @@
         <div id="dt-slider"></div>
         <div id="num-paths-slider"></div>
         <div id="seed-control"></div>
-        <div class="stats-grid" id="stats"></div>
+        <div class="stats-grid" aria-live="polite" id="stats"></div>
       </aside>
     </div>
     <div class="info-panel" id="info">

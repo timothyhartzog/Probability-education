@@ -43,7 +43,7 @@
         <div class="viz-area">
 
           <!-- Main forest plot -->
-          <div class="viz-container" id="forest-panel">
+          <div class="viz-container" id="forest-panel" aria-label="Forest chart">
             <div class="viz-title">Forest Plot</div>
             <div class="viz-subtitle" id="forest-subtitle">
               Each row is one study &mdash; square size reflects weight, diamond shows pooled estimate
@@ -54,7 +54,7 @@
 
           <!-- Secondary panels -->
           <div class="secondary-panels">
-            <div class="viz-container" id="bias-panel">
+            <div class="viz-container" id="bias-panel" aria-label="Bias chart">
               <div class="viz-title">Publication Bias Funnel</div>
               <div class="viz-subtitle" id="bias-subtitle">
                 Asymmetry suggests selective reporting of positive results
@@ -62,7 +62,7 @@
               <div id="bias-funnel-chart"></div>
             </div>
 
-            <div class="viz-container" id="heterogeneity-panel">
+            <div class="viz-container" id="heterogeneity-panel" aria-label="Heterogeneity chart">
               <div class="viz-title">Heterogeneity Explorer</div>
               <div class="viz-subtitle" id="heterogeneity-subtitle">
                 Distribution of study effects relative to pooled estimate
@@ -178,7 +178,7 @@
           </div>
 
           <!-- Stats -->
-          <div class="stats-grid" id="stats-grid">
+          <div class="stats-grid" aria-live="polite" id="stats-grid">
             <div class="stat-card">
               <div class="stat-value" id="stat-pooled">--</div>
               <div class="stat-label">Pooled Estimate [CI]</div>

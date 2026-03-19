@@ -28,7 +28,7 @@
       <div class="module-layout">
         <div class="viz-area">
           <!-- Main: Projection Visualization -->
-          <div class="viz-container" id="projection-panel">
+          <div class="viz-container" id="projection-panel" aria-label="Projection chart">
             <div class="viz-title">Projection Visualization</div>
             <div class="viz-subtitle" id="projection-subtitle">
               Blue bars show X(&omega;); orange step function shows E[X|G] constant on each atom of G
@@ -38,7 +38,7 @@
 
           <div class="secondary-panels">
             <!-- Partition View -->
-            <div class="viz-container" id="partition-panel">
+            <div class="viz-container" id="partition-panel" aria-label="Partition chart">
               <div class="viz-title">Partition View</div>
               <div class="viz-subtitle" id="partition-subtitle">
                 Atoms of G partition &Omega; &mdash; each colored region is one atom
@@ -47,7 +47,7 @@
             </div>
 
             <!-- L2 Distance -->
-            <div class="viz-container" id="l2-panel">
+            <div class="viz-container" id="l2-panel" aria-label="L2 chart">
               <div class="viz-title">L&sup2; Projection</div>
               <div class="viz-subtitle" id="l2-subtitle">
                 E[X|G] minimizes &Vert;X &minus; Y&Vert;&sup2; over G-measurable Y
@@ -119,7 +119,7 @@
             <button class="btn btn-secondary" id="resample-btn">Resample</button>
           </div>
 
-          <div class="stats-grid" id="stats-grid">
+          <div class="stats-grid" aria-live="polite" id="stats-grid">
             <div class="stat-card">
               <div class="stat-value" id="stat-ex">--</div>
               <div class="stat-label">E[X]</div>

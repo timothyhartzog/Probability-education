@@ -42,7 +42,7 @@
         <div class="viz-area">
 
           <!-- Main funnel plot -->
-          <div class="viz-container" id="funnel-panel">
+          <div class="viz-container" id="funnel-panel" aria-label="Funnel chart">
             <div class="viz-title">Funnel Plot</div>
             <div class="viz-subtitle" id="funnel-subtitle">
               Each dot is one hospital — funnel narrows with increasing volume
@@ -53,7 +53,7 @@
 
           <!-- Secondary panels -->
           <div class="secondary-panels">
-            <div class="viz-container" id="caterpillar-panel">
+            <div class="viz-container" id="caterpillar-panel" aria-label="Caterpillar chart">
               <div class="viz-title">Ranked Hospital Comparison</div>
               <div class="viz-subtitle" id="caterpillar-subtitle">
                 Hospitals ranked by observed rate with 95% CI
@@ -61,7 +61,7 @@
               <div id="caterpillar-chart"></div>
             </div>
 
-            <div class="viz-container" id="volume-panel">
+            <div class="viz-container" id="volume-panel" aria-label="Volume chart">
               <div class="viz-title">Volume Distribution</div>
               <div class="viz-subtitle" id="volume-subtitle">
                 Distribution of hospital case volumes
@@ -142,7 +142,7 @@
           </div>
 
           <!-- Stats -->
-          <div class="stats-grid" id="stats-grid">
+          <div class="stats-grid" aria-live="polite" id="stats-grid">
             <div class="stat-card">
               <div class="stat-value" id="stat-target">--</div>
               <div class="stat-label">National Rate</div>

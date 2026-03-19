@@ -27,7 +27,7 @@
       <div class="module-layout">
         <div class="viz-area">
           <!-- Cantor set construction -->
-          <div class="viz-container" id="construction-panel">
+          <div class="viz-container" id="construction-panel" aria-label="Construction chart">
             <div class="viz-title">Cantor Set Construction</div>
             <div class="viz-subtitle" id="construction-subtitle">
               Iterative middle-third removal &mdash; step <span id="step-display">0</span>
@@ -37,7 +37,7 @@
 
           <div class="secondary-panels">
             <!-- Cantor function -->
-            <div class="viz-container" id="function-panel">
+            <div class="viz-container" id="function-panel" aria-label="Function chart">
               <div class="viz-title">Cantor Function (Devil's Staircase)</div>
               <div class="viz-subtitle" id="function-subtitle">
                 Continuous, non-decreasing, derivative zero a.e.
@@ -46,13 +46,13 @@
             </div>
 
             <!-- Measure panel -->
-            <div class="viz-container" id="measure-panel">
+            <div class="viz-container" id="measure-panel" aria-label="Measure chart">
               <div class="viz-title">Measure Properties</div>
               <div class="viz-subtitle" id="measure-subtitle">
                 Length removed vs. remaining at each iteration
               </div>
               <div id="measure-chart"></div>
-              <div class="stats-grid" id="measure-stats"></div>
+              <div class="stats-grid" aria-live="polite" id="measure-stats"></div>
             </div>
           </div>
         </div>
@@ -97,7 +97,7 @@
             <button class="btn" id="reset-btn">Reset</button>
           </div>
 
-          <div class="stats-grid" id="stats-grid">
+          <div class="stats-grid" aria-live="polite" id="stats-grid">
             <div class="stat-card">
               <div class="stat-value" id="stat-intervals">1</div>
               <div class="stat-label">Intervals</div>

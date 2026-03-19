@@ -42,12 +42,12 @@
         <div class="viz-area">
 
           <!-- Bayes formula banner -->
-          <div class="viz-container" id="formula-panel">
+          <div class="viz-container" id="formula-panel" aria-label="Formula chart">
             <div id="bayes-formula"></div>
           </div>
 
           <!-- Main icon array -->
-          <div class="viz-container" id="icon-array-panel">
+          <div class="viz-container" id="icon-array-panel" aria-label="Icon Array chart">
             <div class="viz-title">Natural Frequency Icon Array</div>
             <div class="viz-subtitle" id="icon-array-subtitle">
               Each icon represents one person in the tested population
@@ -58,7 +58,7 @@
 
           <!-- Secondary panels -->
           <div class="secondary-panels">
-            <div class="viz-container" id="matrix-panel">
+            <div class="viz-container" id="matrix-panel" aria-label="Matrix chart">
               <div class="viz-title">Confusion Matrix</div>
               <div class="viz-subtitle">
                 2&times;2 contingency table with predictive values
@@ -66,7 +66,7 @@
               <div id="matrix-chart"></div>
             </div>
 
-            <div class="viz-container" id="tree-panel">
+            <div class="viz-container" id="tree-panel" aria-label="Tree chart">
               <div class="viz-title">Bayesian Probability Tree</div>
               <div class="viz-subtitle">
                 Sequential branching from prevalence through test result
@@ -74,7 +74,7 @@
               <div id="tree-chart"></div>
             </div>
 
-            <div class="viz-container" id="ppv-curve-panel">
+            <div class="viz-container" id="ppv-curve-panel" aria-label="Ppv Curve chart">
               <div class="viz-title">PPV &amp; NPV vs Prevalence</div>
               <div class="viz-subtitle">
                 How predictive values change across disease prevalence
@@ -169,7 +169,7 @@
           <hr class="control-divider" />
 
           <!-- Stats grid -->
-          <div class="stats-grid" id="stats-grid">
+          <div class="stats-grid" aria-live="polite" id="stats-grid">
             <div class="stat-card">
               <div class="stat-value" id="stat-ppv">--</div>
               <div class="stat-label">PPV</div>

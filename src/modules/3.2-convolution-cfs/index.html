@@ -27,7 +27,7 @@
       <div class="module-layout">
         <div class="viz-area">
           <!-- CF product panel -->
-          <div class="viz-container" id="cf-product-panel">
+          <div class="viz-container" id="cf-product-panel" aria-label="Cf Product chart">
             <div class="viz-title">Characteristic Function Product</div>
             <div class="viz-subtitle" id="cf-product-subtitle">
               &phi;<sub>S<sub>n</sub>/&radic;n</sub>(t) = [&phi;<sub>X</sub>(t/&radic;n)]<sup>n</sup> &rarr; e<sup>-t&sup2;/2</sup>
@@ -38,7 +38,7 @@
 
           <div class="secondary-panels">
             <!-- Density evolution -->
-            <div class="viz-container" id="density-evolution-panel">
+            <div class="viz-container" id="density-evolution-panel" aria-label="Density Evolution chart">
               <div class="viz-title">Density Evolution</div>
               <div class="viz-subtitle" id="density-evolution-subtitle">
                 Density of standardized sum converging to N(0,1)
@@ -47,7 +47,7 @@
             </div>
 
             <!-- Log-modulus -->
-            <div class="viz-container" id="log-mod-panel">
+            <div class="viz-container" id="log-mod-panel" aria-label="Log Mod chart">
               <div class="viz-title">Log-Modulus Comparison</div>
               <div class="viz-subtitle" id="log-mod-subtitle">
                 log|&phi;<sub>n</sub>(t)| &rarr; -t&sup2;/2
@@ -109,7 +109,7 @@
             <button class="btn btn-primary" id="play-btn">Animate n</button>
           </div>
 
-          <div class="stats-grid" id="stats-grid">
+          <div class="stats-grid" aria-live="polite" id="stats-grid">
             <div class="stat-card">
               <div class="stat-value" id="stat-n">1</div>
               <div class="stat-label">n</div>

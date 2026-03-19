@@ -42,7 +42,7 @@
         <div class="viz-area">
 
           <!-- Main Pareto chart -->
-          <div class="viz-container" id="pareto-panel">
+          <div class="viz-container" id="pareto-panel" aria-label="Pareto chart">
             <div class="viz-title">Pareto Chart</div>
             <div class="viz-subtitle" id="pareto-subtitle">
               Bars = frequency, line = cumulative percentage — the 80/20 rule
@@ -53,7 +53,7 @@
 
           <!-- Secondary panels -->
           <div class="secondary-panels">
-            <div class="viz-container" id="trend-panel">
+            <div class="viz-container" id="trend-panel" aria-label="Trend chart">
               <div class="viz-title">Trend Over Time</div>
               <div class="viz-subtitle" id="trend-subtitle">
                 Top categories tracked across quarters
@@ -61,7 +61,7 @@
               <div id="trend-chart"></div>
             </div>
 
-            <div class="viz-container" id="comparison-panel">
+            <div class="viz-container" id="comparison-panel" aria-label="Comparison chart">
               <div class="viz-title">Department Comparison</div>
               <div class="viz-subtitle" id="comparison-subtitle">
                 Stacked distribution across departments
@@ -148,7 +148,7 @@
           </div>
 
           <!-- Stats -->
-          <div class="stats-grid" id="stats-grid">
+          <div class="stats-grid" aria-live="polite" id="stats-grid">
             <div class="stat-card">
               <div class="stat-value" id="stat-total">--</div>
               <div class="stat-label">Total Events</div>

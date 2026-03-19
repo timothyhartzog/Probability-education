@@ -55,31 +55,31 @@
           <!-- Visualization area -->
           <div class="viz-area">
             <!-- Equations display -->
-            <div class="viz-container" id="equations-panel">
+            <div class="viz-container" id="equations-panel" aria-label="Equations chart">
               <div class="viz-title">Model Equations</div>
               <div id="model-equations"></div>
             </div>
 
             <!-- Main epidemic curve chart -->
-            <div class="viz-container" id="epidemic-curve-panel">
+            <div class="viz-container" id="epidemic-curve-panel" aria-label="Epidemic Curve chart">
               <div class="viz-title">Epidemic Dynamics Over Time</div>
               <div id="epidemic-curve"></div>
             </div>
 
             <!-- Phase portrait -->
-            <div class="viz-container" id="phase-portrait-panel">
+            <div class="viz-container" id="phase-portrait-panel" aria-label="Phase Portrait chart">
               <div class="viz-title">Phase Portrait (S vs I)</div>
               <div id="phase-portrait"></div>
             </div>
 
             <!-- R-effective over time -->
-            <div class="viz-container" id="r-effective-panel">
+            <div class="viz-container" id="r-effective-panel" aria-label="R Effective chart">
               <div class="viz-title">Effective Reproduction Number R<sub>eff</sub>(t)</div>
               <div id="r-effective-chart"></div>
             </div>
 
             <!-- Key metrics -->
-            <div class="metrics-row" id="metrics-row">
+            <div class="metrics-row" aria-live="polite" id="metrics-row">
               <div class="metric-card">
                 <div class="metric-label">R<sub>0</sub></div>
                 <div class="metric-value" id="metric-r0">—</div>
@@ -211,7 +211,7 @@
         <div class="module-layout">
 
           <div class="viz-area">
-            <div class="viz-container" id="abm-canvas-panel">
+            <div class="viz-container" id="abm-canvas-panel" aria-label="Abm Canvas chart">
               <div class="viz-title">Agent-Based Epidemic Simulation</div>
               <div class="abm-legend" id="abm-legend">
                 <span class="legend-item"><span class="legend-dot susceptible"></span> Susceptible</span>
@@ -225,13 +225,13 @@
               <canvas id="abm-canvas" width="700" height="500"></canvas>
             </div>
 
-            <div class="viz-container" id="abm-curve-panel">
+            <div class="viz-container" id="abm-curve-panel" aria-label="Abm Curve chart">
               <div class="viz-title">Population Dynamics</div>
               <div id="abm-curve"></div>
             </div>
 
             <!-- ABM metrics -->
-            <div class="metrics-row" id="abm-metrics-row">
+            <div class="metrics-row" aria-live="polite" id="abm-metrics-row">
               <div class="metric-card">
                 <div class="metric-label">Day</div>
                 <div class="metric-value" id="abm-day">0</div>
@@ -344,17 +344,17 @@
         <div class="module-layout">
 
           <div class="viz-area">
-            <div class="viz-container" id="intervention-curve-panel">
+            <div class="viz-container" id="intervention-curve-panel" aria-label="Intervention Curve chart">
               <div class="viz-title">Comparing Intervention Strategies</div>
               <div id="intervention-curve"></div>
             </div>
 
-            <div class="viz-container" id="intervention-bar-panel">
+            <div class="viz-container" id="intervention-bar-panel" aria-label="Intervention Bar chart">
               <div class="viz-title">Outcome Comparison</div>
               <div id="intervention-bar"></div>
             </div>
 
-            <div class="viz-container" id="flatten-curve-panel">
+            <div class="viz-container" id="flatten-curve-panel" aria-label="Flatten Curve chart">
               <div class="viz-title">"Flatten the Curve" — Healthcare Capacity Analysis</div>
               <div id="flatten-curve"></div>
             </div>
@@ -422,17 +422,17 @@
         <div class="module-layout">
 
           <div class="viz-area">
-            <div class="viz-container" id="network-graph-panel">
+            <div class="viz-container" id="network-graph-panel" aria-label="Network Graph chart">
               <div class="viz-title">Contact Network — Disease Spread</div>
               <div id="network-graph"></div>
             </div>
 
-            <div class="viz-container" id="network-curve-panel">
+            <div class="viz-container" id="network-curve-panel" aria-label="Network Curve chart">
               <div class="viz-title">Network Epidemic Curve</div>
               <div id="network-curve"></div>
             </div>
 
-            <div class="viz-container" id="degree-dist-panel">
+            <div class="viz-container" id="degree-dist-panel" aria-label="Degree Dist chart">
               <div class="viz-title">Degree Distribution</div>
               <div id="degree-distribution"></div>
             </div>
@@ -509,25 +509,25 @@
 
           <div class="viz-area">
             <!-- Stochastic trajectories vs deterministic -->
-            <div class="viz-container" id="stoch-trajectories-panel">
+            <div class="viz-container" id="stoch-trajectories-panel" aria-label="Stoch Trajectories chart">
               <div class="viz-title">Stochastic SIR Trajectories vs Deterministic Solution</div>
               <div id="stoch-trajectories"></div>
             </div>
 
             <!-- Final size distribution -->
-            <div class="viz-container" id="stoch-finalsize-panel">
+            <div class="viz-container" id="stoch-finalsize-panel" aria-label="Stoch Finalsize chart">
               <div class="viz-title">Final Epidemic Size Distribution (Monte Carlo)</div>
               <div id="stoch-finalsize"></div>
             </div>
 
             <!-- Epidemic probability -->
-            <div class="viz-container" id="stoch-probability-panel">
+            <div class="viz-container" id="stoch-probability-panel" aria-label="Stoch Probability chart">
               <div class="viz-title">Probability of Major Epidemic vs R<sub>0</sub></div>
               <div id="stoch-probability"></div>
             </div>
 
             <!-- Stochastic metrics -->
-            <div class="metrics-row" id="stoch-metrics-row">
+            <div class="metrics-row" aria-live="polite" id="stoch-metrics-row">
               <div class="metric-card">
                 <div class="metric-label">R<sub>0</sub></div>
                 <div class="metric-value" id="stoch-r0">—</div>
@@ -619,25 +619,25 @@
 
           <div class="viz-area">
             <!-- Tornado diagram -->
-            <div class="viz-container" id="tornado-panel">
+            <div class="viz-container" id="tornado-panel" aria-label="Tornado chart">
               <div class="viz-title">Tornado Diagram — Parameter Impact on Peak Infected</div>
               <div id="tornado-chart"></div>
             </div>
 
             <!-- Spider/parameter sweep -->
-            <div class="viz-container" id="spider-panel">
+            <div class="viz-container" id="spider-panel" aria-label="Spider chart">
               <div class="viz-title">Parameter Sweep — Peak Infected vs Parameter Variation</div>
               <div id="spider-chart"></div>
             </div>
 
             <!-- R0 heatmap -->
-            <div class="viz-container" id="heatmap-panel">
+            <div class="viz-container" id="heatmap-panel" aria-label="Heatmap chart">
               <div class="viz-title">R<sub>0</sub> Heatmap — Transmission Rate vs Recovery Rate</div>
               <div id="r0-heatmap"></div>
             </div>
 
             <!-- Sensitivity metrics -->
-            <div class="metrics-row" id="sensitivity-metrics-row">
+            <div class="metrics-row" aria-live="polite" id="sensitivity-metrics-row">
               <div class="metric-card">
                 <div class="metric-label">Most Sensitive</div>
                 <div class="metric-value" id="sens-most">—</div>

@@ -42,7 +42,7 @@
         <div class="viz-area">
 
           <!-- Main CUSUM chart -->
-          <div class="viz-container" id="cusum-panel">
+          <div class="viz-container" id="cusum-panel" aria-label="Cusum chart">
             <div class="viz-title">CUSUM Chart</div>
             <div class="viz-subtitle" id="cusum-subtitle">
               Cumulative sum of deviations from target — signals when threshold is crossed
@@ -53,7 +53,7 @@
 
           <!-- Secondary panels -->
           <div class="secondary-panels">
-            <div class="viz-container" id="raw-data-panel">
+            <div class="viz-container" id="raw-data-panel" aria-label="Raw Data chart">
               <div class="viz-title">Raw Outcome Sequence</div>
               <div class="viz-subtitle" id="raw-data-subtitle">
                 Individual case outcomes (success/failure) over time
@@ -61,7 +61,7 @@
               <div id="raw-data-chart"></div>
             </div>
 
-            <div class="viz-container" id="arl-panel">
+            <div class="viz-container" id="arl-panel" aria-label="Arl chart">
               <div class="viz-title">Average Run Length</div>
               <div class="viz-subtitle" id="arl-subtitle">
                 Expected cases to detection vs. true failure rate
@@ -172,7 +172,7 @@
           </div>
 
           <!-- Stats -->
-          <div class="stats-grid" id="stats-grid">
+          <div class="stats-grid" aria-live="polite" id="stats-grid">
             <div class="stat-card">
               <div class="stat-value" id="stat-signal">--</div>
               <div class="stat-label">Signal at Case</div>

@@ -18,22 +18,22 @@
     </header>
     <div class="module-layout">
       <div class="viz-area">
-        <div class="viz-container" id="distributions-chart">
+        <div class="viz-container" id="distributions-chart" aria-label="Distributions chart">
           <div class="viz-title">Distributions P and Q</div>
           <div class="viz-subtitle" id="dist-subtitle">Drag bars to adjust probabilities</div>
           <div id="distributions-plot"></div>
         </div>
         <div class="secondary-panels">
-          <div class="viz-container" id="entropy-chart">
+          <div class="viz-container" id="entropy-chart" aria-label="Entropy chart">
             <div class="viz-title">Entropy Decomposition</div>
             <div id="entropy-plot"></div>
           </div>
-          <div class="viz-container" id="kl-chart">
+          <div class="viz-container" id="kl-chart" aria-label="Kl chart">
             <div class="viz-title">KL Divergence D<sub>KL</sub>(P || Q)</div>
             <div id="kl-plot"></div>
           </div>
         </div>
-        <div class="viz-container" id="coding-chart">
+        <div class="viz-container" id="coding-chart" aria-label="Coding chart">
           <div class="viz-title">Optimal Coding Interpretation</div>
           <div class="viz-subtitle">Expected message length under different codes</div>
           <div id="coding-plot"></div>
@@ -47,7 +47,7 @@
         <div id="param-sliders"></div>
         <button class="btn btn-primary" id="randomize-btn">Randomize Q</button>
         <button class="btn btn-secondary" id="match-btn">Set Q = P</button>
-        <div class="stats-grid" id="stats"></div>
+        <div class="stats-grid" aria-live="polite" id="stats"></div>
       </aside>
     </div>
     <div class="info-panel" id="info">

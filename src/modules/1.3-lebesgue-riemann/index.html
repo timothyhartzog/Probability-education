@@ -28,27 +28,27 @@
         <div class="viz-area">
           <!-- Dual panels -->
           <div class="dual-panels">
-            <div class="viz-container" id="riemann-panel">
+            <div class="viz-container" id="riemann-panel" aria-label="Riemann chart">
               <div class="viz-title">Riemann Integration</div>
               <div class="viz-subtitle" id="riemann-subtitle">
                 Partition the domain &mdash; upper and lower sums bracket the integral
               </div>
               <div id="riemann-chart"></div>
-              <div class="stats-grid" id="riemann-stats"></div>
+              <div class="stats-grid" aria-live="polite" id="riemann-stats"></div>
             </div>
 
-            <div class="viz-container" id="lebesgue-panel">
+            <div class="viz-container" id="lebesgue-panel" aria-label="Lebesgue chart">
               <div class="viz-title">Lebesgue Integration</div>
               <div class="viz-subtitle" id="lebesgue-subtitle">
                 Partition the range &mdash; measure the preimage of each slice
               </div>
               <div id="lebesgue-chart"></div>
-              <div class="stats-grid" id="lebesgue-stats"></div>
+              <div class="stats-grid" aria-live="polite" id="lebesgue-stats"></div>
             </div>
           </div>
 
           <!-- Convergence panel -->
-          <div class="viz-container" id="convergence-panel">
+          <div class="viz-container" id="convergence-panel" aria-label="Convergence chart">
             <div class="viz-title">Convergence of Sums</div>
             <div class="viz-subtitle" id="convergence-subtitle">
               Upper and lower sums vs. partition refinement
@@ -116,7 +116,7 @@
             <button class="btn btn-primary" id="animate-btn">Animate Refinement</button>
           </div>
 
-          <div class="stats-grid" id="stats-grid">
+          <div class="stats-grid" aria-live="polite" id="stats-grid">
             <div class="stat-card">
               <div class="stat-value" id="stat-riemann-upper">--</div>
               <div class="stat-label">Riemann Upper</div>

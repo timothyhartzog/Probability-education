@@ -42,7 +42,7 @@
         <div class="viz-area">
 
           <!-- Main control chart -->
-          <div class="viz-container" id="spc-panel">
+          <div class="viz-container" id="spc-panel" aria-label="Spc chart">
             <div class="viz-title">Control Chart</div>
             <div class="viz-subtitle" id="spc-subtitle">
               Tracking metric over time with UCL / CL / LCL
@@ -54,7 +54,7 @@
           <!-- Secondary panels -->
           <div class="secondary-panels">
             <!-- Run chart / histogram -->
-            <div class="viz-container" id="histogram-panel">
+            <div class="viz-container" id="histogram-panel" aria-label="Histogram chart">
               <div class="viz-title">Distribution of Values</div>
               <div class="viz-subtitle" id="histogram-subtitle">
                 Histogram of observed metric values
@@ -63,13 +63,13 @@
             </div>
 
             <!-- Violations summary -->
-            <div class="viz-container" id="violations-panel">
+            <div class="viz-container" id="violations-panel" aria-label="Violations chart">
               <div class="viz-title">Rule Violations</div>
               <div class="viz-subtitle" id="violations-subtitle">
                 Western Electric / Nelson rules triggered
               </div>
               <div id="violations-chart"></div>
-              <div class="stats-grid" id="violations-stats"></div>
+              <div class="stats-grid" aria-live="polite" id="violations-stats"></div>
             </div>
           </div>
         </div>
@@ -159,7 +159,7 @@
           </div>
 
           <!-- Stats -->
-          <div class="stats-grid" id="stats-grid">
+          <div class="stats-grid" aria-live="polite" id="stats-grid">
             <div class="stat-card">
               <div class="stat-value" id="stat-mean">--</div>
               <div class="stat-label">Center Line</div>

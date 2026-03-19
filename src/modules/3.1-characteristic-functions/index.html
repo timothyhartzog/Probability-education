@@ -27,7 +27,7 @@
       <div class="module-layout">
         <div class="viz-area">
           <!-- Complex plane plot -->
-          <div class="viz-container" id="complex-panel">
+          <div class="viz-container" id="complex-panel" aria-label="Complex chart">
             <div class="viz-title">Characteristic Function in Complex Plane</div>
             <div class="viz-subtitle" id="complex-subtitle">
               Parametric curve (&phi;(t)) as t varies
@@ -37,7 +37,7 @@
 
           <div class="secondary-panels">
             <!-- Real/Imaginary parts -->
-            <div class="viz-container" id="reim-panel">
+            <div class="viz-container" id="reim-panel" aria-label="Reim chart">
               <div class="viz-title">Real &amp; Imaginary Parts</div>
               <div class="viz-subtitle" id="reim-subtitle">
                 Re(&phi;(t)) and Im(&phi;(t)) vs. t
@@ -47,7 +47,7 @@
             </div>
 
             <!-- PDF/PMF -->
-            <div class="viz-container" id="density-panel">
+            <div class="viz-container" id="density-panel" aria-label="Density chart">
               <div class="viz-title">Density / PMF</div>
               <div class="viz-subtitle" id="density-subtitle">
                 The distribution whose CF is shown
@@ -126,7 +126,7 @@
             <span class="toggle-label">Animate t sweep</span>
           </label>
 
-          <div class="stats-grid" id="stats-grid">
+          <div class="stats-grid" aria-live="polite" id="stats-grid">
             <div class="stat-card">
               <div class="stat-value" id="stat-phi0">1.00</div>
               <div class="stat-label">&phi;(0)</div>

@@ -42,7 +42,7 @@
         <div class="viz-area">
 
           <!-- Main: Treatment Effect Visualizer -->
-          <div class="viz-container" id="effect-panel">
+          <div class="viz-container" id="effect-panel" aria-label="Effect chart">
             <div class="viz-title">Treatment Effect Visualizer</div>
             <div class="viz-subtitle" id="effect-subtitle">
               Side-by-side comparison of treatment vs control groups (100 patients each)
@@ -53,7 +53,7 @@
 
           <!-- Secondary panels -->
           <div class="secondary-panels">
-            <div class="viz-container" id="risk-panel">
+            <div class="viz-container" id="risk-panel" aria-label="Risk chart">
               <div class="viz-title">Risk Measures Comparison</div>
               <div class="viz-subtitle" id="risk-subtitle">
                 CER, EER, ARR, RRR, and NNT with confidence intervals
@@ -61,7 +61,7 @@
               <div id="risk-chart"></div>
             </div>
 
-            <div class="viz-container" id="ci-panel">
+            <div class="viz-container" id="ci-panel" aria-label="Ci chart">
               <div class="viz-title">Confidence Interval &amp; Repeated Sampling</div>
               <div class="viz-subtitle" id="ci-subtitle">
                 What "95% confidence" actually means
@@ -168,7 +168,7 @@
           </div>
 
           <!-- Stats grid -->
-          <div class="stats-grid" id="stats-grid">
+          <div class="stats-grid" aria-live="polite" id="stats-grid">
             <div class="stat-card">
               <div class="stat-value" id="stat-arr">--</div>
               <div class="stat-label">ARR [CI]</div>

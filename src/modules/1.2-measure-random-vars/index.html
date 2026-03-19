@@ -27,7 +27,7 @@
       <div class="module-layout">
         <div class="viz-area">
           <!-- Main: Measure Builder -->
-          <div class="viz-container" id="measure-panel">
+          <div class="viz-container" id="measure-panel" aria-label="Measure chart">
             <div class="viz-title">Measure Builder</div>
             <div class="viz-subtitle" id="measure-subtitle">
               Drag bars to assign probabilities to each outcome &mdash; must sum to 1
@@ -37,7 +37,7 @@
 
           <div class="secondary-panels">
             <!-- Random Variable Mapping -->
-            <div class="viz-container" id="rv-panel">
+            <div class="viz-container" id="rv-panel" aria-label="Rv chart">
               <div class="viz-title">Random Variable Mapping</div>
               <div class="viz-subtitle" id="rv-subtitle">
                 X: &Omega; &rarr; &Reals; shown as a bipartite graph
@@ -46,7 +46,7 @@
             </div>
 
             <!-- Pushforward Distribution -->
-            <div class="viz-container" id="pushforward-panel">
+            <div class="viz-container" id="pushforward-panel" aria-label="Pushforward chart">
               <div class="viz-title">Pushforward Distribution</div>
               <div class="viz-subtitle" id="pushforward-subtitle">
                 Image measure P<sub>X</sub> = P &compfn; X<sup>&minus;1</sup> on &Reals;
@@ -100,7 +100,7 @@
             <button class="btn" id="random-btn">Random</button>
           </div>
 
-          <div class="stats-grid" id="stats-grid">
+          <div class="stats-grid" aria-live="polite" id="stats-grid">
             <div class="stat-card">
               <div class="stat-value" id="stat-total">1</div>
               <div class="stat-label">P(&Omega;)</div>

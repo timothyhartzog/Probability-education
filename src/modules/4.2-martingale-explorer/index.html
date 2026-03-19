@@ -42,7 +42,7 @@
         <div class="viz-area">
 
           <!-- Main paths panel -->
-          <div class="viz-container" id="paths-panel">
+          <div class="viz-container" id="paths-panel" aria-label="Paths chart">
             <div class="viz-title">Sample Paths</div>
             <div class="viz-subtitle" id="paths-subtitle"></div>
             <div id="paths-chart"></div>
@@ -52,17 +52,17 @@
           <!-- Two-column sub-panels -->
           <div class="sub-panels">
             <!-- Stopped values histogram -->
-            <div class="viz-container" id="histogram-panel">
+            <div class="viz-container" id="histogram-panel" aria-label="Histogram chart">
               <div class="viz-title">Stopped Values Distribution</div>
               <div class="viz-subtitle" id="histogram-subtitle">
                 Enable a stopping rule to view M<sub>T</sub> histogram
               </div>
               <div id="histogram-chart"></div>
-              <div class="stats-grid" id="histogram-stats"></div>
+              <div class="stats-grid" aria-live="polite" id="histogram-stats"></div>
             </div>
 
             <!-- Quadratic variation panel -->
-            <div class="viz-container" id="qv-panel">
+            <div class="viz-container" id="qv-panel" aria-label="Qv chart">
               <div class="viz-title">Quadratic Variation [M]<sub>n</sub></div>
               <div class="viz-subtitle" id="qv-subtitle"></div>
               <div id="qv-chart"></div>

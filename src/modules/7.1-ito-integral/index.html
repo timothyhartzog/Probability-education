@@ -18,22 +18,22 @@
     </header>
     <div class="module-layout">
       <div class="viz-area">
-        <div class="viz-container" id="integrand-chart">
+        <div class="viz-container" id="integrand-chart" aria-label="Integrand chart">
           <div class="viz-title">Integrand f(t, B<sub>t</sub>)</div>
           <div class="viz-subtitle" id="integrand-subtitle">Select an integrand to visualize</div>
           <div id="integrand-plot"></div>
         </div>
         <div class="secondary-panels">
-          <div class="viz-container" id="integral-chart">
+          <div class="viz-container" id="integral-chart" aria-label="Integral chart">
             <div class="viz-title">Stochastic Integral &int; f dB<sub>t</sub></div>
             <div id="integral-plot"></div>
           </div>
-          <div class="viz-container" id="quadvar-chart">
+          <div class="viz-container" id="quadvar-chart" aria-label="Quadvar chart">
             <div class="viz-title">Quadratic Variation &amp; Itô Correction</div>
             <div id="quadvar-plot"></div>
           </div>
         </div>
-        <div class="viz-container" id="ito-formula-chart">
+        <div class="viz-container" id="ito-formula-chart" aria-label="Ito Formula chart">
           <div class="viz-title">Itô's Formula Decomposition</div>
           <div class="viz-subtitle">g(B<sub>t</sub>) = g(B<sub>0</sub>) + &int;g'dB + &frac12;&int;g''dt</div>
           <div id="ito-formula-plot"></div>
@@ -47,7 +47,7 @@
         <div id="num-paths-slider"></div>
         <div id="seed-control"></div>
         <div id="formula-select"></div>
-        <div class="stats-grid" id="stats"></div>
+        <div class="stats-grid" aria-live="polite" id="stats"></div>
       </aside>
     </div>
     <div class="info-panel" id="info">

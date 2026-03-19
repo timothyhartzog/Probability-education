@@ -27,7 +27,7 @@
       <div class="module-layout">
         <div class="viz-area">
           <!-- Main: Event Occurrence Grid -->
-          <div class="viz-container" id="event-grid-panel">
+          <div class="viz-container" id="event-grid-panel" aria-label="Event Grid chart">
             <div class="viz-title">Event Occurrence Grid</div>
             <div class="viz-subtitle" id="event-grid-subtitle">
               Rows = events A<sub>1</sub>, A<sub>2</sub>, &hellip; &ensp;|&ensp; Columns = sample paths &omega; &ensp;|&ensp; Highlighted columns &isin; limsup (A<sub>n</sub> i.o.)
@@ -37,7 +37,7 @@
 
           <div class="secondary-panels">
             <!-- Partial Sum Chart -->
-            <div class="viz-container" id="sum-panel">
+            <div class="viz-container" id="sum-panel" aria-label="Sum chart">
               <div class="viz-title">Partial Sum &Sigma; P(A<sub>n</sub>)</div>
               <div class="viz-subtitle" id="sum-subtitle">
                 Convergent &rArr; BC1 applies &ensp;|&ensp; Divergent + independent &rArr; BC2 applies
@@ -46,7 +46,7 @@
             </div>
 
             <!-- Frequency Tracker -->
-            <div class="viz-container" id="freq-panel">
+            <div class="viz-container" id="freq-panel" aria-label="Freq chart">
               <div class="viz-title">Running Hit Count per Path</div>
               <div class="viz-subtitle" id="freq-subtitle">
                 Cumulative number of events fired for each sample path
@@ -124,7 +124,7 @@
             <button class="btn" id="reset-btn">Reset</button>
           </div>
 
-          <div class="stats-grid" id="stats-grid">
+          <div class="stats-grid" aria-live="polite" id="stats-grid">
             <div class="stat-card">
               <div class="stat-value" id="stat-sum">&mdash;</div>
               <div class="stat-label">&Sigma; P(A<sub>n</sub>)</div>

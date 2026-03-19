@@ -18,22 +18,22 @@
     </header>
     <div class="module-layout">
       <div class="viz-area">
-        <div class="viz-container" id="distribution-chart">
+        <div class="viz-container" id="distribution-chart" aria-label="Distribution chart">
           <div class="viz-title">Prior, Likelihood &amp; Posterior</div>
           <div class="viz-subtitle" id="conjugate-subtitle">Beta-Binomial conjugate family</div>
           <div id="distribution-plot"></div>
         </div>
         <div class="secondary-panels">
-          <div class="viz-container" id="updating-chart">
+          <div class="viz-container" id="updating-chart" aria-label="Updating chart">
             <div class="viz-title">Sequential Updating</div>
             <div id="updating-plot"></div>
           </div>
-          <div class="viz-container" id="credible-chart">
+          <div class="viz-container" id="credible-chart" aria-label="Credible chart">
             <div class="viz-title">Credible Intervals &amp; Point Estimates</div>
             <div id="credible-plot"></div>
           </div>
         </div>
-        <div class="viz-container" id="data-panel">
+        <div class="viz-container" id="data-panel" aria-label="Data chart">
           <div class="viz-title">Observed Data</div>
           <div id="data-viz"></div>
         </div>
@@ -47,7 +47,7 @@
         <div id="sample-size-slider"></div>
         <button class="btn btn-primary" id="add-data-btn">Add Observation</button>
         <button class="btn btn-secondary" id="reset-btn">Reset Data</button>
-        <div class="stats-grid" id="stats"></div>
+        <div class="stats-grid" aria-live="polite" id="stats"></div>
       </aside>
     </div>
     <div class="info-panel" id="info">

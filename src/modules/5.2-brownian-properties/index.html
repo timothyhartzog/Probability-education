@@ -51,20 +51,20 @@
 
           <!-- Tab 1: Path Explorer -->
           <div class="tab-content active" id="tab-path-explorer">
-            <div class="viz-container" id="path-explorer-panel">
+            <div class="viz-container" id="path-explorer-panel" aria-label="Path Explorer chart">
               <div class="viz-title">Brownian Motion Paths</div>
               <div class="viz-subtitle" id="path-explorer-subtitle">
                 Zoom in to see fractal roughness at every scale
               </div>
               <div id="path-explorer-chart"></div>
-              <div class="stats-grid" id="path-explorer-stats"></div>
+              <div class="stats-grid" aria-live="polite" id="path-explorer-stats"></div>
               <div class="math-block" id="path-explorer-formula"></div>
             </div>
           </div>
 
           <!-- Tab 2: Self-Similarity -->
           <div class="tab-content" id="tab-self-similarity">
-            <div class="viz-container" id="self-similarity-panel">
+            <div class="viz-container" id="self-similarity-panel" aria-label="Self Similarity chart">
               <div class="viz-title">Self-Similarity of Brownian Motion</div>
               <div class="viz-subtitle" id="self-similarity-subtitle">
                 Original path vs rescaled path — statistically identical
@@ -76,26 +76,26 @@
 
           <!-- Tab 3: Quadratic Variation -->
           <div class="tab-content" id="tab-quadratic-variation">
-            <div class="viz-container" id="qv-panel">
+            <div class="viz-container" id="qv-panel" aria-label="Qv chart">
               <div class="viz-title">Quadratic Variation</div>
               <div class="viz-subtitle" id="qv-subtitle">
                 Quadratic variation converges to t as the partition refines
               </div>
               <div id="qv-chart"></div>
-              <div class="stats-grid" id="qv-stats"></div>
+              <div class="stats-grid" aria-live="polite" id="qv-stats"></div>
               <div class="math-block" id="qv-formula"></div>
             </div>
           </div>
 
           <!-- Tab 4: Arcsine Laws -->
           <div class="tab-content" id="tab-arcsine-laws">
-            <div class="viz-container" id="arcsine-panel">
+            <div class="viz-container" id="arcsine-panel" aria-label="Arcsine chart">
               <div class="viz-title">Arcsine Law for Time Spent Positive</div>
               <div class="viz-subtitle" id="arcsine-subtitle">
                 The fraction of time B_t > 0 follows the arcsine distribution
               </div>
               <div id="arcsine-chart"></div>
-              <div class="stats-grid" id="arcsine-stats"></div>
+              <div class="stats-grid" aria-live="polite" id="arcsine-stats"></div>
               <div class="math-block" id="arcsine-formula"></div>
             </div>
           </div>

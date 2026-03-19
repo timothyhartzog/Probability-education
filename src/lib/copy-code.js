@@ -82,9 +82,30 @@ function showFeedback(btn, msg, isError = false) {
   }, 2000);
 }
 
+// SVG Accessibility — adds <title> and role="img" to D3-generated SVGs
+// Runs on window load (after all module initialization has completed)
+function setupSVGAccessibility() {
+  document.querySelectorAll('[aria-label]').forEach(container => {
+    const label = container.getAttribute('aria-label');
+    if (!label) return;
+    const svg = container.querySelector('svg');
+    if (!svg) return;
+    if (!svg.hasAttribute('role')) {
+      svg.setAttribute('role', 'img');
+      svg.setAttribute('aria-label', label);
+    }
+    if (!svg.querySelector('title')) {
+      const title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
+      title.textContent = label;
+      svg.insertBefore(title, svg.firstChild);
+    }
+  });
+}
+
 // Auto-initialize when imported
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', setup);
 } else {
   setup();
 }
+window.addEventListener('load', setupSVGAccessibility);

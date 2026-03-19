@@ -27,7 +27,7 @@
       <div class="module-layout">
         <div class="viz-area">
           <!-- Set diagram -->
-          <div class="viz-container" id="set-diagram-panel">
+          <div class="viz-container" id="set-diagram-panel" aria-label="Set Diagram chart">
             <div class="viz-title">Set Diagram</div>
             <div class="viz-subtitle" id="set-diagram-subtitle">
               Click subsets of &Omega; to toggle membership &mdash; closure is enforced automatically
@@ -37,7 +37,7 @@
 
           <div class="secondary-panels">
             <!-- Lattice of sigma-algebras -->
-            <div class="viz-container" id="lattice-panel">
+            <div class="viz-container" id="lattice-panel" aria-label="Lattice chart">
               <div class="viz-title">Sigma-Algebra Lattice</div>
               <div class="viz-subtitle" id="lattice-subtitle">
                 Containment partial order on all sigma-algebras of &Omega;
@@ -46,13 +46,13 @@
             </div>
 
             <!-- Current sigma-algebra contents -->
-            <div class="viz-container" id="contents-panel">
+            <div class="viz-container" id="contents-panel" aria-label="Contents chart">
               <div class="viz-title">Current Sigma-Algebra</div>
               <div class="viz-subtitle" id="contents-subtitle">
                 All sets in the generated sigma-algebra &sigma;(S)
               </div>
               <div id="contents-chart"></div>
-              <div class="stats-grid" id="contents-stats"></div>
+              <div class="stats-grid" aria-live="polite" id="contents-stats"></div>
             </div>
           </div>
         </div>
@@ -96,7 +96,7 @@
             <button class="btn" id="random-btn">Random</button>
           </div>
 
-          <div class="stats-grid" id="stats-grid">
+          <div class="stats-grid" aria-live="polite" id="stats-grid">
             <div class="stat-card">
               <div class="stat-value" id="stat-generators">0</div>
               <div class="stat-label">Generators</div>
