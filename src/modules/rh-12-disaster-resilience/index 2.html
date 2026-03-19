@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 12: Disaster Resilience | Rural Nexus</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <link rel="stylesheet" href="../../assets/design-system.css">
+  <link rel="stylesheet" href="../../assets/module-template.css">
+  <style>
+    .disaster-viz { height: 400px; background: #020617; border-radius: var(--radius-lg); position: relative; overflow: hidden; }
+    .triage-tag { width: 12px; height: 12px; border-radius: 50%; display: inline-block; margin-right: 4px; }
+    .tag-immediate { background: #ef4444; } /* Red */
+    .tag-delayed { background: #f59e0b; }   /* Yellow */
+    .tag-minor { background: #10b981; }     /* Green */
+    .tag-expectant { background: #1e293b; }  /* Black */
+  </style>
+</head>
+<body>
+  <div class="module-page">
+    <header class="module-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">Home</a> /
+        <a href="../../index.html#rural-healthcare">Rural Healthcare</a> /
+        Chapter 12
+      </nav>
+      <h1>Disaster Resilience & Surge Capacity</h1>
+      <p class="module-subtitle">Modeling Mass Casualty Response in Resource-Limited Rural Regions.</p>
+    </header>
+
+    <div class="module-layout">
+      <div class="viz-area">
+        <div class="disaster-viz" id="mci-canv"></div>
+        <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:10px; margin-top:15px;">
+          <div class="m-card text-center"><div class="m-label">Immediate (Red)</div><div id="stat-red" class="m-val">0</div></div>
+          <div class="m-card text-center"><div class="m-label">Delayed (Yellow)</div><div id="stat-yellow" class="m-val">0</div></div>
+          <div class="m-card text-center"><div class="m-label">Minor (Green)</div><div id="stat-green" class="m-val">0</div></div>
+          <div class="m-card text-center"><div class="m-label">Stabilized/Transf.</div><div id="stat-trans" class="m-val">0</div></div>
+        </div>
+      </div>
+
+      <aside class="control-panel">
+        <div class="control-section">
+          <h3>MCI Response Parameters</h3>
+          <div id="mci-inputs"></div>
+          <button id="trigger-mci" class="btn btn-error w-full mt-4">TRIGGER MASS CASUALTY (MCI)</button>
+        </div>
+        <div class="m-card"><div class="m-label">System Saturation</div><div id="sat-perc" class="m-val">0%</div></div>
+        <div class="m-card mt-2"><div class="m-label">Mean Triage Latency</div><div id="triage-lag" class="m-val">-- mins</div></div>
+      </aside>
+    </div>
+
+    <div class="info-panel">
+      <section>
+        <h2>The Triage-to-Transfer Dilemma</h2>
+        <p>
+          In an urban disaster, the primary bottleneck is **Triage Speed**. In a rural disaster, the 
+          primary bottleneck is **Transfer Throughput** (ambulances and aircraft). We model local 
+          resilience using the **START Triage Algorithm** and a limited-capacity egress queue, 
+          highlighting the "Golden Hour" threshold for survivors.
+        </p>
+        <div id="math-disaster"></div>
+      </section>
+    </div>
+  </div>
+  <script type="module" src="./module.js"></script>
+</body>
+</html>

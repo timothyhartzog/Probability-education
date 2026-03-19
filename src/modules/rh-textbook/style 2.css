@@ -1,0 +1,200 @@
+/*
+ * RH-15: Interactive Digital Textbook Styles (Nexus Core)
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --text-font: 'Outfit', sans-serif;
+  --reading-font: 'Libre+Baskerville', serif;
+}
+
+.textbook-shell {
+  display: flex;
+  height: calc(100vh - 64px);
+  overflow: hidden;
+  background: #fff;
+}
+
+/* Sidebar TOC */
+.sidebar-toc {
+  width: 360px;
+  background: #f8fafc;
+  border-right: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  overflow-y: auto;
+}
+
+.toc-header {
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.toc-header h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.toc-item {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 0.5rem;
+  border: 1px solid transparent;
+}
+
+.toc-item:hover {
+  background: #fff;
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+}
+
+.toc-item.active {
+  background: #fff;
+  border-color: #2563eb;
+  box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.1);
+}
+
+.ch-num {
+  font-size: 0.875rem;
+  font-weight: 800;
+  color: #3b82f6;
+  width: 24px;
+}
+
+.ch-title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 0.25rem;
+}
+
+.ch-summary {
+  font-size: 0.8125rem;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+/* Reader Pane */
+.reader-pane {
+  flex: 1;
+  padding: 3rem 4rem;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+
+#content-boundary {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.chapter-hero {
+  margin-bottom: 3rem;
+  padding-bottom: 2rem;
+  border-bottom: 2px solid #f1f5f9;
+}
+
+#hero-title {
+  font-size: 3rem;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  color: #0f172a;
+  margin-bottom: 1rem;
+  line-height: 1.1;
+}
+
+#hero-desc {
+  font-size: 1.25rem;
+  color: #64748b;
+  font-family: var(--text-font);
+  line-height: 1.6;
+}
+
+.typography-prose {
+  font-family: var(--reading-font);
+  font-size: 1.125rem;
+  line-height: 1.8;
+  color: #334155;
+}
+
+.typography-prose h2 {
+  font-family: var(--text-font);
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.typography-prose h3 {
+  font-family: var(--text-font);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #334155;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.typography-prose p {
+  margin-bottom: 1.5rem;
+}
+
+/* Simulation Playground */
+.playground-container {
+  margin-top: 4rem;
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 1.5rem;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.playground-container.maximized {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 1000;
+  margin: 0;
+}
+
+.playground-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  background: #fff;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.playground-header h4 {
+  font-family: var(--text-font);
+  font-size: 1rem;
+  font-weight: 700;
+  color: #2563eb;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.iframe-wrapper {
+  height: 600px;
+  width: 100%;
+}
+
+iframe {
+  width: 100%;
+  height: 100%;
+}
+
+.playground-container.maximized .iframe-wrapper {
+  height: calc(100vh - 4rem - 64px);
+}

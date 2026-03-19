@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 10: Financial Risk Modeling | Rural Nexus</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <link rel="stylesheet" href="../../assets/design-system.css">
+  <link rel="stylesheet" href="../../assets/module-template.css">
+  <style>
+    .fin-viz { height: 350px; background: #fafafa; border-radius: var(--radius-lg); padding: var(--space-md); }
+    .risk-guage { height: 100px; background: #fff; border: 1px solid #e2e8f0; border-radius: var(--radius-md); margin-top: 15px; display: flex; align-items: center; justify-content: center; position: relative; }
+    .guage-arrow { width: 4px; height: 40px; background: #1e293b; position: absolute; bottom: 50%; transform-origin: bottom center; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+  </style>
+</head>
+<body>
+  <div class="module-page">
+    <header class="module-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">Home</a> /
+        <a href="../../index.html#rural-healthcare">Rural Healthcare</a> /
+        Chapter 10
+      </nav>
+      <h1>Financial Risk & Payer Mix Volatility</h1>
+      <p class="module-subtitle">Modeling Revenue Cycles in Agricultural and Resource-Limited Economies.</p>
+    </header>
+
+    <div class="module-layout">
+      <div class="viz-area">
+        <div class="fin-viz" id="finance-chart"></div>
+        <div class="risk-guage">
+          <div class="guage-arrow" id="risk-arrow"></div>
+          <div style="font-size: 0.65rem; color: #64748b; font-weight: 700; margin-top: 60px;">CLOSURE RISK INDEX</div>
+        </div>
+      </div>
+
+      <aside class="control-panel">
+        <div class="control-section">
+          <h3>Economic Inputs</h3>
+          <div id="finance-inputs"></div>
+          <p class="text-xs text-slate-500 mt-2">Ag-cycle volatility peaks during harvest or extreme weather events.</p>
+        </div>
+        <div class="m-card"><div class="m-label">Net Operating Margin</div><div id="margin-val" class="m-val">--%</div></div>
+        <div class="m-card mt-2"><div class="m-label">Payer Efficiency</div><div id="payer-eff" class="m-val">--%</div></div>
+      </aside>
+    </div>
+
+    <div class="info-panel">
+      <section>
+        <h2>The Fragile Payer Mix</h2>
+        <p>
+          Rural hospitals often have a **disproportional reliance on Medicare and Medicaid** (due to aging 
+          and low-income populations). When local agricultural yields drop or commodity prices shift, 
+          the **Uncompensated Care** burden can spike by 200% in a single quarter, threatening the 
+          very existence of the hospital.
+        </p>
+        <div id="math-finance"></div>
+      </section>
+    </div>
+  </div>
+  <script type="module" src="./module.js"></script>
+</body>
+</html>

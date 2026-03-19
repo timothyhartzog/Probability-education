@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 11: Hospital Digital Twin | Rural Nexus</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <link rel="stylesheet" href="../../assets/design-system.css">
+  <link rel="stylesheet" href="../../assets/module-template.css">
+  <style>
+    .twin-viz { height: 500px; background: #fafafa; border: 1px solid #e2e8f0; border-radius: var(--radius-lg); position: relative; overflow: hidden; }
+    .room { fill: #f8fafc; stroke: #cbd5e1; stroke-width: 1.5px; }
+    .bed-slot { fill: #e2e8f0; stroke: #94a3b8; stroke-width: 1px; }
+    .bed-slot.active { fill: #3b82f6; }
+    .station-node { fill: #1e293b; stroke: #fff; stroke-width: 2px; }
+    .queue-dot { fill: #ef4444; }
+  </style>
+</head>
+<body>
+  <div class="module-page">
+    <header class="module-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">Home</a> /
+        <a href="../../index.html#rural-healthcare">Rural Healthcare</a> /
+        Chapter 11
+      </nav>
+      <h1>Hospital Digital Twin (DES)</h1>
+      <p class="module-subtitle">Modeling Bottlenecks in Rural Lab, Imaging, and Transfer Desks.</p>
+    </header>
+
+    <div class="module-layout">
+      <div class="viz-area">
+        <div class="twin-viz" id="twin-canv"></div>
+        <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:10px; margin-top:15px;">
+          <div class="m-card text-center"><div class="m-label">Lab Queue</div><div id="q-lab" class="m-val">0</div></div>
+          <div class="m-card text-center"><div class="m-label">X-Ray Queue</div><div id="q-xray" class="m-val">0</div></div>
+          <div class="m-card text-center"><div class="m-label">Transfer Delay</div><div id="q-trans" class="m-val">0</div></div>
+          <div class="m-card text-center"><div class="m-label">Total ED Pts</div><div id="pts-ed" class="m-val">0</div></div>
+        </div>
+      </div>
+
+      <aside class="control-panel">
+        <div class="control-section">
+          <h3>Workstation Capacities</h3>
+          <div id="twin-inputs"></div>
+          <button id="add-pt" class="btn btn-primary w-full mt-4">Simulate Emergency Arrival</button>
+        </div>
+        <div class="control-section">
+          <h3>Bottleneck Analysis</h3>
+          <p class="text-xs text-slate-500">Resource constraints shift under stochastic demand cycles.</p>
+          <div class="m-card mt-2"><div class="m-label">Critical Path Lag</div><div id="total-delay" class="m-val">-- mins</div></div>
+        </div>
+      </aside>
+    </div>
+
+    <div class="info-panel">
+      <section>
+        <h2>Discrete Event Simulation (DES)</h2>
+        <p>
+          In a small-N hospital, **resource conflict** is the primary driver of delay. A single x-ray machine 
+          serves the ER, Inpatients, and Outpatients. Using DES, we model the facility not as an 
+          average throughput, but as a sequence of discrete events where patients compete for 
+          **Shared Constrained Resources**.
+        </p>
+        <div id="math-des"></div>
+      </section>
+    </div>
+  </div>
+  <script type="module" src="./module.js"></script>
+</body>
+</html>

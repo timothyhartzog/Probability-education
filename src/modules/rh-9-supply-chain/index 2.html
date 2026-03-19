@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 9: Supply Chain Logistics | Rural Nexus</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <link rel="stylesheet" href="../../assets/design-system.css">
+  <link rel="stylesheet" href="../../assets/module-template.css">
+  <style>
+    .log-viz { height: 450px; background: #f1f5f9; border-radius: var(--radius-lg); position: relative; overflow: hidden; }
+    .station { fill: #334155; stroke: #fff; stroke-width: 2px; }
+    .drone { fill: #3b82f6; stroke: #fff; stroke-width: 1px; }
+    .inv-card { background: var(--color-surface); padding: 10px; border-radius: var(--radius-md); border-left: 4px solid var(--color-primary); }
+  </style>
+</head>
+<body>
+  <div class="module-page">
+    <header class="module-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">Home</a> /
+        <a href="../../index.html#rural-healthcare">Rural Healthcare</a> /
+        Chapter 9
+      </nav>
+      <h1>Last-Mile Supply Chain & Drone Logistics</h1>
+      <p class="module-subtitle">Modeling Blood, Oxygen, and Pharmacy Delivery Resilience.</p>
+    </header>
+
+    <div class="module-layout">
+      <div class="viz-area">
+        <div class="log-viz" id="logistics-canv"></div>
+        <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; margin-top:15px;">
+          <div class="inv-card">
+            <div class="m-label">Whole Blood (Units)</div>
+            <div id="blood-inv" class="m-val">12</div>
+          </div>
+          <div class="inv-card" style="border-left-color: #ef4444;">
+            <div class="m-label">Emergency Oxygen</div>
+            <div id="oxy-inv" class="m-val">98%</div>
+          </div>
+          <div id="sim-status" class="inv-card" style="border-left-color: #10b981;">
+            <div class="m-label">Drone Status</div>
+            <div id="drone-msg" class="m-val text-sm">Standby</div>
+          </div>
+        </div>
+      </div>
+
+      <aside class="control-panel">
+        <div class="control-section">
+          <h3>Logistical Parameters</h3>
+          <div id="supply-inputs"></div>
+          <button id="launch-blood" class="btn btn-primary w-full mt-4">Emergency Drone: Blood Launch</button>
+        </div>
+        <div class="control-section">
+          <h3>The "Last Mile" Penalty</h3>
+          <p class="text-xs text-slate-500">How geographic friction impacts clinical availability of life-saving products.</p>
+          <div class="m-card mt-2"><div class="m-label">Logistical Gap</div><div id="log-gap" class="m-val">-- mins</div></div>
+        </div>
+      </aside>
+    </div>
+
+    <div class="info-panel">
+      <section>
+        <h2>The Zero-Inventory Problem</h2>
+        <p>
+          Critical Access Hospitals (CAHs) cannot economically store rare blood types or expensive 
+          biologics. This creates a **Zero-Inventory Trap** where a single trauma patient can 
+          deplete the regional stock. **Drone networks** (Zipline-style) transform this linear 
+          logistical problem into a spatial network problem, effectively "expanding" the pharmacy 
+          radius of a hub hospital.
+        </p>
+        <div id="math-logistics"></div>
+      </section>
+    </div>
+  </div>
+  <script type="module" src="./module.js"></script>
+</body>
+</html>

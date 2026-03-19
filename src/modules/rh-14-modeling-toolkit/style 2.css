@@ -1,0 +1,201 @@
+/*
+ * RH-14 Modeling Toolkit — Custom Nexus Styles
+ */
+
+:root {
+  --sidebar-width: 320px;
+}
+
+.dashboard-container {
+  display: flex;
+  height: calc(100vh - 64px); /* Nav height */
+  overflow: hidden;
+  background: var(--color-bg);
+}
+
+.config-sidebar {
+  width: var(--sidebar-width);
+  background: var(--color-surface);
+  border-right: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  overflow-y: auto;
+  box-shadow: 4px 0 12px rgba(0,0,0,0.03);
+  z-index: 10;
+}
+
+.config-header {
+  margin-bottom: 2rem;
+}
+
+.config-header h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 0.25rem;
+}
+
+.config-header p {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+}
+
+.config-groups {
+  flex: 1;
+}
+
+.config-footer {
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.content-view {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.module-intro h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 0.75rem;
+  color: var(--color-text);
+}
+
+.module-intro p {
+  font-size: 1.125rem;
+  max-width: 900px;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+}
+
+.sim-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 1.5rem;
+}
+
+.sim-card {
+  background: var(--color-surface);
+  border: 1px solid #e2e8f0;
+  border-radius: 1rem;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  height: 480px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+}
+
+.sim-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 12px rgba(0,0,0,0.04);
+}
+
+.sim-card.wide {
+  grid-column: span 2;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.card-header h4 {
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.viz-area {
+  flex: 1;
+  background: #f8fafc;
+  border-radius: 0.5rem;
+  position: relative;
+}
+
+.card-footer {
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #e2e8f0;
+  font-size: 0.875rem;
+}
+
+.config-slider-label {
+  display: block;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+.config-slider-value {
+  float: right;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.config-slider-group {
+  margin-bottom: 1.5rem;
+}
+
+.config-slider-group input[type=range] {
+  width: 100%;
+  accent-color: var(--color-primary);
+}
+
+.anomaly-section {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 1rem;
+  padding: 1.5rem;
+}
+
+.viz-full {
+  height: 300px;
+  background: #f8fafc;
+  border-radius: 0.5rem;
+  margin-top: 1rem;
+}
+
+/* Tooltip & Labels */
+.tooltip {
+  position: absolute;
+  padding: 8px 12px;
+  background: rgba(15, 23, 42, 0.95);
+  color: white;
+  border-radius: 6px;
+  font-size: 12px;
+  pointer-events: none;
+  z-index: 100;
+}
+
+.m-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #e2e8f0;
+  color: #475569;
+}
+
+/* Scrollbar styling */
+.content-view::-webkit-scrollbar, .config-sidebar::-webkit-scrollbar {
+  width: 8px;
+}
+.content-view::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+.content-view::-webkit-scrollbar-track {
+  background: transparent;
+}

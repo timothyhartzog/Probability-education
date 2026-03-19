@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 4: Disease Burden | Rural Nexus</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <link rel="stylesheet" href="../../assets/design-system.css">
+  <link rel="stylesheet" href="../../assets/module-template.css">
+  <style>
+    .epidemic-viz { height: 400px; background: #0f172a; border-radius: var(--radius-lg); position: relative; overflow: hidden; }
+    .node { stroke: #fff; stroke-width: 1.5px; }
+    .link { stroke: #334155; stroke-opacity: 0.6; }
+    .stats-panel { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: var(--space-md); }
+  </style>
+</head>
+<body>
+  <div class="module-page">
+    <header class="module-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">Home</a> /
+        <a href="../../index.html#rural-healthcare">Rural Healthcare</a> /
+        Chapter 4
+      </nav>
+      <h1>Disease Burden & Epidemiological Spread</h1>
+      <p class="module-subtitle">Modeling Chronic Prevalance and Infectious R₀ in Isolated Clusters.</p>
+    </header>
+
+    <div class="module-layout">
+      <div class="viz-area">
+        <div class="epidemic-viz" id="disease-canv"></div>
+        <div class="stats-panel">
+          <div class="m-card"><div class="m-label">Infected %</div><div id="perc-inf" class="m-val text-error">0.0%</div></div>
+          <div class="m-card"><div class="m-label">Effective R_e</div><div id="val-re" class="m-val text-warning">0.0</div></div>
+        </div>
+      </div>
+
+      <aside class="control-panel">
+        <div class="control-section">
+          <h3>Simulation Parameters</h3>
+          <div id="disease-inputs"></div>
+          <button id="btn-reset" class="btn btn-secondary w-full mt-4">Reset Simulation</button>
+        </div>
+        <div class="control-section">
+          <h3>Chronic Prevalance</h3>
+          <p class="text-xs text-slate-500">Aging-driven chronic clusters increase vulnerability to infectious surges.</p>
+          <div class="m-card mt-2"><div class="m-label">Diabetes/COPD Rate</div><div id="chronic-prev" class="m-val">12.5%</div></div>
+        </div>
+      </aside>
+    </div>
+
+    <div class="info-panel">
+      <section>
+        <h2>Connectivity and R₀ in Rural Areas</h2>
+        <p>
+          Unlike urban centers with continuous exposure, rural disease spread is often characterized by 
+          **Stochastic Jump Processes**. Long periods of zero infection are interrupted by 
+          **Super-Spreader Events** (community fairs, church gatherings, or regional schools). 
+          The lack of daily background exposure can lead to rapid "Flash Outbreaks" that overwhelm CAHs.
+        </p>
+        <div id="math-epidemic"></div>
+      </section>
+    </div>
+  </div>
+  <script type="module" src="./module.js"></script>
+</body>
+</html>

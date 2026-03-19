@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rural Healthcare Nexus: The Interactive Textbook | Probability Education</title>
+  <link rel="stylesheet" href="../../../css/main.css">
+  <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.38/dist/katex.min.css">
+</head>
+<body class="nexus-theme">
+  <!-- Navigation Header -->
+  <nav class="top-nav">
+    <div class="nav-content">
+      <a href="../../../index.html" class="back-link">← Platform Home</a>
+      <div class="nav-title">Interactive Textbook: Healthcare Operations Modeling</div>
+      <div class="search-box">
+        <input type="text" id="chapter-search" placeholder="Search methods, models, chapters...">
+      </div>
+    </div>
+  </nav>
+
+  <main class="textbook-shell">
+    <!-- Sidebar: Interactive Table of Contents -->
+    <aside class="sidebar-toc" id="sidebar">
+      <div class="toc-header">
+        <h3>Contents</h3>
+        <span class="m-label">2026 Edition</span>
+      </div>
+      <div class="toc-list" id="toc-list">
+        <!-- Chapters injected by JS -->
+      </div>
+    </aside>
+
+    <!-- Content Area: The Reader Pane -->
+    <article class="reader-pane" id="reader">
+      <div id="content-boundary">
+        <div class="chapter-hero" id="chapter-hero">
+          <div id="hero-title">Welcome to the Nexus</div>
+          <p id="hero-desc">Select a chapter from the left to begin your journey through rural healthcare operations modeling.</p>
+        </div>
+        
+        <div id="chapter-body" class="typography-prose">
+          <!-- Text content injected by JS -->
+        </div>
+
+        <!-- Interactive Playground Anchor -->
+        <div id="playground-anchor" class="playground-container" style="display: none;">
+          <div class="playground-header">
+            <h4>Live Simulation Lab</h4>
+            <div class="p-control">
+              <button id="btn-maximize" class="btn btn-sm btn-ghost">Maximize</button>
+            </div>
+          </div>
+          <div class="iframe-wrapper">
+             <iframe id="sim-frame" src="" frameborder="0"></iframe>
+          </div>
+        </div>
+      </div>
+    </article>
+  </main>
+
+  <div id="antigravity-error-overlay"></div>
+  <script type="module" src="./module.js"></script>
+</body>
+</html>

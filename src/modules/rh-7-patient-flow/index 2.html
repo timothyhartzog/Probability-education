@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 7: Patient Flow & Surge Simulator | Rural Nexus</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <link rel="stylesheet" href="../../assets/design-system.css">
+  <link rel="stylesheet" href="../../assets/module-template.css">
+  <style>
+    .ca-comparison {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-md);
+    }
+    .hospital-view {
+      background: var(--color-surface);
+      border: 1px solid #e5e7eb;
+      border-radius: var(--radius-lg);
+      padding: var(--space-md);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+    }
+    .h-header {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid #f3f4f6;
+      padding-bottom: 8px;
+    }
+    .viz-window { height: 300px; position: relative; }
+    .bed-grid { 
+      display: grid; 
+      grid-template-columns: repeat(10, 1fr); 
+      gap: 3px; 
+      margin-top: 10px;
+    }
+    .rural-grid { grid-template-columns: repeat(5, 1fr); max-width: 150px; }
+    .bed { 
+      width: 100%; aspect-ratio: 1; 
+      background: #f1f5f9; border-radius: 2px;
+      transition: background 0.3s;
+    }
+    .bed.occupied { background: var(--color-accent); border: 1px solid rgba(0,0,0,0.1); }
+    .bed.surge { background: var(--color-error); }
+    .metric-row { display: flex; gap: 10px; margin-top: auto; }
+    .m-card { 
+      flex: 1; 
+      padding: 6px; 
+      background: #f8fafc; 
+      border-radius: var(--radius-sm);
+      text-align: center;
+    }
+    .m-label { font-size: 0.65rem; color: #64748b; text-transform: uppercase; }
+    .m-val { font-size: 1.1rem; font-weight: 700; font-family: var(--font-mono); }
+    
+    .event-log {
+      margin-top: var(--space-md);
+      height: 120px;
+      background: #1e293b;
+      color: #94a3b8;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      padding: 10px;
+      border-radius: var(--radius-md);
+      overflow-y: auto;
+    }
+    .log-entry { margin-bottom: 2px; }
+    .log-entry.critical { color: #f87171; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="module-page">
+    <header class="module-header">
+      <nav class="breadcrumb">
+        <a href="../../index.html">Home</a> /
+        <a href="../../index.html#rural-healthcare">Rural Healthcare</a> /
+        Chapter 7
+      </nav>
+      <h1>Stochastic Modeling of Patient Flow</h1>
+      <p class="module-subtitle">The "Small N" Challenge: Why the Law of Large Numbers fails in Rural Facilities.</p>
+    </header>
+
+    <div class="module-layout">
+      <div class="viz-area">
+        <div class="ca-comparison">
+          <!-- Urban Hub -->
+          <div class="hospital-view">
+            <div class="h-header">
+              <span class="m-label font-bold text-blue-600">Urban Hub (500 Bed)</span>
+              <span id="urban-occupancy" class="m-val text-blue-600">--%</span>
+            </div>
+            <div id="urban-charts" class="viz-window"></div>
+            <div class="metric-row">
+              <div class="m-card"><div class="m-label">Wait Time</div><div id="urban-wait" class="m-val">--</div></div>
+              <div class="m-card"><div class="m-label">Diversion</div><div id="urban-diversion" class="m-val">No</div></div>
+            </div>
+          </div>
+
+          <!-- Rural CAH -->
+          <div class="hospital-view">
+            <div class="h-header">
+              <span class="m-label font-bold text-orange-600">Critical Access (25 Bed)</span>
+              <span id="rural-occupancy" class="m-val text-orange-600">--%</span>
+            </div>
+            <div id="rural-charts" class="viz-window">
+              <div id="rural-beds" class="bed-grid rural-grid"></div>
+            </div>
+            <div class="metric-row">
+              <div class="m-card"><div class="m-label">Wait Time</div><div id="rural-wait" class="m-val">--</div></div>
+              <div class="m-card"><div class="m-label">Diversion</div><div id="rural-diversion" class="m-val">No</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="event-log" id="log-box">
+          <div class="log-entry">SIMULATION INITIALIZED...</div>
+        </div>
+      </div>
+
+      <aside class="control-panel" id="controls">
+        <div class="control-section">
+          <h3>Simulation Engine</h3>
+          <button id="btn-play" class="btn btn-primary w-full mb-2">Run Simulation</button>
+          <button id="btn-trauma" class="btn btn-error w-full">Trigger Regional Trauma (Car Crash)</button>
+        </div>
+        <div class="control-section" id="params">
+          <!-- Parameter sliders -->
+        </div>
+      </aside>
+    </div>
+
+    <div class="info-panel">
+      <section>
+        <h2>Probability Theory in the Rural Nexus</h2>
+        <p>
+          Urban hospitals benefit from the <strong>Law of Large Numbers (LLN)</strong>. With hundreds of patients daily, 
+          the average arrival rate and service time are stable and highly predictable. 
+          The variance of the mean $\sigma^2/n$ approaches zero as $n$ increases.
+        </p>
+        <p>
+          In a <strong>Critical Access Hospital (CAH)</strong>, $n$ is very small. Arrival patterns are "lumpy." 
+          A single high-acuity event (Chapter 7: The "Surge") can represent 500% of the daily mean demand, 
+          immediately saturating the facility or exceeding the "96-hour stay rule" (Chapter 6).
+        </p>
+        <div id="math-variance"></div>
+      </section>
+    </div>
+  </div>
+
+  <div id="antigravity-error-overlay"></div>
+  <script type="module" src="./module.js"></script>
+</body>
+</html>
