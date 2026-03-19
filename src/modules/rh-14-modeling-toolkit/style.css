@@ -10,13 +10,13 @@
   display: flex;
   height: calc(100vh - 64px); /* Nav height */
   overflow: hidden;
-  background: var(--color-background);
+  background: var(--color-bg);
 }
 
 .config-sidebar {
   width: var(--sidebar-width);
   background: var(--color-surface);
-  border-right: 1px solid var(--color-border);
+  border-right: 1px solid #e2e8f0;
   display: flex;
   flex-direction: column;
   padding: 1.5rem;
@@ -38,7 +38,7 @@
 
 .config-header p {
   font-size: 0.875rem;
-  color: var(--color-text-light);
+  color: var(--color-text-secondary);
 }
 
 .config-groups {
@@ -70,7 +70,7 @@
   font-size: 1.125rem;
   max-width: 900px;
   line-height: 1.6;
-  color: var(--color-text-light);
+  color: var(--color-text-secondary);
 }
 
 .sim-grid {
@@ -81,7 +81,7 @@
 
 .sim-card {
   background: var(--color-surface);
-  border: 1px solid var(--color-border);
+  border: 1px solid #e2e8f0;
   border-radius: 1rem;
   padding: 1.25rem;
   display: flex;
@@ -122,8 +122,34 @@
 .card-footer {
   margin-top: 1rem;
   padding-top: 0.75rem;
-  border-top: 1px solid var(--color-border);
+  border-top: 1px solid #e2e8f0;
   font-size: 0.875rem;
+}
+
+.config-slider-label {
+  display: block;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+.config-slider-value {
+  float: right;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.config-slider-group {
+  margin-bottom: 1.5rem;
+}
+
+.config-slider-group input[type=range] {
+  width: 100%;
+  accent-color: var(--color-primary);
 }
 
 .anomaly-section {

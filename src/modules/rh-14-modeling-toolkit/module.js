@@ -105,13 +105,16 @@ function updateDerivedData() {
 function renderAll() {
   renderDistChart();
   renderQueueChart();
+  renderABMCascade();
+  renderKMCurve();
+  renderROIChart();
   renderAnomalyStream();
 }
 
 function renderDistChart() {
   const container = d3.select('#viz-ed-dist');
-  const width = container.node().clientWidth;
-  const height = container.node().clientHeight;
+  if (!container.node()) return;
+  const { w: width, h: height } = getSVGDims('#viz-ed-dist', 380, 300);
   container.selectAll('svg').remove();
 
   const svg = container.append('svg').attr('width', width).attr('height', height);
@@ -159,8 +162,8 @@ function renderDistChart() {
 
 function renderQueueChart() {
   const container = d3.select('#viz-queue-curve');
-  const width = container.node().clientWidth;
-  const height = container.node().clientHeight;
+  if (!container.node()) return;
+  const { w: width, h: height } = getSVGDims('#viz-queue-curve', 380, 300);
   container.selectAll('svg').remove();
 
   const svg = container.append('svg').attr('width', width).attr('height', height);
@@ -208,10 +211,235 @@ function renderQueueChart() {
   `);
 }
 
+function getSVGDims(selector, fallbackW, fallbackH) {
+  const node = document.querySelector(selector);
+  const w = (node && node.clientWidth > 0) ? node.clientWidth : fallbackW;
+  const h = (node && node.clientHeight > 0) ? node.clientHeight : fallbackH;
+  return { w, h };
+}
+
+// ---- Agent Cascade Simulation (staffing cascade model) ----------
+function renderABMCascade() {
+  const container = d3.select('#viz-abm-cascade');
+  if (!container.node()) return;
+  container.selectAll('svg').remove();
+
+  const cfg = state.config;
+  const { w, h } = getSVGDims('#viz-abm-cascade', 700, 340);
+  const margin = { top: 20, right: 20, bottom: 40, left: 50 };
+  const iW = w - margin.left - margin.right;
+  const iH = h - margin.top - margin.bottom;
+
+  // Simulate cascade: each departure increases load, above threshold triggers more
+  const steps = 60;
+  const initStaff = cfg.rnFTE;
+  const threshold = initStaff * 0.65; // below 65% triggers cascade
+  const cascadeRate = 0.08; // prob additional departure per step if below threshold
+  const recoveryRate = 0.04; // prob hire per step
+
+  let staffSeries = [initStaff];
+  let loadSeries = [1.0];
+  for (let i = 1; i < steps; i++) {
+    let s = staffSeries[i - 1];
+    const load = Math.min(3.0, initStaff / Math.max(1, s));
+    if (s < threshold) {
+      // Cascade: high load triggers departures
+      if (Math.random() < cascadeRate * load) s = Math.max(1, s - 1);
+    }
+    // Slow recovery
+    if (Math.random() < recoveryRate && s < initStaff) s++;
+    staffSeries.push(s);
+    loadSeries.push(Math.min(3.0, initStaff / Math.max(1, s)));
+  }
+
+  const svg = container.append('svg').attr('width', w).attr('height', h);
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+
+  const x = d3.scaleLinear().domain([0, steps - 1]).range([0, iW]);
+  const yStaff = d3.scaleLinear().domain([0, initStaff * 1.1]).range([iH, 0]);
+  const yLoad = d3.scaleLinear().domain([0, 3.5]).range([iH, 0]);
+
+  // Threshold band
+  g.append('rect')
+    .attr('x', 0).attr('width', iW)
+    .attr('y', yStaff(threshold)).attr('height', iH - yStaff(threshold))
+    .attr('fill', '#fef2f2').attr('opacity', 0.6);
+
+  g.append('line')
+    .attr('x1', 0).attr('x2', iW)
+    .attr('y1', yStaff(threshold)).attr('y2', yStaff(threshold))
+    .attr('stroke', 'var(--color-error)').attr('stroke-width', 1.5).attr('stroke-dasharray', '5,3');
+
+  g.append('text')
+    .attr('x', iW - 4).attr('y', yStaff(threshold) - 4)
+    .attr('text-anchor', 'end').attr('font-size', 11).attr('fill', 'var(--color-error)')
+    .text('Cascade threshold');
+
+  // Staff line
+  const staffLine = d3.line().x((_, i) => x(i)).y(d => yStaff(d)).curve(d3.curveMonotoneX);
+  g.append('path').datum(staffSeries)
+    .attr('fill', 'none').attr('stroke', 'var(--color-primary)').attr('stroke-width', 2.5)
+    .attr('d', staffLine);
+
+  g.append('g').attr('transform', `translate(0,${iH})`).call(d3.axisBottom(x).ticks(8).tickFormat(d => `Day ${d}`));
+  g.append('g').call(d3.axisLeft(yStaff).ticks(5));
+
+  g.append('text').attr('class', 'axis-label').attr('transform', `translate(-38,${iH / 2}) rotate(-90)`)
+    .attr('text-anchor', 'middle').attr('font-size', 11).text('RN FTE');
+
+  d3.select('#stats-abm').html(
+    `<span>Final staff: <strong>${staffSeries[steps - 1].toFixed(0)}</strong> FTE</span> &nbsp; ` +
+    `<span>Min: <strong>${d3.min(staffSeries).toFixed(0)}</strong></span> &nbsp; ` +
+    `<span>Cascaded: <strong>${staffSeries.filter(s => s < threshold).length}</strong> days below threshold</span>`
+  );
+}
+
+// ---- Kaplan-Meier Nurse Retention Curve -------------------------
+function renderKMCurve() {
+  const container = d3.select('#viz-km-curve');
+  if (!container.node()) return;
+  container.selectAll('svg').remove();
+
+  const cfg = state.config;
+  const { w, h } = getSVGDims('#viz-km-curve', 380, 300);
+  const margin = { top: 20, right: 20, bottom: 40, left: 50 };
+  const iW = w - margin.left - margin.right;
+  const iH = h - margin.top - margin.bottom;
+
+  // Simulate event times for rural vs urban retention (exponential)
+  const nNurses = Math.round(cfg.rnFTE * 3); // 3 years of cohort
+  const ruralRate = 0.028; // monthly departure rate (rural ~35% annual turnover)
+  const urbanRate = 0.015; // urban ~18% annual turnover
+  const maxMonths = 36;
+
+  function kmEstimate(rate, n) {
+    // Generate departure months, then compute KM
+    const times = d3.range(n).map(() => Math.floor(-Math.log(Math.random()) / rate));
+    const sorted = times.slice().sort((a, b) => a - b);
+    let atRisk = n, survival = 1;
+    const curve = [{ t: 0, s: 1 }];
+    for (let t = 1; t <= maxMonths; t++) {
+      const events = sorted.filter(x => x === t).length;
+      if (events > 0 && atRisk > 0) {
+        survival *= (1 - events / atRisk);
+      }
+      atRisk -= sorted.filter(x => x <= t).length - sorted.filter(x => x < t).length;
+      curve.push({ t, s: Math.max(0, survival) });
+    }
+    return curve;
+  }
+
+  const ruralKM = kmEstimate(ruralRate, nNurses);
+  const urbanKM = kmEstimate(urbanRate, nNurses);
+
+  const svg = container.append('svg').attr('width', w).attr('height', h);
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+
+  const x = d3.scaleLinear().domain([0, maxMonths]).range([0, iW]);
+  const y = d3.scaleLinear().domain([0, 1]).range([iH, 0]);
+
+  const stepLine = d3.line().x(d => x(d.t)).y(d => y(d.s)).curve(d3.curveStepAfter);
+
+  g.append('path').datum(ruralKM)
+    .attr('fill', 'none').attr('stroke', 'var(--color-error)').attr('stroke-width', 2.5)
+    .attr('d', stepLine);
+  g.append('path').datum(urbanKM)
+    .attr('fill', 'none').attr('stroke', 'var(--color-primary)').attr('stroke-width', 2).attr('stroke-dasharray', '6,3')
+    .attr('d', stepLine);
+
+  // Legend
+  const leg = g.append('g').attr('transform', `translate(${iW - 120}, 10)`);
+  leg.append('line').attr('x2', 20).attr('stroke', 'var(--color-error)').attr('stroke-width', 2.5);
+  leg.append('text').attr('x', 24).attr('y', 4).attr('font-size', 11).text('Rural');
+  leg.append('line').attr('y1', 18).attr('y2', 18).attr('x2', 20).attr('stroke', 'var(--color-primary)').attr('stroke-width', 2).attr('stroke-dasharray', '6,3');
+  leg.append('text').attr('x', 24).attr('y', 22).attr('font-size', 11).text('Urban');
+
+  g.append('g').attr('transform', `translate(0,${iH})`).call(d3.axisBottom(x).ticks(6).tickFormat(d => `Mo ${d}`));
+  g.append('g').call(d3.axisLeft(y).ticks(5).tickFormat(d3.format('.0%')));
+
+  g.append('text').attr('class', 'axis-label').attr('transform', `translate(-38,${iH / 2}) rotate(-90)`)
+    .attr('text-anchor', 'middle').attr('font-size', 11).text('P(Still Employed)');
+
+  const rural12 = ruralKM.find(d => d.t === 12)?.s ?? 0;
+  const urban12 = urbanKM.find(d => d.t === 12)?.s ?? 0;
+  d3.select('#stats-survival').html(
+    `<span>1-yr retention — Rural: <strong>${(rural12 * 100).toFixed(0)}%</strong> &nbsp; Urban: <strong>${(urban12 * 100).toFixed(0)}%</strong></span>`
+  );
+}
+
+// ---- 5-Year Financial ROI Chart ---------------------------------
+function renderROIChart() {
+  const container = d3.select('#viz-fin-roi');
+  if (!container.node()) return;
+  container.selectAll('svg').remove();
+
+  const cfg = state.config;
+  const { w, h } = getSVGDims('#viz-fin-roi', 380, 300);
+  const margin = { top: 20, right: 20, bottom: 40, left: 60 };
+  const iW = w - margin.left - margin.right;
+  const iH = h - margin.top - margin.bottom;
+
+  // Simple DCF model: staffing intervention cost upfront, then reduced turnover savings
+  const discountRate = 0.06;
+  const intervention = cfg.budgetStaff * 0.5; // 50% of staffing budget as upfront investment
+  const annualTurnoverCost = cfg.rnFTE * 15000; // $15k per RN turnover event
+  const retentionImprovement = 0.25; // 25% turnover reduction from intervention
+  const annualSavings = annualTurnoverCost * retentionImprovement;
+
+  const years = [0, 1, 2, 3, 4, 5];
+  let cumulativeNPV = -intervention;
+  const cashFlows = years.map(yr => {
+    if (yr === 0) return { yr, cf: -intervention, cumNPV: -intervention };
+    const discounted = annualSavings / Math.pow(1 + discountRate, yr);
+    cumulativeNPV += discounted;
+    return { yr, cf: discounted, cumNPV: cumulativeNPV };
+  });
+
+  const svg = container.append('svg').attr('width', w).attr('height', h);
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+
+  const x = d3.scaleBand().domain(years.map(String)).range([0, iW]).padding(0.3);
+  const minVal = d3.min(cashFlows, d => d.cumNPV);
+  const maxVal = d3.max(cashFlows, d => d.cumNPV);
+  const pad = (maxVal - minVal) * 0.15 || 10000;
+  const y = d3.scaleLinear().domain([minVal - pad, maxVal + pad]).range([iH, 0]);
+
+  // Zero line
+  g.append('line').attr('x1', 0).attr('x2', iW)
+    .attr('y1', y(0)).attr('y2', y(0))
+    .attr('stroke', '#94a3b8').attr('stroke-width', 1).attr('stroke-dasharray', '4,3');
+
+  // Bars
+  g.selectAll('.roi-bar').data(cashFlows).join('rect').attr('class', 'roi-bar')
+    .attr('x', d => x(String(d.yr)))
+    .attr('width', x.bandwidth())
+    .attr('y', d => d.cumNPV >= 0 ? y(d.cumNPV) : y(0))
+    .attr('height', d => Math.abs(y(d.cumNPV) - y(0)))
+    .attr('fill', d => d.cumNPV >= 0 ? 'var(--color-accent)' : 'var(--color-error)')
+    .attr('rx', 3);
+
+  // NPV line
+  const line = d3.line().x(d => x(String(d.yr)) + x.bandwidth() / 2).y(d => y(d.cumNPV)).curve(d3.curveMonotoneX);
+  g.append('path').datum(cashFlows).attr('fill', 'none').attr('stroke', 'var(--color-primary)').attr('stroke-width', 2).attr('d', line);
+
+  g.append('g').attr('transform', `translate(0,${iH})`).call(d3.axisBottom(x).tickFormat(d => `Yr ${d}`));
+  g.append('g').call(d3.axisLeft(y).ticks(5).tickFormat(d => `$${(d / 1000).toFixed(0)}k`));
+
+  g.append('text').attr('class', 'axis-label').attr('transform', `translate(-50,${iH / 2}) rotate(-90)`)
+    .attr('text-anchor', 'middle').attr('font-size', 11).text('Cumulative NPV ($)');
+
+  const finalNPV = cashFlows[cashFlows.length - 1].cumNPV;
+  const breakeven = cashFlows.find(d => d.yr > 0 && d.cumNPV >= 0);
+  d3.select('#stats-finance').html(
+    `<span>5-yr NPV: <strong style="color:${finalNPV >= 0 ? 'var(--color-accent)' : 'var(--color-error)'}">${finalNPV >= 0 ? '+' : ''}$${(finalNPV / 1000).toFixed(0)}k</strong></span> &nbsp; ` +
+    `<span>Break-even: <strong>Year ${breakeven ? breakeven.yr : '>5'}</strong></span>`
+  );
+}
+
 function renderAnomalyStream() {
   const container = d3.select('#viz-anomalies');
-  const width = container.node().clientWidth;
-  const height = container.node().clientHeight;
+  if (!container.node()) return;
+  const { w: width, h: height } = getSVGDims('#viz-anomalies', 700, 300);
   container.selectAll('svg').remove();
 
   const svg = container.append('svg').attr('width', width).attr('height', height);
@@ -267,16 +495,18 @@ function initControls() {
 
   const parent = d3.select('#config-controls');
   controls.forEach(c => {
-    const group = parent.append('div').attr('class', 'mb-6');
-    group.append('label').attr('class', 'text-xs uppercase font-bold text-slate-500 mb-2 block').text(c.label);
-    const slider = group.append('input')
+    const group = parent.append('div').attr('class', 'config-slider-group');
+    const labelEl = group.append('label').attr('class', 'config-slider-label');
+    labelEl.append('span').text(c.label);
+    const valSpan = labelEl.append('span').attr('class', 'config-slider-value').text(c.val);
+    group.append('input')
       .attr('type', 'range')
       .attr('min', c.min)
       .attr('max', c.max)
       .attr('value', c.val)
-      .attr('class', 'w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600')
       .on('input', function() {
         state.config[c.id] = +this.value;
+        valSpan.text(this.value);
         engine.step(state);
       });
   });
@@ -298,6 +528,6 @@ document.addEventListener('DOMContentLoaded', () => {
     engine.step(state);
   });
 
-  // Start the engine
-  engine.step(state);
+  // Defer initial render so browser completes layout first (clientWidth/clientHeight > 0)
+  requestAnimationFrame(() => engine.step(state));
 });
