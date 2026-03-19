@@ -133,6 +133,14 @@
               <div class="stat-value" id="stat-exact">--</div>
               <div class="stat-label">Exact Integral</div>
             </div>
+            <div class="stat-card" style="border-left-color: var(--viz-2)">
+              <div class="stat-value" id="stat-riemann-gap">--</div>
+              <div class="stat-label">Riemann Gap (U−L)</div>
+            </div>
+            <div class="stat-card" style="border-left-color: var(--viz-3)">
+              <div class="stat-value" id="stat-lebesgue-error">--</div>
+              <div class="stat-label">Lebesgue Error</div>
+            </div>
           </div>
         </aside>
       </div>
@@ -164,11 +172,60 @@
           <summary>The Dirichlet Function</summary>
           <div class="detail-body">
             <p>
-              The indicator of the rationals, 1<sub>Q</sub>(x), is the canonical example where
+              The indicator of the rationals, 1<sub>&Qopf;</sub>(x), is the canonical example where
               Riemann integration fails but Lebesgue integration succeeds. Every subinterval
               contains both rationals and irrationals, so the Riemann upper sum is 1 and the
               lower sum is 0, regardless of partition size. But the Lebesgue integral is 0
-              because Q has measure zero.
+              because &Qopf; has measure zero.
+            </p>
+            <p>
+              From the Lebesgue perspective, the range of 1<sub>&Qopf;</sub> is {0, 1}. The preimage of {1} is &Qopf; &cap; [0,1], which has Lebesgue measure 0. The preimage of {0} is (&Reals; &setminus; &Qopf;) &cap; [0,1], which has measure 1. So the integral is 1 &middot; 0 + 0 &middot; 1 = 0.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>Simple Function Approximation</summary>
+          <div class="detail-body">
+            <p>
+              The Lebesgue integral is constructed in stages. A <strong>simple function</strong> is a finite linear combination of indicator functions: &phi; = &sum;<sub>i</sub> a<sub>i</sub> &middot; 1<sub>A<sub>i</sub></sub>. Its integral is defined as &int; &phi; d&mu; = &sum;<sub>i</sub> a<sub>i</sub> &mu;(A<sub>i</sub>).
+            </p>
+            <p>
+              For any non-negative measurable f, there exists a sequence of simple functions &phi;<sub>n</sub> &uarr; f pointwise. The Lebesgue integral is then defined as the supremum of &int; &phi; d&mu; over all simple &phi; &le; f. This construction guarantees &int; f d&mu; is well-defined (possibly +&infin;) for all non-negative measurable f.
+            </p>
+            <p>
+              The <strong>Lebesgue slicing</strong> shown on the right panel is exactly this: each horizontal strip [y, y+&delta;y) defines a set A = f<sup>&minus;1</sup>([y, y+&delta;y)), and the contribution is y &middot; &mu;(A). Summing these gives the simple function approximation to &int; f d&mu;.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>Limit Theorems: MCT and DCT</summary>
+          <div class="detail-body">
+            <p>
+              The Lebesgue framework's greatest advantage is that limits can be passed <em>inside</em> integrals under mild conditions. Suppose f<sub>n</sub> &rarr; f pointwise:
+            </p>
+            <ul>
+              <li><strong>Monotone Convergence Theorem (MCT)</strong>: If 0 &le; f<sub>n</sub> &uarr; f, then &int; f<sub>n</sub> d&mu; &rarr; &int; f d&mu;. No absolute bound required — monotonicity is enough.</li>
+              <li><strong>Dominated Convergence Theorem (DCT)</strong>: If |f<sub>n</sub>| &le; g for some integrable g, then &int; f<sub>n</sub> d&mu; &rarr; &int; f d&mu;. The function g <em>dominates</em> the sequence.</li>
+              <li><strong>Fatou's Lemma</strong>: &int; lim inf f<sub>n</sub> d&mu; &le; lim inf &int; f<sub>n</sub> d&mu; (for non-negative f<sub>n</sub>). The inequality can be strict if probability mass escapes to infinity.</li>
+            </ul>
+            <p>
+              These theorems fail for the Riemann integral. The Riemann integral of a pointwise limit of integrable functions may not equal the limit of integrals, even for bounded sequences on compact intervals. The Lebesgue framework resolves this, enabling the foundations of L<sup>p</sup> spaces, Fourier analysis, and probability theory.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>L<sup>p</sup> Spaces and Integrability Classes</summary>
+          <div class="detail-body">
+            <p>
+              The Lebesgue integral defines a family of function spaces. For p &ge; 1, the space L<sup>p</sup>(&mu;) consists of all measurable functions with finite p-norm: &Vert;f&Vert;<sub>p</sub> = (&int; |f|<sup>p</sup> d&mu;)<sup>1/p</sup> &lt; &infin;.
+            </p>
+            <ul>
+              <li><strong>L<sup>1</sup></strong>: Integrable functions. Expectation E[X] = &int; X dP is defined for L<sup>1</sup> random variables.</li>
+              <li><strong>L<sup>2</sup></strong>: Square-integrable functions. Variance Var(X) = E[X<sup>2</sup>] &minus; (E[X])<sup>2</sup> is finite. L<sup>2</sup> is a Hilbert space with inner product &lang;f, g&rang; = &int; fg d&mu;.</li>
+              <li><strong>L<sup>&infin;</sup></strong>: Essentially bounded functions. &Vert;f&Vert;<sub>&infin;</sub> = ess sup |f| &lt; &infin;.</li>
+            </ul>
+            <p>
+              The Hölder inequality &int; |fg| d&mu; &le; &Vert;f&Vert;<sub>p</sub> &Vert;g&Vert;<sub>q</sub> (where 1/p + 1/q = 1) and the Minkowski inequality &Vert;f+g&Vert;<sub>p</sub> &le; &Vert;f&Vert;<sub>p</sub> + &Vert;g&Vert;<sub>p</sub> make L<sup>p</sup> a Banach space. For probability: if X &in; L<sup>p</sup> then X &in; L<sup>q</sup> for all q &le; p.
             </p>
           </div>
         </details>

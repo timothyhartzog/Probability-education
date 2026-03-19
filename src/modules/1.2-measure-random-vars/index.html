@@ -54,6 +54,15 @@
               <div id="pushforward-chart"></div>
             </div>
           </div>
+
+          <!-- CDF Panel -->
+          <div class="viz-container" id="cdf-panel" aria-label="Cumulative Distribution Function chart">
+            <div class="viz-title">Cumulative Distribution Function F<sub>X</sub>(t)</div>
+            <div class="viz-subtitle" id="cdf-subtitle">
+              F<sub>X</sub>(t) = P(X &le; t) &mdash; right-continuous staircase with jumps at each range value
+            </div>
+            <div id="cdf-chart"></div>
+          </div>
         </div>
 
         <aside class="control-panel" id="control-panel">
@@ -182,6 +191,46 @@
               are the level sets {&omega; : X(&omega;) = x} for each value x in the range of X.
               More atoms means X distinguishes more outcomes &mdash; the identity function generates
               the finest (power set) sigma-algebra, while a constant function generates the trivial one.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>The Cumulative Distribution Function</summary>
+          <div class="detail-body">
+            <p>
+              The <strong>CDF</strong> of X is defined as F<sub>X</sub>(t) = P(X &le; t) = P<sub>X</sub>((−&infin;, t]). It is a complete description of the distribution of X: two random variables with the same CDF have the same distribution, regardless of what probability space (&Omega;, F, P) they are defined on.
+            </p>
+            <p>
+              The CDF satisfies three key properties: (1) non-decreasing, (2) right-continuous with left limits (càdlàg), (3) F<sub>X</sub>(−&infin;) = 0 and F<sub>X</sub>(+&infin;) = 1. On a finite sample space, the CDF is a staircase function &mdash; each jump at value x has size P<sub>X</sub>({x}).
+            </p>
+            <p>
+              Conversely, <em>any</em> right-continuous non-decreasing function from &Reals; to [0,1] with the correct limits is the CDF of some measure &mdash; this is the <strong>Helly-Bray theorem</strong> and is how probability measures on (&Reals;, &Beta;(&Reals;)) are constructed from CDFs without needing an explicit sample space.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>Independence: A Measure-Theoretic View</summary>
+          <div class="detail-body">
+            <p>
+              Events A, B &in; F are <strong>independent</strong> if P(A &cap; B) = P(A) &middot; P(B). Random variables X, Y are independent if &sigma;(X) and &sigma;(Y) are independent sigma-algebras: for all A &in; &sigma;(X) and B &in; &sigma;(Y), P(A &cap; B) = P(A)P(B).
+            </p>
+            <p>
+              This is equivalent to: for all Borel sets B<sub>1</sub>, B<sub>2</sub> &sube; &Reals;, P(X &in; B<sub>1</sub>, Y &in; B<sub>2</sub>) = P(X &in; B<sub>1</sub>) &middot; P(Y &in; B<sub>2</sub>). For discrete RVs, this means P(X = x, Y = y) = P(X = x) &middot; P(Y = y) for all x, y.
+            </p>
+            <p>
+              The pushforward of (X, Y) jointly is a measure on (&Reals;&sup2;, &Beta;(&Reals;&sup2;)). Independence holds if and only if this joint pushforward equals the product measure P<sub>X</sub> &otimes; P<sub>Y</sub>. The <strong>joint distribution factorizes</strong> as a product of marginals.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>Absolute Continuity and Density Functions</summary>
+          <div class="detail-body">
+            <p>
+              A probability measure &mu; is <strong>absolutely continuous</strong> with respect to Lebesgue measure &lambda; (written &mu; &ll; &lambda;) if &lambda;(A) = 0 implies &mu;(A) = 0. By the <strong>Radon-Nikodym theorem</strong>, this is equivalent to the existence of a non-negative measurable function f (the <em>probability density function</em>) such that:
+            </p>
+            <p style="text-align:center"><strong>&mu;(A) = &int;<sub>A</sub> f(x) d&lambda;(x)</strong> for all A &in; &Beta;(&Reals;)</p>
+            <p>
+              The density f is the Radon-Nikodym derivative d&mu;/d&lambda;. For continuous distributions like Normal or Exponential, f is the familiar PDF. For discrete distributions, no density exists with respect to Lebesgue measure &mdash; instead, the pushforward measure is absolutely continuous with respect to <em>counting measure</em>.
             </p>
           </div>
         </details>

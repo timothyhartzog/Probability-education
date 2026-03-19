@@ -155,6 +155,48 @@
               everywhere (on the complement of the Cantor set, which has full measure). It is
               the CDF of the Cantor measure, a <strong>singular continuous</strong> measure.
             </p>
+            <p>
+              Singular continuous measures sit in between: they are neither discrete (no atom has positive measure) nor absolutely continuous (no density function f with &mu; = f &middot; &lambda; exists). The Lebesgue decomposition theorem guarantees that any measure uniquely decomposes as &mu; = &mu;<sub>ac</sub> + &mu;<sub>sc</sub> + &mu;<sub>pp</sub> — absolutely continuous, singular continuous, and pure point (discrete) parts.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>Cardinality vs. Measure — The Paradox</summary>
+          <div class="detail-body">
+            <p>
+              The Cantor set resolves a naive intuition: <em>"uncountably many points should have positive measure."</em> In fact, the Cantor set C is:
+            </p>
+            <ul>
+              <li><strong>Uncountable</strong>: |C| = |[0,1]| = 2<sup>&aleph;<sub>0</sub></sup> (the cardinality of the continuum). This follows from the ternary representation — each point in C corresponds to an infinite sequence of 0s and 2s, and such sequences biject with {0,1}<sup>&Naturals;</sup>.</li>
+              <li><strong>Lebesgue measure zero</strong>: The total length of removed intervals is (1/3) + 2(1/9) + 4(1/27) + &hellip; = &sum;<sub>n=0</sub><sup>&infin;</sup> (2/3)<sup>n</sup> &middot; (1/3) = 1. So 100% of [0,1]'s length is removed, yet C remains.</li>
+            </ul>
+            <p>
+              This resolves as follows: measure and cardinality are fundamentally different notions. The rationals &Qopf; &cap; [0,1] are countable (measure zero is intuitive). The irrationals are uncountable (measure 1 is intuitive). But the Cantor set breaks this pattern: uncountable yet measure zero. Cardinality cannot predict measure.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>Ternary Representation and the Digit Characterization</summary>
+          <div class="detail-body">
+            <p>
+              Every x &in; [0,1] has a <strong>base-3 (ternary) expansion</strong>: x = &sum;<sub>k=1</sub><sup>&infin;</sup> d<sub>k</sub> / 3<sup>k</sup> where each digit d<sub>k</sub> &in; {0, 1, 2}. The middle-third removal at step 1 eliminates all x with d<sub>1</sub> = 1. At step 2, all x with d<sub>2</sub> = 1 (within each remaining interval) are removed. After all steps:
+            </p>
+            <p style="text-align:center"><strong>C = {x &in; [0,1] : all ternary digits of x are in {0, 2}}</strong></p>
+            <p>
+              From this, the bijection with {0,1}<sup>&Naturals;</sup> is explicit: map each digit 0 &rarr; 0, 2 &rarr; 1. This gives an uncountable encoding, proving |C| = 2<sup>&aleph;<sub>0</sub></sup>. The Cantor function maps x &in; C to the binary number formed by replacing each digit 2 with 1: this makes the function constant on each removed interval and continuous on C.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>Fat Cantor Sets and Positive Measure</summary>
+          <div class="detail-body">
+            <p>
+              The removal fraction slider above lets you vary how much is removed at each step. If at step n you remove a fraction &alpha; of each remaining interval (with &alpha; &lt; 1/2 to maintain two pieces), the total measure of C<sub>&alpha;</sub> is:
+            </p>
+            <p style="text-align:center"><strong>&lambda;(C<sub>&alpha;</sub>) = lim<sub>n&rarr;&infin;</sub> (1 &minus; &alpha;)<sup>n</sup> = 0</strong> when 0 &lt; &alpha; &le; 1/2</p>
+            <p>
+              But a different construction — the <strong>Smith-Volterra-Cantor (fat Cantor) set</strong> — removes smaller and smaller fractions: remove 1/4 at step 1, 1/16 at step 2, 1/64 at step 3, etc. (total removed: &sum; 2<sup>n&minus;1</sup>/4<sup>n</sup> = 1/2). The resulting set has measure 1/2, is nowhere dense, has empty interior, yet is uncountable and perfect. Such sets demonstrate that "nowhere dense" and "measure zero" are independent properties.
+            </p>
           </div>
         </details>
       </div>

@@ -164,6 +164,45 @@
             </p>
           </div>
         </details>
+        <details>
+          <summary>Countable vs. Finite Closure — Why It Matters</summary>
+          <div class="detail-body">
+            <p>
+              An <strong>algebra</strong> (field) is closed under only <em>finite</em> unions. A <strong>sigma-algebra</strong> is closed under <em>countably infinite</em> unions. The extra power costs nothing on finite &Omega; &mdash; every finite union is trivially countable &mdash; but is essential in analysis.
+            </p>
+            <p>
+              On the real line, events like "X &lt; r for all rational r in (a, b)" require a countable intersection of events, one per rational. Without countable closure the collection {X &lt; r} for each r could belong to F while the limit event {X &le; b} = &cap;<sub>r&gt;b, r&in;&Qopf;</sub>{X &lt; r} does not. Sigma-algebras guarantee this works.
+            </p>
+            <p>
+              The distinction also matters for <strong>continuity of measure</strong>: if A<sub>n</sub> &uarr; A then P(A<sub>n</sub>) &rarr; P(A). Proving this uses countable additivity of &sigma;-algebras, which finite algebras cannot deliver.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>The Borel Sigma-Algebra on &Reals;</summary>
+          <div class="detail-body">
+            <p>
+              The most important sigma-algebra in probability is the <strong>Borel &sigma;-algebra</strong> &Beta;(&Reals;), defined as the smallest &sigma;-algebra containing all open intervals (a, b). Equivalently, &Beta;(&Reals;) = &sigma;({(−&infin;, x] : x &in; &Reals;}).
+            </p>
+            <p>
+              Every open set, closed set, countable intersection of open sets (G<sub>&delta;</sub>), or countable union of closed sets (F<sub>&sigma;</sub>) belongs to &Beta;(&Reals;). Random variables are defined as <em>Borel-measurable</em> functions: X: (&Omega;, F) &rarr; (&Reals;, &Beta;(&Reals;)), ensuring that {&omega;: X(&omega;) &le; x} &in; F for all x &in; &Reals; &mdash; which is exactly what allows P(X &le; x) to be well-defined.
+            </p>
+            <p>
+              Non-Borel sets exist (proven using the axiom of choice) but are pathological &mdash; they cannot be given a consistent probability. The Lebesgue &sigma;-algebra is a larger completion of &Beta;(&Reals;) that includes all measure-zero sets and their subsets, but for probability theory &Beta;(&Reals;) suffices.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>Closure Size: How Many Sets Can a &sigma;-Algebra Have?</summary>
+          <div class="detail-body">
+            <p>
+              On a finite set &Omega; with |&Omega;| = n, the power set has 2<sup>n</sup> subsets. Any sigma-algebra F satisfies |F| = 2<sup>k</sup> for some k &le; n, where k is the number of <strong>atoms</strong> (the minimal non-empty elements of F). This means sigma-algebras on finite sets have sizes 2, 4, 8, &hellip;, 2<sup>n</sup> &mdash; only powers of two are possible!
+            </p>
+            <p>
+              Given g generators, the generated sigma-algebra can be at most 2<sup>2<sup>g</sup></sup> in size before stabilizing (since g generators create at most 2<sup>g</sup> atoms). The <strong>lattice</strong> shown above visualizes the partial order of all valid sigma-algebras by containment, with the trivial {&empty;, &Omega;} at the bottom and the power set at the top.
+            </p>
+          </div>
+        </details>
       </div>
     </div>
   </div>

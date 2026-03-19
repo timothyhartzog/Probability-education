@@ -176,6 +176,8 @@ const statRU = document.getElementById('stat-riemann-upper');
 const statRL = document.getElementById('stat-riemann-lower');
 const statLeb = document.getElementById('stat-lebesgue');
 const statExact = document.getElementById('stat-exact');
+const statRiemannGap = document.getElementById('stat-riemann-gap');
+const statLebError = document.getElementById('stat-lebesgue-error');
 
 // ---- Build SVGs -------------------------------------------------
 function makeSVG(container, vbW, vbH) {
@@ -375,6 +377,8 @@ function draw(transition = true) {
   statRL.textContent = rs.lower.toFixed(6);
   statLeb.textContent = ls.sum.toFixed(6);
   statExact.textContent = fnDef.exact.toFixed(6);
+  statRiemannGap.textContent = (rs.upper - rs.lower).toFixed(6);
+  statLebError.textContent = Math.abs(ls.sum - fnDef.exact).toFixed(6);
 }
 
 // ---- Convergence chart (cached per function) -------------------

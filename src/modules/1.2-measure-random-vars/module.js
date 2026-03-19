@@ -752,6 +752,116 @@ function subscript(num) {
 }
 
 // ============================================================
+//  CDF Chart — F_X(t) = P(X ≤ t)
+// ============================================================
+
+function renderCDFChart() {
+  const container = document.getElementById('cdf-chart');
+  if (!container) return;
+  container.innerHTML = '';
+
+  const rv = state.rv;
+  const probs = state.probs;
+  const pushforward = computePushforward(probs, rv);
+  const rangeVals = rvRange(rv);
+
+  // Build CDF points: include -inf lead-in and +inf tail
+  const padding = 0.8;
+  const xMin = rangeVals[0] - padding;
+  const xMax = rangeVals[rangeVals.length - 1] + padding;
+
+  // Sorted (value, cumProb) pairs
+  let cumulative = 0;
+  const steps = [];
+  for (const val of rangeVals) {
+    const left = cumulative;
+    cumulative += pushforward.get(val) || 0;
+    steps.push({ val, left, right: cumulative });
+  }
+
+  const w = container.clientWidth || 360;
+  const h = 200;
+  const margin = { top: 20, right: 20, bottom: 36, left: 46 };
+  const iW = w - margin.left - margin.right;
+  const iH = h - margin.top - margin.bottom;
+
+  const svg = d3.select(container).append('svg')
+    .attr('viewBox', `0 0 ${w} ${h}`)
+    .attr('preserveAspectRatio', 'xMidYMid meet');
+
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+
+  const xScale = d3.scaleLinear().domain([xMin, xMax]).range([0, iW]);
+  const yScale = d3.scaleLinear().domain([0, 1]).range([iH, 0]);
+
+  // Axes
+  g.append('g').attr('transform', `translate(0,${iH})`).call(d3.axisBottom(xScale).ticks(rangeVals.length + 2));
+  g.append('g').call(d3.axisLeft(yScale).ticks(5).tickFormat(d3.format('.1f')));
+
+  // Axis labels
+  g.append('text').attr('class', 'axis-label')
+    .attr('text-anchor', 'middle')
+    .attr('x', iW / 2).attr('y', iH + 32)
+    .text('t');
+  g.append('text').attr('class', 'axis-label')
+    .attr('text-anchor', 'middle')
+    .attr('transform', `translate(-36,${iH / 2}) rotate(-90)`)
+    .text('F\u2093(t)');
+
+  // Horizontal segments
+  // Lead-in: from xMin to first value
+  g.append('line')
+    .attr('x1', xScale(xMin)).attr('x2', xScale(rangeVals[0]))
+    .attr('y1', yScale(0)).attr('y2', yScale(0))
+    .attr('stroke', 'var(--color-primary)').attr('stroke-width', 2.5);
+
+  steps.forEach(({ val, left, right }, i) => {
+    // Flat segment from val to next val (or xMax)
+    const nextX = i + 1 < rangeVals.length ? rangeVals[i + 1] : xMax;
+    g.append('line')
+      .attr('x1', xScale(val)).attr('x2', xScale(nextX))
+      .attr('y1', yScale(right)).attr('y2', yScale(right))
+      .attr('stroke', 'var(--color-primary)').attr('stroke-width', 2.5);
+
+    // Vertical jump at val (open circle at bottom, filled at top)
+    g.append('line')
+      .attr('x1', xScale(val)).attr('x2', xScale(val))
+      .attr('y1', yScale(left)).attr('y2', yScale(right))
+      .attr('stroke', 'var(--color-primary)').attr('stroke-width', 1.5)
+      .attr('stroke-dasharray', '3,2');
+
+    // Open circle (limit from left) at (val, left)
+    g.append('circle')
+      .attr('cx', xScale(val)).attr('cy', yScale(left))
+      .attr('r', 4)
+      .attr('fill', 'white')
+      .attr('stroke', 'var(--color-primary)').attr('stroke-width', 2);
+
+    // Filled circle (right-continuous value) at (val, right)
+    g.append('circle')
+      .attr('cx', xScale(val)).attr('cy', yScale(right))
+      .attr('r', 4)
+      .attr('fill', 'var(--color-primary)').attr('stroke', 'none');
+
+    // Label jump magnitude
+    g.append('text')
+      .attr('x', xScale(val) + 6)
+      .attr('y', yScale((left + right) / 2) + 4)
+      .attr('font-size', '11px')
+      .attr('fill', 'var(--color-text-secondary)')
+      .text((right - left).toFixed(3));
+  });
+
+  // y=1 dashed reference
+  g.append('line')
+    .attr('x1', 0).attr('x2', iW)
+    .attr('y1', yScale(1)).attr('y2', yScale(1))
+    .attr('stroke', 'var(--color-text-secondary)')
+    .attr('stroke-width', 1)
+    .attr('stroke-dasharray', '4,3');
+}
+
+// ============================================================
 //  Render all
 // ============================================================
 
@@ -760,6 +870,7 @@ function renderAll() {
   renderMeasureChart();
   renderRVChart();
   renderPushforwardChart();
+  renderCDFChart();
 }
 
 // ============================================================
