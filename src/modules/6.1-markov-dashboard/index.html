@@ -80,7 +80,12 @@
 
           <!-- Preset chain -->
           <div class="control-group dropdown-control">
-            <label for="preset-chain">Preset Chain</label>
+            <label for="preset-chain">Preset Chain
+              <button class="param-info" aria-label="Parameter info" aria-expanded="false"
+                data-param="Preset Chain"
+                data-tip="Which Markov chain to load. Weather: irreducible, aperiodic — converges to unique π. Gambler's Ruin: absorbing states at 0 and N — probability mass drains to absorbers. Periodic (period 2): irreducible but periodic — distribution oscillates, doesn't converge pointwise. Doubly Stochastic: π = uniform. Ehrenfest: mean-reverting model of gas diffusion."
+                data-default="Simple 3-State (Weather)">ⓘ</button>
+            </label>
             <select id="preset-chain">
               <option value="weather">Simple 3-State (Weather)</option>
               <option value="gambler">Gambler's Ruin (5 states)</option>
@@ -103,6 +108,10 @@
             <label for="step-n">
               Step n
               <span class="value-display" id="step-n-val">0</span>
+              <button class="param-info" aria-label="Parameter info" aria-expanded="false"
+                data-param="Step n"
+                data-tip="The current time step. The distribution panel shows μₙ = μ₀ Pⁿ — the distribution after n transitions starting from the selected initial state. The TV distance panel plots how ‖μₙ − π‖_TV decays. Use 'Play' to animate the convergence automatically."
+                data-default="0" data-range="0–200" data-unit="steps">ⓘ</button>
             </label>
             <input
               type="range" id="step-n"
@@ -200,6 +209,34 @@
               convergence: the weather model converges quickly, the periodic
               chain oscillates forever, and the gambler's ruin gets absorbed.
             </p>
+          </div>
+        </details>
+        <details>
+          <summary>Irreducibility, Aperiodicity, and the Perron-Frobenius Theorem</summary>
+          <div class="detail-body">
+            <p>A Markov chain converges to a unique stationary distribution if and only if it is:</p>
+            <ul>
+              <li><strong>Irreducible</strong>: every state can be reached from every other state in a finite number of steps. No isolated "islands."</li>
+              <li><strong>Aperiodic</strong>: no state is only revisited at regular intervals (the GCD of return times equals 1). The periodic preset demonstrates failure: the chain oscillates between sets and &pi; is not a pointwise limit, even though it is the time-average distribution.</li>
+            </ul>
+            <p>The <strong>Perron-Frobenius theorem</strong> guarantees that for an irreducible aperiodic chain, the transition matrix P has a unique eigenvalue of modulus 1 (which is 1 itself), and all other eigenvalues satisfy |&lambda;| &lt; 1. The stationary distribution is the corresponding left eigenvector. The second-largest eigenvalue |&lambda;<sub>2</sub>| determines the <strong>spectral gap</strong> and hence the mixing rate: the TV distance decays geometrically as |&lambda;<sub>2</sub>|<sup>n</sup>.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Absorbing States and Gambler's Ruin</summary>
+          <div class="detail-body">
+            <p>A state is <strong>absorbing</strong> if once entered, it cannot be left. For a chain with absorbing states, the long-run behavior is characterized by: (1) the probability of being absorbed into each absorbing state, and (2) the expected time to absorption.</p>
+            <p>The <strong>Gambler's Ruin</strong> is the classic example: a gambler starts with $k, gains $1 or loses $1 at each step with probabilities p and 1-p, and stops at $0 (bankrupt) or $N (wins). The probability of ruin starting from $k is:</p>
+            <p style="text-align:center"><strong>P(ruin | start at k) = ((q/p)<sup>k</sup> - (q/p)<sup>N</sup>) / (1 - (q/p)<sup>N</sup>)</strong> when p &ne; q</p>
+            <p>At p = 0.5 (fair game): P(ruin) = 1 - k/N. With even a slight house edge (p &lt; 0.5), ruin is nearly certain for large N. The absorbing chain in the dashboard shows how the probability mass concentrates at the absorbing states over time.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Detailed Balance and Reversibility</summary>
+          <div class="detail-body">
+            <p>A Markov chain is <strong>reversible</strong> with respect to distribution &pi; if it satisfies <em>detailed balance</em>: &pi;<sub>i</sub> P<sub>ij</sub> = &pi;<sub>j</sub> P<sub>ji</sub> for all i, j. Detailed balance says the probability flux from i to j equals the flux from j to i in stationarity.</p>
+            <p>Reversibility implies &pi; is the stationary distribution, but the converse is false: a chain can have a unique &pi; without being reversible (think of a directed cycle). Reversible chains have real eigenvalues, making their spectral analysis tractable. The <strong>Metropolis-Hastings algorithm</strong> (Module 8.2) is designed to produce reversible chains with a prescribed target distribution.</p>
+            <p>The <strong>Kolmogorov criterion</strong>: a chain is reversible if and only if for every cycle of states i<sub>0</sub>, i<sub>1</sub>, &hellip;, i<sub>k</sub> = i<sub>0</sub>, the product of transition probabilities in one direction equals the product in the reverse direction.</p>
           </div>
         </details>
       </div>

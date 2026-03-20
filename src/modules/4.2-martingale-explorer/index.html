@@ -76,7 +76,12 @@
 
           <!-- Martingale type -->
           <div class="control-group dropdown-control">
-            <label for="martingale-type">Martingale Type</label>
+            <label for="martingale-type">Martingale Type
+              <button class="param-info" aria-label="Parameter info" aria-expanded="false"
+                data-param="Martingale Type"
+                data-tip="Which martingale process to simulate. Simple Random Walk: ±1 steps, variance grows as n. Scaled: ±1/√n steps, converges to Brownian motion. Doob: conditional expectation of a terminal variable — guaranteed to converge. Exponential: e^{θBₙ}/E[e^{θBₙ}] — used in change-of-measure (Girsanov)."
+                data-default="Simple Random Walk">ⓘ</button>
+            </label>
             <select id="martingale-type">
               <option value="simple">Simple Random Walk</option>
               <option value="scaled">Scaled Random Walk</option>
@@ -90,6 +95,10 @@
             <label for="time-horizon">
               Time Horizon
               <span class="value-display" id="time-horizon-val">500</span>
+              <button class="param-info" aria-label="Parameter info" aria-expanded="false"
+                data-param="Time Horizon (n)"
+                data-tip="Number of time steps to simulate. For the simple random walk, variance at time n is σ²n — paths spread as √n. For the Doob martingale, paths converge by construction as n approaches the terminal time. Longer horizons reveal the asymptotic behavior more clearly."
+                data-default="500" data-range="50–5,000" data-unit="steps">ⓘ</button>
             </label>
             <input
               type="range" id="time-horizon"
@@ -113,7 +122,12 @@
 
           <!-- Stopping rule -->
           <div class="control-group dropdown-control">
-            <label for="stopping-rule">Stopping Rule</label>
+            <label for="stopping-rule">Stopping Rule
+              <button class="param-info" aria-label="Parameter info" aria-expanded="false"
+                data-param="Stopping Rule"
+                data-tip="Optional Stopping Theorem (OST): under mild conditions, E[M_τ] = M₀ at a stopping time τ. 'First Passage' stops when the path first hits the barrier level — tests OST for bounded stopping times. 'Fixed Time' stops at a fixed n. Without a stopping rule, paths run to the full time horizon."
+                data-default="None">ⓘ</button>
+            </label>
             <select id="stopping-rule">
               <option value="none">None</option>
               <option value="first-passage">First Passage</option>
@@ -218,6 +232,30 @@
               equals exactly n (one unit of variance per step). The quadratic
               variation panel lets you verify this fundamental property.
             </p>
+          </div>
+        </details>
+        <details>
+          <summary>Doob's Martingale Convergence Theorem</summary>
+          <div class="detail-body">
+            <p>A <strong>submartingale</strong> M<sub>n</sub> (where E[M<sub>n+1</sub> | F<sub>n</sub>] &ge; M<sub>n</sub>) that is bounded in L<sup>1</sup> — i.e., sup<sub>n</sub> E[|M<sub>n</sub>|] &lt; &infin; — converges almost surely to a finite limit M<sub>&infin;</sub>.</p>
+            <p>The intuition: if the expected value cannot keep growing unboundedly, the process must "settle down" almost everywhere. The proof uses the <strong>upcrossing lemma</strong>: for any interval [a, b], the expected number of times the process crosses from below a to above b is bounded by (E[|M<sub>n</sub>|] + |a|)/(b-a).</p>
+            <p>For the simple random walk (a martingale), the condition sup E[|M<sub>n</sub>|] &lt; &infin; fails — the walk is recurrent and does not converge. Adding an absorbing barrier converts it to a bounded martingale that does converge (to 0 or the barrier level a.s.).</p>
+          </div>
+        </details>
+        <details>
+          <summary>Sub- and Supermartingales — Drift and Applications</summary>
+          <div class="detail-body">
+            <p>A process with E[M<sub>n+1</sub> | F<sub>n</sub>] &ge; M<sub>n</sub> is a <strong>submartingale</strong> (favorable game — expected value increases). E[M<sub>n+1</sub> | F<sub>n</sub>] &le; M<sub>n</sub> defines a <strong>supermartingale</strong> (unfavorable game). Every martingale is both.</p>
+            <p>A biased random walk with step probability p > 1/2 is a submartingale. But the process M<sub>n</sub> = S<sub>n</sub> - n(2p-1) removes the drift, restoring the martingale property. Finding such a "compensating" sequence is the core idea of the <strong>Doob-Meyer decomposition</strong>: every submartingale decomposes as a martingale plus a predictable non-decreasing process.</p>
+            <p>Applications: the price process of a stock under the risk-neutral measure is a martingale (no free lunch). Defective systems and insurance loss processes are supermartingales (expected value decreases over time). The Optional Stopping Theorem in each case has different economic interpretations.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Martingale Transforms and Financial Derivatives</summary>
+          <div class="detail-body">
+            <p>If M<sub>n</sub> is a martingale and H<sub>n</sub> is a <strong>predictable</strong> process (H<sub>n</sub> is measurable with respect to F<sub>n-1</sub>), then the <strong>martingale transform</strong> (H &bull; M)<sub>n</sub> = &sum;<sub>k=1</sub><sup>n</sup> H<sub>k</sub>&Delta;M<sub>k</sub> is also a martingale.</p>
+            <p>This is the discrete-time version of the stochastic integral &int; H dM. In finance, H<sub>k</sub> represents the number of shares held at time k (chosen based on information up to k-1 — no look-ahead), and M<sub>k</sub> is the discounted asset price. The no-arbitrage condition is exactly the statement that the gain process &int; H dM is a martingale, preventing systematic profit without risk.</p>
+            <p>The <strong>optional stopping theorem</strong> then implies that no predictable trading strategy can generate a positive expected profit: E[(H &bull; M)<sub>T</sub>] = (H &bull; M)<sub>0</sub> = 0 for any stopping time T satisfying the integrability conditions.</p>
           </div>
         </details>
       </div>

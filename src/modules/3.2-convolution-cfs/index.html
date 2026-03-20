@@ -156,6 +156,35 @@
               the Taylor expansion of any CF matches the Gaussian CF to second order. Higher-order
               terms are suppressed by 1/&radic;n, making the product converge to e<sup>-t&sup2;/2</sup>.
             </p>
+            <p>The remarkable consequence: the <em>only</em> information from X that survives in the limit is its mean &mu; and variance &sigma;&sup2;. All the detail about skewness, kurtosis, and tail shape is washed out as n &rarr; &infin;. This is what makes the CLT so universal and why the Gaussian distribution appears throughout science.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Convolution vs. Characteristic Functions — When to Use Each</summary>
+          <div class="detail-body">
+            <p>The density of X + Y (when densities exist) is the <strong>convolution</strong> f<sub>X+Y</sub>(z) = &int; f<sub>X</sub>(x) f<sub>Y</sub>(z-x) dx. This is direct but computationally expensive for multiple variables (the density of a sum of n variables involves n-fold convolution).</p>
+            <p>Characteristic functions reduce n-fold convolution to a product: &phi;<sub>X<sub>1</sub>+&hellip;+X<sub>n</sub></sub>(t) = &prod; &phi;<sub>X<sub>i</sub></sub>(t). Inversion then recovers the density if needed. This is the key reason CFs are preferred in theoretical proofs: products are algebraically simpler than nested integrals.</p>
+            <p>In practice: for sums of Normals, Poissons, or Gammas (all closed under convolution), use the known closed-form result. For arbitrary mixtures, numerical CF inversion (Gil-Pelaez formula) is efficient. For a small fixed n, direct convolution via FFT is often fastest.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Cumulants and the Role of Higher Moments</summary>
+          <div class="detail-body">
+            <p>The <strong>cumulant generating function</strong> K(t) = log &phi;(t/i) has coefficients called cumulants &kappa;<sub>n</sub> = K<sup>(n)</sup>(0). Key properties:</p>
+            <ul>
+              <li>&kappa;<sub>1</sub> = E[X] (mean)</li>
+              <li>&kappa;<sub>2</sub> = Var(X) (variance)</li>
+              <li>&kappa;<sub>3</sub> = E[(X-&mu;)<sup>3</sup>] (raw skewness)</li>
+              <li>&kappa;<sub>4</sub> = E[(X-&mu;)<sup>4</sup>] - 3&sigma;<sup>4</sup> (excess kurtosis numerator)</li>
+            </ul>
+            <p>Crucially, cumulants are <strong>additive for independent variables</strong>: &kappa;<sub>n</sub>(X+Y) = &kappa;<sub>n</sub>(X) + &kappa;<sub>n</sub>(Y). For the Gaussian, all cumulants of order ≥ 3 are zero — which is the characteristic property. The rate at which the CLT approaches normality (Berry-Esseen, Edgeworth expansion) is controlled by the ratio &kappa;<sub>3</sub>/(&sigma;&radic;n), the standardized skewness of the sum.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Application — Portfolio Risk and the Normal Power Approximation</summary>
+          <div class="detail-body">
+            <p>In quantitative finance, the loss distribution of a portfolio of n assets is a sum of (correlated) random variables. The characteristic function approach handles this efficiently: &phi;<sub>L</sub>(t) = E[e<sup>itL</sup>] where L = &sum;<sub>i</sub> w<sub>i</sub> X<sub>i</sub>.</p>
+            <p>For uncorrelated assets, the CLT guarantees approximate normality for large n — this is the foundation of the normal VaR model. For correlated assets or fat-tailed returns, the CF is modified using the Lévy-Khintchine representation, leading to the <strong>normal power approximation</strong> or stable distribution models that capture the non-Gaussian tails observed in practice.</p>
           </div>
         </details>
       </div>

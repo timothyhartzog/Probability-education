@@ -93,7 +93,7 @@ export class SimulationEngine {
     console.error(`[Simulation Failure :: ${this.name}]`, errorPayload);
 
     // Provide visual feedback in the UI if possible
-    const overlay = document.getElementById('error-overlay');
+    const overlay = typeof document !== 'undefined' ? document.getElementById('error-overlay') : null;
     if (overlay) {
       overlay.style.display = 'block';
       overlay.innerHTML = `

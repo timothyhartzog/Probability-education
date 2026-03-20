@@ -61,7 +61,12 @@
           <h2>Controls</h2>
 
           <div class="control-group dropdown-control">
-            <label for="dist-select">Distribution</label>
+            <label for="dist-select">Distribution
+              <button class="param-info" aria-label="Parameter info" aria-expanded="false"
+                data-param="Distribution"
+                data-tip="The probability distribution whose characteristic function φ(t) = E[e^{itX}] is displayed. Cauchy is the classic example where φ(t) = e^{-|t|} is non-differentiable at 0 — reflecting infinite variance. Compare the complex-plane trace for symmetric (Normal, Laplace) vs. asymmetric (Exponential) distributions."
+                data-default="Normal(0,1)">ⓘ</button>
+            </label>
             <select id="dist-select">
               <option value="normal">Normal(&mu;, &sigma;&sup2;)</option>
               <option value="uniform">Uniform(a, b)</option>
@@ -100,6 +105,10 @@
             <label for="t-range">
               Frequency Range |t|
               <span class="value-display" id="t-range-val">10</span>
+              <button class="param-info" aria-label="Parameter info" aria-expanded="false"
+                data-param="Frequency Range |t|"
+                data-tip="The range of the frequency argument t shown. Near t=0, the CF is always 1; the shape near 0 encodes moments (slope=mean, curvature=variance). Farther from 0, the CF encodes fine distribution details. Distributions with heavier tails decay more slowly as |t| increases."
+                data-default="10" data-range="2–30">ⓘ</button>
             </label>
             <input type="range" id="t-range" min="2" max="30" step="1" value="10" />
           </div>
@@ -172,6 +181,34 @@
               The inversion formula recovers the density (when it exists):
               f(x) = (1/2&pi;) &int; e<sup>-itx</sup> &phi;(t) dt.
             </p>
+            <p>
+              Even when no density exists (e.g., for the Cantor measure or discrete distributions), the characteristic function is still well-defined and continuous. This makes it far more versatile than the PDF. The Lévy continuity theorem exploits this: &phi;<sub>n</sub>(t) → &phi;(t) pointwise if and only if X<sub>n</sub> converges in distribution to X.
+            </p>
+          </div>
+        </details>
+        <details>
+          <summary>Moments from the Characteristic Function</summary>
+          <div class="detail-body">
+            <p>If E[|X|<sup>k</sup>] &lt; &infin;, the k-th moment can be read off the characteristic function via differentiation at t = 0:</p>
+            <p style="text-align:center"><strong>E[X<sup>k</sup>] = i<sup>-k</sup> &phi;<sup>(k)</sup>(0)</strong></p>
+            <p>Concretely: E[X] = -i &phi;'(0) and Var(X) = -&phi;''(0) - (&phi;'(0))<sup>2</sup>. This is visible in the <em>Show moment markers</em> view: the slope at t=0 encodes the mean, and the curvature encodes the variance. Distributions with infinite variance (Cauchy) have characteristic functions that are non-differentiable at 0 — note the cusp in the modulus plot.</p>
+            <p>The full Taylor series at t = 0, when it converges, gives the <strong>moment generating function</strong> evaluated on the imaginary axis: &phi;(t) = M(it) = &sum;<sub>k=0</sub><sup>&infin;</sup> E[X<sup>k</sup>] (it)<sup>k</sup>/k!.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Lévy's Continuity Theorem and the Proof of the CLT</summary>
+          <div class="detail-body">
+            <p>The cleanest proof of the Central Limit Theorem uses characteristic functions. Let X<sub>1</sub>, X<sub>2</sub>, &hellip; be i.i.d. with mean 0 and variance 1. The characteristic function of the standardized sum Z<sub>n</sub> = (X<sub>1</sub> + &hellip; + X<sub>n</sub>) / &radic;n is:</p>
+            <p style="text-align:center"><strong>&phi;<sub>Z<sub>n</sub></sub>(t) = [&phi;<sub>X</sub>(t/&radic;n)]<sup>n</sup></strong></p>
+            <p>Taylor expanding &phi;<sub>X</sub>(t/&radic;n) = 1 - t<sup>2</sup>/(2n) + o(1/n) gives [1 - t<sup>2</sup>/(2n)]<sup>n</sup> → e<sup>-t<sup>2</sup>/2</sup> as n → &infin;, which is the characteristic function of N(0,1). By Lévy's continuity theorem, pointwise convergence of characteristic functions implies convergence in distribution.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Stable Distributions and Infinite Divisibility</summary>
+          <div class="detail-body">
+            <p>A distribution is <strong>stable</strong> if a sum of i.i.d. copies has the same distribution up to centering and scaling. Normal, Cauchy, and Lévy distributions are all stable. The characteristic function of a stable distribution has the Lévy-Khintchine form:</p>
+            <p style="text-align:center"><strong>log &phi;(t) = i&mu;t - c|t|<sup>&alpha;</sup>(1 - i&beta; sgn(t) tan(&pi;&alpha;/2))</strong></p>
+            <p>where &alpha; &in; (0, 2] is the <strong>stability index</strong>. &alpha; = 2 gives the normal distribution; &alpha; = 1 gives Cauchy. When &alpha; &lt; 2 the variance is infinite; when &alpha; &le; 1 even the mean is undefined. These are the only possible limit distributions for sums of i.i.d. variables.</p>
           </div>
         </details>
       </div>
