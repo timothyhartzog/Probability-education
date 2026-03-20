@@ -212,6 +212,23 @@
             </p>
           </div>
         </details>
+        <details>
+          <summary>Applications: Strong Law of Large Numbers</summary>
+          <div class="detail-body">
+            <p>The Borel-Cantelli lemmas are the main tool for proving almost sure convergence. The <strong>Strong Law of Large Numbers</strong> (SLLN) can be proved using BC1: for i.i.d. variables with E[X<sup>4</sup>] &lt; ∞, Chebyshev's inequality gives P(|S<sub>n</sub>/n − μ| &gt; ε) ≤ C/(ε<sup>4</sup>n<sup>2</sup>). Since Σ 1/n<sup>2</sup> &lt; ∞, BC1 gives P(|S<sub>n</sub>/n − μ| &gt; ε i.o.) = 0 for every ε, hence S<sub>n</sub>/n → μ almost surely.</p>
+            <p>The <strong>infinite monkey theorem</strong> is a direct application of BC2: a monkey typing at random will eventually type any fixed finite string. If each "trial" is a non-overlapping block of k characters and each has probability p &gt; 0 of matching the target string, then Σ p = ∞ and the blocks are independent, so BC2 guarantees the monkey types the string infinitely often with probability 1.</p>
+            <p>BC1 also proves the <strong>Borel normal number theorem</strong>: almost every real number in [0,1] is normal (each digit 0–9 appears with frequency 1/10 in its decimal expansion). The events A<sub>n</sub> = {|frequency of digit d in first n places − 1/10| &gt; ε} satisfy Σ P(A<sub>n</sub>) &lt; ∞ by the law of large numbers rate, so normality holds a.s.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Kochen-Stone Lemma — A Partial Converse Without Independence</summary>
+          <div class="detail-body">
+            <p>BC2 requires independence, but the <strong>Kochen-Stone lemma</strong> (1964) gives a useful lower bound without it. If Σ P(A<sub>n</sub>) = ∞, then:</p>
+            <p style="text-align:center"><strong>P(A<sub>n</sub> i.o.) ≥ limsup<sub>N→∞</sub> (Σ<sub>n≤N</sub> P(A<sub>n</sub>))<sup>2</sup> / Σ<sub>m,n≤N</sub> P(A<sub>m</sub> ∩ A<sub>n</sub>)</strong></p>
+            <p>This ratio is positive whenever the events are "not too correlated." Precisely: if P(A<sub>m</sub> ∩ A<sub>n</sub>) ≤ C · P(A<sub>m</sub>) P(A<sub>n</sub>) for some constant C and all m ≠ n (called <strong>pairwise quasi-independence</strong>), then P(A<sub>n</sub> i.o.) ≥ 1/C &gt; 0.</p>
+            <p>The Kochen-Stone lemma is used to prove results in number theory (e.g., Cramér's conjecture about prime gaps) and in the theory of random walks where exact independence is unavailable but correlations decay fast enough.</p>
+          </div>
+        </details>
       </div>
     </div>
   </div>

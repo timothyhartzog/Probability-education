@@ -75,6 +75,32 @@
           <p>Vitali's convergence theorem: if X<sub>n</sub> → X in probability and {X<sub>n</sub>} is uniformly integrable, then X<sub>n</sub> → X in L<sup>1</sup>. This generalises the Dominated Convergence Theorem, which provides a sufficient condition for uniform integrability via a dominating function.</p>
         </div>
       </details>
+      <details>
+        <summary>Convergence in Distribution and the Portmanteau Theorem</summary>
+        <div class="detail-body">
+          <p>Convergence in distribution (weak convergence) X<sub>n</sub> &xrarr;<sup>d</sup> X means F<sub>n</sub>(x) → F(x) at all continuity points of F. It is the weakest mode — it only says the <em>laws</em> converge, not the random variables themselves. Remarkably, there are many equivalent formulations:</p>
+          <p><strong>Portmanteau theorem:</strong> the following are all equivalent to X<sub>n</sub> &xrarr;<sup>d</sup> X:</p>
+          <ul>
+            <li>E[f(X<sub>n</sub>)] → E[f(X)] for every bounded continuous f</li>
+            <li>limsup P(X<sub>n</sub> ∈ F) ≤ P(X ∈ F) for every closed set F</li>
+            <li>liminf P(X<sub>n</sub> ∈ G) ≥ P(X ∈ G) for every open set G</li>
+            <li>P(X<sub>n</sub> ∈ B) → P(X ∈ B) for every Borel B with P(X ∈ ∂B) = 0</li>
+          </ul>
+          <p>The CLT is a theorem about convergence in distribution: (S<sub>n</sub> − nμ)/(σ√n) &xrarr;<sup>d</sup> N(0,1). The individual random variables S<sub>n</sub>/√n need not be close to any particular normal variable — only their distributions are close.</p>
+        </div>
+      </details>
+      <details>
+        <summary>Continuous Mapping Theorem and Slutsky's Theorem</summary>
+        <div class="detail-body">
+          <p>The <strong>Continuous Mapping Theorem (CMT)</strong>: if X<sub>n</sub> converges to X in any mode (a.s., probability, or distribution), and g is a continuous function (or merely continuous at the support of X), then g(X<sub>n</sub>) converges to g(X) in the same mode. This lets you transfer convergence through transformations: if X<sub>n</sub> &xrarr;<sup>d</sup> N(0,1), then X<sub>n</sub><sup>2</sup> &xrarr;<sup>d</sup> χ<sup>2</sup>(1).</p>
+          <p><strong>Slutsky's theorem</strong> handles sums and products: if X<sub>n</sub> &xrarr;<sup>d</sup> X and Y<sub>n</sub> &xrarr;<sup>p</sup> c (a constant), then:</p>
+          <ul>
+            <li>X<sub>n</sub> + Y<sub>n</sub> &xrarr;<sup>d</sup> X + c</li>
+            <li>X<sub>n</sub> Y<sub>n</sub> &xrarr;<sup>d</sup> cX</li>
+          </ul>
+          <p>Note: Slutsky requires one sequence to converge to a <em>constant</em>. If Y<sub>n</sub> &xrarr;<sup>d</sup> Y (non-degenerate) and X<sub>n</sub> &xrarr;<sup>d</sup> X, the joint distribution (X<sub>n</sub>, Y<sub>n</sub>) need not converge to (X, Y) without an independence assumption. This is why the <strong>delta method</strong> (g(X<sub>n</sub>) ≈ g(μ) + g′(μ)(X<sub>n</sub>−μ)) applies: it combines CMT with Slutsky to derive the asymptotic distribution of smooth functions of estimators.</p>
+        </div>
+      </details>
     </div>
   </div>
   <script type="module" src="./module.js"></script>

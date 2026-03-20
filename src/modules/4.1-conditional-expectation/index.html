@@ -202,6 +202,22 @@
             </p>
           </div>
         </details>
+        <details>
+          <summary>Measurability and σ-Algebras — What G-Measurability Means</summary>
+          <div class="detail-body">
+            <p>A G-measurable function is one that is "constant within the atoms of G." In the finite case, a sub-σ-algebra G partitions Ω into <strong>atoms</strong> — the smallest non-empty G-measurable sets. The conditional expectation E[X|G] is the function that assigns to each atom A the weighted average E[X · 1<sub>A</sub>] / P(A).</p>
+            <p>Intuitively, G encodes <em>what you know</em>. If G = {∅, Ω} (trivial), you know nothing, and E[X|G] = E[X] (the unconditional mean). If G = F (the full σ-algebra), you know everything, and E[X|G] = X itself. Intermediate G represents partial knowledge — e.g., G = σ(Y) means "you observe Y but not X directly."</p>
+            <p>In continuous probability, atoms are replaced by the preimages of Y's values: the atom "containing ω" is the set of outcomes indistinguishable from ω under G. The conditional expectation is still defined as an a.s.-unique G-measurable function satisfying ∫<sub>A</sub> E[X|G] dP = ∫<sub>A</sub> X dP for all A ∈ G, but existence requires the Radon-Nikodym theorem.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Regular Conditional Distributions and Disintegration</summary>
+          <div class="detail-body">
+            <p>For a σ-algebra G = σ(Y), it is natural to ask: can we define P(X ∈ B | Y = y) as a genuine probability measure for each y, not just an equivalence class? This is the question of whether a <strong>regular conditional distribution</strong> (RCD) exists.</p>
+            <p>For Polish spaces (complete separable metric spaces — the standard setting for probability theory), regular conditional distributions always exist: there is a jointly measurable function (ω, B) ↦ P(X ∈ B | G)(ω) that is a probability measure in B for almost every ω. This is the <strong>disintegration theorem</strong>: the joint law P<sub>X,Y</sub> "disintegrates" over P<sub>Y</sub> as μ<sub>y</sub>(·) where μ<sub>y</sub> = P(X ∈ · | Y = y).</p>
+            <p>The disintegration is fundamental to Bayesian updating: the posterior P(θ | data) is exactly the regular conditional distribution of the prior given the data. It is also the rigorous foundation for the statement "E[X|Y=y] = ∫ x μ<sub>y</sub>(dx)" — the conditional expectation is the mean of the conditional distribution, not merely a symbolic expression.</p>
+          </div>
+        </details>
       </div>
     </div>
   </div>

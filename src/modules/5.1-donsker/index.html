@@ -212,6 +212,22 @@
             </p>
           </div>
         </details>
+        <details>
+          <summary>Weak Convergence in C[0,1] and the Skorokhod Representation</summary>
+          <div class="detail-body">
+            <p>Donsker's theorem is a statement about convergence in distribution of <em>random elements of a function space</em>. The space C[0,1] of continuous functions on [0,1], equipped with the sup-norm topology, is a Polish space, so Prokhorov's theorem applies: a sequence of probability measures on C[0,1] is tight (relatively compact) if and only if it is uniformly tight — meaning the paths are collectively equicontinuous with high probability.</p>
+            <p>The scaled random walk B<sub>n</sub> satisfies this tightness condition: the increments are small (order 1/√n) and independent, preventing large oscillations with high probability. Combined with convergence of finite-dimensional distributions to those of Brownian motion (which follows from the CLT), this gives the full weak convergence.</p>
+            <p>The <strong>Skorokhod representation theorem</strong> is a key tool: if X<sub>n</sub> &xrarr;<sup>d</sup> X in a Polish space, there exist random variables X̃<sub>n</sub> &xrarr;<sup>a.s.</sup> X̃ on a common probability space, where each X̃<sub>n</sub> has the same law as X<sub>n</sub> and X̃ has the same law as X. This lets you pass from distributional convergence to almost-sure convergence for the purposes of proving limit theorems for functionals.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Empirical Process Theory and the Kolmogorov-Smirnov Test</summary>
+          <div class="detail-body">
+            <p>Donsker's theorem is the foundation of <strong>empirical process theory</strong>. Given i.i.d. observations X<sub>1</sub>, ..., X<sub>n</sub> with CDF F, the empirical CDF is F<sub>n</sub>(x) = (1/n) Σ 1{X<sub>i</sub> ≤ x}. The scaled process √n (F<sub>n</sub>(x) − F(x)) converges weakly (as a function of x) to a <strong>Brownian bridge</strong> B(F(x)), where B is a Brownian bridge on [0,1].</p>
+            <p>This gives the asymptotic distribution of the <strong>Kolmogorov-Smirnov statistic</strong>: D<sub>n</sub> = sup<sub>x</sub> |F<sub>n</sub>(x) − F(x)|. By Donsker and the CMT, √n · D<sub>n</sub> &xrarr;<sup>d</sup> sup<sub>t∈[0,1]</sub> |B(t)| (the Kolmogorov distribution). This allows the KS test's critical values to be computed analytically.</p>
+            <p>More generally, empirical process theory studies √n (Pf<sub>n</sub> − Pf) = (1/√n) Σ (f(X<sub>i</sub>) − Ef(X)) for classes of functions f. The <strong>Glivenko-Cantelli theorem</strong> (strong law for function classes) and <strong>Donsker classes</strong> (classes for which the empirical process satisfies a CLT) are central to the theory of statistical learning and semiparametric efficiency.</p>
+          </div>
+        </details>
       </div>
     </div>
   </div>
