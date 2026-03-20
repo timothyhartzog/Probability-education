@@ -104,6 +104,15 @@
       </div>
     </div>
 
+    <div class="toc-part" id="part-gloss">
+      <div class="toc-part-label" onclick="togglePart('part-gloss')">
+        <span class="toc-part-arrow">▶</span> Reference
+      </div>
+      <div class="toc-chapters">
+        <a class="toc-ch" href="#glossary">Glossary</a>
+      </div>
+    </div>
+
     <div style="padding: 1.25rem; margin-top: auto;">
       <a href="../../../index.html" style="font-size:.75rem; color:rgba(255,255,255,.4); text-decoration:none;">← Back to Platform</a>
     </div>
@@ -288,6 +297,32 @@
           </table>
           <button class="w-btn" id="ypll-add" style="margin-top:.65rem;font-size:.78rem">+ Add Row</button>
           <div class="w-result-grid" id="ypll-results" style="margin-top:.75rem"></div>
+        </div>
+      </div>
+
+      <h3>2.6 Multi-Year Rate Stabilization</h3>
+      <p>When annual event counts are below the CDC stability threshold of n = 20, multi-year pooling is the recommended remedy. Pooling 3–5 years of events increases effective n, narrows confidence intervals, and produces a more reliable rate estimate.</p>
+
+      <!-- WIDGET: Multi-Year Stabilization -->
+      <div class="widget" id="widget-multiyear">
+        <div class="widget-header">
+          <span class="widget-icon">📅</span>
+          <span class="widget-title">Interactive: Multi-Year Rate Stabilization</span>
+          <span class="widget-subtitle">Pool multiple years to stabilize small rural counts</span>
+        </div>
+        <div class="widget-body">
+          <table class="w-table">
+            <thead><tr><th>Year</th><th>Events</th><th>Population</th><th>Annual Rate (per 100k)</th></tr></thead>
+            <tbody id="my-rows">
+              <tr><td>2020</td><td><input type="number" class="w-attack-input" value="3" min="0"></td><td><input type="number" class="w-attack-input" value="7800"></td><td class="my-rate" style="font-family:var(--font-mono)"></td></tr>
+              <tr><td>2021</td><td><input type="number" class="w-attack-input" value="7" min="0"></td><td><input type="number" class="w-attack-input" value="7750"></td><td class="my-rate" style="font-family:var(--font-mono)"></td></tr>
+              <tr><td>2022</td><td><input type="number" class="w-attack-input" value="4" min="0"></td><td><input type="number" class="w-attack-input" value="7900"></td><td class="my-rate" style="font-family:var(--font-mono)"></td></tr>
+              <tr><td>2023</td><td><input type="number" class="w-attack-input" value="9" min="0"></td><td><input type="number" class="w-attack-input" value="7850"></td><td class="my-rate" style="font-family:var(--font-mono)"></td></tr>
+              <tr><td>2024</td><td><input type="number" class="w-attack-input" value="5" min="0"></td><td><input type="number" class="w-attack-input" value="8000"></td><td class="my-rate" style="font-family:var(--font-mono)"></td></tr>
+            </tbody>
+          </table>
+          <div class="w-result-grid" id="my-results" style="margin-top:.75rem"></div>
+          <div class="w-callout" id="my-interp" style="margin-top:.65rem"></div>
         </div>
       </div>
     </section>
@@ -544,13 +579,37 @@
     <section id="ch10" class="book-chapter">
       <div class="book-chapter-num">Chapter 10</div>
       <h2>Environmental and Occupational Epidemiology</h2>
-      <p>Rural agricultural, mining, logging, and construction workers face environmental and occupational exposures not encountered in urban settings. Pesticide exposure, heat illness, traumatic injury, and agricultural dust-related respiratory disease are leading rural occupational health concerns.</p>
+
+      <h3>10.1 Agricultural Health</h3>
+      <p>The Agricultural Health Study — a prospective cohort of ~90,000 farmers and their spouses in Iowa and North Carolina — has documented elevated risks of several cancers (non-Hodgkin lymphoma, leukemia, prostate cancer), neurological outcomes (Parkinson's disease), and respiratory conditions in agricultural workers. Pesticide exposures, zoonotic pathogens, grain dust, and confined animal feeding operation (CAFO) emissions are the primary hazard categories.</p>
+
+      <h3>10.2 Extractive Industries</h3>
+      <p>Rural mining communities face distinctive exposure profiles. Coal miners develop pneumoconiosis (black lung disease) from respirable coal dust; silicosis from crystalline silica exposure is re-emerging as a serious occupational hazard in hydraulic fracturing workers. Surveillance systems including MSHA's Mine Injury and Worktime database track fatal and nonfatal injuries in mining operations.</p>
+
+      <h3>10.3 Environmental Justice in Rural America</h3>
+      <p>Environmental exposures are not randomly distributed. Industrial facilities, hazardous waste sites, and large-scale agricultural operations are disproportionately sited in low-income rural communities and communities of color. ATSDR's Agency for Toxic Substances and Disease Registry maintains the National Priorities List Exposure Registry and community health investigations when environmental contamination is suspected.</p>
+      <div class="callout-box rust">
+        <div class="callout-title">Lead in Rural Water Systems</div>
+        <p>Small rural water systems — serving fewer than 10,000 persons — have the highest rates of lead and arsenic violations in US drinking water infrastructure. Blood lead level surveillance in children is a critical rural environmental health monitoring function for rural public health departments.</p>
+      </div>
     </section>
 
     <section id="ch11" class="book-chapter">
       <div class="book-chapter-num">Chapter 11</div>
       <h2>Social Determinants of Health and Rural Disparities</h2>
-      <p>Geoffrey Rose's landmark insight — that shifting the entire population distribution of a risk factor achieves greater absolute risk reduction than high-intensity intervention on the highest-risk individuals — has profound implications for rural communities where screening and treatment resources are scarce.</p>
+
+      <h3>11.1 The Rural Poverty Gradient</h3>
+      <p>The rural poverty rate (16.1%) substantially exceeds the urban rate (12.9%), and persistent-poverty counties — defined as counties with poverty rates ≥ 20% for the past 30 years — are disproportionately rural. Persistent poverty is concentrated in specific rural regions: Appalachia, the Mississippi Delta, the Colonias along the US-Mexico border, and tribal lands in the Northern Plains and Southwest.</p>
+
+      <h3>11.2 Social Isolation and Health</h3>
+      <p>Social isolation — objectively measured by limited social contacts and activities — and loneliness — subjectively experienced disconnection — are associated with 29% increased risk of heart disease, 32% increased risk of stroke, and 50% increased risk of dementia. Rural populations, particularly elderly rural residents, have higher rates of social isolation than urban counterparts due to geographic dispersion, limited transportation, and the loss of community anchors (schools, churches, small businesses).</p>
+
+      <h3>11.3 Geoffrey Rose and the Population Strategy</h3>
+      <p>Geoffrey Rose's landmark insight distinguishes between the <em>high-risk strategy</em> — identifying and treating the small proportion of individuals at highest risk — and the <em>population strategy</em> — shifting the entire distribution of risk factors in the population. The population strategy achieves greater absolute risk reduction because the many people at moderate risk contribute more total cases than the few at very high risk.</p>
+      <div class="callout-box teal">
+        <div class="callout-title">Rose's Paradox for Rural Settings</div>
+        <p>In a rural county with limited specialist and screening resources, Rose's population strategy may be even more relevant than in urban areas. A community-level intervention (water fluoridation, food fortification, built-environment change) reaches everyone without requiring individual clinical encounters.</p>
+      </div>
     </section>
 
     <section id="ch12" class="book-chapter">
@@ -664,6 +723,13 @@
         dD/dt = γ·μ·I
       </div>
 
+      <h3>13.5 Stochastic Extinction in Small Populations</h3>
+      <p>In the deterministic SIR model, an epidemic with R₀ &gt; 1 will always grow. In reality, when the number of infectious individuals is small (I = 1, 2, 3...), random chance can extinguish transmission before an epidemic establishes. The probability that a single introduced case causes a major outbreak is approximately 1 − 1/R₀.</p>
+      <div class="eq-block">
+        P(major outbreak from single case) ≈ 1 − 1/R₀
+      </div>
+      <p>For R₀ = 2, each introduction has only a 50% chance of sparking an epidemic. This <strong>stochastic extinction</strong> effect is critical for understanding why rural communities may escape an outbreak that devastates a neighboring county — particularly when community size is small relative to the threshold population 1/β.</p>
+
       <!-- WIDGET: SEIR/SEIRD Model -->
       <div class="widget" id="widget-seir">
         <div class="widget-header">
@@ -708,6 +774,60 @@
         </div>
       </div>
 
+      <!-- WIDGET: R₀ Calculator -->
+      <div class="widget" id="widget-r0">
+        <div class="widget-header">
+          <span class="widget-icon">📐</span>
+          <span class="widget-title">Interactive: R₀ &amp; Herd Immunity Calculator</span>
+          <span class="widget-subtitle">Basic reproduction number and epidemic thresholds</span>
+        </div>
+        <div class="widget-body">
+          <div class="w-grid-2">
+            <div>
+              <div class="w-form-group">
+                <label class="w-label">Transmission Rate β</label>
+                <input type="number" class="w-input" id="r0-beta" value="0.30" min="0.01" max="5" step="0.01">
+              </div>
+              <div class="w-form-group">
+                <label class="w-label">Recovery Rate γ (= 1/infectious days)</label>
+                <input type="number" class="w-input" id="r0-gamma" value="0.10" min="0.01" max="2" step="0.01">
+              </div>
+              <hr style="border:none;border-top:1px solid var(--book-midgray);margin:.75rem 0">
+              <div class="w-form-group">
+                <label class="w-label">OR Enter R₀ Directly</label>
+                <input type="number" class="w-input" id="r0-direct" value="" min="0.1" max="30" step="0.1" placeholder="Leave blank to use β/γ">
+              </div>
+              <div class="w-form-group">
+                <label class="w-label">Current Immune Fraction (%)</label>
+                <input type="number" class="w-input" id="r0-immune" value="0" min="0" max="99" step="1">
+              </div>
+              <div class="w-result-grid" id="r0-results"></div>
+            </div>
+            <div>
+              <div class="w-chart-wrap"><canvas id="r0-hit-chart"></canvas></div>
+              <div class="w-callout" id="r0-interp" style="margin-top:.65rem"></div>
+            </div>
+          </div>
+          <div style="margin-top:1rem">
+            <div style="font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--book-textgray);margin-bottom:.5rem">Known R₀ Reference Values</div>
+            <table class="w-table">
+              <thead><tr><th>Pathogen</th><th>Typical R₀</th><th>HIT</th><th>Infectious Period</th></tr></thead>
+              <tbody>
+                <tr><td>Measles</td><td>12–18</td><td>92–94%</td><td>~8 days</td></tr>
+                <tr><td>Pertussis</td><td>12–17</td><td>92–94%</td><td>~21 days</td></tr>
+                <tr><td>COVID-19 (Omicron)</td><td>8–15</td><td>88–93%</td><td>~5 days</td></tr>
+                <tr><td>Mumps</td><td>4–7</td><td>75–86%</td><td>~14 days</td></tr>
+                <tr><td>Polio</td><td>5–7</td><td>80–86%</td><td>~10 days</td></tr>
+                <tr><td>COVID-19 (original)</td><td>2.5–3.5</td><td>60–72%</td><td>~5 days</td></tr>
+                <tr><td>SARS-CoV-1</td><td>2.0–4.0</td><td>50–75%</td><td>~8 days</td></tr>
+                <tr><td>Influenza H1N1 2009</td><td>1.4–1.6</td><td>29–38%</td><td>~4 days</td></tr>
+                <tr><td>Influenza (seasonal)</td><td>1.2–1.4</td><td>17–29%</td><td>~4 days</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
       <div class="case-study">
         <div class="case-study-header">
           <div class="case-study-label">Case Study</div>
@@ -735,7 +855,22 @@
     <section id="ch15" class="book-chapter">
       <div class="book-chapter-num">Chapter 15</div>
       <h2>Parameter Estimation and Model Calibration</h2>
-      <p>Compartmental model parameters (β, γ, σ, μ) must be estimated from surveillance data. Methods include: least-squares fitting to observed incidence curves, maximum likelihood estimation, and Markov chain Monte Carlo (MCMC) for full posterior distributions of parameter uncertainty. In rural settings with sparse surveillance data, prior distributions based on pathogen-specific literature are critical for avoiding overfit.</p>
+
+      <h3>15.1 Fitting Models to Surveillance Data</h3>
+      <p>Compartmental model parameters (β, γ, σ, μ) are not directly observable — they must be inferred from surveillance data. The standard approach fits the model's predicted incidence curve to observed case counts by minimizing a loss function (least squares or negative log-likelihood).</p>
+      <div class="eq-block">
+        Least squares: minimize Σ(I_observed(t) − I_model(t))²<br>
+        Maximum likelihood (Poisson): minimize −Σ[I_obs(t)·log(I_model(t)) − I_model(t)]
+      </div>
+
+      <h3>15.2 The Effective Reproduction Number Rₑ(t)</h3>
+      <p>During an ongoing epidemic, the <strong>time-varying effective reproduction number Rₑ(t)</strong> captures how transmission intensity changes over time due to depletion of susceptibles, behavioral change, and interventions. EpiEstim (Cori et al., 2013) estimates Rₑ(t) from daily case counts using a sliding time window and the serial interval distribution.</p>
+      <div class="eq-block">
+        Rₑ(t) is estimated as the ratio of new cases in a window to the expected cases based on the infectiousness profile of past cases (renewal equation framework)
+      </div>
+
+      <h3>15.3 Identifiability and Prior Information</h3>
+      <p>In rural outbreak settings with sparse data, many parameter combinations may fit the observed data equally well (non-identifiability). Bayesian approaches address this by incorporating prior distributions based on pathogen-specific literature. When β and γ are individually non-identifiable from case count data alone, fixing γ from published serial interval estimates and estimating only R₀ = β/γ is a practical remedy.</p>
     </section>
 
     <!-- PART V -->
@@ -778,6 +913,74 @@
         </div>
       </div>
 
+    </section>
+
+    <hr class="section-rule">
+
+    <section id="glossary" class="book-chapter">
+      <div class="book-chapter-num">Glossary</div>
+      <h2>Key Epidemiological Terms</h2>
+
+      <div class="definition">
+        <div class="definition-term">Attack Rate</div>
+        <p>The cumulative incidence of infection in a group of persons during a defined time period (often a single outbreak). Expressed as a proportion: cases / persons exposed.</p>
+      </div>
+      <div class="definition">
+        <div class="definition-term">Basic Reproduction Number (R₀)</div>
+        <p>The expected number of secondary cases produced by one infectious case in a completely susceptible population. R₀ = β/γ in the SIR model. When R₀ &gt; 1, epidemic growth occurs.</p>
+      </div>
+      <div class="definition">
+        <div class="definition-term">Case Fatality Rate (CFR)</div>
+        <p>The proportion of cases that result in death: CFR = deaths / confirmed cases. Distinct from the Infection Fatality Rate (IFR), which includes undetected infections in the denominator.</p>
+      </div>
+      <div class="definition">
+        <div class="definition-term">Confidence Interval</div>
+        <p>A range of plausible values for a population parameter, calculated from sample data. A 95% CI contains the true parameter value in 95% of repeated samples constructed by the same method.</p>
+      </div>
+      <div class="definition">
+        <div class="definition-term">Confounding</div>
+        <p>A variable that is associated with both the exposure and the outcome, but is not on the causal pathway, creating a spurious association. Control methods: restriction, matching, stratification, multivariable adjustment.</p>
+      </div>
+      <div class="definition">
+        <div class="definition-term">Herd Immunity Threshold (HIT)</div>
+        <p>The proportion of the population that must be immune (through vaccination or prior infection) to prevent epidemic spread: HIT = 1 − 1/R₀.</p>
+      </div>
+      <div class="definition">
+        <div class="definition-term">Incidence Rate</div>
+        <p>New cases of disease per unit of person-time at risk. Accounts for varying observation times. Units: cases per person-year (or person-month, person-day).</p>
+      </div>
+      <div class="definition">
+        <div class="definition-term">Likelihood Ratio</div>
+        <p>LR+ = Sensitivity / (1 − Specificity). LR− = (1 − Sensitivity) / Specificity. Prevalence-independent measures of diagnostic utility. LR+ ≥ 10 is a strong rule-in; LR− ≤ 0.1 is a strong rule-out.</p>
+      </div>
+      <div class="definition">
+        <div class="definition-term">Number Needed to Treat (NNT)</div>
+        <p>The number of patients who must receive an intervention for one additional patient to benefit: NNT = 1 / ARD. A lower NNT indicates a more effective intervention.</p>
+      </div>
+      <div class="definition">
+        <div class="definition-term">Positive Predictive Value (PPV)</div>
+        <p>The probability that a person with a positive test result truly has the disease: PPV = TP / (TP + FP). Depends heavily on disease prevalence (pre-test probability).</p>
+      </div>
+      <div class="definition">
+        <div class="definition-term">Prevalence</div>
+        <p>The proportion of a population with a disease at a specific point in time. Prevalence ≈ Incidence × Duration.</p>
+      </div>
+      <div class="definition">
+        <div class="definition-term">Risk Ratio (Relative Risk)</div>
+        <p>The ratio of the incidence of disease in exposed persons to the incidence in unexposed persons. RR = CI(exposed) / CI(unexposed).</p>
+      </div>
+      <div class="definition">
+        <div class="definition-term">Sensitivity</div>
+        <p>The probability that a test is positive given that the disease is truly present: Sensitivity = TP / (TP + FN). Also called the true positive rate.</p>
+      </div>
+      <div class="definition">
+        <div class="definition-term">Specificity</div>
+        <p>The probability that a test is negative given that the disease is truly absent: Specificity = TN / (TN + FP). Also called the true negative rate.</p>
+      </div>
+      <div class="definition">
+        <div class="definition-term">Years of Potential Life Lost (YPLL)</div>
+        <p>A measure of premature mortality weighting deaths by years lost before age 75: YPLL = Σ(75 − age at death). Emphasizes deaths in younger age groups, relevant in rural settings where injury and overdose drive early mortality.</p>
+      </div>
     </section>
 
   </main><!-- /book-content -->

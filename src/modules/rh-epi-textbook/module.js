@@ -469,6 +469,102 @@ function initSEIRChart() {
   });
 }
 
+// ── WIDGET 7: R₀ Calculator ────────────────────────────────────
+let r0HitChart = null;
+
+function calcR0Widget() {
+  const directVal = document.getElementById('r0-direct').value;
+  const beta = parseFloat(document.getElementById('r0-beta').value) || 0;
+  const gamma = parseFloat(document.getElementById('r0-gamma').value) || 1;
+  const immPct = parseFloat(document.getElementById('r0-immune').value) || 0;
+  const r0 = directVal ? (parseFloat(directVal) || 0) : beta / gamma;
+  const hit = r0 > 1 ? 1 - 1 / r0 : 0;
+  const reff = r0 * (1 - immPct / 100);
+  let ar = 0;
+  if (r0 > 1) {
+    let x = 0.5;
+    for (let i = 0; i < 100; i++) x = 1 - Math.exp(-r0 * x);
+    ar = x;
+  }
+  document.getElementById('r0-results').innerHTML = resultBoxes([
+    ['Basic R₀', fmt(r0, 2), '', r0 > 1 ? 'warn' : ''],
+    ['Effective Rₑ', fmt(reff, 2), '', reff < 1 ? '' : 'warn'],
+    ['HIT', fmtPct(hit), '', 'gold'],
+    ['Final Attack Rate', fmtPct(ar), '', 'rust'],
+    ['Infectious Period', fmt(1 / (gamma || 1), 1), ' days', ''],
+  ]);
+  let interp = `<strong>R₀ = ${fmt(r0, 2)}</strong>: `;
+  if (r0 < 1) interp += 'Epidemic cannot sustain. R₀ &lt; 1 — chain of transmission dies out.';
+  else if (r0 < 2) interp += `Slow growth. HIT = ${fmtPct(hit)}. Expected final attack rate: ${fmtPct(ar)}.`;
+  else interp += `Substantial epidemic expected. HIT = ${fmtPct(hit)} (${(hit * 100).toFixed(0)}% of population must be immune to halt spread). Final attack rate if uncontrolled: ${fmtPct(ar)}.`;
+  if (immPct > 0) {
+    if (immPct / 100 >= hit) interp += ` <strong style="color:#2E7D6B">Current immunity (${immPct}%) exceeds HIT — Rₑ &lt; 1, epidemic suppressed.</strong>`;
+    else interp += ` Current immunity (${immPct}%) is below HIT — Rₑ = ${fmt(reff, 2)}, epidemic can still spread.`;
+  }
+  document.getElementById('r0-interp').innerHTML = interp;
+  document.getElementById('r0-interp').className = `w-callout ${immPct / 100 >= hit && r0 > 1 ? 'teal' : ''}`;
+  if (r0HitChart) updateR0Chart(r0);
+}
+
+function initR0HitChart() {
+  const ctx = document.getElementById('r0-hit-chart')?.getContext('2d');
+  if (!ctx) return;
+  const r0vals = Array.from({ length: 200 }, (_, i) => 1 + (i / 199) * 19);
+  const hits = r0vals.map(r => (1 - 1 / r) * 100);
+  r0HitChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: r0vals.map(v => v.toFixed(1)),
+      datasets: [{
+        label: 'Herd Immunity Threshold (%)',
+        data: hits,
+        borderColor: PALETTE.teal,
+        backgroundColor: 'rgba(46,125,107,.12)',
+        fill: true, pointRadius: 0, tension: .4
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { title: { display: true, text: 'Basic Reproduction Number (R₀)' }, ticks: { maxTicksLimit: 10 } },
+        y: { title: { display: true, text: 'HIT (%)' }, min: 0, max: 100 }
+      }
+    }
+  });
+}
+
+function updateR0Chart(currentR0) {
+  if (!r0HitChart) return;
+  // Nothing needed — static curve
+}
+
+// ── WIDGET 8: Multi-Year Stabilization ────────────────────────
+function calcMultiYear() {
+  let totalEvents = 0, totalPop = 0;
+  const mult = 100000;
+  document.querySelectorAll('#my-rows tr').forEach(row => {
+    const inputs = row.querySelectorAll('input');
+    const ev = +inputs[0].value || 0, pop = +inputs[1].value || 1;
+    const rate = (ev / pop) * mult;
+    const rateCell = row.querySelector('.my-rate');
+    if (rateCell) rateCell.textContent = fmt(rate, 1);
+    totalEvents += ev; totalPop += pop;
+  });
+  const pooledRate = (totalEvents / totalPop) * mult;
+  const [lo, hi] = poissonCI(totalEvents);
+  document.getElementById('my-results').innerHTML = resultBoxes([
+    ['Pooled Events', totalEvents, '', totalEvents >= 20 ? '' : 'warn'],
+    ['Pooled Rate', fmt(pooledRate, 2), ' per 100k', 'gold'],
+    ['95% CI', `${fmt((lo / totalPop) * mult, 1)}–${fmt((hi / totalPop) * mult, 1)}`, ' per 100k', ''],
+    ['Stable?', totalEvents >= 20 ? 'Yes (n≥20)' : 'Not yet', '', totalEvents >= 20 ? '' : 'warn'],
+  ]);
+  document.getElementById('my-interp').innerHTML = totalEvents >= 20
+    ? `Pooled n = ${totalEvents} meets CDC stability threshold. Pooled rate ${fmt(pooledRate, 2)} per 100,000 (95% CI: ${fmt((lo / totalPop) * mult, 1)}–${fmt((hi / totalPop) * mult, 1)}).`
+    : `Pooled n = ${totalEvents} is still below 20. Consider adding more years or reporting as a multi-year pooled estimate with a stability caveat.`;
+  document.getElementById('my-interp').className = `w-callout ${totalEvents >= 20 ? 'teal' : 'rust'}`;
+}
+
 // ── INIT ───────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   Chart.defaults.font.family = 'IBM Plex Sans, sans-serif';
@@ -522,6 +618,20 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   initSEIRChart();
   runSEIR();
+
+  // ── R₀ widget ──
+  ['r0-beta', 'r0-gamma', 'r0-direct', 'r0-immune'].forEach(id => {
+    document.getElementById(id)?.addEventListener('input', calcR0Widget);
+  });
+  initR0HitChart();
+  calcR0Widget();
+
+  // ── Multi-year widget ──
+  const myRows = document.getElementById('my-rows');
+  if (myRows) {
+    myRows.addEventListener('input', calcMultiYear);
+    calcMultiYear();
+  }
 });
 
 // expose for inline onclick in attack table
