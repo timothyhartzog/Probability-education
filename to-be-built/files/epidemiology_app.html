@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rural Epidemiology Calculator Suite</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<style>
+/* ═══════════════════════════════════════════════════════════════
+   HARTZOG WEB STANDARD v1.0  — Light Theme
+═══════════════════════════════════════════════════════════════ */
+:root{
+  --navy:#1B3A5C; --teal:#2E7D6B; --gold:#B5892A; --rust:#A63D2F;
+  --smoke:#F2F4F7; --midgray:#D0D5DE; --textgray:#4A5568;
+  --white:#FFFFFF; --accent-blue:#2563EB; --accent-green:#16A34A;
+  --warn:#DC2626;
+  --font-head:'DM Serif Display',serif;
+  --font-body:'IBM Plex Sans',sans-serif;
+  --font-mono:'IBM Plex Mono',monospace;
+  --radius:8px; --shadow:0 2px 12px rgba(27,58,92,.10);
+  --transition:all .22s cubic-bezier(.4,0,.2,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:15px;scroll-behavior:smooth}
+body{font-family:var(--font-body);background:var(--smoke);color:var(--navy);min-height:100vh}
+
+/* ── HEADER ── */
+.app-header{background:var(--navy);color:#fff;padding:1.5rem 2rem;
+  display:flex;align-items:center;gap:1.2rem;position:sticky;top:0;z-index:100;
+  box-shadow:0 2px 16px rgba(0,0,0,.25)}
+.app-header h1{font-family:var(--font-head);font-size:1.55rem;font-weight:400;letter-spacing:.01em}
+.app-header span{font-size:.8rem;color:#AAC0D8;font-family:var(--font-mono)}
+.badge{background:var(--gold);color:#fff;border-radius:4px;padding:2px 8px;
+  font-size:.72rem;font-family:var(--font-mono);font-weight:600;margin-left:.5rem}
+
+/* ── TABS ── */
+.tabs{display:flex;gap:0;background:var(--white);border-bottom:2px solid var(--midgray);
+  overflow-x:auto;padding:0 1.5rem}
+.tab{padding:.75rem 1.25rem;cursor:pointer;font-size:.88rem;font-weight:500;
+  border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap;
+  transition:var(--transition);color:var(--textgray)}
+.tab:hover{color:var(--teal)}
+.tab.active{color:var(--teal);border-bottom-color:var(--teal);font-weight:600}
+
+/* ── PANELS ── */
+.panel{display:none;padding:2rem;max-width:1100px;margin:0 auto;animation:fadeIn .2s ease}
+.panel.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* ── CARDS ── */
+.card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);
+  padding:1.5rem;margin-bottom:1.5rem}
+.card-title{font-family:var(--font-head);font-size:1.25rem;color:var(--navy);
+  margin-bottom:.25rem}
+.card-sub{font-size:.82rem;color:var(--textgray);margin-bottom:1.25rem;
+  font-style:italic}
+
+/* ── GRID ── */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem}
+@media(max-width:780px){.grid-2,.grid-3{grid-template-columns:1fr}}
+
+/* ── FORM CONTROLS ── */
+.form-group{margin-bottom:1rem}
+label{display:block;font-size:.82rem;font-weight:600;color:var(--textgray);
+  margin-bottom:.3rem;text-transform:uppercase;letter-spacing:.04em}
+input[type=range]{width:100%;accent-color:var(--teal);cursor:pointer}
+input[type=number],input[type=text],select{
+  width:100%;border:1.5px solid var(--midgray);border-radius:6px;
+  padding:.4rem .7rem;font-family:var(--font-mono);font-size:.92rem;
+  background:var(--white);color:var(--navy);transition:var(--transition)}
+input:focus,select:focus{outline:none;border-color:var(--teal);
+  box-shadow:0 0 0 3px rgba(46,125,107,.15)}
+.range-val{font-family:var(--font-mono);font-size:.9rem;font-weight:600;
+  color:var(--teal);float:right}
+
+/* ── RESULTS ── */
+.result-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:.75rem;margin-top:1rem}
+.result-box{background:var(--smoke);border-radius:var(--radius);padding:.85rem 1rem;
+  border-left:4px solid var(--teal)}
+.result-box.warn{border-color:var(--warn)}
+.result-box.gold{border-color:var(--gold)}
+.result-box.rust{border-color:var(--rust)}
+.result-label{font-size:.73rem;font-weight:600;text-transform:uppercase;
+  letter-spacing:.05em;color:var(--textgray);margin-bottom:.25rem}
+.result-value{font-family:var(--font-mono);font-size:1.35rem;font-weight:600;
+  color:var(--navy)}
+.result-unit{font-size:.72rem;color:var(--textgray);margin-left:.15rem}
+
+/* ── TABLE ── */
+table{width:100%;border-collapse:collapse;font-size:.88rem}
+th{background:var(--navy);color:#fff;padding:.55rem .75rem;text-align:left;
+  font-family:var(--font-mono);font-size:.78rem;font-weight:600;
+  text-transform:uppercase;letter-spacing:.05em}
+td{padding:.5rem .75rem;border-bottom:1px solid var(--midgray);vertical-align:middle}
+tr:nth-child(even) td{background:var(--smoke)}
+tr.highlight td{background:#EEF7F5;font-weight:600;color:var(--teal)}
+.badge-rr{display:inline-block;padding:2px 8px;border-radius:4px;
+  font-family:var(--font-mono);font-size:.8rem;font-weight:600}
+.badge-rr.high{background:#FEE2E2;color:var(--warn)}
+.badge-rr.low{background:#D1FAE5;color:var(--accent-green)}
+.badge-rr.neutral{background:var(--midgray);color:var(--textgray)}
+
+/* ── CHART CONTAINER ── */
+.chart-wrap{position:relative;height:300px;margin-top:1rem}
+.chart-wrap-tall{position:relative;height:420px;margin-top:1rem}
+
+/* ── CALLOUT ── */
+.callout{border-left:4px solid var(--gold);background:#FFF8E7;border-radius:0 6px 6px 0;
+  padding:.8rem 1rem;margin:1rem 0;font-size:.88rem;color:var(--textgray)}
+.callout strong{color:var(--navy)}
+.callout.teal{border-color:var(--teal);background:#EEF7F5}
+.callout.rust{border-color:var(--rust);background:#FDF0EE}
+
+/* ── BTN ── */
+.btn{display:inline-flex;align-items:center;gap:.4rem;padding:.5rem 1.2rem;
+  border:none;border-radius:6px;font-size:.88rem;font-weight:600;cursor:pointer;
+  transition:var(--transition);font-family:var(--font-body)}
+.btn-primary{background:var(--teal);color:#fff}
+.btn-primary:hover{background:#22614F;transform:translateY(-1px)}
+.btn-danger{background:var(--rust);color:#fff}
+.btn-danger:hover{background:#7D2E22}
+
+/* ── MATRIX (2x2) ── */
+.matrix-grid{display:grid;grid-template-columns:1fr 1fr 1fr;
+  grid-template-rows:auto auto auto;gap:4px;margin:1rem 0}
+.m-cell{padding:.6rem .5rem;text-align:center;border-radius:4px;font-size:.88rem}
+.m-header{background:var(--navy);color:#fff;font-weight:600;
+  font-family:var(--font-mono);font-size:.78rem}
+.m-tp{background:#D1FAE5;color:#065F46;font-family:var(--font-mono);
+  font-size:1rem;font-weight:600}
+.m-fp{background:#FEE2E2;color:#991B1B;font-family:var(--font-mono);
+  font-size:1rem;font-weight:600}
+.m-fn{background:#FEF3C7;color:#92400E;font-family:var(--font-mono);
+  font-size:1rem;font-weight:600}
+.m-tn{background:#D1FAE5;color:#065F46;font-family:var(--font-mono);
+  font-size:1rem;font-weight:600}
+
+/* ── SECTION HEADER ── */
+.sec-header{font-family:var(--font-head);font-size:1.6rem;color:var(--navy);
+  margin-bottom:.4rem}
+.sec-desc{font-size:.9rem;color:var(--textgray);margin-bottom:1.5rem;
+  line-height:1.6}
+hr.divider{border:none;border-top:2px solid var(--midgray);margin:1.5rem 0}
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+    <circle cx="16" cy="16" r="15" stroke="#2E7D6B" stroke-width="2"/>
+    <path d="M6 22 L11 14 L16 18 L21 8 L26 12" stroke="#B5892A" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="16" cy="10" r="3" fill="#2E7D6B" opacity=".7"/>
+    <circle cx="21" cy="8" r="2" fill="#B5892A"/>
+  </svg>
+  <div>
+    <h1>Rural Epidemiology Calculator Suite <span class="badge">INTERACTIVE</span></h1>
+    <span>For Critical Access Hospitals · Rural Emergency Departments · Public Health Departments</span>
+  </div>
+</div>
+
+<div class="tabs" id="tabs">
+  <div class="tab active" onclick="switchTab('seir')">SEIR/SEIRD Model</div>
+  <div class="tab" onclick="switchTab('r0')">R₀ &amp; Herd Immunity</div>
+  <div class="tab" onclick="switchTab('attack')">Attack Rate Table</div>
+  <div class="tab" onclick="switchTab('diag')">Diagnostic Tests</div>
+  <div class="tab" onclick="switchTab('rates')">Rate Calculator</div>
+  <div class="tab" onclick="switchTab('ci')">Confidence Intervals</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+  PANEL 1: SEIR/SEIRD MODEL
+═══════════════════════════════════════════════════════════════ -->
+<div class="panel active" id="panel-seir">
+  <div class="sec-header">SEIR / SEIRD Epidemic Model</div>
+  <div class="sec-desc">Compartmental disease model with Susceptible → Exposed → Infectious → Recovered / Dead compartments. Uses 4th-order Runge-Kutta ODE integration. Mirrors the Rust/WASM implementation in Chapter 14.</div>
+
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <div class="card-title">Population Parameters</div>
+        <div class="form-group">
+          <label>Population Size (N) <span class="range-val" id="v-N">10,000</span></label>
+          <input type="range" id="r-N" min="500" max="50000" step="500" value="10000" oninput="updateVal('N');runSEIR()">
+        </div>
+        <div class="form-group">
+          <label>Initial Susceptible Fraction <span class="range-val" id="v-S0">95%</span></label>
+          <input type="range" id="r-S0" min="30" max="100" step="1" value="95" oninput="updateVal('S0');runSEIR()">
+        </div>
+        <div class="form-group">
+          <label>Vaccination Coverage <span class="range-val" id="v-vacc">0%</span></label>
+          <input type="range" id="r-vacc" min="0" max="95" step="1" value="0" oninput="updateVal('vacc');runSEIR()">
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Transmission Parameters</div>
+        <div class="form-group">
+          <label>Transmission Rate (β) <span class="range-val" id="v-beta">0.30</span></label>
+          <input type="range" id="r-beta" min="0.05" max="1.5" step="0.01" value="0.30" oninput="updateVal('beta');runSEIR()">
+        </div>
+        <div class="form-group">
+          <label>Recovery Rate (γ = 1/infectious days) <span class="range-val" id="v-gamma">0.10</span></label>
+          <input type="range" id="r-gamma" min="0.03" max="0.5" step="0.01" value="0.10" oninput="updateVal('gamma');runSEIR()">
+        </div>
+        <div class="form-group">
+          <label>Latent Period (1/σ days) <span class="range-val" id="v-sigma">0.20</span></label>
+          <input type="range" id="r-sigma" min="0.05" max="1.0" step="0.01" value="0.20" oninput="updateVal('sigma');runSEIR()">
+        </div>
+        <div class="form-group">
+          <label>Case Fatality Rate (μ) <span class="range-val" id="v-mu">1.0%</span></label>
+          <input type="range" id="r-mu" min="0" max="20" step="0.1" value="1.0" oninput="updateVal('mu');runSEIR()">
+        </div>
+        <div class="form-group">
+          <label>Simulation Days <span class="range-val" id="v-days">365</span></label>
+          <input type="range" id="r-days" min="30" max="730" step="5" value="365" oninput="updateVal('days');runSEIR()">
+        </div>
+      </div>
+      <div class="result-grid" id="seir-results"></div>
+    </div>
+
+    <div>
+      <div class="card">
+        <div class="card-title">Epidemic Curve</div>
+        <div class="card-sub">Compartment trajectories over time</div>
+        <div class="chart-wrap-tall">
+          <canvas id="seirChart"></canvas>
+        </div>
+      </div>
+      <div class="callout" id="seir-interp">
+        <strong>Clinical Interpretation:</strong> Adjust parameters to see how R₀, vaccination, and case fatality shape the epidemic.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+  PANEL 2: R₀ and Herd Immunity
+═══════════════════════════════════════════════════════════════ -->
+<div class="panel" id="panel-r0">
+  <div class="sec-header">R₀ &amp; Herd Immunity Calculator</div>
+  <div class="sec-desc">Calculate the basic reproduction number, effective reproduction number, herd immunity threshold, and expected final attack rate.</div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Direct Parameter Entry</div>
+      <div class="form-group">
+        <label>Transmission Rate (β) — contacts/day × p(transmission)</label>
+        <input type="number" id="r0-beta" value="0.30" min="0.01" max="5" step="0.01" oninput="calcR0()">
+      </div>
+      <div class="form-group">
+        <label>Recovery Rate (γ = 1 / mean infectious days)</label>
+        <input type="number" id="r0-gamma" value="0.10" min="0.01" max="2" step="0.01" oninput="calcR0()">
+      </div>
+      <hr class="divider">
+      <div class="form-group">
+        <label>OR: Enter R₀ Directly</label>
+        <input type="number" id="r0-direct" value="" min="0.1" max="30" step="0.1" oninput="calcR0FromDirect()" placeholder="Leave blank to use β/γ">
+      </div>
+      <div class="form-group">
+        <label>Current Immune Fraction (vaccination + prior infection) %</label>
+        <input type="number" id="r0-immune" value="0" min="0" max="99" step="1" oninput="calcR0()">
+      </div>
+    </div>
+    <div>
+      <div class="result-grid" id="r0-results"></div>
+      <div class="card" style="margin-top:1rem">
+        <div class="card-title">Known R₀ Reference Values</div>
+        <table id="r0-ref-table">
+          <thead><tr><th>Pathogen</th><th>Typical R₀ Range</th><th>HIT</th></tr></thead>
+          <tbody>
+            <tr><td>Measles</td><td>12–18</td><td>92–94%</td></tr>
+            <tr><td>Mumps</td><td>4–7</td><td>75–86%</td></tr>
+            <tr><td>Rubella</td><td>6–7</td><td>83–86%</td></tr>
+            <tr><td>Pertussis</td><td>12–17</td><td>92–94%</td></tr>
+            <tr><td>Polio</td><td>5–7</td><td>80–86%</td></tr>
+            <tr><td>COVID-19 (orig.)</td><td>2.5–3.5</td><td>60–72%</td></tr>
+            <tr><td>COVID-19 (Omicron)</td><td>8–15</td><td>88–93%</td></tr>
+            <tr><td>Influenza H1N1 2009</td><td>1.4–1.6</td><td>29–38%</td></tr>
+            <tr><td>Influenza (seasonal)</td><td>1.2–1.4</td><td>17–29%</td></tr>
+            <tr><td>Ebola</td><td>1.5–2.5</td><td>33–60%</td></tr>
+            <tr><td>SARS-CoV-1</td><td>2.0–4.0</td><td>50–75%</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Herd Immunity Threshold vs. R₀</div>
+    <div class="chart-wrap"><canvas id="hitChart"></canvas></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+  PANEL 3: ATTACK RATE TABLE
+═══════════════════════════════════════════════════════════════ -->
+<div class="panel" id="panel-attack">
+  <div class="sec-header">Foodborne Outbreak Attack Rate Analyzer</div>
+  <div class="sec-desc">Enter food-specific exposure data to calculate attack rates, risk ratios, odds ratios, and attributable fractions for each food item. Highest risk ratios and attack rate differences identify the probable vehicle.</div>
+
+  <div class="card">
+    <div class="card-title">Outbreak Parameters</div>
+    <div class="grid-3">
+      <div class="form-group">
+        <label>Outbreak Name / Event</label>
+        <input type="text" id="atk-name" value="County Fair Potluck" oninput="calcAttack()">
+      </div>
+      <div class="form-group">
+        <label>Incubation Period (hours, estimated)</label>
+        <input type="number" id="atk-incub" value="4" oninput="calcAttack()">
+      </div>
+      <div class="form-group">
+        <label>Total Attendees</label>
+        <input type="number" id="atk-total" value="232" oninput="calcAttack()">
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Food Exposure Data</div>
+    <div class="card-sub">Enter number ill / total exposed for each food item. Add rows as needed.</div>
+    <table id="attack-input-table">
+      <thead>
+        <tr>
+          <th>Food Item</th>
+          <th>Ill (Ate)</th>
+          <th>Total (Ate)</th>
+          <th>Ill (Didn't Eat)</th>
+          <th>Total (Didn't Eat)</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="attack-rows">
+        <tr>
+          <td><input type="text" value="Potato Salad" oninput="calcAttack()"></td>
+          <td><input type="number" value="87" min="0" oninput="calcAttack()"></td>
+          <td><input type="number" value="143" min="1" oninput="calcAttack()"></td>
+          <td><input type="number" value="12" min="0" oninput="calcAttack()"></td>
+          <td><input type="number" value="89" min="1" oninput="calcAttack()"></td>
+          <td><button class="btn btn-danger" onclick="removeRow(this)" style="padding:.3rem .6rem;font-size:.75rem">✕</button></td>
+        </tr>
+        <tr>
+          <td><input type="text" value="Coleslaw" oninput="calcAttack()"></td>
+          <td><input type="number" value="52" min="0" oninput="calcAttack()"></td>
+          <td><input type="number" value="118" min="1" oninput="calcAttack()"></td>
+          <td><input type="number" value="47" min="0" oninput="calcAttack()"></td>
+          <td><input type="number" value="114" min="1" oninput="calcAttack()"></td>
+          <td><button class="btn btn-danger" onclick="removeRow(this)" style="padding:.3rem .6rem;font-size:.75rem">✕</button></td>
+        </tr>
+        <tr>
+          <td><input type="text" value="Grilled Chicken" oninput="calcAttack()"></td>
+          <td><input type="number" value="61" min="0" oninput="calcAttack()"></td>
+          <td><input type="number" value="132" min="1" oninput="calcAttack()"></td>
+          <td><input type="number" value="38" min="0" oninput="calcAttack()"></td>
+          <td><input type="number" value="100" min="1" oninput="calcAttack()"></td>
+          <td><button class="btn btn-danger" onclick="removeRow(this)" style="padding:.3rem .6rem;font-size:.75rem">✕</button></td>
+        </tr>
+        <tr>
+          <td><input type="text" value="Lemonade" oninput="calcAttack()"></td>
+          <td><input type="number" value="56" min="0" oninput="calcAttack()"></td>
+          <td><input type="number" value="109" min="1" oninput="calcAttack()"></td>
+          <td><input type="number" value="43" min="0" oninput="calcAttack()"></td>
+          <td><input type="number" value="123" min="1" oninput="calcAttack()"></td>
+          <td><button class="btn btn-danger" onclick="removeRow(this)" style="padding:.3rem .6rem;font-size:.75rem">✕</button></td>
+        </tr>
+        <tr>
+          <td><input type="text" value="Baked Beans" oninput="calcAttack()"></td>
+          <td><input type="number" value="50" min="0" oninput="calcAttack()"></td>
+          <td><input type="number" value="121" min="1" oninput="calcAttack()"></td>
+          <td><input type="number" value="49" min="0" oninput="calcAttack()"></td>
+          <td><input type="number" value="111" min="1" oninput="calcAttack()"></td>
+          <td><button class="btn btn-danger" onclick="removeRow(this)" style="padding:.3rem .6rem;font-size:.75rem">✕</button></td>
+        </tr>
+      </tbody>
+    </table>
+    <button class="btn btn-primary" onclick="addRow()" style="margin-top:.75rem">+ Add Food Item</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Attack Rate Analysis Results</div>
+    <div id="attack-results"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Risk Ratio Comparison</div>
+    <div class="chart-wrap"><canvas id="attackChart"></canvas></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+  PANEL 4: DIAGNOSTIC TEST EVALUATOR
+═══════════════════════════════════════════════════════════════ -->
+<div class="panel" id="panel-diag">
+  <div class="sec-header">Diagnostic Test Performance Calculator</div>
+  <div class="sec-desc">Enter 2×2 table data OR sensitivity/specificity with disease prevalence to calculate all test performance metrics including Bayesian PPV/NPV.</div>
+
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <div class="card-title">Input Method</div>
+        <div style="display:flex;gap:.5rem;margin-bottom:1rem">
+          <button class="btn btn-primary" id="btn-2x2" onclick="setDiagMode('2x2')">2×2 Table</button>
+          <button class="btn" id="btn-sens" onclick="setDiagMode('sens')"
+            style="background:var(--smoke);color:var(--navy);border:1.5px solid var(--midgray)">Sens/Spec + Prevalence</button>
+        </div>
+        <div id="diag-2x2-inputs">
+          <div class="matrix-grid">
+            <div class="m-cell m-header"></div>
+            <div class="m-cell m-header">Disease +</div>
+            <div class="m-cell m-header">Disease −</div>
+            <div class="m-cell m-header">Test +</div>
+            <div class="m-cell m-tp"><input type="number" id="d-a" value="85" style="width:70px;text-align:center;border:1.5px solid #6EE7B7;border-radius:4px;background:#D1FAE5;font-family:var(--font-mono);font-weight:600;font-size:.95rem" oninput="calcDiag()"><br><small>TP</small></div>
+            <div class="m-cell m-fp"><input type="number" id="d-b" value="12" style="width:70px;text-align:center;border:1.5px solid #FCA5A5;border-radius:4px;background:#FEE2E2;font-family:var(--font-mono);font-weight:600;font-size:.95rem" oninput="calcDiag()"><br><small>FP</small></div>
+            <div class="m-cell m-header">Test −</div>
+            <div class="m-cell m-fn"><input type="number" id="d-c" value="15" style="width:70px;text-align:center;border:1.5px solid #FCD34D;border-radius:4px;background:#FEF3C7;font-family:var(--font-mono);font-weight:600;font-size:.95rem" oninput="calcDiag()"><br><small>FN</small></div>
+            <div class="m-cell m-tn"><input type="number" id="d-d" value="388" style="width:70px;text-align:center;border:1.5px solid #6EE7B7;border-radius:4px;background:#D1FAE5;font-family:var(--font-mono);font-weight:600;font-size:.95rem" oninput="calcDiag()"><br><small>TN</small></div>
+          </div>
+        </div>
+        <div id="diag-sens-inputs" style="display:none">
+          <div class="form-group">
+            <label>Sensitivity (%)</label>
+            <input type="number" id="d-sens" value="85" min="1" max="100" oninput="calcDiagSens()">
+          </div>
+          <div class="form-group">
+            <label>Specificity (%)</label>
+            <input type="number" id="d-spec" value="97" min="1" max="100" oninput="calcDiagSens()">
+          </div>
+          <div class="form-group">
+            <label>Disease Prevalence (%) — pre-test probability</label>
+            <input type="number" id="d-prev" value="17" min="0.1" max="99" step="0.1" oninput="calcDiagSens()">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="result-grid" id="diag-results"></div>
+      <div class="callout teal" id="diag-interp" style="margin-top:1rem"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">PPV &amp; NPV vs. Disease Prevalence</div>
+    <div class="card-sub">Shows how predictive values change across the full prevalence range (Bayes' theorem).</div>
+    <div class="chart-wrap"><canvas id="diagChart"></canvas></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+  PANEL 5: RATE CALCULATOR
+═══════════════════════════════════════════════════════════════ -->
+<div class="panel" id="panel-rates">
+  <div class="sec-header">Epidemiological Rate Calculator</div>
+  <div class="sec-desc">Calculate crude, specific, age-standardized rates, YPLL, and NNT/NNH from basic frequency data.</div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Crude Rate &amp; Confidence Interval</div>
+      <div class="form-group">
+        <label>Number of Events (cases, deaths)</label>
+        <input type="number" id="rc-events" value="8" min="0" oninput="calcRates()">
+      </div>
+      <div class="form-group">
+        <label>Population Size</label>
+        <input type="number" id="rc-pop" value="6000" min="1" oninput="calcRates()">
+      </div>
+      <div class="form-group">
+        <label>Rate Multiplier</label>
+        <select id="rc-mult" onchange="calcRates()">
+          <option value="1000">per 1,000</option>
+          <option value="10000">per 10,000</option>
+          <option value="100000" selected>per 100,000</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Years of Observation</label>
+        <input type="number" id="rc-years" value="1" min="1" oninput="calcRates()">
+      </div>
+      <div class="result-grid" id="rate-results"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">NNT / NNH Calculator</div>
+      <div class="card-sub">Absolute risk reduction to number needed to treat</div>
+      <div class="form-group">
+        <label>Risk in Treatment / Exposed Group (%)</label>
+        <input type="number" id="nnt-rt" value="8.5" min="0" max="100" step="0.1" oninput="calcNNT()">
+      </div>
+      <div class="form-group">
+        <label>Risk in Control / Unexposed Group (%)</label>
+        <input type="number" id="nnt-rc" value="13.2" min="0" max="100" step="0.1" oninput="calcNNT()">
+      </div>
+      <div class="result-grid" id="nnt-results"></div>
+      <div class="callout" id="nnt-interp" style="margin-top:1rem"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">YPLL Calculator</div>
+      <div class="card-sub">Years of Potential Life Lost before age 75</div>
+      <table id="ypll-table">
+        <thead><tr><th>Age at Death</th><th>Deaths (n)</th><th>YPLL/Death</th><th>Total YPLL</th></tr></thead>
+        <tbody id="ypll-rows">
+          <tr>
+            <td><input type="number" value="25" min="0" max="74" oninput="calcYPLL()"></td>
+            <td><input type="number" value="3" min="0" oninput="calcYPLL()"></td>
+            <td class="ypll-each" style="font-family:var(--font-mono)">50</td>
+            <td class="ypll-total" style="font-family:var(--font-mono);font-weight:600">150</td>
+          </tr>
+          <tr>
+            <td><input type="number" value="38" min="0" max="74" oninput="calcYPLL()"></td>
+            <td><input type="number" value="7" min="0" oninput="calcYPLL()"></td>
+            <td class="ypll-each" style="font-family:var(--font-mono)">37</td>
+            <td class="ypll-total" style="font-family:var(--font-mono);font-weight:600">259</td>
+          </tr>
+          <tr>
+            <td><input type="number" value="55" min="0" max="74" oninput="calcYPLL()"></td>
+            <td><input type="number" value="12" min="0" oninput="calcYPLL()"></td>
+            <td class="ypll-each" style="font-family:var(--font-mono)">20</td>
+            <td class="ypll-total" style="font-family:var(--font-mono);font-weight:600">240</td>
+          </tr>
+          <tr>
+            <td><input type="number" value="68" min="0" max="74" oninput="calcYPLL()"></td>
+            <td><input type="number" value="22" min="0" oninput="calcYPLL()"></td>
+            <td class="ypll-each" style="font-family:var(--font-mono)">7</td>
+            <td class="ypll-total" style="font-family:var(--font-mono);font-weight:600">154</td>
+          </tr>
+        </tbody>
+      </table>
+      <button class="btn btn-primary" onclick="addYPLLRow()" style="margin-top:.75rem">+ Add Row</button>
+      <div class="result-grid" id="ypll-results" style="margin-top:1rem"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+  PANEL 6: CONFIDENCE INTERVALS
+═══════════════════════════════════════════════════════════════ -->
+<div class="panel" id="panel-ci">
+  <div class="sec-header">Confidence Interval Calculator</div>
+  <div class="sec-desc">Poisson exact 95% CI for counts and rates. Critical for rural settings with small event counts where normal approximation fails.</div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Poisson CI for Event Count</div>
+      <div class="form-group">
+        <label>Observed count (n)</label>
+        <input type="number" id="ci-n" value="5" min="0" oninput="calcCI()">
+      </div>
+      <div class="form-group">
+        <label>Population</label>
+        <input type="number" id="ci-pop" value="8000" oninput="calcCI()">
+      </div>
+      <div class="form-group">
+        <label>Rate multiplier</label>
+        <select id="ci-mult" onchange="calcCI()">
+          <option value="1000">per 1,000</option>
+          <option value="10000">per 10,000</option>
+          <option value="100000" selected>per 100,000</option>
+        </select>
+      </div>
+      <div class="result-grid" id="ci-results"></div>
+      <div class="callout rust" id="ci-warn" style="margin-top:1rem"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Multi-Year Stabilization</div>
+      <div class="card-sub">Rolling average to stabilize small rural counts</div>
+      <table id="multi-year-table">
+        <thead><tr><th>Year</th><th>Events</th><th>Population</th><th>Crude Rate</th></tr></thead>
+        <tbody id="multi-year-rows">
+          <tr>
+            <td>2020</td>
+            <td><input type="number" value="3" min="0" oninput="calcMultiYear()"></td>
+            <td><input type="number" value="7800" oninput="calcMultiYear()"></td>
+            <td class="my-rate" style="font-family:var(--font-mono)"></td>
+          </tr>
+          <tr>
+            <td>2021</td>
+            <td><input type="number" value="7" min="0" oninput="calcMultiYear()"></td>
+            <td><input type="number" value="7750" oninput="calcMultiYear()"></td>
+            <td class="my-rate" style="font-family:var(--font-mono)"></td>
+          </tr>
+          <tr>
+            <td>2022</td>
+            <td><input type="number" value="4" min="0" oninput="calcMultiYear()"></td>
+            <td><input type="number" value="7900" oninput="calcMultiYear()"></td>
+            <td class="my-rate" style="font-family:var(--font-mono)"></td>
+          </tr>
+          <tr>
+            <td>2023</td>
+            <td><input type="number" value="9" min="0" oninput="calcMultiYear()"></td>
+            <td><input type="number" value="7850" oninput="calcMultiYear()"></td>
+            <td class="my-rate" style="font-family:var(--font-mono)"></td>
+          </tr>
+          <tr>
+            <td>2024</td>
+            <td><input type="number" value="5" min="0" oninput="calcMultiYear()"></td>
+            <td><input type="number" value="8000" oninput="calcMultiYear()"></td>
+            <td class="my-rate" style="font-family:var(--font-mono)"></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="result-grid" id="multi-year-results" style="margin-top:1rem"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">CI Width vs. Event Count</div>
+    <div class="card-sub">Visualizes why small counts produce wide, unstable confidence intervals</div>
+    <div class="chart-wrap"><canvas id="ciChart"></canvas></div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// UTILITIES
+// ═══════════════════════════════════════════════════════════════
+function fmt(n,d=2){return isFinite(n)?n.toFixed(d):'-'}
+function fmtPct(n,d=1){return isFinite(n)?(n*100).toFixed(d)+'%':'-'}
+function fmtN(n){return isFinite(n)?Math.round(n).toLocaleString():'-'}
+const PALETTE = {
+  navy:'#1B3A5C', teal:'#2E7D6B', gold:'#B5892A', rust:'#A63D2F',
+  blue:'#2563EB', green:'#16A34A', purple:'#7C3AED', orange:'#EA580C',
+};
+Chart.defaults.font.family = "'IBM Plex Sans', sans-serif";
+Chart.defaults.color = '#4A5568';
+
+// ── TAB SWITCHING ──────────────────────────────────────────────
+function switchTab(id){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  const idx = ['seir','r0','attack','diag','rates','ci'].indexOf(id);
+  document.querySelectorAll('.tab')[idx].classList.add('active');
+  document.getElementById('panel-'+id).classList.add('active');
+  // Lazy-init
+  if(id==='seir' && !seirChart) initSEIR();
+  if(id==='r0') { calcR0(); initHITChart(); }
+  if(id==='attack') calcAttack();
+  if(id==='diag') { calcDiag(); initDiagChart(); }
+  if(id==='rates') { calcRates(); calcNNT(); calcYPLL(); }
+  if(id==='ci') { calcCI(); calcMultiYear(); initCIChart(); }
+}
+
+// ── RESULT BOX BUILDER ────────────────────────────────────────
+function resultBoxes(items){
+  return items.map(([label,val,unit='',cls='']=>
+    `<div class="result-box ${cls}">
+      <div class="result-label">${label}</div>
+      <div class="result-value">${val}<span class="result-unit">${unit}</span></div>
+    </div>`
+  ).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// PANEL 1: SEIR/SEIRD MODEL (Runge-Kutta 4)
+// ═══════════════════════════════════════════════════════════════
+let seirChart = null;
+const sliderMap = {
+  N: v=>parseInt(v).toLocaleString(),
+  S0: v=>v+'%',
+  vacc: v=>v+'%',
+  beta: v=>parseFloat(v).toFixed(2),
+  gamma: v=>parseFloat(v).toFixed(2),
+  sigma: v=>parseFloat(v).toFixed(2),
+  mu: v=>parseFloat(v).toFixed(1)+'%',
+  days: v=>v,
+};
+function updateVal(id){
+  const v = document.getElementById('r-'+id).value;
+  document.getElementById('v-'+id).textContent = sliderMap[id](v);
+}
+
+function rk4Step(s,e,i,r,d,beta,sigma,gamma,mu,N,dt){
+  const f=(S,E,I)=>{
+    const dS=-beta*S*I/N, dE=beta*S*I/N-sigma*E, dI=sigma*E-gamma*I;
+    const dR=gamma*(1-mu)*I, dD=gamma*mu*I;
+    return[dS,dE,dI,dR,dD];
+  };
+  const[ds1,de1,di1,dr1,dd1]=f(s,e,i);
+  const[ds2,de2,di2,dr2,dd2]=f(s+.5*dt*ds1,e+.5*dt*de1,i+.5*dt*di1);
+  const[ds3,de3,di3,dr3,dd3]=f(s+.5*dt*ds2,e+.5*dt*de2,i+.5*dt*di2);
+  const[ds4,de4,di4,dr4,dd4]=f(s+dt*ds3,e+dt*de3,i+dt*di3);
+  return[
+    s+dt/6*(ds1+2*ds2+2*ds3+ds4),
+    e+dt/6*(de1+2*de2+2*de3+de4),
+    i+dt/6*(di1+2*di2+2*di3+di4),
+    r+dt/6*(dr1+2*dr2+2*dr3+dr4),
+    d+dt/6*(dd1+2*dd2+2*dd3+dd4),
+  ];
+}
+
+function runSEIR(){
+  const N=parseFloat(document.getElementById('r-N').value);
+  const s0pct=parseFloat(document.getElementById('r-S0').value)/100;
+  const vaccPct=parseFloat(document.getElementById('r-vacc').value)/100;
+  const beta=parseFloat(document.getElementById('r-beta').value);
+  const gamma=parseFloat(document.getElementById('r-gamma').value);
+  const sigma=parseFloat(document.getElementById('r-sigma').value);
+  const mu=parseFloat(document.getElementById('r-mu').value)/100;
+  const days=parseInt(document.getElementById('r-days').value);
+  const dt=0.5, sPerDay=Math.round(1/dt);
+  const effS0=Math.max(0,Math.min(1,(s0pct-vaccPct)));
+  let [S,E,I,R,D]=[N*effS0,N*0.001,0,N*(1-effS0-0.001),0];
+  const sArr=[S],eArr=[E],iArr=[I],rArr=[R],dArr=[D];
+  let peakI=I,peakDay=0;
+  for(let day=1;day<=days;day++){
+    for(let t=0;t<sPerDay;t++){
+      [S,E,I,R,D]=rk4Step(S,E,I,R,D,beta,sigma,gamma,mu,N,dt);
+      [S,E,I,R,D]=[Math.max(0,S),Math.max(0,E),Math.max(0,I),Math.max(0,R),Math.max(0,D)];
+    }
+    if(I>peakI){peakI=I;peakDay=day;}
+    sArr.push(S);eArr.push(E);iArr.push(I);rArr.push(R);dArr.push(D);
+  }
+  const r0=beta/gamma;
+  const far=(N-S)/N;
+  // Update chart
+  const labels=Array.from({length:days+1},(_,i)=>i);
+  if(!seirChart) initSEIR();
+  seirChart.data.labels=labels;
+  seirChart.data.datasets[0].data=sArr;
+  seirChart.data.datasets[1].data=eArr;
+  seirChart.data.datasets[2].data=iArr;
+  seirChart.data.datasets[3].data=rArr;
+  seirChart.data.datasets[4].data=dArr;
+  seirChart.update('none');
+  // Results
+  document.getElementById('seir-results').innerHTML=resultBoxes([
+    ['R₀',fmt(r0,2),'',''],
+    ['Peak Infectious',fmtN(peakI),' persons','gold'],
+    ['Peak Day',peakDay,' days',''],
+    ['Final Attack Rate',fmtPct(far),'',''],
+    ['Total Deaths',fmtN(D),' persons','rust'],
+    ['HIT',fmtPct(r0>1?1-1/r0:0),'',''],
+  ]);
+  const hit=r0>1?1-1/r0:0;
+  const vacc=parseFloat(document.getElementById('r-vacc').value)/100;
+  let interp=`<strong>R₀ = ${fmt(r0,2)}</strong> — `;
+  if(r0<1) interp+='Epidemic cannot sustain. Each case generates fewer than one secondary case.';
+  else if(r0<2) interp+=`Slow growth. Final attack rate ~${fmtPct(far)}. HIT = ${fmtPct(hit)}.`;
+  else interp+=`Significant outbreak expected. Peak at day ${peakDay} (${fmtN(peakI)} simultaneously infectious). Final attack rate: ${fmtPct(far)}. Total deaths: ~${fmtN(D)}.`;
+  if(vacc>0) interp+=` Current vaccination (${(vacc*100).toFixed(0)}%) ${vacc>=hit?'<strong>exceeds HIT — epidemic suppressed.</strong>':'does not yet reach HIT of '+fmtPct(hit)+'.'}`;
+  document.getElementById('seir-interp').innerHTML=interp;
+}
+
+function initSEIR(){
+  const ctx=document.getElementById('seirChart').getContext('2d');
+  seirChart=new Chart(ctx,{
+    type:'line',
+    data:{labels:[],datasets:[
+      {label:'Susceptible (S)',borderColor:PALETTE.navy,backgroundColor:'rgba(27,58,92,.08)',fill:true,pointRadius:0,tension:.4,data:[]},
+      {label:'Exposed (E)',borderColor:PALETTE.gold,backgroundColor:'rgba(181,137,42,.08)',fill:true,pointRadius:0,tension:.4,data:[]},
+      {label:'Infectious (I)',borderColor:PALETTE.rust,backgroundColor:'rgba(166,61,47,.15)',fill:true,pointRadius:0,tension:.4,data:[]},
+      {label:'Recovered (R)',borderColor:PALETTE.teal,backgroundColor:'rgba(46,125,107,.08)',fill:true,pointRadius:0,tension:.4,data:[]},
+      {label:'Deaths (D)',borderColor:'#374151',backgroundColor:'rgba(55,65,81,.06)',fill:true,pointRadius:0,tension:.4,data:[]},
+    ]},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      interaction:{mode:'index',intersect:false},
+      plugins:{legend:{position:'top',labels:{font:{size:11},boxWidth:14}},
+        tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: ${Math.round(ctx.parsed.y).toLocaleString()}`}}},
+      scales:{
+        x:{title:{display:true,text:'Day',font:{size:11}},ticks:{maxTicksLimit:12}},
+        y:{title:{display:true,text:'Persons',font:{size:11}},ticks:{callback:v=>v.toLocaleString()}},
+      }
+    }
+  });
+  runSEIR();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// PANEL 2: R₀ / HERD IMMUNITY
+// ═══════════════════════════════════════════════════════════════
+let hitChart=null;
+function calcR0(){
+  const beta=parseFloat(document.getElementById('r0-beta').value)||0;
+  const gamma=parseFloat(document.getElementById('r0-gamma').value)||1;
+  const immPct=parseFloat(document.getElementById('r0-immune').value)||0;
+  const r0=beta/gamma;
+  showR0Results(r0,immPct/100);
+}
+function calcR0FromDirect(){
+  const v=document.getElementById('r0-direct').value;
+  if(!v){calcR0();return;}
+  const r0=parseFloat(v)||0;
+  const immPct=parseFloat(document.getElementById('r0-immune').value)||0;
+  showR0Results(r0,immPct/100);
+}
+function showR0Results(r0,immFrac){
+  const hit=r0>1?1-1/r0:0;
+  const reff=r0*(1-immFrac);
+  // Approximate final attack rate (solving implicit equation numerically)
+  let ar=0;
+  if(r0>1){
+    let x=0.5;
+    for(let i=0;i<100;i++) x=1-Math.exp(-r0*x);
+    ar=x;
+  }
+  document.getElementById('r0-results').innerHTML=resultBoxes([
+    ['Basic R₀',fmt(r0,2),'',''],
+    ['Effective Rₑ',fmt(reff,2),'','reff<1?\"\":\"warn\"'],
+    ['HIT',fmtPct(hit),'','gold'],
+    ['Final Attack Rate',fmtPct(ar),'','rust'],
+    ['Infectious Period',fmt(1/parseFloat(document.getElementById('r0-gamma').value||0.1),1),' days',''],
+  ].map((item,i)=>{
+    if(i===1) item[3]=reff<1?'':'warn';
+    return item;
+  }));
+  if(hitChart) updateHITChart(r0);
+}
+function initHITChart(){
+  if(hitChart) return;
+  const ctx=document.getElementById('hitChart').getContext('2d');
+  const r0vals=Array.from({length:200},(_,i)=>1+(i/199)*19);
+  const hits=r0vals.map(r=>((1-1/r)*100));
+  hitChart=new Chart(ctx,{
+    type:'line',
+    data:{labels:r0vals.map(v=>v.toFixed(1)),datasets:[
+      {label:'Herd Immunity Threshold (%)',data:hits,borderColor:PALETTE.teal,
+       backgroundColor:'rgba(46,125,107,.12)',fill:true,pointRadius:0,tension:.4},
+    ]},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},
+        annotation:{annotations:{line1:{type:'line',xMin:0,xMax:0,borderColor:PALETTE.rust,borderWidth:2,borderDash:[4,4]}}}},
+      scales:{
+        x:{title:{display:true,text:'Basic Reproduction Number (R₀)'},ticks:{maxTicksLimit:10}},
+        y:{title:{display:true,text:'HIT (%)'},min:0,max:100},
+      }
+    }
+  });
+}
+function updateHITChart(r0){if(!hitChart)return;}
+
+// ═══════════════════════════════════════════════════════════════
+// PANEL 3: ATTACK RATE TABLE
+// ═══════════════════════════════════════════════════════════════
+let attackChart=null;
+function addRow(){
+  const tbody=document.getElementById('attack-rows');
+  const tr=document.createElement('tr');
+  tr.innerHTML=`
+    <td><input type="text" value="New Food Item" oninput="calcAttack()"></td>
+    <td><input type="number" value="0" min="0" oninput="calcAttack()"></td>
+    <td><input type="number" value="50" min="1" oninput="calcAttack()"></td>
+    <td><input type="number" value="0" min="0" oninput="calcAttack()"></td>
+    <td><input type="number" value="50" min="1" oninput="calcAttack()"></td>
+    <td><button class="btn btn-danger" onclick="removeRow(this)" style="padding:.3rem .6rem;font-size:.75rem">✕</button></td>`;
+  tbody.appendChild(tr);
+  calcAttack();
+}
+function removeRow(btn){btn.closest('tr').remove();calcAttack();}
+function calcAttack(){
+  const rows=document.querySelectorAll('#attack-rows tr');
+  const data=[];
+  rows.forEach(row=>{
+    const inputs=row.querySelectorAll('input');
+    const name=inputs[0].value||'Item';
+    const illE=+inputs[1].value||0, totE=+inputs[2].value||1;
+    const illNE=+inputs[3].value||0, totNE=+inputs[4].value||1;
+    const arE=illE/totE, arNE=illNE/totNE;
+    const rr=arNE>0?arE/arNE:arE>0?Infinity:1;
+    const ard=arE-arNE;
+    const a=illE,b=totE-illE,c=illNE,d=totNE-illNE;
+    const or=(b>0&&c>0)?(a*d)/(b*c):Infinity;
+    const af=rr>1?(rr-1)/rr:0;
+    data.push({name,arE,arNE,rr,ard,or,af,illE,totE,illNE,totNE});
+  });
+  data.sort((a,b)=>b.rr-a.rr);
+  const maxRR=data[0]?.rr||1;
+  const tbody2=data.map((d,i)=>`
+    <tr class="${i===0?'highlight':''}">
+      <td>${i===0?'⭐ ':''}<strong>${d.name}</strong></td>
+      <td>${d.illE}/${d.totE}</td>
+      <td style="font-family:var(--font-mono);font-weight:600">${fmtPct(d.arE,1)}</td>
+      <td>${d.illNE}/${d.totNE}</td>
+      <td style="font-family:var(--font-mono)">${fmtPct(d.arNE,1)}</td>
+      <td><span class="badge-rr ${d.rr>=3?'high':d.rr<1.2?'neutral':'low'}">${isFinite(d.rr)?fmt(d.rr,2):'∞'}</span></td>
+      <td style="font-family:var(--font-mono)">${fmtPct(d.ard,1)}</td>
+      <td style="font-family:var(--font-mono)">${isFinite(d.or)?fmt(d.or,2):'∞'}</td>
+      <td style="font-family:var(--font-mono)">${fmtPct(d.af,0)}</td>
+    </tr>`).join('');
+  document.getElementById('attack-results').innerHTML=`
+    <table>
+      <thead><tr>
+        <th>Food Item</th><th>Ill/Total (Ate)</th><th>AR (Ate)</th>
+        <th>Ill/Total (Not)</th><th>AR (Not Ate)</th>
+        <th>Risk Ratio</th><th>AR Diff.</th><th>Odds Ratio</th><th>Attr. Frac.</th>
+      </tr></thead>
+      <tbody>${tbody2}</tbody>
+    </table>
+    <div class="callout" style="margin-top:1rem">
+      <strong>Probable Vehicle: ${data[0]?.name||'—'}</strong> — Risk Ratio ${isFinite(data[0]?.rr)?fmt(data[0]?.rr,2):'∞'}× (attack rate ${fmtPct(data[0]?.arE,1)} among exposed vs. ${fmtPct(data[0]?.arNE,1)} among unexposed; ARD = ${fmtPct(data[0]?.ard,1)}).
+      Attributable fraction: ${fmtPct(data[0]?.af,0)} of cases in exposed group attributable to this food.
+    </div>`;
+  // Chart
+  const labels=data.map(d=>d.name);
+  const rrs=data.map(d=>isFinite(d.rr)?d.rr:15);
+  if(!attackChart){
+    const ctx=document.getElementById('attackChart').getContext('2d');
+    attackChart=new Chart(ctx,{
+      type:'bar',
+      data:{labels,datasets:[
+        {label:'Risk Ratio',data:rrs,backgroundColor:data.map((_,i)=>i===0?PALETTE.rust:PALETTE.teal),borderRadius:4},
+        {label:'AR Exposed (%)',data:data.map(d=>d.arE*100),backgroundColor:'rgba(181,137,42,.4)',borderRadius:4},
+      ]},
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{position:'top',labels:{boxWidth:14,font:{size:11}}}},
+        scales:{y:{title:{display:true,text:'Value'},min:0}}
+      }
+    });
+  } else {
+    attackChart.data.labels=labels;
+    attackChart.data.datasets[0].data=rrs;
+    attackChart.data.datasets[0].backgroundColor=data.map((_,i)=>i===0?PALETTE.rust:PALETTE.teal);
+    attackChart.data.datasets[1].data=data.map(d=>d.arE*100);
+    attackChart.update('none');
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// PANEL 4: DIAGNOSTIC TEST
+// ═══════════════════════════════════════════════════════════════
+let diagChart=null;
+let diagMode='2x2';
+function setDiagMode(m){
+  diagMode=m;
+  document.getElementById('diag-2x2-inputs').style.display=m==='2x2'?'':'none';
+  document.getElementById('diag-sens-inputs').style.display=m==='sens'?'':'none';
+  document.getElementById('btn-2x2').style.background=m==='2x2'?'var(--teal)':'var(--smoke)';
+  document.getElementById('btn-2x2').style.color=m==='2x2'?'#fff':'var(--navy)';
+  document.getElementById('btn-sens').style.background=m==='sens'?'var(--teal)':'var(--smoke)';
+  document.getElementById('btn-sens').style.color=m==='sens'?'#fff':'var(--navy)';
+  if(m==='2x2') calcDiag(); else calcDiagSens();
+}
+function calcDiag(){
+  const a=+document.getElementById('d-a').value||0;
+  const b=+document.getElementById('d-b').value||0;
+  const c=+document.getElementById('d-c').value||0;
+  const d=+document.getElementById('d-d').value||0;
+  const sens=a/(a+c), spec=d/(b+d);
+  const ppv=a/(a+b), npv=d/(c+d);
+  const lrp=sens/(1-spec), lrn=(1-sens)/spec;
+  const prev=(a+c)/(a+b+c+d);
+  showDiagResults(sens,spec,ppv,npv,lrp,lrn,prev);
+}
+function calcDiagSens(){
+  const sens=parseFloat(document.getElementById('d-sens').value)/100;
+  const spec=parseFloat(document.getElementById('d-spec').value)/100;
+  const prev=parseFloat(document.getElementById('d-prev').value)/100;
+  const ppv=(sens*prev)/(sens*prev+(1-spec)*(1-prev));
+  const npv=(spec*(1-prev))/((1-sens)*prev+spec*(1-prev));
+  const lrp=sens/(1-spec), lrn=(1-sens)/spec;
+  showDiagResults(sens,spec,ppv,npv,lrp,lrn,prev);
+}
+function showDiagResults(sens,spec,ppv,npv,lrp,lrn,prev){
+  document.getElementById('diag-results').innerHTML=resultBoxes([
+    ['Sensitivity',fmtPct(sens),'',''],
+    ['Specificity',fmtPct(spec),'',''],
+    ['PPV',fmtPct(ppv),'','gold'],
+    ['NPV',fmtPct(npv),'','teal'],
+    ['LR+',fmt(lrp,2),'',''],
+    ['LR−',fmt(lrn,3),'',''],
+    ['Accuracy',fmtPct((prev>0&&prev<1)?sens*prev+spec*(1-prev):0),'',''],
+    ['Prevalence',fmtPct(prev),'',''],
+  ].map(i=>(i[3]==='teal'?{...i,3:''}:i)));
+  let interp=`Sensitivity ${fmtPct(sens)}, Specificity ${fmtPct(spec)}. `;
+  interp+=`At prevalence ${fmtPct(prev)}: PPV = ${fmtPct(ppv)} (${fmtPct(1-ppv)} false positive rate), NPV = ${fmtPct(npv)}. `;
+  if(lrp>=10) interp+='LR+ ≥ 10: strong rule-in. ';
+  else if(lrp>=5) interp+='LR+ 5–10: moderate rule-in. ';
+  if(lrn<=0.1) interp+='LR− ≤ 0.1: strong rule-out. ';
+  document.getElementById('diag-interp').innerHTML=interp;
+  updateDiagChart(sens,spec);
+}
+function initDiagChart(){
+  if(diagChart) return;
+  const ctx=document.getElementById('diagChart').getContext('2d');
+  diagChart=new Chart(ctx,{
+    type:'line',
+    data:{labels:[],datasets:[
+      {label:'PPV',borderColor:PALETTE.gold,backgroundColor:'rgba(181,137,42,.1)',fill:true,pointRadius:0,tension:.4,data:[]},
+      {label:'NPV',borderColor:PALETTE.teal,backgroundColor:'rgba(46,125,107,.1)',fill:true,pointRadius:0,tension:.4,data:[]},
+    ]},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      interaction:{mode:'index',intersect:false},
+      plugins:{legend:{position:'top',labels:{boxWidth:14}}},
+      scales:{
+        x:{title:{display:true,text:'Disease Prevalence (%)'},ticks:{maxTicksLimit:10}},
+        y:{title:{display:true,text:'Predictive Value (%)'},min:0,max:100},
+      }
+    }
+  });
+  calcDiag();
+}
+function updateDiagChart(sens,spec){
+  if(!diagChart) return;
+  const prevs=Array.from({length:100},(_,i)=>(i+1)/100);
+  const ppvs=prevs.map(p=>(sens*p/(sens*p+(1-spec)*(1-p)))*100);
+  const npvs=prevs.map(p=>(spec*(1-p)/((1-sens)*p+spec*(1-p)))*100);
+  diagChart.data.labels=prevs.map(p=>(p*100).toFixed(0));
+  diagChart.data.datasets[0].data=ppvs;
+  diagChart.data.datasets[1].data=npvs;
+  diagChart.update('none');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// PANEL 5: RATES
+// ═══════════════════════════════════════════════════════════════
+function calcRates(){
+  const n=+document.getElementById('rc-events').value||0;
+  const pop=+document.getElementById('rc-pop').value||1;
+  const mult=+document.getElementById('rc-mult').value||100000;
+  const yrs=+document.getElementById('rc-years').value||1;
+  const rate=(n/pop/yrs)*mult;
+  // Poisson CI
+  const [lo,hi]=poissonCI(n);
+  const rateLo=(lo/pop/yrs)*mult, rateHi=(hi/pop/yrs)*mult;
+  document.getElementById('rate-results').innerHTML=resultBoxes([
+    ['Crude Rate',fmt(rate,2),` per ${mult.toLocaleString()}/yr`,''],
+    ['95% CI Lower',fmt(rateLo,2),` per ${mult.toLocaleString()}`,''],
+    ['95% CI Upper',fmt(rateHi,2),` per ${mult.toLocaleString()}`,'gold'],
+    ['Person-Years',(pop*yrs).toLocaleString(),'',''],
+    ['Stable?',n>=20?'Yes (n≥20)':'No — multi-year avg recommended','',n>=20?'':'warn'],
+  ]);
+}
+function calcNNT(){
+  const rt=parseFloat(document.getElementById('nnt-rt').value)/100;
+  const rc=parseFloat(document.getElementById('nnt-rc').value)/100;
+  const ard=rc-rt, rr=rc>0?rt/rc:0, or=(rc>0&&1-rt>0&&1-rc>0)?(rt*(1-rc))/(rc*(1-rt)):0;
+  const nnt=ard!==0?1/Math.abs(ard):Infinity;
+  const label=ard>0?'NNT (Benefit)':'NNH (Harm)';
+  document.getElementById('nnt-results').innerHTML=resultBoxes([
+    [label,isFinite(nnt)?Math.ceil(nnt).toLocaleString(),'',''],
+    ['ARD',fmtPct(Math.abs(ard)),'','gold'],
+    ['Risk Ratio',fmt(rr,3),'',''],
+    ['Odds Ratio',fmt(or,3),'',''],
+  ]);
+  const dir=ard>0?'benefit':'harm';
+  document.getElementById('nnt-interp').innerHTML=
+    `<strong>${label} = ${isFinite(nnt)?Math.ceil(nnt).toLocaleString():'∞'}</strong>: ${isFinite(nnt)?`Treating ${Math.ceil(nnt).toLocaleString()} persons prevents 1 additional ${dir} compared to control.`:'No difference between groups.'}`;
+}
+function calcYPLL(){
+  let totalYPLL=0, totalDeaths=0;
+  document.querySelectorAll('#ypll-rows tr').forEach(row=>{
+    const inputs=row.querySelectorAll('input');
+    const age=+inputs[0].value||0, deaths=+inputs[1].value||0;
+    const each=Math.max(0,75-age), total=each*deaths;
+    row.querySelector('.ypll-each').textContent=each;
+    row.querySelector('.ypll-total').textContent=total.toLocaleString();
+    totalYPLL+=total; totalDeaths+=deaths;
+  });
+  document.getElementById('ypll-results').innerHTML=resultBoxes([
+    ['Total YPLL',totalYPLL.toLocaleString(),' years',''],
+    ['Total Deaths',totalDeaths.toLocaleString(),'',''],
+    ['YPLL/Death',totalDeaths>0?fmt(totalYPLL/totalDeaths,1):'-',' years','gold'],
+  ]);
+}
+function addYPLLRow(){
+  const tbody=document.getElementById('ypll-rows');
+  const tr=document.createElement('tr');
+  tr.innerHTML=`<td><input type="number" value="50" min="0" max="74" oninput="calcYPLL()"></td>
+    <td><input type="number" value="1" min="0" oninput="calcYPLL()"></td>
+    <td class="ypll-each" style="font-family:var(--font-mono)">25</td>
+    <td class="ypll-total" style="font-family:var(--font-mono);font-weight:600">25</td>`;
+  tbody.appendChild(tr); calcYPLL();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// PANEL 6: CI
+// ═══════════════════════════════════════════════════════════════
+function poissonCI(n){
+  if(n===0) return [0, -Math.log(0.05)*1.0];  // exact for n=0
+  const lo=n*Math.pow(1-1/(9*n)-1.96/Math.sqrt(9*n),3);
+  const hi=(n+1)*Math.pow(1-1/(9*(n+1))+1.96/Math.sqrt(9*(n+1)),3);
+  return [Math.max(0,lo), hi];
+}
+let ciChart=null;
+function calcCI(){
+  const n=+document.getElementById('ci-n').value||0;
+  const pop=+document.getElementById('ci-pop').value||1;
+  const mult=+document.getElementById('ci-mult').value||100000;
+  const [lo,hi]=poissonCI(n);
+  const rate=(n/pop)*mult, rateLo=(lo/pop)*mult, rateHi=(hi/pop)*mult;
+  const width=rateHi-rateLo;
+  document.getElementById('ci-results').innerHTML=resultBoxes([
+    ['Point Estimate',fmt(rate,2),` per ${mult.toLocaleString()}`,''],
+    ['Lower 95% CI',fmt(rateLo,2),'',''],
+    ['Upper 95% CI',fmt(rateHi,2),'','gold'],
+    ['CI Width',fmt(width,2),'',''],
+    ['CV (%)',rate>0?fmt((width/2/rate)*100,1):'∞','',''],
+  ]);
+  const warn=n<20;
+  document.getElementById('ci-warn').innerHTML=warn
+    ?`<strong>⚠ Small count warning:</strong> n = ${n}. Confidence interval spans ${fmt(rateLo,1)}–${fmt(rateHi,1)} per ${mult.toLocaleString()} (coefficient of variation ${rate>0?fmt((width/2/rate)*100,0):'∞'}%). CDC recommends suppressing rates based on n < 20. Consider 3–5 year rolling averages.`
+    :`Count of ${n} meets CDC stability threshold (n ≥ 20). Rate is statistically stable.`;
+  document.getElementById('ci-warn').className=`callout ${warn?'rust':'teal'}`;
+}
+function calcMultiYear(){
+  let totalEvents=0, totalPop=0;
+  const mult=100000;
+  document.querySelectorAll('#multi-year-rows tr').forEach(row=>{
+    const inputs=row.querySelectorAll('input');
+    const ev=+inputs[0].value||0, pop=+inputs[1].value||1;
+    const rate=(ev/pop)*mult;
+    row.querySelector('.my-rate').textContent=fmt(rate,1);
+    totalEvents+=ev; totalPop+=pop;
+  });
+  const pooledRate=(totalEvents/totalPop)*mult;
+  const [lo,hi]=poissonCI(totalEvents);
+  document.getElementById('multi-year-results').innerHTML=resultBoxes([
+    ['Pooled Events',totalEvents,'',''],
+    ['Pooled Rate',fmt(pooledRate,2),` per ${mult.toLocaleString()}`,'gold'],
+    ['95% CI',`${fmt((lo/totalPop)*mult,1)}–${fmt((hi/totalPop)*mult,1)}`,` per ${mult.toLocaleString()}`,'teal'],
+    ['Stability',totalEvents>=20?'Stable':'Add more years','',''],
+  ]);
+}
+function initCIChart(){
+  if(ciChart) return;
+  const ctx=document.getElementById('ciChart').getContext('2d');
+  const counts=Array.from({length:50},(_,i)=>i+1);
+  const relWidths=counts.map(n=>{
+    const [lo,hi]=poissonCI(n);
+    return n>0?((hi-lo)/n)*100:0;
+  });
+  ciChart=new Chart(ctx,{
+    type:'line',
+    data:{labels:counts,datasets:[
+      {label:'95% CI Width as % of Point Estimate',data:relWidths,
+       borderColor:PALETTE.rust,backgroundColor:'rgba(166,61,47,.1)',fill:true,pointRadius:0,tension:.4},
+    ]},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{
+        x:{title:{display:true,text:'Event Count (n)'}},
+        y:{title:{display:true,text:'Relative CI Width (%)'},min:0},
+      }
+    }
+  });
+  // Reference line at n=20
+  const plugin={id:'threshold',afterDraw(chart){
+    const {ctx,chartArea,scales}=chart;
+    const x=scales.x.getPixelForValue(19);
+    ctx.save();
+    ctx.beginPath();ctx.moveTo(x,chartArea.top);ctx.lineTo(x,chartArea.bottom);
+    ctx.strokeStyle=PALETTE.gold;ctx.lineWidth=2;ctx.setLineDash([5,5]);ctx.stroke();
+    ctx.fillStyle=PALETTE.gold;ctx.font='11px IBM Plex Sans';
+    ctx.fillText('CDC threshold (n=20)',x+4,chartArea.top+14);
+    ctx.restore();
+  }};
+  ciChart.options.plugins.threshold=plugin;
+  Chart.register(plugin);
+  ciChart.update();
+}
+
+// ── INIT ON LOAD ──────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded',()=>{
+  initSEIR();
+  calcAttack();
+  initHITChart();
+  calcR0();
+  calcRates();
+  calcNNT();
+  calcYPLL();
+  calcMultiYear();
+});
+</script>
+</body>
+</html>
