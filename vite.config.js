@@ -66,6 +66,7 @@ export default defineConfig({
         rhModelingToolkit: resolve(__dirname, 'src/modules/rh-14-modeling-toolkit/index.html'),
         rhTextbook: resolve(__dirname, 'src/modules/rh-textbook/index.html'),
         rhEpiCalculator: resolve(__dirname, 'src/modules/rh-epi-calculator/index.html'),
+        rhEpiTextbook: resolve(__dirname, 'src/modules/rh-epi-textbook/index.html'),
       },
     },
   },

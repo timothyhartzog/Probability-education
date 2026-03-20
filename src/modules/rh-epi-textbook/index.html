@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rural Epidemiology — Interactive Textbook</title>
+
+  <!-- KaTeX -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
+    integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" crossorigin="anonymous" />
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"
+    integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+    integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"
+    onload="renderMathInElement(document.body, {delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]})"></script>
+
+  <!-- Chart.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+
+  <!-- Platform styles -->
+  <link rel="stylesheet" href="../../assets/design-system.css" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+
+<!-- Reading progress bar -->
+<div class="reading-progress"><div class="reading-progress-bar" id="progress-bar"></div></div>
+
+<div class="book-shell">
+
+  <!-- ── SIDEBAR ── -->
+  <nav class="book-sidebar" id="book-sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-title">Interactive Textbook</div>
+      <div class="sidebar-book-title">Rural Epidemiology for Healthcare Providers</div>
+    </div>
+
+    <div class="toc-part open" id="part-preface">
+      <div class="toc-part-label" onclick="togglePart('part-preface')">
+        <span class="toc-part-arrow">▶</span> Front Matter
+      </div>
+      <div class="toc-chapters">
+        <a class="toc-ch" href="#preface">Preface</a>
+        <a class="toc-ch" href="#toc">Table of Contents</a>
+      </div>
+    </div>
+
+    <div class="toc-part open" id="part-1">
+      <div class="toc-part-label" onclick="togglePart('part-1')">
+        <span class="toc-part-arrow">▶</span> Part I — Foundations
+      </div>
+      <div class="toc-chapters">
+        <a class="toc-ch" href="#ch1">Ch 1: Introduction &amp; Rural Health</a>
+        <a class="toc-ch" href="#ch2">Ch 2: Measures of Disease Frequency</a>
+        <a class="toc-ch" href="#ch3">Ch 3: Measures of Association</a>
+        <a class="toc-ch" href="#ch4">Ch 4: Descriptive Epidemiology</a>
+      </div>
+    </div>
+
+    <div class="toc-part" id="part-2">
+      <div class="toc-part-label" onclick="togglePart('part-2')">
+        <span class="toc-part-arrow">▶</span> Part II — Study Designs
+      </div>
+      <div class="toc-chapters">
+        <a class="toc-ch" href="#ch5">Ch 5: Observational Studies</a>
+        <a class="toc-ch" href="#ch6">Ch 6: Experimental Designs</a>
+        <a class="toc-ch" href="#ch7">Ch 7: Systematic Review</a>
+      </div>
+    </div>
+
+    <div class="toc-part" id="part-3">
+      <div class="toc-part-label" onclick="togglePart('part-3')">
+        <span class="toc-part-arrow">▶</span> Part III — Applied Rural Epi
+      </div>
+      <div class="toc-chapters">
+        <a class="toc-ch" href="#ch8">Ch 8: Outbreak Investigation</a>
+        <a class="toc-ch" href="#ch9">Ch 9: Chronic Disease</a>
+        <a class="toc-ch" href="#ch10">Ch 10: Environmental Epi</a>
+        <a class="toc-ch" href="#ch11">Ch 11: Social Determinants</a>
+        <a class="toc-ch" href="#ch12">Ch 12: Screening &amp; Diagnostics</a>
+      </div>
+    </div>
+
+    <div class="toc-part" id="part-4">
+      <div class="toc-part-label" onclick="togglePart('part-4')">
+        <span class="toc-part-arrow">▶</span> Part IV — Mathematical Modeling
+      </div>
+      <div class="toc-chapters">
+        <a class="toc-ch" href="#ch13">Ch 13: Compartmental Models</a>
+        <a class="toc-ch" href="#ch14">Ch 14: Rust/WASM Implementation</a>
+        <a class="toc-ch" href="#ch15">Ch 15: Parameter Estimation</a>
+      </div>
+    </div>
+
+    <div class="toc-part" id="part-5">
+      <div class="toc-part-label" onclick="togglePart('part-5')">
+        <span class="toc-part-arrow">▶</span> Part V — Case Studies
+      </div>
+      <div class="toc-chapters">
+        <a class="toc-ch" href="#ch16">Ch 16: Rural Surveillance System</a>
+        <a class="toc-ch" href="#ch17">Ch 17: Community Health Assessment</a>
+        <a class="toc-ch" href="#ch18">Ch 18: Quality Improvement</a>
+        <a class="toc-ch" href="#ch19">Ch 19: Case Studies</a>
+      </div>
+    </div>
+
+    <div style="padding: 1.25rem; margin-top: auto;">
+      <a href="../../../index.html" style="font-size:.75rem; color:rgba(255,255,255,.4); text-decoration:none;">← Back to Platform</a>
+    </div>
+  </nav>
+
+  <!-- ── MAIN CONTENT ── -->
+  <main class="book-content" id="book-content">
+
+    <!-- PREFACE -->
+    <section id="preface" class="book-chapter">
+      <div class="book-chapter-num">Preface</div>
+      <h2>Rural Epidemiology for Healthcare Providers</h2>
+      <div class="book-preface">
+        <p>Rural healthcare providers occupy a uniquely demanding position in the American healthcare ecosystem. Caring for populations dispersed across vast geographies—often with limited specialist backup, constrained laboratory resources, and patient populations bearing disproportionate burdens of chronic disease—rural clinicians must think epidemiologically as a matter of daily survival.</p>
+        <p>This textbook was written specifically for the rural healthcare context: Critical Access Hospitals, Rural Emergency Hospitals, federally qualified health centers, and the solo-practitioner clinics that serve the 46 million Americans who call rural America home.</p>
+        <p>What distinguishes this text from standard epidemiology references is its computational orientation. Each chapter integrates interactive calculation tools that allow the reader to manipulate real disease parameters and observe outcomes in real time.</p>
+      </div>
+    </section>
+
+    <!-- PART I -->
+    <div class="book-part-header">Part I &mdash; Foundations of Epidemiology</div>
+
+    <!-- CHAPTER 1 -->
+    <section id="ch1" class="book-chapter">
+      <div class="book-chapter-num">Chapter 1</div>
+      <h2>Introduction to Epidemiology and Rural Health</h2>
+
+      <h3>1.1 What Is Epidemiology?</h3>
+      <p>Epidemiology is the study of the distribution and determinants of health-related states or events in specified populations, and the application of this study to the control of health problems. This canonical definition contains three operational components:</p>
+      <p><strong>Distribution</strong> — who gets the disease, where, and when (descriptive epidemiology). <strong>Determinants</strong> — why they get it, what causes it (analytic epidemiology). <strong>Application</strong> — translation into prevention programs, clinical guidelines, and public health practice.</p>
+
+      <div class="callout-box">
+        <div class="callout-title">The Rural Imperative</div>
+        <p>In rural settings, the translation imperative is especially acute. When a cluster of unusual pneumonias appears in a county with one hospital, or when the opioid mortality rate suddenly spikes, there is no metropolitan academic center down the street to call.</p>
+      </div>
+
+      <h3>1.2 A Brief History</h3>
+      <h4>1.2.1 John Snow and the Broad Street Pump</h4>
+      <p>John Snow's investigation of the 1854 Broad Street cholera outbreak stands as the founding act of modern field epidemiology. Snow mapped 578 cholera deaths against the locations of water pumps, demonstrating dramatic clustering around the Broad Street pump. His systematic data collection and decisive action—removing the pump handle before Koch had even identified <em>Vibrio cholerae</em>—established epidemiology as a tool for disease control independent of mechanistic understanding.</p>
+
+      <h4>1.2.2 The Framingham Heart Study</h4>
+      <p>The 1948 launch of the Framingham Heart Study marked the transition to chronic disease epidemiology. By following a community cohort over decades, investigators identified cholesterol, blood pressure, smoking, and diabetes as cardiovascular risk factors—establishing prospective cohort design as the template for modern chronic disease research.</p>
+
+      <h3>1.3 Rural Epidemiological Challenges</h3>
+      <p>Rural providers face distinctive challenges that urban-centric textbooks fail to address:</p>
+
+      <div class="callout-box rust">
+        <div class="callout-title">Small-Number Instability</div>
+        <p>When a county has 8,000 residents, a single unusual death can drive dramatic shifts in crude mortality rates. Statistical methods designed for large populations require modification in rural settings.</p>
+      </div>
+
+      <div class="callout-box">
+        <div class="callout-title">Surveillance Gaps</div>
+        <p>Rural counties are underrepresented in national surveillance databases. National Health Interview Survey data from rural communities may have sample sizes too small for reliable subgroup analysis.</p>
+      </div>
+
+      <div class="callout-box teal">
+        <div class="callout-title">Extended Catchment Areas</div>
+        <p>Patients may drive 90 minutes to reach a rural hospital, meaning the hospital's patient population does not correspond neatly to any administrative boundary.</p>
+      </div>
+
+      <h3>1.4 The Epidemiological Triad</h3>
+      <p>The epidemiological triad conceptualizes disease as the product of three interacting components: the <strong>agent</strong> (cause), the <strong>host</strong> (the person who can develop disease), and the <strong>environment</strong> (conditions facilitating interaction). Originally developed for infectious disease, the triad extends to chronic and injury epidemiology.</p>
+    </section>
+
+    <hr class="section-rule">
+
+    <!-- CHAPTER 2 -->
+    <section id="ch2" class="book-chapter">
+      <div class="book-chapter-num">Chapter 2</div>
+      <h2>Measures of Disease Frequency</h2>
+
+      <h3>2.1 From Counts to Rates</h3>
+      <p>The most fundamental epidemiological measurement is the count. But counts are insufficient. A county with 5,000 influenza cases may have lower disease burden than one with 500 cases if the former has 500,000 residents and the latter has 10,000. To make meaningful comparisons, we express counts relative to populations at risk.</p>
+
+      <div class="eq-block">
+        <div class="eq-label">Generic Epidemiological Rate</div>
+        Rate = (Number of events / Population at risk) × Multiplier
+      </div>
+
+      <p>The multiplier (10², 10³, 10⁴, or 10⁵) is chosen to produce a convenient whole number. Reporting 0.000247 annual deaths per person is equivalent to 24.7 deaths per 100,000—but the latter is far more interpretable.</p>
+
+      <h3>2.2 Incidence</h3>
+
+      <h4>2.2.1 Cumulative Incidence (Attack Rate)</h4>
+      <p>Cumulative incidence is the proportion of a defined, disease-free population that develops the disease during a specified time period. It estimates the probability that an individual will develop the disease.</p>
+
+      <div class="eq-block">
+        Cumulative Incidence = New cases in period / Population at risk at start of period
+      </div>
+
+      <h4>2.2.2 Incidence Rate (Incidence Density)</h4>
+      <p>The incidence rate accounts for varying observation time, using person-time (person-years, person-months) as the denominator. A cohort of 1,000 individuals followed for an average of 3.4 years contributes 3,400 person-years.</p>
+
+      <div class="eq-block">
+        Incidence Rate = New cases / Total person-time at risk
+      </div>
+
+      <h3>2.3 Prevalence</h3>
+      <div class="eq-block">
+        Prevalence ≈ Incidence × Average Duration of Disease
+      </div>
+      <p>Treatment that extends survival without curing disease <em>increases</em> prevalence even as incidence falls — a critical insight for chronic disease planning in rural settings.</p>
+
+      <h3>2.4 Special Measures for Rural Practice</h3>
+
+      <h4>2.4.1 Years of Potential Life Lost (YPLL)</h4>
+      <p>YPLL measures premature mortality by weighting deaths by years lost before age 75. A death at age 25 contributes 50 YPLL; at age 70, only 5 YPLL. YPLL is especially informative where unintentional injury and opioid overdose drive substantial premature mortality.</p>
+
+      <div class="eq-block">
+        YPLL = &Sigma;(75 − Age at death) for all deaths below age 75
+      </div>
+
+      <h4>2.4.2 Age-Adjusted Rates</h4>
+      <p>Rural populations are older than urban populations. Crude mortality rates in rural counties are often higher partly because of age structure, not (only) because rural people are less healthy age-for-age. Direct age standardization using the 2000 US Standard Population reveals the true age-adjusted gap.</p>
+
+      <div class="eq-block">
+        Age-Adjusted Rate = &Sigma;(Age-specific rate × Standard population proportion)
+      </div>
+
+      <h3>2.5 Confidence Intervals and Small-Number Problems</h3>
+      <p>In rural epidemiology, small populations create statistical instability. A county with 6,000 residents and 3 deaths has a crude mortality rate of 50 per 100,000. A single additional death raises the rate to 66.7—a 33% "increase" entirely consistent with random variation. The 95% confidence interval (Byar approximation) reveals this uncertainty:</p>
+
+      <div class="eq-block">
+        <div class="eq-label">Poisson 95% CI (Byar Approximation)</div>
+        Lower = n × (1 − 1/(9n) − 1.96/√(9n))³<br>
+        Upper = (n+1) × (1 − 1/(9(n+1)) + 1.96/√(9(n+1)))³
+      </div>
+
+      <!-- WIDGET: Rate & CI Calculator -->
+      <div class="widget" id="widget-rate">
+        <div class="widget-header">
+          <span class="widget-icon">📊</span>
+          <span class="widget-title">Interactive: Crude Rate &amp; Confidence Interval Calculator</span>
+          <span class="widget-subtitle">Try it — change n to see CI width change</span>
+        </div>
+        <div class="widget-body">
+          <div class="w-grid-2">
+            <div>
+              <div class="w-form-group">
+                <label class="w-label">Events (n) <span class="w-val" id="wr-n-val">8</span></label>
+                <input type="range" class="w-range" id="wr-n" min="1" max="50" step="1" value="8">
+              </div>
+              <div class="w-form-group">
+                <label class="w-label">Population</label>
+                <input type="number" class="w-input" id="wr-pop" value="6000" min="100">
+              </div>
+              <div class="w-form-group">
+                <label class="w-label">Rate multiplier</label>
+                <select class="w-select" id="wr-mult">
+                  <option value="1000">per 1,000</option>
+                  <option value="10000">per 10,000</option>
+                  <option value="100000" selected>per 100,000</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <div class="w-result-grid" id="wr-results"></div>
+              <div class="w-callout" id="wr-warn"></div>
+            </div>
+          </div>
+          <div class="w-chart-wrap"><canvas id="wr-chart"></canvas></div>
+        </div>
+      </div>
+
+      <!-- WIDGET: YPLL Calculator -->
+      <div class="widget" id="widget-ypll">
+        <div class="widget-header">
+          <span class="widget-icon">📅</span>
+          <span class="widget-title">Interactive: Years of Potential Life Lost (YPLL)</span>
+          <span class="widget-subtitle">Edit ages and deaths to compute YPLL</span>
+        </div>
+        <div class="widget-body">
+          <table class="w-table">
+            <thead><tr><th>Age at Death</th><th>Deaths (n)</th><th>YPLL/Death</th><th>Total YPLL</th></tr></thead>
+            <tbody id="ypll-rows">
+              <tr><td><input type="number" class="w-attack-input" value="25" min="0" max="74"></td><td><input type="number" class="w-attack-input" value="3" min="0"></td><td class="ypll-each" style="font-family:var(--font-mono)">50</td><td class="ypll-total" style="font-family:var(--font-mono);font-weight:600">150</td></tr>
+              <tr><td><input type="number" class="w-attack-input" value="38" min="0" max="74"></td><td><input type="number" class="w-attack-input" value="7" min="0"></td><td class="ypll-each" style="font-family:var(--font-mono)">37</td><td class="ypll-total" style="font-family:var(--font-mono);font-weight:600">259</td></tr>
+              <tr><td><input type="number" class="w-attack-input" value="55" min="0" max="74"></td><td><input type="number" class="w-attack-input" value="12" min="0"></td><td class="ypll-each" style="font-family:var(--font-mono)">20</td><td class="ypll-total" style="font-family:var(--font-mono);font-weight:600">240</td></tr>
+              <tr><td><input type="number" class="w-attack-input" value="68" min="0" max="74"></td><td><input type="number" class="w-attack-input" value="22" min="0"></td><td class="ypll-each" style="font-family:var(--font-mono)">7</td><td class="ypll-total" style="font-family:var(--font-mono);font-weight:600">154</td></tr>
+            </tbody>
+          </table>
+          <button class="w-btn" id="ypll-add" style="margin-top:.65rem;font-size:.78rem">+ Add Row</button>
+          <div class="w-result-grid" id="ypll-results" style="margin-top:.75rem"></div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-rule">
+
+    <!-- CHAPTER 3 -->
+    <section id="ch3" class="book-chapter">
+      <div class="book-chapter-num">Chapter 3</div>
+      <h2>Measures of Association and Causal Inference</h2>
+
+      <h3>3.1 Relative Measures</h3>
+
+      <div class="definition">
+        <div class="definition-term">Risk Ratio (Relative Risk)</div>
+        <p>The risk ratio compares cumulative incidence among exposed persons to cumulative incidence among unexposed persons. RR = 1.0 indicates no association; RR &gt; 1.0 indicates increased risk; RR &lt; 1.0 indicates a protective effect.</p>
+      </div>
+
+      <div class="eq-block">
+        RR = Cumulative Incidence (Exposed) / Cumulative Incidence (Unexposed)
+      </div>
+
+      <div class="definition">
+        <div class="definition-term">Odds Ratio</div>
+        <p>The OR compares odds of exposure among cases to odds of exposure among controls. It is the natural measure for case-control studies and logistic regression. The OR approximates the RR when the outcome is rare (prevalence &lt; 10%).</p>
+      </div>
+
+      <div class="eq-block">
+        OR = (a × d) / (b × c) &nbsp;&nbsp; [from a 2×2 table: a=exposed cases, b=unexposed cases, c=exposed controls, d=unexposed controls]
+      </div>
+
+      <h3>3.2 Absolute Measures</h3>
+
+      <h4>3.2.1 Risk Difference and Attributable Fraction</h4>
+      <div class="eq-block">
+        Risk Difference (ARD) = Risk(Exposed) − Risk(Unexposed)<br><br>
+        Attributable Fraction (AF) = (RR − 1) / RR<br><br>
+        Population AF (PAF) = p(RR − 1) / [1 + p(RR − 1)] &nbsp;&nbsp; where p = prevalence of exposure
+      </div>
+
+      <h3>3.3 Number Needed to Treat</h3>
+      <p>In clinical practice, the absolute risk difference is most intuitively expressed as the Number Needed to Treat (NNT)—the number of persons who must receive treatment for one additional person to benefit.</p>
+
+      <div class="eq-block">
+        NNT = 1 / |ARD|
+      </div>
+
+      <!-- WIDGET: NNT Calculator -->
+      <div class="widget" id="widget-nnt">
+        <div class="widget-header">
+          <span class="widget-icon">💊</span>
+          <span class="widget-title">Interactive: NNT / NNH Calculator</span>
+          <span class="widget-subtitle">Absolute risk reduction → number needed to treat</span>
+        </div>
+        <div class="widget-body">
+          <div class="w-grid-2">
+            <div>
+              <div class="w-form-group">
+                <label class="w-label">Risk in Treatment / Exposed Group (%)</label>
+                <input type="number" class="w-input" id="nnt-rt" value="8.5" min="0" max="100" step="0.1">
+              </div>
+              <div class="w-form-group">
+                <label class="w-label">Risk in Control / Unexposed Group (%)</label>
+                <input type="number" class="w-input" id="nnt-rc" value="13.2" min="0" max="100" step="0.1">
+              </div>
+            </div>
+            <div>
+              <div class="w-result-grid" id="nnt-results"></div>
+              <div class="w-callout" id="nnt-interp" style="margin-top:.65rem"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h3>3.4 Causal Inference: Bradford Hill Criteria</h3>
+      <p>Austin Bradford Hill articulated nine viewpoints for evaluating whether an observed association is causal. These are not a checklist but conceptual tools for structured reasoning:</p>
+      <ol style="line-height:1.9; color:#374151; padding-left:1.5rem; font-size:.97rem;">
+        <li><strong>Strength</strong> — Stronger associations (higher RR/OR) are less likely explained by confounding alone.</li>
+        <li><strong>Consistency</strong> — Replication across populations and study designs strengthens causal inference.</li>
+        <li><strong>Specificity</strong> — A specific exposure producing a specific outcome increases plausibility.</li>
+        <li><strong>Temporality</strong> — Cause must precede effect. The only criterion that is <em>absolutely required</em>.</li>
+        <li><strong>Biological gradient</strong> — Dose-response relationship supports causality.</li>
+        <li><strong>Plausibility</strong> — Consistency with known biological mechanisms.</li>
+        <li><strong>Coherence</strong> — Should not seriously conflict with the natural history of the disease.</li>
+        <li><strong>Experiment</strong> — Removal of the putative cause reduces disease (strongest evidence).</li>
+        <li><strong>Analogy</strong> — Similar exposures causing similar diseases increases plausibility.</li>
+      </ol>
+    </section>
+
+    <hr class="section-rule">
+
+    <!-- CHAPTER 4 -->
+    <section id="ch4" class="book-chapter">
+      <div class="book-chapter-num">Chapter 4</div>
+      <h2>Descriptive Epidemiology: Person, Place, and Time</h2>
+
+      <h3>4.1 The Triad of Descriptive Epidemiology</h3>
+      <p>Descriptive epidemiology characterizes health events by three fundamental dimensions: person (who), place (where), and time (when). These dimensions define the epidemiological portrait of a health event and generate hypotheses about its determinants.</p>
+
+      <h3>4.2 Person: Who Gets the Disease?</h3>
+      <p><strong>Age</strong> is the strongest and most consistent predictor of disease frequency. In rural populations, the age distribution is older than the national average—reflecting younger out-migration, older in-migration, and higher historical fertility rates. Age-stratified analysis is essential.</p>
+      <p><strong>Socioeconomic position</strong> (income, education, wealth) is inversely associated with virtually every health outcome studied. Rural America has persistently higher poverty rates and lower educational attainment, explaining a substantial fraction of the rural-urban health gap.</p>
+
+      <h3>4.3 Place: Where Does Disease Occur?</h3>
+      <p>The choice of geographic unit profoundly affects patterns observed. County-level analysis is standard in US surveillance, but county geography does not always correspond to meaningful epidemiological populations. Kulldorff's spatial scan statistic implements a likelihood ratio test for circular clusters that adjusts for population density.</p>
+
+      <h3>4.4 Time: The Epidemic Curve</h3>
+      <p>The epidemic curve (epi curve) plots new cases over time. Its shape reveals the mode of transmission and the likely timing of exposure. A <strong>point source</strong> outbreak produces a sharp single peak; a <strong>propagated</strong> outbreak shows a series of progressively taller waves separated by one incubation period.</p>
+    </section>
+
+    <!-- PART II -->
+    <div class="book-part-header">Part II &mdash; Epidemiological Study Designs</div>
+
+    <section id="ch5" class="book-chapter">
+      <div class="book-chapter-num">Chapter 5</div>
+      <h2>Observational Study Designs</h2>
+
+      <h3>5.1 The Hierarchy of Evidence</h3>
+      <p>Epidemiological study designs form a rough hierarchy: randomized controlled trials (highest internal validity) → prospective cohorts → retrospective cohorts → case-control studies → cross-sectional studies → expert opinion. This hierarchy is not absolute: a well-designed cohort study of an irreversible exposure may provide stronger evidence than a poorly conducted RCT.</p>
+
+      <h3>5.2 Cross-Sectional Studies</h3>
+      <p>Cross-sectional studies are the workhorses of descriptive epidemiology. The NHANES, BRFSS, and Rural Health Information Hub surveys are all cross-sectional designs. They are rapid and inexpensive but cannot establish temporality (cause before effect).</p>
+
+      <h3>5.3 Case-Control Studies</h3>
+      <p>Case-control studies are especially valuable for: (1) rare diseases requiring impossibly large prospective cohorts; (2) diseases with long latency; and (3) outbreak investigations requiring rapid answers. The selection of appropriate controls—sampled from the same source population—is the greatest methodological challenge.</p>
+
+      <h3>5.4 Cohort Studies</h3>
+      <p><strong>Prospective cohort studies</strong> enroll participants now and follow them into the future, allowing direct exposure measurement before disease develops. The Framingham Heart Study, Nurses' Health Study, and Agricultural Health Study are landmarks. <strong>Retrospective cohort studies</strong> reconstruct follow-up from historical records—faster but dependent on record completeness.</p>
+    </section>
+
+    <section id="ch6" class="book-chapter">
+      <div class="book-chapter-num">Chapter 6</div>
+      <h2>Experimental and Quasi-Experimental Designs</h2>
+
+      <h3>6.1 Randomized Controlled Trials</h3>
+      <p>Randomization distributes all baseline characteristics—measured and unmeasured—equally across groups, enabling unbiased causal estimation. Key elements: randomization, blinding, intention-to-treat analysis, and prospective sample size calculation.</p>
+
+      <h3>6.2 Interrupted Time Series</h3>
+      <p>The interrupted time series (ITS) is arguably the most powerful quasi-experimental design for population-level health policy evaluation. It compares pre-intervention trend to post-intervention trend, assessing whether the intervention produced a significant change in level or slope.</p>
+      <div class="eq-block">
+        Y(t) = β₀ + β₁·Time + β₂·Intervention + β₃·Time-after-intervention + ε
+      </div>
+      <p>Rural health policy evaluation frequently uses ITS designs: effects of CAH designation, Medicaid expansion on ED utilization, county-wide naloxone programs.</p>
+
+      <h3>6.3 Difference-in-Differences</h3>
+      <div class="eq-block">
+        DiD = (Y<sub>treated,post</sub> − Y<sub>treated,pre</sub>) − (Y<sub>control,post</sub> − Y<sub>control,pre</sub>)
+      </div>
+    </section>
+
+    <section id="ch7" class="book-chapter">
+      <div class="book-chapter-num">Chapter 7</div>
+      <h2>Systematic Review and Evidence Synthesis</h2>
+      <p>Systematic reviews and meta-analyses synthesize evidence across multiple studies using explicit, reproducible methods. In rural health research, systematic reviews of population-sparse studies must carefully attend to heterogeneity in geographic definitions, outcome measurement, and the unique challenges of combining evidence across vastly different rural contexts.</p>
+    </section>
+
+    <!-- PART III -->
+    <div class="book-part-header">Part III &mdash; Applied Rural Epidemiology</div>
+
+    <section id="ch8" class="book-chapter">
+      <div class="book-chapter-num">Chapter 8</div>
+      <h2>Infectious Disease Surveillance and Outbreak Investigation</h2>
+
+      <h3>8.1 Principles of Disease Surveillance</h3>
+      <p>Effective surveillance requires: (1) case definitions sensitive enough to capture true cases without excessive false positives; (2) reliable reporting systems; (3) analytic capacity to detect signals above background noise; and (4) communication infrastructure.</p>
+
+      <h3>8.2 The Outbreak Investigation Framework</h3>
+      <p>Outbreak investigation follows a standard 10-step framework that proceeds simultaneously across detection, investigation, and control activities:</p>
+      <ol style="line-height:1.9; color:#374151; padding-left:1.5rem; font-size:.95rem;">
+        <li>Prepare for field work</li>
+        <li>Establish the existence of an outbreak</li>
+        <li>Verify the diagnosis</li>
+        <li>Construct a working case definition</li>
+        <li>Find and count cases — build the line list</li>
+        <li>Perform descriptive epidemiology (person, place, time)</li>
+        <li>Develop hypotheses</li>
+        <li>Evaluate hypotheses analytically</li>
+        <li>Implement control measures</li>
+        <li>Communicate findings</li>
+      </ol>
+
+      <h3>8.3 The Attack Rate Table</h3>
+      <p>The attack rate table is the core analytical tool for food- and waterborne outbreak investigations. For each food item, calculate: (1) attack rate among those who ate the food; (2) attack rate among those who did not; and (3) the risk ratio. The food with the highest attack rate and largest difference is the most likely vehicle.</p>
+
+      <!-- WIDGET: Attack Rate Analyzer -->
+      <div class="widget" id="widget-attack">
+        <div class="widget-header">
+          <span class="widget-icon">🔍</span>
+          <span class="widget-title">Interactive: Foodborne Outbreak Attack Rate Analyzer</span>
+          <span class="widget-subtitle">As in Section 8.3 — edit data to identify the probable vehicle</span>
+        </div>
+        <div class="widget-body">
+          <table class="w-table" style="margin-bottom:.65rem">
+            <thead>
+              <tr><th>Food Item</th><th>Ill (Ate)</th><th>Total (Ate)</th><th>Ill (Not)</th><th>Total (Not)</th><th></th></tr>
+            </thead>
+            <tbody id="atk-rows">
+              <tr>
+                <td><input type="text" class="w-attack-input" value="Potato Salad"></td>
+                <td><input type="number" class="w-attack-input" value="87" min="0"></td>
+                <td><input type="number" class="w-attack-input" value="143" min="1"></td>
+                <td><input type="number" class="w-attack-input" value="12" min="0"></td>
+                <td><input type="number" class="w-attack-input" value="89" min="1"></td>
+                <td><button class="w-btn w-btn-sm" style="background:#A63D2F" onclick="this.closest('tr').remove();calcAttack()">✕</button></td>
+              </tr>
+              <tr>
+                <td><input type="text" class="w-attack-input" value="Coleslaw"></td>
+                <td><input type="number" class="w-attack-input" value="52" min="0"></td>
+                <td><input type="number" class="w-attack-input" value="118" min="1"></td>
+                <td><input type="number" class="w-attack-input" value="47" min="0"></td>
+                <td><input type="number" class="w-attack-input" value="114" min="1"></td>
+                <td><button class="w-btn w-btn-sm" style="background:#A63D2F" onclick="this.closest('tr').remove();calcAttack()">✕</button></td>
+              </tr>
+              <tr>
+                <td><input type="text" class="w-attack-input" value="Grilled Chicken"></td>
+                <td><input type="number" class="w-attack-input" value="61" min="0"></td>
+                <td><input type="number" class="w-attack-input" value="132" min="1"></td>
+                <td><input type="number" class="w-attack-input" value="38" min="0"></td>
+                <td><input type="number" class="w-attack-input" value="100" min="1"></td>
+                <td><button class="w-btn w-btn-sm" style="background:#A63D2F" onclick="this.closest('tr').remove();calcAttack()">✕</button></td>
+              </tr>
+            </tbody>
+          </table>
+          <button class="w-btn" id="atk-add" style="font-size:.78rem">+ Add Food Item</button>
+          <div id="atk-results" style="margin-top:.75rem"></div>
+        </div>
+      </div>
+
+      <div class="case-study">
+        <div class="case-study-header">
+          <div class="case-study-label">Case Study</div>
+          <div class="case-study-title">Foodborne Outbreak at a Rural Church Potluck</div>
+        </div>
+        <div class="case-study-body">
+          <p>On a Sunday evening in August, the emergency department of a 15-bed Critical Access Hospital received 11 patients over 4 hours with acute onset nausea, vomiting, diarrhea, and abdominal cramps. All 11 had attended a church potluck held that afternoon.</p>
+          <p>The epidemic curve showed a sharp single peak with onset 1–8 hours after the potluck, consistent with a short-incubation toxin-mediated illness. Attack rate analysis identified creamed corn casserole (RR = 8.9) as the probable vehicle. Culture grew <em>S. aureus</em>. All 11 patients recovered within 24 hours.</p>
+          <p><strong>Key lesson:</strong> Short-incubation curves point immediately to toxin-mediated illness, and food handler health screening is the primary prevention intervention.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="ch9" class="book-chapter">
+      <div class="book-chapter-num">Chapter 9</div>
+      <h2>Chronic Disease Epidemiology in Rural Communities</h2>
+      <p>Chronic diseases account for approximately 75% of all US deaths and 86% of healthcare spending. Rural Americans bear a disproportionate share: age-adjusted mortality from each of the four leading chronic diseases is higher in rural than urban counties.</p>
+
+      <h3>9.2 Cardiovascular Disease</h3>
+      <p>Rural residents die from CVD at approximately 25% higher age-adjusted rates than urban residents. STEMI outcomes are particularly sensitive to geography — the 90-minute door-to-balloon time standard is met in only 40–60% of rural hospitals versus 90% of urban hospitals with PCI capability.</p>
+
+      <h3>9.4 The Opioid Epidemic</h3>
+      <p>Age-adjusted opioid overdose death rates are 35–50% higher in rural than urban areas. The rural opioid epidemic was initially fueled by overprescription for musculoskeletal injuries disproportionately common in agricultural, mining, forestry, and construction work. As prescribing was curtailed, many dependent individuals transitioned to heroin and later to illicit fentanyl.</p>
+    </section>
+
+    <section id="ch10" class="book-chapter">
+      <div class="book-chapter-num">Chapter 10</div>
+      <h2>Environmental and Occupational Epidemiology</h2>
+      <p>Rural agricultural, mining, logging, and construction workers face environmental and occupational exposures not encountered in urban settings. Pesticide exposure, heat illness, traumatic injury, and agricultural dust-related respiratory disease are leading rural occupational health concerns.</p>
+    </section>
+
+    <section id="ch11" class="book-chapter">
+      <div class="book-chapter-num">Chapter 11</div>
+      <h2>Social Determinants of Health and Rural Disparities</h2>
+      <p>Geoffrey Rose's landmark insight — that shifting the entire population distribution of a risk factor achieves greater absolute risk reduction than high-intensity intervention on the highest-risk individuals — has profound implications for rural communities where screening and treatment resources are scarce.</p>
+    </section>
+
+    <section id="ch12" class="book-chapter">
+      <div class="book-chapter-num">Chapter 12</div>
+      <h2>Screening Programs and Diagnostic Test Evaluation</h2>
+
+      <h3>12.1 Wilson-Jungner Screening Criteria</h3>
+      <p>Wilson and Jungner's 1968 criteria remain the foundational framework for screening program implementation: the condition must be important; an accepted treatment must exist; the natural history must be understood; a suitable, validated test must be available; the program must be cost-effective.</p>
+
+      <h3>12.2 The 2×2 Table</h3>
+      <p>The performance of any binary diagnostic or screening test is completely described by a 2×2 table comparing test result to true disease status (gold standard).</p>
+
+      <h3>12.3 Test Performance Metrics</h3>
+      <div class="eq-block">
+        Sensitivity = TP / (TP + FN) &nbsp;&nbsp; Specificity = TN / (TN + FP)<br><br>
+        PPV = TP / (TP + FP) &nbsp;&nbsp; NPV = TN / (TN + FN)<br><br>
+        LR+ = Sensitivity / (1 − Specificity) &nbsp;&nbsp; LR− = (1 − Sensitivity) / Specificity
+      </div>
+
+      <h3>12.4 Bayes' Theorem and Pre-test Probability</h3>
+      <p>Sensitivity and specificity are intrinsic test properties that do not change with disease prevalence. Predictive values — the clinically relevant quantities — change dramatically with prevalence. This is Bayes' theorem applied to diagnostic testing:</p>
+
+      <div class="eq-block">
+        PPV = (Sens × Prev) / [(Sens × Prev) + ((1 − Spec) × (1 − Prev))]
+      </div>
+
+      <p>In rural low-prevalence settings, even a highly specific test yields low PPV — a major source of false-positive burden on resource-constrained systems.</p>
+
+      <!-- WIDGET: Diagnostic Test Evaluator -->
+      <div class="widget" id="widget-diag">
+        <div class="widget-header">
+          <span class="widget-icon">🔬</span>
+          <span class="widget-title">Interactive: Diagnostic Test Performance Calculator</span>
+          <span class="widget-subtitle">Enter 2×2 table or Sens/Spec + Prevalence</span>
+        </div>
+        <div class="widget-body">
+          <div style="display:flex;gap:.5rem;margin-bottom:.75rem">
+            <button class="w-btn" id="diag-btn-2x2">2×2 Table</button>
+            <button class="w-btn w-btn-sec" id="diag-btn-sens">Sens/Spec + Prevalence</button>
+          </div>
+          <div id="diag-2x2">
+            <div class="w-matrix">
+              <div class="w-m-h"></div><div class="w-m-h">Disease +</div><div class="w-m-h">Disease −</div>
+              <div class="w-m-h">Test +</div>
+              <div class="w-m-tp"><input type="number" class="w-m-inp" id="d-a" value="85"><br><small>TP</small></div>
+              <div class="w-m-fp"><input type="number" class="w-m-inp" id="d-b" value="12"><br><small>FP</small></div>
+              <div class="w-m-h">Test −</div>
+              <div class="w-m-fn"><input type="number" class="w-m-inp" id="d-c" value="15"><br><small>FN</small></div>
+              <div class="w-m-tn"><input type="number" class="w-m-inp" id="d-d" value="388"><br><small>TN</small></div>
+            </div>
+          </div>
+          <div id="diag-sens" style="display:none">
+            <div class="w-grid-3">
+              <div class="w-form-group"><label class="w-label">Sensitivity (%)</label><input type="number" class="w-input" id="d-sens" value="85"></div>
+              <div class="w-form-group"><label class="w-label">Specificity (%)</label><input type="number" class="w-input" id="d-spec" value="97"></div>
+              <div class="w-form-group"><label class="w-label">Prevalence (%)</label><input type="number" class="w-input" id="d-prev" value="17" step="0.1"></div>
+            </div>
+          </div>
+          <div class="w-result-grid" id="diag-results"></div>
+          <div class="w-callout teal" id="diag-interp" style="margin-top:.65rem"></div>
+          <div class="w-chart-wrap" style="margin-top:1rem"><canvas id="diag-chart"></canvas></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PART IV -->
+    <div class="book-part-header">Part IV &mdash; Mathematical Modeling</div>
+
+    <section id="ch13" class="book-chapter">
+      <div class="book-chapter-num">Chapter 13</div>
+      <h2>Compartmental Models of Infectious Disease</h2>
+
+      <h3>13.1 Why Mathematical Modeling?</h3>
+      <p>Compartmental models translate biological understanding of host-pathogen interactions into quantitative predictions about epidemic dynamics. They allow us to: (1) forecast epidemic trajectory; (2) estimate key parameters from surveillance data; (3) evaluate interventions before implementation; and (4) identify gaps requiring research.</p>
+
+      <h3>13.2 The SIR Model</h3>
+      <div class="eq-block">
+        <div class="eq-label">SIR Differential Equations</div>
+        dS/dt = −β·S·I/N<br>
+        dI/dt = β·S·I/N − γ·I<br>
+        dR/dt = γ·I
+      </div>
+      <p>β (beta) = transmission rate; γ (gamma) = recovery rate (1/mean infectious period); N = total population.</p>
+
+      <h3>13.2.3 The Basic Reproduction Number R₀</h3>
+      <div class="eq-block">
+        R₀ = β / γ
+      </div>
+      <p>The basic reproduction number determines the epidemic threshold. When R₀ &gt; 1, the epidemic grows. The <strong>Herd Immunity Threshold (HIT)</strong> — the immune fraction needed to prevent epidemic spread — is derived from R₀:</p>
+      <div class="eq-block">
+        HIT = 1 − 1/R₀
+      </div>
+
+      <h3>13.3 The SEIR Model</h3>
+      <p>The SEIR model adds an <strong>Exposed (E)</strong> compartment representing individuals infected but not yet infectious — those in the incubation period.</p>
+      <div class="eq-block">
+        <div class="eq-label">SEIR Differential Equations</div>
+        dS/dt = −β·S·I/N<br>
+        dE/dt = β·S·I/N − σ·E<br>
+        dI/dt = σ·E − γ·I<br>
+        dR/dt = γ·I
+      </div>
+
+      <h3>13.4 The SEIRD Model: Incorporating Mortality</h3>
+      <div class="eq-block">
+        <div class="eq-label">SEIRD Differential Equations (μ = case fatality rate)</div>
+        dS/dt = −β·S·I/N<br>
+        dE/dt = β·S·I/N − σ·E<br>
+        dI/dt = σ·E − γ·I<br>
+        dR/dt = γ·(1−μ)·I<br>
+        dD/dt = γ·μ·I
+      </div>
+
+      <!-- WIDGET: SEIR/SEIRD Model -->
+      <div class="widget" id="widget-seir">
+        <div class="widget-header">
+          <span class="widget-icon">🦠</span>
+          <span class="widget-title">Interactive: SEIR/SEIRD Epidemic Model</span>
+          <span class="widget-subtitle">4th-order Runge-Kutta ODE integration</span>
+        </div>
+        <div class="widget-body">
+          <div class="w-grid-2">
+            <div>
+              <div class="w-form-group">
+                <label class="w-label">Population N <span class="w-val" id="ws-N-val">10,000</span></label>
+                <input type="range" class="w-range" id="ws-N" min="1000" max="50000" step="1000" value="10000">
+              </div>
+              <div class="w-form-group">
+                <label class="w-label">Transmission Rate β <span class="w-val" id="ws-beta-val">0.30</span></label>
+                <input type="range" class="w-range" id="ws-beta" min="0.05" max="1.5" step="0.01" value="0.30">
+              </div>
+              <div class="w-form-group">
+                <label class="w-label">Recovery Rate γ <span class="w-val" id="ws-gamma-val">0.10</span></label>
+                <input type="range" class="w-range" id="ws-gamma" min="0.03" max="0.5" step="0.01" value="0.10">
+              </div>
+              <div class="w-form-group">
+                <label class="w-label">Latent Rate σ <span class="w-val" id="ws-sigma-val">0.20</span></label>
+                <input type="range" class="w-range" id="ws-sigma" min="0.05" max="1.0" step="0.01" value="0.20">
+              </div>
+              <div class="w-form-group">
+                <label class="w-label">Case Fatality (μ%) <span class="w-val" id="ws-mu-val">1.0%</span></label>
+                <input type="range" class="w-range" id="ws-mu" min="0" max="20" step="0.1" value="1.0">
+              </div>
+              <div class="w-form-group">
+                <label class="w-label">Vaccination Coverage <span class="w-val" id="ws-vacc-val">0%</span></label>
+                <input type="range" class="w-range" id="ws-vacc" min="0" max="95" step="1" value="0">
+              </div>
+              <div class="w-result-grid" id="ws-results"></div>
+            </div>
+            <div>
+              <div class="w-chart-wrap-tall"><canvas id="ws-chart"></canvas></div>
+              <div class="w-callout" id="ws-interp" style="margin-top:.65rem"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="case-study">
+        <div class="case-study-header">
+          <div class="case-study-label">Case Study</div>
+          <div class="case-study-title">SEIRD Modeling for Rural Influenza Surge Planning</div>
+        </div>
+        <div class="case-study-body">
+          <p>A rural hospital administrator at a 25-bed CAH asked: "If a severe influenza season hits our county of 12,000 residents, how many hospitalizations should we plan for, and when will the peak occur?"</p>
+          <p>After adjusting for pre-existing immunity (45%) and vaccination, the effective R₀ was approximately 1.12. The model generated a peak infection incidence around day 67, with total expected hospitalizations of 81 (95% CI: 54–118) and peak weekly admissions of 12–15 over a 2-week period.</p>
+          <p><strong>Implication:</strong> The 25-bed CAH should anticipate needing surge capacity of approximately 5–7 additional beds for 2 weeks. Raising vaccination coverage to 70% would reduce expected hospitalizations by ~35%.</p>
+          <p><em>Use the SEIRD model above to reproduce these results: set N=12,000, β=0.30, γ=0.10, vaccination=45%.</em></p>
+        </div>
+      </div>
+    </section>
+
+    <section id="ch14" class="book-chapter">
+      <div class="book-chapter-num">Chapter 14</div>
+      <h2>Rust Implementation of the SEIR/SEIRD Framework</h2>
+      <p>Rust offers a compelling combination of performance (comparable to C/C++), memory safety, and excellent WebAssembly compilation support — ideal for browser-deployable epidemic models that are both fast and safe. The JavaScript implementation in this textbook mirrors the Rust/WASM approach described here, using the same 4th-order Runge-Kutta solver.</p>
+      <div class="callout-box">
+        <div class="callout-title">RK4 Integration</div>
+        <p>Fourth-order Runge-Kutta achieves O(h⁴) local error — far superior to Euler's O(h) method. With dt = 0.5 days, RK4 provides accuracy sufficient for clinical planning purposes while remaining computationally trivial in both Rust/WASM and JavaScript.</p>
+      </div>
+    </section>
+
+    <section id="ch15" class="book-chapter">
+      <div class="book-chapter-num">Chapter 15</div>
+      <h2>Parameter Estimation and Model Calibration</h2>
+      <p>Compartmental model parameters (β, γ, σ, μ) must be estimated from surveillance data. Methods include: least-squares fitting to observed incidence curves, maximum likelihood estimation, and Markov chain Monte Carlo (MCMC) for full posterior distributions of parameter uncertainty. In rural settings with sparse surveillance data, prior distributions based on pathogen-specific literature are critical for avoiding overfit.</p>
+    </section>
+
+    <!-- PART V -->
+    <div class="book-part-header">Part V &mdash; Rural Practice Applications</div>
+
+    <section id="ch16" class="book-chapter">
+      <div class="book-chapter-num">Chapter 16</div>
+      <h2>Building a Rural Surveillance System</h2>
+      <p>Rural disease surveillance faces a structural paradox: the areas with greatest need for sensitive, timely surveillance are precisely those with least surveillance infrastructure. Core components: (1) ED syndromic surveillance via NSSP; (2) laboratory-based reporting; (3) death certificate surveillance; (4) electronic case reporting (eCR) via HL7 FHIR.</p>
+      <div class="callout-box teal">
+        <div class="callout-title">One Health Approach</div>
+        <p>Many rural emerging infectious diseases are zoonoses — rabies, brucellosis, leptospirosis, anthrax, West Nile encephalitis, Q fever. Effective rural surveillance integrates animal, human, and environmental health data streams.</p>
+      </div>
+    </section>
+
+    <section id="ch17" class="book-chapter">
+      <div class="book-chapter-num">Chapter 17</div>
+      <h2>Community Health Assessment in Rural Settings</h2>
+      <p>Community Health Needs Assessments (CHNAs) are required every 3 years for tax-exempt hospitals. In rural settings, CHNAs must navigate small-number instability in local data, the absence of many standard data sources, and the need to engage communities where trust in institutions may be strained by historical underservice.</p>
+    </section>
+
+    <section id="ch18" class="book-chapter">
+      <div class="book-chapter-num">Chapter 18</div>
+      <h2>Epidemiological Methods in Quality Improvement</h2>
+      <p>Statistical process control (SPC) methods — control charts, CUSUM, EWMA — originated in industrial quality management and have been adapted for healthcare quality monitoring. In rural hospitals with low volumes, standard SPC chart limits may need adjustment; the CUSUM is particularly useful for detecting sustained shifts in small-volume settings.</p>
+    </section>
+
+    <section id="ch19" class="book-chapter">
+      <div class="book-chapter-num">Chapter 19</div>
+      <h2>Case Studies in Rural Epidemiology</h2>
+
+      <div class="case-study">
+        <div class="case-study-header">
+          <div class="case-study-label">Case Study 3</div>
+          <div class="case-study-title">Opioid Overdose Spatial Analysis — Rural Appalachian County</div>
+        </div>
+        <div class="case-study-body">
+          <p>A county health department identified a 340% increase in opioid overdose EMS calls over 36 months. Spatial analysis using kernel density estimation and Kulldorff's spatial scan statistic identified two significant clusters: one centered on a mobile home park (RR = 4.2 vs. county background) and one along a rural highway corridor associated with a fentanyl distribution network.</p>
+          <p>Naloxone distribution kits were targeted to both clusters — placed in convenience stores, laundromats, and with local churches. A mobile treatment outreach unit was deployed to the rural highway corridor weekly. At 12-month follow-up, overdose mortality in the cluster areas declined 28% compared to non-cluster baseline.</p>
+        </div>
+      </div>
+
+    </section>
+
+  </main><!-- /book-content -->
+</div><!-- /book-shell -->
+
+<script type="module" src="./module.js"></script>
+</body>
+</html>
