@@ -61,7 +61,12 @@
           <h2>Controls</h2>
 
           <div class="control-group dropdown-control">
-            <label for="function-select">Function</label>
+            <label for="function-select">Function
+              <button class="param-info" aria-label="Parameter info" aria-expanded="false"
+                data-param="Integrand Function"
+                data-tip="The function f: [0,1] → ℝ to be integrated. 'Smooth' functions are Riemann-integrable; 'Dirichlet-like' is discontinuous everywhere — Riemann integration fails but Lebesgue integration succeeds. 'Fast Oscillation' demonstrates why partition fineness matters."
+                data-default="Smooth: sin(2πx)+1.5">ⓘ</button>
+            </label>
             <select id="function-select">
               <option value="smooth">Smooth: sin(2&pi;x) + 1.5</option>
               <option value="step">Step Function</option>
@@ -78,6 +83,10 @@
             <label for="num-partitions">
               Partition Size
               <span class="value-display" id="num-partitions-val">8</span>
+              <button class="param-info" aria-label="Parameter info" aria-expanded="false"
+                data-param="Riemann Partition Size (n)"
+                data-tip="Number of equal-width subintervals used for the Riemann sum. The domain [0,1] is divided into n pieces; upper and lower sums are computed over each. As n → ∞, U(f,P) − L(f,P) → 0 for Riemann-integrable functions."
+                data-default="8" data-range="2–100" data-unit="intervals">ⓘ</button>
             </label>
             <input type="range" id="num-partitions" min="2" max="100" step="1" value="8" />
           </div>
@@ -86,6 +95,10 @@
             <label for="range-slices">
               Range Slices (Lebesgue)
               <span class="value-display" id="range-slices-val">8</span>
+              <button class="param-info" aria-label="Parameter info" aria-expanded="false"
+                data-param="Lebesgue Range Slices (m)"
+                data-tip="Number of horizontal slices of the range [min f, max f]. The Lebesgue integral approximates ∫f dλ by summing (slice height) × λ({x : f(x) in slice}), where λ is Lebesgue measure. More slices = finer approximation."
+                data-default="8" data-range="2–100" data-unit="slices">ⓘ</button>
             </label>
             <input type="range" id="range-slices" min="2" max="100" step="1" value="8" />
           </div>
@@ -232,6 +245,7 @@
       </div>
     </div>
   </div>
+  <script type="module" src="../../lib/param-tooltips.js"></script>
   <script type="module" src="./module.js"></script>
 </body>
 </html>

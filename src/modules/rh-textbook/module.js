@@ -5,6 +5,7 @@
 
 import { chapters } from './chapters';
 import katex from 'katex';
+import '../../lib/param-tooltips.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   const tocList = document.getElementById('toc-list');

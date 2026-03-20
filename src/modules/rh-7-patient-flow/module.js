@@ -8,6 +8,7 @@ import katex from 'katex';
 import { ParameterPanel } from '@shared/components';
 import { SimulationEngine } from '../../shared/SimulationEngine';
 import { ErrorBoundary } from '../../shared/ErrorBoundary';
+import '../../lib/param-tooltips.js';
 
 // Initialize Antigravity Error Boundary
 ErrorBoundary.init();

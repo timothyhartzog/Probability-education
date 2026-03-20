@@ -8,6 +8,7 @@
 import * as d3 from 'd3';
 import katex from 'katex';
 import '../../lib/copy-code.js';
+import { makeInfoBtn } from '../../lib/param-tooltips.js';
 
 /* ---- Seedable xoshiro128** PRNG ----------------------------- */
 function xoshiro128ss(a, b, c, d) {
@@ -707,7 +708,11 @@ function buildControls() {
     { value: 'pareto', label: 'Pareto(alpha, xm=1)' },
     { value: 'cauchy', label: 'Cauchy(0, 1) — no mean' },
     { value: 'bernoulli', label: 'Bernoulli(0.5)' },
-  ], state.distribution);
+  ], state.distribution, {
+    param: 'Parent Distribution',
+    tip: 'The distribution each Xᵢ is drawn from. The LLN holds for any distribution with a finite mean (E[|X|] < ∞). Cauchy has no finite mean — the running average never converges. Pareto with α ≤ 1 also fails; at α ≤ 2 variance is infinite so convergence is very slow.',
+    default: 'Normal(0,1)',
+  });
   panel.appendChild(distGroup);
 
   distGroup.querySelector('select').addEventListener('change', (e) => {
@@ -725,6 +730,10 @@ function buildControls() {
     state.paretoAlpha = v;
     updateAlphaAnnotation();
     update();
+  }, undefined, {
+    param: 'Pareto Tail Index (α)',
+    tip: 'Controls the tail heaviness. α > 2: finite mean and variance, LLN works well. 1 < α ≤ 2: finite mean but infinite variance — convergence is very slow and erratic. α ≤ 1: infinite mean — LLN fails entirely and the running average diverges.',
+    default: '1.5', range: '0.5–3.0',
   });
   paretoDiv.appendChild(alphaSlider);
 
@@ -742,6 +751,10 @@ function buildControls() {
   panel.appendChild(makeSlider('Number of paths', 'paths-slider', 10, 200, 10, state.numPaths, (v) => {
     state.numPaths = v;
     update();
+  }, undefined, {
+    param: 'Number of Sample Paths',
+    tip: 'How many independent sequences X₁, X₂, … are simulated simultaneously. More paths shows how the running average Sₙ/n fans out and then concentrates near μ. Higher values slow rendering.',
+    default: '50', range: '10–200', unit: 'paths',
   }));
 
   // Max n (log scale steps)
@@ -759,13 +772,21 @@ function buildControls() {
       }
     }
     update();
-  }, (v) => nSteps[v].toLocaleString());
+  }, (v) => nSteps[v].toLocaleString(), {
+    param: 'Maximum n',
+    tip: 'The largest sample size n to display. Use larger values to see the asymptotic behavior of the LLN and the 1/√n convergence rate on the log-log chart. Steps are logarithmically spaced.',
+    default: '1,000', range: '100–100,000',
+  });
   panel.appendChild(maxNSlider);
 
   // Fixed n for histogram
   panel.appendChild(makeSlider('Fixed n (histogram)', 'fixedn-slider', 10, state.maxN, 10, state.fixedN, (v) => {
     state.fixedN = Math.min(v, state.maxN);
     update();
+  }, undefined, {
+    param: 'Fixed n (Histogram)',
+    tip: 'The specific sample size n used for the distribution histogram (bottom-left panel). Shows how the distribution of the running average Sₙ/n concentrates around μ as n increases.',
+    default: '500', range: '10–max n',
   }));
 
   panel.appendChild(makeDivider());
@@ -791,10 +812,14 @@ function buildControls() {
 }
 
 /* ---- Control helpers ---------------------------------------- */
-function makeDropdown(label, id, options, selected) {
+function makeDropdown(label, id, options, selected, tooltip) {
   const group = document.createElement('div');
   group.className = 'control-group dropdown-control';
-  group.innerHTML = `<label for="${id}">${label}</label>`;
+  const lbl = document.createElement('label');
+  lbl.setAttribute('for', id);
+  lbl.innerHTML = label;
+  if (tooltip) lbl.appendChild(makeInfoBtn(tooltip));
+  group.appendChild(lbl);
   const sel = document.createElement('select');
   sel.id = id;
   for (const opt of options) {
@@ -808,13 +833,14 @@ function makeDropdown(label, id, options, selected) {
   return group;
 }
 
-function makeSlider(label, id, min, max, step, value, onChange, formatFn) {
+function makeSlider(label, id, min, max, step, value, onChange, formatFn, tooltip) {
   const group = document.createElement('div');
   group.className = 'control-group slider-control';
   const lbl = document.createElement('label');
   lbl.setAttribute('for', id);
   const displayVal = formatFn ? formatFn(value) : value;
   lbl.innerHTML = `${label} <span class="value-display">${displayVal}</span>`;
+  if (tooltip) lbl.appendChild(makeInfoBtn(tooltip));
   group.appendChild(lbl);
 
   const input = document.createElement('input');

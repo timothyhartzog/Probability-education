@@ -7,6 +7,7 @@
 import * as d3 from 'd3';
 import katex from 'katex';
 import '../../lib/copy-code.js';
+import { makeInfoBtn } from '../../lib/param-tooltips.js';
 
 // ============================================================
 //  Seeded PRNG — mulberry32
@@ -891,6 +892,7 @@ function buildControls() {
   }
 
   wireControls();
+  setupControlTooltips();
 }
 
 function wireControls() {
@@ -934,6 +936,30 @@ function wireControls() {
       renderAll();
     });
   }
+}
+
+// ============================================================
+//  Control Tooltips — add info buttons to built controls
+// ============================================================
+function setupControlTooltips() {
+  const configs = [
+    {
+      selector: '#preset-select label',
+      param: 'Distribution Preset',
+      tip: 'Pre-defined probability distributions P to start from. You can then drag the bars to create any custom distribution. The preset determines the initial shape for comparison with distribution Q.',
+      default: 'Uniform',
+    },
+    {
+      selector: '#num-symbols label',
+      param: 'Number of Symbols (n)',
+      tip: 'The alphabet size of the probability distributions. With n symbols, P = (p₁,…,pₙ) and Q = (q₁,…,qₙ). Maximum entropy H(P) = log₂(n) is achieved when all pᵢ = 1/n. More symbols give richer KL divergence structure.',
+      default: '4', range: '2–8',
+    },
+  ];
+  configs.forEach(({ selector, ...tooltip }) => {
+    const lbl = document.querySelector(selector);
+    if (lbl) lbl.appendChild(makeInfoBtn(tooltip));
+  });
 }
 
 // ============================================================

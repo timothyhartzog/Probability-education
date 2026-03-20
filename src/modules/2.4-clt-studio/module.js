@@ -8,6 +8,7 @@
 import * as d3 from 'd3';
 import katex from 'katex';
 import '../../lib/copy-code.js';
+import { makeInfoBtn } from '../../lib/param-tooltips.js';
 
 /* ---- Seedable xoshiro128** PRNG ----------------------------- */
 function xoshiro128ss(a, b, c, d) {
@@ -620,7 +621,13 @@ function buildControls() {
 
   // Distribution dropdown
   const distGroup = panel.append('div').attr('class', 'control-group dropdown-control');
-  distGroup.append('label').text('Distribution');
+  const distLbl = distGroup.append('label');
+  distLbl.append('span').text('Distribution');
+  distLbl.node().appendChild(makeInfoBtn({
+    param: 'Parent Distribution',
+    tip: 'The distribution of each individual Xᵢ. The CLT applies when E[X²] < ∞ (finite variance). Cauchy has infinite variance — the histogram never approaches Gaussian regardless of n. Heavy-tailed distributions converge much more slowly than light-tailed ones.',
+    default: 'Normal(0,1)',
+  }));
   const select = distGroup.append('select').attr('id', 'dist-select');
   for (const [key, dist] of Object.entries(DISTRIBUTIONS)) {
     select.append('option').attr('value', key).text(dist.label);
@@ -637,6 +644,11 @@ function buildControls() {
   const nLabel = nGroup.append('label');
   nLabel.append('span').text('n (summands) ');
   nLabel.append('span').attr('class', 'value-display').attr('id', 'n-display').text(state.n);
+  nLabel.node().appendChild(makeInfoBtn({
+    param: 'Number of Summands (n)',
+    tip: 'How many i.i.d. terms are summed and then standardized: Zₙ = (X₁+…+Xₙ − nμ)/(σ√n). Larger n makes the histogram approach N(0,1). By Berry-Esseen, the approximation error is O(1/√n).',
+    default: '30', range: '1–500', unit: 'terms',
+  }));
   const nSlider = nGroup.append('input').attr('type', 'range')
     .attr('min', 1).attr('max', 500).attr('step', 1)
     .attr('value', state.n).attr('id', 'n-slider');
@@ -652,6 +664,11 @@ function buildControls() {
   sampLabel.append('span').text('Samples ');
   sampLabel.append('span').attr('class', 'value-display').attr('id', 'samp-display')
     .text(d3.format(',')(state.numSamples));
+  sampLabel.node().appendChild(makeInfoBtn({
+    param: 'Number of Samples',
+    tip: 'How many independent realizations of Zₙ are drawn to build the histogram. More samples gives a smoother, more accurate empirical distribution. Higher values slow rendering.',
+    default: '10,000', range: '1,000–50,000',
+  }));
   const sampSlider = sampGroup.append('input').attr('type', 'range')
     .attr('min', 1000).attr('max', 50000).attr('step', 1000)
     .attr('value', state.numSamples);

@@ -7,6 +7,7 @@
 import * as d3 from 'd3';
 import katex from 'katex';
 import '../../lib/copy-code.js';
+import { makeInfoBtn } from '../../lib/param-tooltips.js';
 
 /* ----------------------------------------------------------------
    Seedable PRNG (xoshiro128**)
@@ -281,7 +282,13 @@ function buildControls() {
   const integrandDiv = d3.select('#integrand-select');
   integrandDiv.html('');
   const ig = integrandDiv.append('div').attr('class', 'control-group dropdown-control');
-  ig.append('label').text('Integrand f(t, Bt)');
+  const igLbl = ig.append('label');
+  igLbl.append('span').text('Integrand f(t, B\u209c)');
+  igLbl.node().appendChild(makeInfoBtn({
+    param: 'Integrand f(t, Bₜ)',
+    tip: 'The adapted process to integrate against Brownian motion. The Itô integral ∫₀ᵀ f(t,Bₜ) dBₜ is defined as a limit of left-point (non-anticipating) Riemann sums. Each choice has a known closed form via the Itô formula — compare the numerical result to the exact value shown.',
+    default: 'Bₜ (identity)',
+  }));
   const igSel = ig.append('select');
   Object.entries(INTEGRANDS).forEach(([key, val]) => {
     igSel.append('option').attr('value', key).text(val.label);
@@ -296,7 +303,13 @@ function buildControls() {
   const interpDiv = d3.select('#interpretation-toggle');
   interpDiv.html('');
   const tg = interpDiv.append('div').attr('class', 'control-group dropdown-control');
-  tg.append('label').text('Integration Rule');
+  const tgLbl = tg.append('label');
+  tgLbl.append('span').text('Integration Rule');
+  tgLbl.node().appendChild(makeInfoBtn({
+    param: 'Integration Rule',
+    tip: 'Itô uses left-endpoint evaluation (non-anticipating, causal). Stratonovich uses the midpoint rule — it satisfies the usual chain rule but requires "future" information. Itô is standard in finance and physics. Stratonovich is preferred when the noise is physical (Wong-Zakai theorem). The two differ by a correction term: ∫ Bₜ ∘ dBₜ = ∫ Bₜ dBₜ + T/2.',
+    default: 'Itô',
+  }));
   const tgSel = tg.append('select');
   tgSel.append('option').attr('value', 'ito').text('Ito (left-point)');
   tgSel.append('option').attr('value', 'strat').text('Stratonovich (midpoint)');
@@ -314,6 +327,11 @@ function buildControls() {
   const sLabel = sg.append('label');
   sLabel.append('span').text('Time Steps ');
   const sVal = sLabel.append('span').attr('class', 'value-display').text(state.numSteps);
+  sLabel.node().appendChild(makeInfoBtn({
+    param: 'Time Steps (n)',
+    tip: 'Number of subintervals in the partition of [0, T]. The Itô integral is defined as the L² limit of Riemann sums as n → ∞. Larger n gives a finer approximation and reduces discretization error. The quadratic variation ∑(ΔBₜ)² converges to T as n → ∞.',
+    default: '500', range: '50–2,000',
+  }));
   const sSlider = sg.append('input')
     .attr('type', 'range')
     .attr('min', 50).attr('max', 2000).attr('step', 10)

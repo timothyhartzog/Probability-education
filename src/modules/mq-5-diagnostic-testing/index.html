@@ -108,6 +108,10 @@
             <label for="prevalence-slider">
               Prevalence
               <span class="value-display" id="prevalence-val">1%</span>
+              <button class="param-info" aria-label="Parameter info" aria-expanded="false"
+                data-param="Prevalence (Pre-test Probability)"
+                data-tip="The proportion of the population that actually has the disease before testing. This is the most important driver of PPV and NPV. In a low-prevalence setting (e.g. 1%), even a test with 95% sensitivity and specificity will have many false positives — because true positives are rare."
+                data-default="1%" data-range="0.1%–50%">ⓘ</button>
             </label>
             <input
               type="range" id="prevalence-slider"
@@ -123,6 +127,10 @@
             <label for="sensitivity-slider">
               Sensitivity
               <span class="value-display" id="sensitivity-val">95%</span>
+              <button class="param-info" aria-label="Parameter info" aria-expanded="false"
+                data-param="Sensitivity (True Positive Rate)"
+                data-tip="P(test+ | disease+). The probability a test correctly identifies a person who truly has the disease. High sensitivity minimizes false negatives — important when missing a case is dangerous (e.g. cancer screening). Typical high-performance tests: 95–99%."
+                data-default="95%" data-range="50%–100%">ⓘ</button>
             </label>
             <input
               type="range" id="sensitivity-slider"
@@ -138,6 +146,10 @@
             <label for="specificity-slider">
               Specificity
               <span class="value-display" id="specificity-val">95%</span>
+              <button class="param-info" aria-label="Parameter info" aria-expanded="false"
+                data-param="Specificity (True Negative Rate)"
+                data-tip="P(test− | disease−). The probability a test correctly identifies a person who truly does not have the disease. High specificity minimizes false positives — important when a false alarm causes harm (unnecessary treatment, anxiety). Typical high-performance tests: 95–99%."
+                data-default="95%" data-range="50%–100%">ⓘ</button>
             </label>
             <input
               type="range" id="specificity-slider"

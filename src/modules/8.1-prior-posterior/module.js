@@ -10,6 +10,7 @@
 import * as d3 from 'd3';
 import katex from 'katex';
 import '../../lib/copy-code.js';
+import { makeInfoBtn } from '../../lib/param-tooltips.js';
 
 /* ---- Seeded PRNG (mulberry32) ------------------------------- */
 function mulberry32(seed) {
@@ -1085,7 +1086,13 @@ function buildControls() {
   // Family dropdown
   const familyDiv = d3.select('#family-select');
   familyDiv.selectAll('*').remove();
-  const familyLabel = familyDiv.append('label').text('Conjugate Family');
+  const familyLblEl = familyDiv.append('label');
+  familyLblEl.append('span').text('Conjugate Family');
+  familyLblEl.node().appendChild(makeInfoBtn({
+    param: 'Conjugate Family',
+    tip: 'A conjugate prior is one where the posterior has the same distributional form as the prior. E.g., Beta prior + Binomial likelihood → Beta posterior. This makes Bayesian updates analytically tractable. Each family shown here is a classic conjugate pair.',
+    default: 'Beta-Binomial',
+  }));
   const familySelect = familyDiv.append('select').attr('class', 'control-select')
     .style('width', '100%').style('padding', '6px').style('margin-top', '4px')
     .style('border-radius', '6px').style('border', '1px solid #cbd5e1');
@@ -1128,10 +1135,14 @@ function buildControls() {
   // Sample size slider
   buildSlider('#sample-size-slider', 'Obs per click', [1, 20, 1, 1], state.sampleSize, (v) => {
     state.sampleSize = Math.round(v);
+  }, {
+    param: 'Observations per Click',
+    tip: 'How many data points are added to the dataset each time you click "Add Observations". With 1, you see sequential Bayesian updating one observation at a time. With larger values you see batch updates. The posterior after n observations is the same regardless of batch size.',
+    default: '1', range: '1–20', unit: 'obs',
   });
 }
 
-function buildSlider(selector, label, range, currentVal, onChange) {
+function buildSlider(selector, label, range, currentVal, onChange, tooltip) {
   const div = d3.select(selector);
   div.selectAll('*').remove();
 
@@ -1139,7 +1150,9 @@ function buildSlider(selector, label, range, currentVal, onChange) {
 
   const labelRow = div.append('div').style('display', 'flex').style('justify-content', 'space-between')
     .style('margin-bottom', '4px').style('font-size', '13px');
-  labelRow.append('span').text(label);
+  const labelSpan = labelRow.append('span');
+  labelSpan.append('span').text(label);
+  if (tooltip) labelSpan.node().appendChild(makeInfoBtn(tooltip));
   const valSpan = labelRow.append('span').style('font-family', 'var(--font-mono)').style('font-weight', '600')
     .text(currentVal.toFixed(step < 1 ? 2 : 0));
 

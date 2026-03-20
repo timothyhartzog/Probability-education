@@ -333,6 +333,84 @@
   }
 }
 
+/* --- Parameter Info Tooltip ---------------------------------- */
+.param-info {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  font-size: 10px;
+  font-weight: 700;
+  font-family: var(--font-heading);
+  border: none;
+  cursor: pointer;
+  vertical-align: middle;
+  margin-left: var(--space-xs);
+  flex-shrink: 0;
+  transition: background var(--transition-fast), color var(--transition-fast);
+  line-height: 1;
+  padding: 0;
+}
+
+.param-info:hover,
+.param-info:focus {
+  background: var(--color-primary);
+  color: #fff;
+  outline: none;
+}
+
+/* Popup panel */
+.param-popup {
+  position: fixed;
+  z-index: 9999;
+  background: var(--color-text);
+  color: #fff;
+  font-family: var(--font-heading);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+  max-width: 280px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 150ms ease;
+}
+
+.param-popup.visible {
+  opacity: 1;
+}
+
+.param-popup .pp-title {
+  font-weight: 700;
+  font-size: 0.875rem;
+  margin-bottom: var(--space-xs);
+  color: #93c5fd;
+}
+
+.param-popup .pp-body {
+  margin-bottom: var(--space-sm);
+}
+
+.param-popup .pp-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border-top: 1px solid rgba(255,255,255,0.15);
+  padding-top: var(--space-xs);
+  margin-top: var(--space-xs);
+  font-size: 0.75rem;
+  color: #cbd5e1;
+}
+
+.param-popup .pp-meta span {
+  font-family: var(--font-mono);
+}
+
 /* --- Copy Code Button ---------------------------------------- */
 .copy-code-btn {
   position: fixed;

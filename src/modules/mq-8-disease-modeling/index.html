@@ -143,21 +143,36 @@
 
             <!-- Beta (transmission rate) -->
             <div class="control-group slider-control">
-              <label for="beta-slider">Transmission Rate (beta): <span class="value-display" id="beta-display">0.30</span></label>
+              <label for="beta-slider">Transmission Rate (β): <span class="value-display" id="beta-display">0.30</span>
+                <button class="param-info" aria-label="Parameter info" aria-expanded="false"
+                  data-param="Transmission Rate (β)"
+                  data-tip="The rate at which susceptible individuals become infected per contact with an infected individual. β = (contacts/day) × (probability of transmission per contact). R₀ = β/γ. Typical values: Measles β≈1.0, COVID-19 β≈0.3, Flu β≈0.2."
+                  data-default="0.30" data-range="0.01–1.5" data-unit="per day">ⓘ</button>
+              </label>
               <input type="range" id="beta-slider" min="0.01" max="1.5" step="0.01" value="0.30" />
               <div class="param-help">Contact rate x probability of transmission per contact</div>
             </div>
 
             <!-- Gamma (recovery rate) -->
             <div class="control-group slider-control">
-              <label for="gamma-slider">Recovery Rate (gamma): <span class="value-display" id="gamma-display">0.10</span></label>
+              <label for="gamma-slider">Recovery Rate (γ): <span class="value-display" id="gamma-display">0.10</span>
+                <button class="param-info" aria-label="Parameter info" aria-expanded="false"
+                  data-param="Recovery Rate (γ)"
+                  data-tip="The rate at which infected individuals recover. 1/γ is the mean infectious period in days. γ=0.10 means average 10 days infectious. R₀ = β/γ — decreasing γ (longer infection) increases R₀. Typical: Flu γ≈0.25 (4 days), COVID-19 γ≈0.07–0.14."
+                  data-default="0.10" data-range="0.01–0.5" data-unit="per day">ⓘ</button>
+              </label>
               <input type="range" id="gamma-slider" min="0.01" max="0.5" step="0.005" value="0.10" />
               <div class="param-help">1/gamma = <span id="infectious-period">10.0</span> days infectious period</div>
             </div>
 
             <!-- Sigma (exposed rate, for SEIR) -->
             <div class="control-group slider-control seir-param" id="sigma-group">
-              <label for="sigma-slider">Incubation Rate (sigma): <span class="value-display" id="sigma-display">0.20</span></label>
+              <label for="sigma-slider">Incubation Rate (σ): <span class="value-display" id="sigma-display">0.20</span>
+                <button class="param-info" aria-label="Parameter info" aria-expanded="false"
+                  data-param="Incubation Rate (σ) — SEIR/SEIRS only"
+                  data-tip="Rate at which exposed (latent) individuals become infectious. 1/σ is the mean incubation period. Only affects SEIR/SEIRS models where there is an Exposed (E) compartment. COVID-19 σ≈0.2 (5-day incubation), Ebola σ≈0.125 (8 days)."
+                  data-default="0.20" data-range="0.05–1.0" data-unit="per day">ⓘ</button>
+              </label>
               <input type="range" id="sigma-slider" min="0.05" max="1.0" step="0.01" value="0.20" />
               <div class="param-help">1/sigma = <span id="incubation-period">5.0</span> days incubation period</div>
             </div>
@@ -178,7 +193,12 @@
 
             <!-- Initial conditions -->
             <div class="control-group slider-control">
-              <label for="pop-slider">Population: <span class="value-display" id="pop-display">10000</span></label>
+              <label for="pop-slider">Population (N): <span class="value-display" id="pop-display">10000</span>
+                <button class="param-info" aria-label="Parameter info" aria-expanded="false"
+                  data-param="Population Size (N)"
+                  data-tip="Total population size. In deterministic ODE models population size only affects absolute counts — the proportional dynamics (% infected, R₀) are scale-invariant. In the agent-based model, small N shows stochastic fluctuations and extinction events that ODE models miss."
+                  data-default="10,000" data-range="1,000–1,000,000">ⓘ</button>
+              </label>
               <input type="range" id="pop-slider" min="1000" max="1000000" step="1000" value="10000" />
             </div>
 
@@ -922,6 +942,7 @@
 
   </div>
 
+  <script type="module" src="../../lib/param-tooltips.js"></script>
   <script type="module" src="./module.js"></script>
 </body>
 </html>

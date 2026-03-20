@@ -6,6 +6,7 @@
 import * as d3 from 'd3';
 import katex from 'katex';
 import { ParameterPanel } from '@shared/components';
+import '../../lib/param-tooltips.js';
 
 const state = {
   numBeds: 25,

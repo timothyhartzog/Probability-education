@@ -7,6 +7,7 @@
 import * as d3 from 'd3';
 import katex from 'katex';
 import '../../lib/copy-code.js';
+import '../../lib/param-tooltips.js';
 
 // ---- Constants ------------------------------------------------
 const MARGIN = { top: 20, right: 20, bottom: 35, left: 45 };

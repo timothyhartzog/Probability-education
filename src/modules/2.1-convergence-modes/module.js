@@ -6,6 +6,7 @@
 import * as d3 from 'd3';
 import katex from 'katex';
 import '../../lib/copy-code.js';
+import { makeInfoBtn } from '../../lib/param-tooltips.js';
 
 // ---- Seedable PRNG (xoshiro128**) ---------------------------
 function xoshiro128ss(seed) {
@@ -148,7 +149,13 @@ function buildControls() {
 
   // Sequence type
   const seqGroup = panel.append('div').attr('class', 'control-group dropdown-control');
-  seqGroup.append('label').text('Sequence Type');
+  const seqLbl = seqGroup.append('label');
+  seqLbl.append('span').text('Sequence Type');
+  seqLbl.node().appendChild(makeInfoBtn({
+    param: 'Sequence Type',
+    tip: 'Which example sequence to visualize. "Standard a.s." converges in all senses. "Typewriter" converges in probability and Lᵖ but NOT almost surely — paths keep spiking back to 1 forever. "Lp failure" shows convergence a.s. and in probability but failure of Lᵖ convergence due to growing spike height.',
+    default: 'Standard a.s.',
+  }));
   const sel = seqGroup.append('select');
   [['standard', 'Standard a.s.'], ['typewriter', 'Typewriter'], ['lp_failure', 'Lp failure']]
     .forEach(([v, t]) => sel.append('option').attr('value', v).text(t));
@@ -161,19 +168,35 @@ function buildControls() {
   addSlider(panel, 'Max n', 'maxN', 1, 4, state.maxN,
     v => Math.round(Math.pow(10, v)),
     v => Math.log10(v),
-    v => v.toLocaleString());
+    v => v.toLocaleString(), {
+      param: 'Maximum n',
+      tip: 'The time horizon for the simulation. The a.s. convergence panel shows all sample paths up to n. Larger n makes the tail behavior (does it stabilize?) more apparent.',
+      default: '1,000', range: '10–10,000',
+    });
 
   // Num paths
   addSlider(panel, 'Sample Paths', 'numPaths', 10, 200, state.numPaths,
-    v => Math.round(v), v => v, v => String(v));
+    v => Math.round(v), v => v, v => String(v), {
+      param: 'Number of Sample Paths',
+      tip: 'How many independent realizations ω₁, ω₂, … to draw. Each path shows the value of Xₙ(ωᵢ) as n increases. The a.s. panel lets you see whether individual paths converge; the probability panel shows the fraction outside ε.',
+      default: '50', range: '10–200',
+    });
 
   // Epsilon
   addSlider(panel, 'Epsilon (probability panel)', 'epsilon', 0.01, 1.0, state.epsilon,
-    v => +v.toFixed(3), v => v, v => v.toFixed(2));
+    v => +v.toFixed(3), v => v, v => v.toFixed(2), {
+      param: 'Epsilon (ε) — Tolerance Band',
+      tip: 'The tolerance used in the convergence-in-probability panel. It plots P(|Xₙ − X| > ε) as a function of n. This must go to 0 for convergence in probability. Smaller ε is a stricter test.',
+      default: '0.1', range: '0.01–1.0',
+    });
 
   // p
   addSlider(panel, 'p (Lp panel)', 'pValue', 0.5, 4.0, state.pValue,
-    v => +v.toFixed(2), v => v, v => v.toFixed(1));
+    v => +v.toFixed(2), v => v, v => v.toFixed(1), {
+      param: 'Moment Order p (Lᵖ panel)',
+      tip: 'The exponent used in Lᵖ convergence: E[|Xₙ − X|ᵖ] → 0. Larger p is a stricter requirement. p=1 is mean convergence, p=2 is mean-square convergence. The "Lp failure" sequence illustrates how convergence can fail for large p despite converging a.s.',
+      default: '2', range: '0.5–4.0',
+    });
 
   panel.append('hr').attr('class', 'control-divider');
 
@@ -185,12 +208,13 @@ function buildControls() {
     .on('click', () => { state.seed = Math.floor(Math.random() * 1e8); regenerate(); });
 }
 
-function addSlider(panel, label, key, min, max, initial, toVal, fromVal, fmt) {
+function addSlider(panel, label, key, min, max, initial, toVal, fromVal, fmt, tooltip) {
   const group = panel.append('div').attr('class', 'control-group slider-control');
   const lbl = group.append('label');
   lbl.append('span').text(label + ' ');
   const valSpan = lbl.append('span').attr('class', 'value-display');
   valSpan.text(fmt(initial));
+  if (tooltip) lbl.node().appendChild(makeInfoBtn(tooltip));
 
   const slider = group.append('input')
     .attr('type', 'range')

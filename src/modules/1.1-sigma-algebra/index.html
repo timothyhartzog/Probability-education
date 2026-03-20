@@ -64,6 +64,10 @@
             <label for="omega-size">
               |&Omega;|
               <span class="value-display" id="omega-size-val">3</span>
+              <button class="param-info" aria-label="Parameter info" aria-expanded="false"
+                data-param="Sample Space Size |Ω|"
+                data-tip="The number of outcomes in the sample space Ω = {ω₁, …, ωₙ}. Increasing this adds more possible subsets, making the sigma-algebra lattice richer and closure more complex."
+                data-default="3" data-range="2–5" data-unit="outcomes">ⓘ</button>
             </label>
             <input type="range" id="omega-size" min="2" max="5" step="1" value="3" />
           </div>
@@ -71,7 +75,12 @@
           <hr class="control-divider" />
 
           <div class="control-group" id="subset-toggles">
-            <label>Generator Sets</label>
+            <label>Generator Sets
+              <button class="param-info" aria-label="Parameter info" aria-expanded="false"
+                data-param="Generator Sets"
+                data-tip="Choose which subsets of Ω to include as generators. The sigma-algebra σ(S) is the smallest sigma-algebra containing all selected sets — the module automatically enforces closure under complements and countable unions."
+                data-default="none selected">ⓘ</button>
+            </label>
             <!-- Dynamically populated -->
           </div>
 
@@ -206,6 +215,7 @@
       </div>
     </div>
   </div>
+  <script type="module" src="../../lib/param-tooltips.js"></script>
   <script type="module" src="./module.js"></script>
 </body>
 </html>

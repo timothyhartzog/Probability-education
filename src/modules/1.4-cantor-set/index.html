@@ -64,6 +64,10 @@
             <label for="iteration-depth">
               Iteration Depth
               <span class="value-display" id="iteration-depth-val">5</span>
+              <button class="param-info" aria-label="Parameter info" aria-expanded="false"
+                data-param="Iteration Depth (n)"
+                data-tip="Number of removal steps applied. At step n: 2ⁿ remaining intervals, each of length (α)ⁿ. The classical Cantor set (α=1/3) approaches measure 0 as n → ∞. Higher values show the fractal structure more clearly but may slow rendering."
+                data-default="5" data-range="0–12" data-unit="steps">ⓘ</button>
             </label>
             <input type="range" id="iteration-depth" min="0" max="12" step="1" value="5" />
           </div>
@@ -72,6 +76,10 @@
             <label for="removal-fraction">
               Removal Fraction
               <span class="value-display" id="removal-fraction-val">1/3</span>
+              <button class="param-info" aria-label="Parameter info" aria-expanded="false"
+                data-param="Removal Fraction (α)"
+                data-tip="The fraction of each interval removed at each step. At α=1/3 this is the classical Cantor set. Smaller α creates 'fat' Cantor sets (SVC sets) with positive measure. For α close to 0, almost nothing is removed and the set retains most of its length. Hausdorff dimension = log(2)/log(1/(1-α))."
+                data-default="1/3 ≈ 0.333" data-range="0.1–0.9">ⓘ</button>
             </label>
             <input type="range" id="removal-fraction" min="0.1" max="0.9" step="0.05" value="0.333" />
           </div>
@@ -202,6 +210,7 @@
       </div>
     </div>
   </div>
+  <script type="module" src="../../lib/param-tooltips.js"></script>
   <script type="module" src="./module.js"></script>
 </body>
 </html>

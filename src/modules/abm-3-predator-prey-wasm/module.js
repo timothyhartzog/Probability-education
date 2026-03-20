@@ -20,6 +20,7 @@ import {
   drawActionDonut, drawGrassHeatmap,
 } from './charts.js';
 import '../../lib/copy-code.js';
+import '../../lib/param-tooltips.js';
 
 // ════════════════════════════════════════════════════════════════
 //  D3 DISPATCH — central event bus

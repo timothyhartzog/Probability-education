@@ -9,6 +9,7 @@
 
 import * as d3 from 'd3';
 import '../../lib/copy-code.js';
+import '../../lib/param-tooltips.js';
 
 // ── Constants ────────────────────────────────────────────────
 const COLORS = {

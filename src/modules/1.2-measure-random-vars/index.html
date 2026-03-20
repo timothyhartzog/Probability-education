@@ -72,6 +72,10 @@
             <label for="omega-size">
               |&Omega;|
               <span class="value-display" id="omega-size-val">4</span>
+              <button class="param-info" aria-label="Parameter info" aria-expanded="false"
+                data-param="Sample Space Size |Ω|"
+                data-tip="Number of elementary outcomes in Ω. Each outcome receives a probability (draggable bars). The total must equal 1. More outcomes allows richer distributions and random variable mappings."
+                data-default="4" data-range="2–6" data-unit="outcomes">ⓘ</button>
             </label>
             <input type="range" id="omega-size" min="2" max="6" step="1" value="4" />
           </div>
@@ -79,7 +83,12 @@
           <hr class="control-divider" />
 
           <div class="control-group dropdown-control">
-            <label for="rv-type">Random Variable Type</label>
+            <label for="rv-type">Random Variable Type
+              <button class="param-info" aria-label="Parameter info" aria-expanded="false"
+                data-param="Random Variable Type"
+                data-tip="Choose how outcomes are mapped to real numbers. Indicator: X=1 on one set, 0 elsewhere. Two/Three-Value: X takes 2 or 3 distinct values. Identity: X(ωᵢ) = i, mapping each outcome to its index. The sigma-algebra σ(X) (preimage partition) updates accordingly."
+                data-default="Indicator">ⓘ</button>
+            </label>
             <select id="rv-type">
               <option value="indicator">Indicator</option>
               <option value="two-value">Two-Value</option>
@@ -237,6 +246,7 @@
       </div>
     </div>
   </div>
+  <script type="module" src="../../lib/param-tooltips.js"></script>
   <script type="module" src="./module.js"></script>
 </body>
 </html>

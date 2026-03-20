@@ -8,6 +8,7 @@
 import * as d3 from 'd3';
 import katex from 'katex';
 import '../../lib/copy-code.js';
+import '../../lib/param-tooltips.js';
 
 /* ---- Seedable xoshiro128** PRNG ----------------------------- */
 function xoshiro128ss(a, b, c, d) {

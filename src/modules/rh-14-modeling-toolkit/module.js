@@ -6,6 +6,7 @@
 import * as d3 from 'd3';
 import { SimulationEngine } from '../../shared/SimulationEngine';
 import { ErrorBoundary } from '../../shared/ErrorBoundary';
+import '../../lib/param-tooltips.js';
 
 // Initialize Global Error Trapping
 ErrorBoundary.init();
