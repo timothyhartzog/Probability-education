@@ -565,6 +565,276 @@ function calcMultiYear() {
   document.getElementById('my-interp').className = `w-callout ${totalEvents >= 20 ? 'teal' : 'rust'}`;
 }
 
+// ── WIDGET: Forest Plot ────────────────────────────────────────
+let forestChart = null;
+
+function calcForest() {
+  const rows = document.querySelectorAll('#forest-rows tr');
+  const studies = [];
+  rows.forEach(row => {
+    const inputs = row.querySelectorAll('input');
+    const name = inputs[0].value || 'Study';
+    const aE = +inputs[1].value || 1, nE = +inputs[2].value || 1;
+    const aC = +inputs[3].value || 1, nC = +inputs[4].value || 1;
+    const bE = nE - aE, bC = nC - aC;
+    if (aE <= 0 || aC <= 0 || bE <= 0 || bC <= 0) return;
+    const rr = (aE / nE) / (aC / nC);
+    const logRR = Math.log(rr);
+    const se = Math.sqrt(1/aE - 1/nE + 1/aC - 1/nC);
+    const lo95 = Math.exp(logRR - 1.96 * se);
+    const hi95 = Math.exp(logRR + 1.96 * se);
+    const w = 1 / (se * se);
+    studies.push({ name, rr, logRR, se, lo95, hi95, w, aE, nE, aC, nC });
+  });
+  if (studies.length === 0) return;
+
+  // Fixed-effects pooled
+  const sumW = studies.reduce((s, d) => s + d.w, 0);
+  const pooledLogRR = studies.reduce((s, d) => s + d.w * d.logRR, 0) / sumW;
+  const pooledRR = Math.exp(pooledLogRR);
+  const pooledSE = Math.sqrt(1 / sumW);
+  const pooledLo = Math.exp(pooledLogRR - 1.96 * pooledSE);
+  const pooledHi = Math.exp(pooledLogRR + 1.96 * pooledSE);
+
+  // I² (Cochran's Q)
+  const Q = studies.reduce((s, d) => s + d.w * Math.pow(d.logRR - pooledLogRR, 2), 0);
+  const df = studies.length - 1;
+  const I2 = Math.max(0, (Q - df) / Q) * 100;
+
+  document.getElementById('forest-summary').innerHTML = resultBoxes([
+    ['Pooled RR', fmt(pooledRR, 2), '', pooledRR < 1 ? '' : 'gold'],
+    ['95% CI', `${fmt(pooledLo, 2)}–${fmt(pooledHi, 2)}`, '', ''],
+    ['Studies', studies.length, '', ''],
+    ['I²', fmt(I2, 0), '%', I2 > 75 ? 'warn' : I2 > 25 ? 'gold' : ''],
+  ]);
+
+  const heterLabel = I2 < 25 ? 'Low heterogeneity' : I2 < 75 ? 'Moderate heterogeneity' : 'High heterogeneity';
+  const sig = pooledLo > 1 ? 'significantly increased risk' : pooledHi < 1 ? 'significantly reduced risk' : 'no significant effect';
+  document.getElementById('forest-interp').innerHTML =
+    `Pooled RR = ${fmt(pooledRR, 2)} (95% CI: ${fmt(pooledLo, 2)}–${fmt(pooledHi, 2)}) — ${sig}. I² = ${fmt(I2, 0)}%: ${heterLabel} (Q = ${fmt(Q, 2)}, df = ${df}).`;
+  document.getElementById('forest-interp').className = `w-callout ${I2 > 75 ? 'rust' : I2 > 25 ? '' : 'teal'}`;
+
+  // Draw forest plot via Chart.js scatter + error bars (horizontal)
+  drawForestChart(studies, pooledRR, pooledLo, pooledHi);
+}
+
+function drawForestChart(studies, pooledRR, pooledLo, pooledHi) {
+  const ctx = document.getElementById('forest-chart')?.getContext('2d');
+  if (!ctx) return;
+  if (forestChart) { forestChart.destroy(); forestChart = null; }
+
+  const maxW = Math.max(...studies.map(d => d.w));
+  const labels = [...studies.map(d => d.name), '', 'Pooled'];
+  const yIdxMap = labels.map((_, i) => labels.length - 1 - i);
+
+  // Build datasets: one scatter point per row + error bar via custom plugin
+  const pointData = studies.map((d, i) => ({ x: d.rr, y: labels.length - 1 - i, lo: d.lo95, hi: d.hi95, w: d.w / maxW }));
+  const pooledY = 0;
+  pointData.push({ x: pooledRR, y: pooledY, lo: pooledLo, hi: pooledHi, w: 1, isPooled: true });
+
+  forestChart = new Chart(ctx, {
+    type: 'scatter',
+    data: {
+      datasets: [{
+        label: 'Studies',
+        data: pointData.map(d => ({ x: d.x, y: d.y })),
+        pointRadius: pointData.map(d => d.isPooled ? 0 : Math.max(4, d.w * 12)),
+        pointStyle: pointData.map(d => d.isPooled ? 'rectRot' : 'rect'),
+        backgroundColor: pointData.map(d => d.isPooled ? PALETTE.navy : PALETTE.teal),
+        pointHoverRadius: pointData.map(d => d.isPooled ? 0 : 8),
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: (ctx) => {
+              const d = pointData[ctx.dataIndex];
+              return d.isPooled
+                ? `Pooled: ${fmt(d.x, 2)} (${fmt(d.lo, 2)}–${fmt(d.hi, 2)})`
+                : `${labels[labels.length - 1 - ctx.dataIndex]}: RR ${fmt(d.x, 2)} (${fmt(d.lo, 2)}–${fmt(d.hi, 2)})`;
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          type: 'logarithmic',
+          title: { display: true, text: 'Risk Ratio (log scale)' },
+          min: 0.1, max: 10,
+          ticks: { callback: v => v }
+        },
+        y: {
+          ticks: {
+            callback: (v) => labels[labels.length - 1 - Math.round(v)] || '',
+            font: { size: 11 }
+          },
+          min: -0.5, max: labels.length - 0.5,
+          grid: { display: false }
+        }
+      }
+    },
+    plugins: [{
+      id: 'errorBars',
+      afterDraw(chart) {
+        const { ctx, scales } = chart;
+        ctx.save();
+        ctx.lineWidth = 1.5;
+        pointData.forEach((d, i) => {
+          const xLo = scales.x.getPixelForValue(d.lo);
+          const xHi = scales.x.getPixelForValue(d.hi);
+          const y = scales.y.getPixelForValue(d.y);
+          ctx.strokeStyle = d.isPooled ? PALETTE.navy : PALETTE.teal;
+          ctx.lineWidth = d.isPooled ? 2.5 : 1.5;
+          // Horizontal CI line
+          ctx.beginPath(); ctx.moveTo(xLo, y); ctx.lineTo(xHi, y); ctx.stroke();
+          // Whiskers
+          const wh = d.isPooled ? 5 : 3;
+          ctx.beginPath(); ctx.moveTo(xLo, y - wh); ctx.lineTo(xLo, y + wh); ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(xHi, y - wh); ctx.lineTo(xHi, y + wh); ctx.stroke();
+          if (d.isPooled) {
+            // Diamond
+            const cx = scales.x.getPixelForValue(d.x);
+            const hw = 10, hh = 6;
+            ctx.fillStyle = PALETTE.navy;
+            ctx.beginPath();
+            ctx.moveTo(cx, y - hh); ctx.lineTo(cx + hw, y);
+            ctx.lineTo(cx, y + hh); ctx.lineTo(cx - hw, y);
+            ctx.closePath(); ctx.fill();
+          }
+        });
+        // Vertical null line at RR=1
+        const xNull = scales.x.getPixelForValue(1);
+        ctx.strokeStyle = '#9CA3AF'; ctx.lineWidth = 1; ctx.setLineDash([4, 3]);
+        ctx.beginPath(); ctx.moveTo(xNull, scales.y.top); ctx.lineTo(xNull, scales.y.bottom); ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.restore();
+      }
+    }]
+  });
+}
+
+// ── WIDGET: CUSUM ─────────────────────────────────────────────
+let cusumChart = null;
+let cusumData = null;
+
+function generateCusumData() {
+  const mu0 = parseFloat(document.getElementById('cusum-mu').value);
+  const shiftMult = parseFloat(document.getElementById('cusum-shift').value);
+  const k = parseFloat(document.getElementById('cusum-k').value);
+  const h = parseFloat(document.getElementById('cusum-h').value);
+  document.getElementById('cusum-mu-val').textContent = mu0.toFixed(1);
+  document.getElementById('cusum-shift-val').textContent = shiftMult.toFixed(2) + '×';
+  document.getElementById('cusum-k-val').textContent = k.toFixed(2);
+  document.getElementById('cusum-h-val').textContent = h.toFixed(1);
+
+  // Simulate 40 periods: first 20 at baseline, then 20 at elevated rate
+  const n = 40;
+  const shiftStart = 20;
+  const mu1 = mu0 * shiftMult;
+  const counts = [];
+  for (let i = 0; i < n; i++) {
+    const lambda = i < shiftStart ? mu0 : mu1;
+    // Poisson random via inverse transform
+    let L = Math.exp(-lambda), p = 1, x = 0;
+    do { p *= Math.random(); x++; } while (p > L);
+    counts.push(x - 1);
+  }
+
+  // CUSUM
+  let cPlus = 0, cMinus = 0;
+  const cPlusArr = [], cMinusArr = [];
+  let signalIdx = -1;
+  for (let i = 0; i < n; i++) {
+    cPlus = Math.max(0, cPlus + counts[i] - mu0 - k);
+    cMinus = Math.max(0, cMinus - counts[i] + mu0 - k);
+    cPlusArr.push(cPlus);
+    cMinusArr.push(cMinus);
+    if (signalIdx < 0 && (cPlus > h || cMinus > h)) signalIdx = i;
+  }
+
+  cusumData = { counts, cPlusArr, cMinusArr, signalIdx, shiftStart, mu0, mu1, h, k };
+  drawCusum();
+}
+
+function drawCusum() {
+  if (!cusumData) return;
+  const { counts, cPlusArr, cMinusArr, signalIdx, shiftStart, mu0, h } = cusumData;
+  const labels = counts.map((_, i) => i + 1);
+
+  const ctx = document.getElementById('cusum-chart')?.getContext('2d');
+  if (!ctx) return;
+  if (cusumChart) { cusumChart.destroy(); cusumChart = null; }
+
+  cusumChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'CUSUM C⁺',
+          data: cPlusArr,
+          borderColor: PALETTE.rust,
+          backgroundColor: 'rgba(166,61,47,.08)',
+          fill: true, pointRadius: 2, tension: .3
+        },
+        {
+          label: 'CUSUM C⁻',
+          data: cMinusArr,
+          borderColor: PALETTE.blue,
+          backgroundColor: 'rgba(37,99,235,.05)',
+          fill: true, pointRadius: 2, tension: .3
+        },
+        {
+          label: 'Threshold h',
+          data: Array(labels.length).fill(h),
+          borderColor: PALETTE.gold,
+          borderDash: [6, 4],
+          pointRadius: 0,
+          borderWidth: 2
+        },
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: { legend: { position: 'top', labels: { boxWidth: 12, font: { size: 10 } } } },
+      scales: {
+        x: { title: { display: true, text: 'Period' } },
+        y: { title: { display: true, text: 'CUSUM Value' }, min: 0 }
+      }
+    },
+    plugins: [{
+      id: 'shiftMarker',
+      afterDraw(chart) {
+        const { ctx, chartArea, scales } = chart;
+        const x = scales.x.getPixelForValue(shiftStart);
+        ctx.save();
+        ctx.strokeStyle = PALETTE.gold; ctx.lineWidth = 1.5; ctx.setLineDash([3, 3]);
+        ctx.beginPath(); ctx.moveTo(x, chartArea.top); ctx.lineTo(x, chartArea.bottom); ctx.stroke();
+        ctx.fillStyle = PALETTE.gold; ctx.font = '10px sans-serif';
+        ctx.fillText('Shift begins', x + 3, chartArea.top + 12);
+        ctx.restore();
+      }
+    }]
+  });
+
+  const detected = signalIdx >= 0;
+  const delay = detected ? signalIdx - shiftStart : null;
+  document.getElementById('cusum-results').innerHTML = resultBoxes([
+    ['Shift Start', `Period ${shiftStart + 1}`, '', ''],
+    ['Signal', detected ? `Period ${signalIdx + 1}` : 'Not detected', '', detected ? 'gold' : 'warn'],
+    ['Detection Lag', detected && delay >= 0 ? delay + 1 : detected ? '(pre-shift)' : '—', detected && delay >= 0 ? ' periods' : '', ''],
+    ['Baseline μ₀', cusumData.mu0.toFixed(1), ' events', ''],
+  ]);
+  document.getElementById('cusum-interp').innerHTML = detected
+    ? `CUSUM detected a shift from baseline ${cusumData.mu0.toFixed(1)} to elevated rate ${cusumData.mu1.toFixed(1)} events/period at period ${signalIdx + 1} (${Math.max(0, signalIdx - shiftStart + 1)} period${signalIdx - shiftStart !== 0 ? 's' : ''} after the shift began).`
+    : `No CUSUM signal in this simulation. The shift to ${cusumData.mu1.toFixed(1)} events/period was not detected within 40 periods with the current k and h settings. Try reducing k or h, or increasing the shift multiplier.`;
+  document.getElementById('cusum-interp').className = `w-callout ${detected ? 'teal' : 'rust'}`;
+}
+
 // ── INIT ───────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   Chart.defaults.font.family = 'IBM Plex Sans, sans-serif';
@@ -632,8 +902,24 @@ document.addEventListener('DOMContentLoaded', () => {
     myRows.addEventListener('input', calcMultiYear);
     calcMultiYear();
   }
+
+  // ── Forest plot ──
+  const forestRows = document.getElementById('forest-rows');
+  if (forestRows) {
+    forestRows.addEventListener('input', calcForest);
+    calcForest();
+  }
+
+  // ── CUSUM ──
+  const cusumControls = ['cusum-mu', 'cusum-shift', 'cusum-k', 'cusum-h'];
+  cusumControls.forEach(id => {
+    document.getElementById(id)?.addEventListener('input', generateCusumData);
+  });
+  document.getElementById('cusum-regen')?.addEventListener('click', generateCusumData);
+  generateCusumData();
 });
 
 // expose for inline onclick in attack table
 window.calcAttack = calcAttack;
+window.calcForest = calcForest;
 window.togglePart = togglePart;

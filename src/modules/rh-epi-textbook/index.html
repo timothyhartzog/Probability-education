@@ -474,10 +474,60 @@
     </section>
 
     <section id="ch7" class="book-chapter">
-      <div class="book-chapter-num">Chapter 7</div>
-      <h2>Systematic Review and Evidence Synthesis</h2>
-      <p>Systematic reviews and meta-analyses synthesize evidence across multiple studies using explicit, reproducible methods. In rural health research, systematic reviews of population-sparse studies must carefully attend to heterogeneity in geographic definitions, outcome measurement, and the unique challenges of combining evidence across vastly different rural contexts.</p>
-    </section>
+  <div class="book-chapter-num">Chapter 7</div>
+  <h2>Systematic Review and Evidence Synthesis</h2>
+
+  <h3>7.1 What Is a Systematic Review?</h3>
+  <p>A systematic review applies explicit, pre-specified, reproducible methods to identify, select, critically appraise, and synthesize all available evidence relevant to a specific research question. Unlike narrative reviews, systematic reviews minimize selection bias by exhaustively searching multiple databases, using pre-registered eligibility criteria, and documenting exclusion reasons.</p>
+
+  <h3>7.2 Meta-Analysis</h3>
+  <p>When primary studies report sufficiently similar outcomes, a meta-analysis quantitatively pools effect estimates across studies using statistical weighting. The two dominant models are:</p>
+  <p><strong>Fixed-effects model</strong> (Mantel-Haenszel or inverse-variance): assumes all studies estimate the same true effect; appropriate when studies are nearly identical in design, population, and intervention.</p>
+  <p><strong>Random-effects model</strong> (DerSimonian-Laird): assumes study-specific effects vary around a mean; appropriate when heterogeneity exists. Random-effects CIs are always wider than fixed-effects CIs, reflecting between-study variance τ².</p>
+  <div class="eq-block">
+    <div class="eq-label">Inverse-Variance Weighting (Fixed Effects)</div>
+    w_i = 1 / SE_i² &nbsp;&nbsp; Pooled estimate = Σ(w_i × θ_i) / Σ(w_i)
+  </div>
+  <div class="eq-block">
+    <div class="eq-label">I² Heterogeneity Statistic</div>
+    I² = max(0, (Q − df) / Q) × 100%<br>
+    I² &lt; 25%: low heterogeneity &nbsp;|&nbsp; 25–75%: moderate &nbsp;|&nbsp; &gt;75%: high
+  </div>
+
+  <h3>7.3 The Forest Plot</h3>
+  <p>The forest plot is the visual signature of meta-analysis. Each row displays one study: a square whose size is proportional to study weight and a horizontal line representing the 95% CI. The pooled estimate is shown as a diamond at the bottom. The vertical line of no effect (RR = 1 or RD = 0) is the reference; studies whose CIs cross it are not statistically significant individually.</p>
+
+  <!-- WIDGET: Forest Plot Builder -->
+  <div class="widget" id="widget-forest">
+    <div class="widget-header">
+      <span class="widget-icon">🌳</span>
+      <span class="widget-title">Interactive: Meta-Analysis Forest Plot</span>
+      <span class="widget-subtitle">Edit study estimates to see pooled RR and I²</span>
+    </div>
+    <div class="widget-body">
+      <table class="w-table" style="margin-bottom:.65rem">
+        <thead><tr><th>Study</th><th>Events (Exp)</th><th>N (Exp)</th><th>Events (Ctrl)</th><th>N (Ctrl)</th></tr></thead>
+        <tbody id="forest-rows">
+          <tr><td><input type="text" class="w-attack-input" value="Smith 2018"></td><td><input type="number" class="w-attack-input" value="12" min="1"></td><td><input type="number" class="w-attack-input" value="85" min="1"></td><td><input type="number" class="w-attack-input" value="24" min="1"></td><td><input type="number" class="w-attack-input" value="82" min="1"></td></tr>
+          <tr><td><input type="text" class="w-attack-input" value="Jones 2019"></td><td><input type="number" class="w-attack-input" value="31" min="1"></td><td><input type="number" class="w-attack-input" value="210" min="1"></td><td><input type="number" class="w-attack-input" value="58" min="1"></td><td><input type="number" class="w-attack-input" value="198" min="1"></td></tr>
+          <tr><td><input type="text" class="w-attack-input" value="Chen 2020"></td><td><input type="number" class="w-attack-input" value="8" min="1"></td><td><input type="number" class="w-attack-input" value="62" min="1"></td><td><input type="number" class="w-attack-input" value="19" min="1"></td><td><input type="number" class="w-attack-input" value="59" min="1"></td></tr>
+          <tr><td><input type="text" class="w-attack-input" value="Williams 2021"></td><td><input type="number" class="w-attack-input" value="44" min="1"></td><td><input type="number" class="w-attack-input" value="320" min="1"></td><td><input type="number" class="w-attack-input" value="71" min="1"></td><td><input type="number" class="w-attack-input" value="310" min="1"></td></tr>
+          <tr><td><input type="text" class="w-attack-input" value="Garcia 2022"></td><td><input type="number" class="w-attack-input" value="19" min="1"></td><td><input type="number" class="w-attack-input" value="130" min="1"></td><td><input type="number" class="w-attack-input" value="33" min="1"></td><td><input type="number" class="w-attack-input" value="128" min="1"></td></tr>
+        </tbody>
+      </table>
+      <div class="w-result-grid" id="forest-summary" style="margin-bottom:.75rem"></div>
+      <div style="position:relative;height:320px"><canvas id="forest-chart"></canvas></div>
+      <div class="w-callout" id="forest-interp" style="margin-top:.65rem"></div>
+    </div>
+  </div>
+
+  <h3>7.4 Systematic Reviews in Rural Health Research</h3>
+  <p>Systematic reviews of rural health research face unique challenges: (1) small primary studies with imprecise effect estimates; (2) heterogeneous definitions of "rural" across studies (USDA Rural-Urban Continuum Codes, OMB metro/nonmetro classifications, population density thresholds); (3) publication bias against null findings, particularly in small rural samples; and (4) limited generalizability of urban-derived interventions to rural contexts.</p>
+  <div class="callout-box">
+    <div class="callout-title">GRADE Evidence Quality Framework</div>
+    <p>The GRADE (Grading of Recommendations Assessment, Development and Evaluation) framework rates evidence quality as high, moderate, low, or very low based on study design, risk of bias, inconsistency, indirectness, imprecision, and publication bias. Most rural health intervention evidence falls in the low-to-moderate range due to small sample sizes, heterogeneous populations, and limited replication.</p>
+  </div>
+</section>
 
     <!-- PART III -->
     <div class="book-part-header">Part III &mdash; Applied Rural Epidemiology</div>
@@ -887,16 +937,95 @@
     </section>
 
     <section id="ch17" class="book-chapter">
-      <div class="book-chapter-num">Chapter 17</div>
-      <h2>Community Health Assessment in Rural Settings</h2>
-      <p>Community Health Needs Assessments (CHNAs) are required every 3 years for tax-exempt hospitals. In rural settings, CHNAs must navigate small-number instability in local data, the absence of many standard data sources, and the need to engage communities where trust in institutions may be strained by historical underservice.</p>
-    </section>
+  <div class="book-chapter-num">Chapter 17</div>
+  <h2>Community Health Assessment in Rural Settings</h2>
+
+  <h3>17.1 The Community Health Needs Assessment (CHNA)</h3>
+  <p>Tax-exempt hospitals must conduct and publish a Community Health Needs Assessment every three years (IRS Form 990, Schedule H). The CHNA requires: (1) defining the community served; (2) assessing health needs using secondary data and community input; (3) identifying significant health needs; and (4) adopting an implementation strategy to address them.</p>
+
+  <h3>17.2 Data Sources for Rural CHNAs</h3>
+  <p>Standard CHNA data sources include:</p>
+  <ul style="line-height:1.9; color:#374151; padding-left:1.5rem; font-size:.95rem; margin-bottom:1rem;">
+    <li><strong>County Health Rankings &amp; Roadmaps</strong> (RWJF/UW) — annual county-level rankings across 4 health factors and 4 health outcomes. Small-county data suppression for counts &lt; 20 is common.</li>
+    <li><strong>CDC PLACES</strong> — census tract-level model-based estimates for 36 health measures using BRFSS data; particularly useful for sub-county mapping in rural areas.</li>
+    <li><strong>USDA Food Environment Atlas</strong> — food access, food store availability, restaurant density, SNAP participation by county.</li>
+    <li><strong>Rural Health Information Hub</strong> — state-specific rural health data, CAH financial and utilization data.</li>
+    <li><strong>State vital statistics and hospital discharge data</strong> — most granular source for local mortality, hospitalization, and ED utilization; often requires data use agreements.</li>
+  </ul>
+
+  <h3>17.3 Dealing with Small-Number Instability in CHNAs</h3>
+  <p>Rural CHNA teams routinely encounter suppressed data. Strategies: (1) multi-year pooling (3–5 year averages) for mortality and hospitalization rates; (2) borrowing strength from county clusters (multi-county regional analysis); (3) using model-based estimates (PLACES, CDC WONDER) that stabilize small-area estimates through spatial smoothing; and (4) supplementing with primary data collection (community surveys, key informant interviews) where secondary data is unavailable or suppressed.</p>
+
+  <h3>17.4 Community Engagement in Rural Settings</h3>
+  <p>Meaningful community engagement is both a CHNA requirement and an epidemiological necessity: community members hold knowledge about local conditions, historical exposures, and priority concerns that no secondary data source captures. In rural settings, effective engagement strategies include town halls held at trusted community venues (churches, extension offices, feed stores), key informant interviews with agricultural employers and school nurses, and partnerships with tribal health departments and Federally Qualified Health Centers.</p>
+
+  <div class="callout-box teal">
+    <div class="callout-title">Asset-Based Community Development</div>
+    <p>The traditional needs-assessment frame identifies deficits — what the community lacks. Asset-based community development (ABCD) begins by mapping community strengths: strong social networks, community institutions, natural resources, agricultural knowledge, and local leadership. A complete rural CHNA incorporates both a needs assessment and an asset inventory.</p>
+  </div>
+</section>
 
     <section id="ch18" class="book-chapter">
-      <div class="book-chapter-num">Chapter 18</div>
-      <h2>Epidemiological Methods in Quality Improvement</h2>
-      <p>Statistical process control (SPC) methods — control charts, CUSUM, EWMA — originated in industrial quality management and have been adapted for healthcare quality monitoring. In rural hospitals with low volumes, standard SPC chart limits may need adjustment; the CUSUM is particularly useful for detecting sustained shifts in small-volume settings.</p>
-    </section>
+  <div class="book-chapter-num">Chapter 18</div>
+  <h2>Epidemiological Methods in Quality Improvement</h2>
+
+  <h3>18.1 Statistical Process Control</h3>
+  <p>Statistical process control (SPC) distinguishes between <strong>common cause variation</strong> (random fluctuation inherent in any process) and <strong>special cause variation</strong> (non-random signals indicating a true change in the process). SPC control charts plot a quality metric over time with control limits (typically ±3σ from the process mean). Points outside control limits or non-random patterns within control limits trigger investigation.</p>
+
+  <h3>18.2 Control Chart Types for Healthcare</h3>
+  <p><strong>P-chart</strong>: monitors proportion defective (e.g., CLABSI rate per 1,000 catheter-days). Appropriate when the denominator varies and the outcome is binary. Control limits derived from binomial distribution. In rural hospitals with low volumes, P-chart control limits can be extremely wide — making small shifts undetectable.</p>
+  <p><strong>CUSUM (Cumulative Sum)</strong>: accumulates deviations from a target value, making it sensitive to sustained small shifts that a standard Shewhart chart would miss. Particularly valuable in rural hospitals for monitoring rare adverse events where monthly counts fluctuate between 0 and 2.</p>
+  <div class="eq-block">
+    <div class="eq-label">CUSUM Algorithm</div>
+    C⁺(t) = max(0, C⁺(t−1) + (x_t − μ₀ − k))<br>
+    C⁻(t) = max(0, C⁻(t−1) − (x_t − μ₀ + k))<br>
+    Signal when C⁺ or C⁻ exceeds threshold h<br>
+    k = slack/reference value (typically 0.5σ); h = decision interval (typically 4–5σ)
+  </div>
+
+  <!-- WIDGET: CUSUM Chart -->
+  <div class="widget" id="widget-cusum">
+    <div class="widget-header">
+      <span class="widget-icon">📈</span>
+      <span class="widget-title">Interactive: CUSUM Signal Detection</span>
+      <span class="widget-subtitle">Detects sustained shifts from baseline in small rural counts</span>
+    </div>
+    <div class="widget-body">
+      <div class="w-grid-2">
+        <div>
+          <div class="w-form-group">
+            <label class="w-label">Baseline rate μ₀ (events/period) <span class="w-val" id="cusum-mu-val">2.0</span></label>
+            <input type="range" class="w-range" id="cusum-mu" min="0.5" max="10" step="0.5" value="2">
+          </div>
+          <div class="w-form-group">
+            <label class="w-label">Shift to detect (×baseline) <span class="w-val" id="cusum-shift-val">2.0×</span></label>
+            <input type="range" class="w-range" id="cusum-shift" min="1.25" max="4" step="0.25" value="2">
+          </div>
+          <div class="w-form-group">
+            <label class="w-label">Slack k <span class="w-val" id="cusum-k-val">0.5</span></label>
+            <input type="range" class="w-range" id="cusum-k" min="0.25" max="1.5" step="0.25" value="0.5">
+          </div>
+          <div class="w-form-group">
+            <label class="w-label">Decision threshold h <span class="w-val" id="cusum-h-val">4.0</span></label>
+            <input type="range" class="w-range" id="cusum-h" min="2" max="8" step="0.5" value="4">
+          </div>
+          <button class="w-btn" id="cusum-regen">↻ New Simulation</button>
+        </div>
+        <div>
+          <div class="w-result-grid" id="cusum-results"></div>
+          <div class="w-callout" id="cusum-interp" style="margin-top:.65rem"></div>
+        </div>
+      </div>
+      <div style="position:relative;height:280px;margin-top:1rem"><canvas id="cusum-chart"></canvas></div>
+    </div>
+  </div>
+
+  <h3>18.3 Funnel Plots for Institutional Comparison</h3>
+  <p>Funnel plots display performance metrics for multiple institutions against their procedure volume, with control limits that narrow as volume increases. Outliers — institutions above the upper control limit — are candidates for quality investigation. Funnel plots are superior to league tables for institutional comparison because they account for the higher statistical uncertainty inherent in low-volume providers — exactly the situation for rural CAHs.</p>
+
+  <h3>18.4 The Model for Improvement</h3>
+  <p>The Model for Improvement (Langley et al.) provides the operational framework for QI: three fundamental questions (What are we trying to accomplish? How will we know that a change is an improvement? What changes can we make that will result in improvement?) followed by iterative Plan-Do-Study-Act (PDSA) cycles. Epidemiological measures — run charts, statistical process control, pre/post comparisons — are the measurement engine that distinguishes genuine improvement from random variation.</p>
+</section>
 
     <section id="ch19" class="book-chapter">
       <div class="book-chapter-num">Chapter 19</div>
