@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rural Epidemiology Calculator Suite</title>
+
+  <!-- KaTeX CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
+    integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" crossorigin="anonymous" />
+
+  <!-- Chart.js from CDN (required before module script) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+
+  <!-- Platform styles -->
+  <link rel="stylesheet" href="../../assets/design-system.css" />
+  <link rel="stylesheet" href="../../assets/module-template.css" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="module-page">
+
+    <!-- Header -->
+    <header class="module-header">
+      <ul class="breadcrumb">
+        <li><a href="../../../index.html">Home</a></li>
+        <li><a href="#">Rural Health</a></li>
+        <li>Epidemiology Calculator Suite</li>
+      </ul>
+      <h1>Rural Epidemiology Calculator Suite</h1>
+      <p class="text-secondary">
+        SEIR/SEIRD modeling · R₀ &amp; herd immunity · attack rate analysis · diagnostic tests · rate calculators · confidence intervals
+      </p>
+    </header>
+
+    <!-- Main layout — full-width, no sidebar -->
+    <div class="module-body">
+      <div style="max-width:1200px; margin:0 auto; padding:0 var(--space-lg);">
+
+        <!-- Tab bar -->
+        <div class="tab-bar" id="epi-tab-bar">
+          <button class="tab active" data-tab="seir">SEIR/SEIRD Model</button>
+          <button class="tab" data-tab="r0">R₀ &amp; Herd Immunity</button>
+          <button class="tab" data-tab="attack">Attack Rate Table</button>
+          <button class="tab" data-tab="diag">Diagnostic Tests</button>
+          <button class="tab" data-tab="rates">Rate Calculator</button>
+          <button class="tab" data-tab="ci">Confidence Intervals</button>
+        </div>
+
+        <!-- ═══ TAB 1: SEIR/SEIRD ═══ -->
+        <div class="epi-panel active" id="epi-panel-seir">
+          <div class="epi-grid-2">
+            <div>
+              <div class="epi-card">
+                <div class="epi-card-title">Population Parameters</div>
+                <div class="epi-form-group">
+                  <label class="epi-label">Population Size (N) <span class="epi-range-val" id="v-N">10,000</span></label>
+                  <input type="range" class="epi-range" id="r-N" min="500" max="50000" step="500" value="10000">
+                </div>
+                <div class="epi-form-group">
+                  <label class="epi-label">Initial Susceptible Fraction <span class="epi-range-val" id="v-S0">95%</span></label>
+                  <input type="range" class="epi-range" id="r-S0" min="30" max="100" step="1" value="95">
+                </div>
+                <div class="epi-form-group">
+                  <label class="epi-label">Vaccination Coverage <span class="epi-range-val" id="v-vacc">0%</span></label>
+                  <input type="range" class="epi-range" id="r-vacc" min="0" max="95" step="1" value="0">
+                </div>
+              </div>
+              <div class="epi-card">
+                <div class="epi-card-title">Transmission Parameters</div>
+                <div class="epi-form-group">
+                  <label class="epi-label">Transmission Rate (β) <span class="epi-range-val" id="v-beta">0.30</span></label>
+                  <input type="range" class="epi-range" id="r-beta" min="0.05" max="1.5" step="0.01" value="0.30">
+                </div>
+                <div class="epi-form-group">
+                  <label class="epi-label">Recovery Rate (γ = 1/infectious days) <span class="epi-range-val" id="v-gamma">0.10</span></label>
+                  <input type="range" class="epi-range" id="r-gamma" min="0.03" max="0.5" step="0.01" value="0.10">
+                </div>
+                <div class="epi-form-group">
+                  <label class="epi-label">Latent Period Rate (σ) <span class="epi-range-val" id="v-sigma">0.20</span></label>
+                  <input type="range" class="epi-range" id="r-sigma" min="0.05" max="1.0" step="0.01" value="0.20">
+                </div>
+                <div class="epi-form-group">
+                  <label class="epi-label">Case Fatality Rate (μ) <span class="epi-range-val" id="v-mu">1.0%</span></label>
+                  <input type="range" class="epi-range" id="r-mu" min="0" max="20" step="0.1" value="1.0">
+                </div>
+                <div class="epi-form-group">
+                  <label class="epi-label">Simulation Days <span class="epi-range-val" id="v-days">365</span></label>
+                  <input type="range" class="epi-range" id="r-days" min="30" max="730" step="5" value="365">
+                </div>
+              </div>
+              <div class="epi-result-grid" id="seir-results"></div>
+            </div>
+            <div>
+              <div class="epi-card">
+                <div class="epi-card-title">Epidemic Curve</div>
+                <div class="epi-card-sub">Compartment trajectories over time (RK4 integration)</div>
+                <div class="epi-chart-wrap-tall">
+                  <canvas id="seirChart"></canvas>
+                </div>
+              </div>
+              <div class="epi-callout" id="seir-interp">
+                <strong>Clinical Interpretation:</strong> Adjust parameters to see how R₀, vaccination, and case fatality shape the epidemic.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══ TAB 2: R₀ / HERD IMMUNITY ═══ -->
+        <div class="epi-panel" id="epi-panel-r0">
+          <div class="epi-grid-2">
+            <div class="epi-card">
+              <div class="epi-card-title">Parameter Entry</div>
+              <div class="epi-form-group">
+                <label class="epi-label">Transmission Rate (β)</label>
+                <input type="number" class="epi-input" id="r0-beta" value="0.30" min="0.01" max="5" step="0.01">
+              </div>
+              <div class="epi-form-group">
+                <label class="epi-label">Recovery Rate (γ = 1 / mean infectious days)</label>
+                <input type="number" class="epi-input" id="r0-gamma" value="0.10" min="0.01" max="2" step="0.01">
+              </div>
+              <hr class="epi-divider">
+              <div class="epi-form-group">
+                <label class="epi-label">OR: Enter R₀ Directly</label>
+                <input type="number" class="epi-input" id="r0-direct" value="" min="0.1" max="30" step="0.1" placeholder="Leave blank to use β/γ">
+              </div>
+              <div class="epi-form-group">
+                <label class="epi-label">Current Immune Fraction (vaccination + prior infection) %</label>
+                <input type="number" class="epi-input" id="r0-immune" value="0" min="0" max="99" step="1">
+              </div>
+            </div>
+            <div>
+              <div class="epi-result-grid" id="r0-results"></div>
+              <div class="epi-card" style="margin-top:1rem">
+                <div class="epi-card-title">Known R₀ Reference Values</div>
+                <table class="epi-table">
+                  <thead><tr><th>Pathogen</th><th>Typical R₀ Range</th><th>HIT</th></tr></thead>
+                  <tbody>
+                    <tr><td>Measles</td><td>12–18</td><td>92–94%</td></tr>
+                    <tr><td>Mumps</td><td>4–7</td><td>75–86%</td></tr>
+                    <tr><td>Rubella</td><td>6–7</td><td>83–86%</td></tr>
+                    <tr><td>Pertussis</td><td>12–17</td><td>92–94%</td></tr>
+                    <tr><td>Polio</td><td>5–7</td><td>80–86%</td></tr>
+                    <tr><td>COVID-19 (original)</td><td>2.5–3.5</td><td>60–72%</td></tr>
+                    <tr><td>COVID-19 (Omicron)</td><td>8–15</td><td>88–93%</td></tr>
+                    <tr><td>Influenza H1N1 2009</td><td>1.4–1.6</td><td>29–38%</td></tr>
+                    <tr><td>Influenza (seasonal)</td><td>1.2–1.4</td><td>17–29%</td></tr>
+                    <tr><td>Ebola</td><td>1.5–2.5</td><td>33–60%</td></tr>
+                    <tr><td>SARS-CoV-1</td><td>2.0–4.0</td><td>50–75%</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="epi-card">
+            <div class="epi-card-title">Herd Immunity Threshold vs. R₀</div>
+            <div class="epi-chart-wrap"><canvas id="hitChart"></canvas></div>
+          </div>
+        </div>
+
+        <!-- ═══ TAB 3: ATTACK RATE TABLE ═══ -->
+        <div class="epi-panel" id="epi-panel-attack">
+          <div class="epi-card">
+            <div class="epi-card-title">Outbreak Parameters</div>
+            <div class="epi-grid-3">
+              <div class="epi-form-group">
+                <label class="epi-label">Outbreak Name / Event</label>
+                <input type="text" class="epi-input" id="atk-name" value="County Fair Potluck">
+              </div>
+              <div class="epi-form-group">
+                <label class="epi-label">Incubation Period (hours)</label>
+                <input type="number" class="epi-input" id="atk-incub" value="4">
+              </div>
+              <div class="epi-form-group">
+                <label class="epi-label">Total Attendees</label>
+                <input type="number" class="epi-input" id="atk-total" value="232">
+              </div>
+            </div>
+          </div>
+          <div class="epi-card">
+            <div class="epi-card-title">Food Exposure Data</div>
+            <div class="epi-card-sub">Enter number ill / total exposed for each food item.</div>
+            <table class="epi-table" id="attack-input-table">
+              <thead>
+                <tr>
+                  <th>Food Item</th><th>Ill (Ate)</th><th>Total (Ate)</th>
+                  <th>Ill (Didn't Eat)</th><th>Total (Didn't Eat)</th><th></th>
+                </tr>
+              </thead>
+              <tbody id="attack-rows">
+                <tr>
+                  <td><input type="text" class="epi-input" value="Potato Salad"></td>
+                  <td><input type="number" class="epi-input" value="87" min="0"></td>
+                  <td><input type="number" class="epi-input" value="143" min="1"></td>
+                  <td><input type="number" class="epi-input" value="12" min="0"></td>
+                  <td><input type="number" class="epi-input" value="89" min="1"></td>
+                  <td><button class="epi-btn epi-btn-danger epi-remove-row" style="padding:.3rem .6rem;font-size:.75rem">✕</button></td>
+                </tr>
+                <tr>
+                  <td><input type="text" class="epi-input" value="Coleslaw"></td>
+                  <td><input type="number" class="epi-input" value="52" min="0"></td>
+                  <td><input type="number" class="epi-input" value="118" min="1"></td>
+                  <td><input type="number" class="epi-input" value="47" min="0"></td>
+                  <td><input type="number" class="epi-input" value="114" min="1"></td>
+                  <td><button class="epi-btn epi-btn-danger epi-remove-row" style="padding:.3rem .6rem;font-size:.75rem">✕</button></td>
+                </tr>
+                <tr>
+                  <td><input type="text" class="epi-input" value="Grilled Chicken"></td>
+                  <td><input type="number" class="epi-input" value="61" min="0"></td>
+                  <td><input type="number" class="epi-input" value="132" min="1"></td>
+                  <td><input type="number" class="epi-input" value="38" min="0"></td>
+                  <td><input type="number" class="epi-input" value="100" min="1"></td>
+                  <td><button class="epi-btn epi-btn-danger epi-remove-row" style="padding:.3rem .6rem;font-size:.75rem">✕</button></td>
+                </tr>
+                <tr>
+                  <td><input type="text" class="epi-input" value="Lemonade"></td>
+                  <td><input type="number" class="epi-input" value="56" min="0"></td>
+                  <td><input type="number" class="epi-input" value="109" min="1"></td>
+                  <td><input type="number" class="epi-input" value="43" min="0"></td>
+                  <td><input type="number" class="epi-input" value="123" min="1"></td>
+                  <td><button class="epi-btn epi-btn-danger epi-remove-row" style="padding:.3rem .6rem;font-size:.75rem">✕</button></td>
+                </tr>
+                <tr>
+                  <td><input type="text" class="epi-input" value="Baked Beans"></td>
+                  <td><input type="number" class="epi-input" value="50" min="0"></td>
+                  <td><input type="number" class="epi-input" value="121" min="1"></td>
+                  <td><input type="number" class="epi-input" value="49" min="0"></td>
+                  <td><input type="number" class="epi-input" value="111" min="1"></td>
+                  <td><button class="epi-btn epi-btn-danger epi-remove-row" style="padding:.3rem .6rem;font-size:.75rem">✕</button></td>
+                </tr>
+              </tbody>
+            </table>
+            <button class="epi-btn epi-btn-primary" id="atk-add-btn" style="margin-top:.75rem">+ Add Food Item</button>
+          </div>
+          <div class="epi-card">
+            <div class="epi-card-title">Attack Rate Analysis Results</div>
+            <div id="attack-results"></div>
+          </div>
+          <div class="epi-card">
+            <div class="epi-card-title">Risk Ratio Comparison</div>
+            <div class="epi-chart-wrap"><canvas id="attackChart"></canvas></div>
+          </div>
+        </div>
+
+        <!-- ═══ TAB 4: DIAGNOSTIC TEST ═══ -->
+        <div class="epi-panel" id="epi-panel-diag">
+          <div class="epi-grid-2">
+            <div>
+              <div class="epi-card">
+                <div class="epi-card-title">Input Method</div>
+                <div class="epi-mode-toggle">
+                  <button class="epi-btn epi-btn-primary" id="btn-2x2">2×2 Table</button>
+                  <button class="epi-btn epi-btn-secondary" id="btn-sens">Sens/Spec + Prevalence</button>
+                </div>
+                <div id="diag-2x2-inputs">
+                  <div class="epi-matrix-grid">
+                    <div class="m-cell m-header"></div>
+                    <div class="m-cell m-header">Disease +</div>
+                    <div class="m-cell m-header">Disease −</div>
+                    <div class="m-cell m-header">Test +</div>
+                    <div class="m-cell m-tp">
+                      <input type="number" id="d-a" value="85" style="border-color:#6EE7B7;background:#D1FAE5"><br><small>TP</small>
+                    </div>
+                    <div class="m-cell m-fp">
+                      <input type="number" id="d-b" value="12" style="border-color:#FCA5A5;background:#FEE2E2"><br><small>FP</small>
+                    </div>
+                    <div class="m-cell m-header">Test −</div>
+                    <div class="m-cell m-fn">
+                      <input type="number" id="d-c" value="15" style="border-color:#FCD34D;background:#FEF3C7"><br><small>FN</small>
+                    </div>
+                    <div class="m-cell m-tn">
+                      <input type="number" id="d-d" value="388" style="border-color:#6EE7B7;background:#D1FAE5"><br><small>TN</small>
+                    </div>
+                  </div>
+                </div>
+                <div id="diag-sens-inputs" style="display:none">
+                  <div class="epi-form-group">
+                    <label class="epi-label">Sensitivity (%)</label>
+                    <input type="number" class="epi-input" id="d-sens" value="85" min="1" max="100">
+                  </div>
+                  <div class="epi-form-group">
+                    <label class="epi-label">Specificity (%)</label>
+                    <input type="number" class="epi-input" id="d-spec" value="97" min="1" max="100">
+                  </div>
+                  <div class="epi-form-group">
+                    <label class="epi-label">Disease Prevalence (%) — pre-test probability</label>
+                    <input type="number" class="epi-input" id="d-prev" value="17" min="0.1" max="99" step="0.1">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="epi-result-grid" id="diag-results"></div>
+              <div class="epi-callout teal" id="diag-interp" style="margin-top:1rem"></div>
+            </div>
+          </div>
+          <div class="epi-card">
+            <div class="epi-card-title">PPV &amp; NPV vs. Disease Prevalence</div>
+            <div class="epi-card-sub">How predictive values change across the prevalence range (Bayes' theorem)</div>
+            <div class="epi-chart-wrap"><canvas id="diagChart"></canvas></div>
+          </div>
+        </div>
+
+        <!-- ═══ TAB 5: RATE CALCULATOR ═══ -->
+        <div class="epi-panel" id="epi-panel-rates">
+          <div class="epi-grid-2">
+            <div class="epi-card">
+              <div class="epi-card-title">Crude Rate &amp; Confidence Interval</div>
+              <div class="epi-form-group">
+                <label class="epi-label">Number of Events (cases, deaths)</label>
+                <input type="number" class="epi-input" id="rc-events" value="8" min="0">
+              </div>
+              <div class="epi-form-group">
+                <label class="epi-label">Population Size</label>
+                <input type="number" class="epi-input" id="rc-pop" value="6000" min="1">
+              </div>
+              <div class="epi-form-group">
+                <label class="epi-label">Rate Multiplier</label>
+                <select class="epi-select" id="rc-mult">
+                  <option value="1000">per 1,000</option>
+                  <option value="10000">per 10,000</option>
+                  <option value="100000" selected>per 100,000</option>
+                </select>
+              </div>
+              <div class="epi-form-group">
+                <label class="epi-label">Years of Observation</label>
+                <input type="number" class="epi-input" id="rc-years" value="1" min="1">
+              </div>
+              <div class="epi-result-grid" id="rate-results"></div>
+            </div>
+            <div class="epi-card">
+              <div class="epi-card-title">NNT / NNH Calculator</div>
+              <div class="epi-card-sub">Absolute risk reduction → number needed to treat</div>
+              <div class="epi-form-group">
+                <label class="epi-label">Risk in Treatment / Exposed Group (%)</label>
+                <input type="number" class="epi-input" id="nnt-rt" value="8.5" min="0" max="100" step="0.1">
+              </div>
+              <div class="epi-form-group">
+                <label class="epi-label">Risk in Control / Unexposed Group (%)</label>
+                <input type="number" class="epi-input" id="nnt-rc" value="13.2" min="0" max="100" step="0.1">
+              </div>
+              <div class="epi-result-grid" id="nnt-results"></div>
+              <div class="epi-callout" id="nnt-interp" style="margin-top:1rem"></div>
+            </div>
+          </div>
+          <div class="epi-card">
+            <div class="epi-card-title">YPLL Calculator</div>
+            <div class="epi-card-sub">Years of Potential Life Lost before age 75</div>
+            <table class="epi-table" id="ypll-table">
+              <thead><tr><th>Age at Death</th><th>Deaths (n)</th><th>YPLL/Death</th><th>Total YPLL</th></tr></thead>
+              <tbody id="ypll-rows">
+                <tr>
+                  <td><input type="number" class="epi-input" value="25" min="0" max="74"></td>
+                  <td><input type="number" class="epi-input" value="3" min="0"></td>
+                  <td class="ypll-each" style="font-family:var(--font-mono)">50</td>
+                  <td class="ypll-total" style="font-family:var(--font-mono);font-weight:600">150</td>
+                </tr>
+                <tr>
+                  <td><input type="number" class="epi-input" value="38" min="0" max="74"></td>
+                  <td><input type="number" class="epi-input" value="7" min="0"></td>
+                  <td class="ypll-each" style="font-family:var(--font-mono)">37</td>
+                  <td class="ypll-total" style="font-family:var(--font-mono);font-weight:600">259</td>
+                </tr>
+                <tr>
+                  <td><input type="number" class="epi-input" value="55" min="0" max="74"></td>
+                  <td><input type="number" class="epi-input" value="12" min="0"></td>
+                  <td class="ypll-each" style="font-family:var(--font-mono)">20</td>
+                  <td class="ypll-total" style="font-family:var(--font-mono);font-weight:600">240</td>
+                </tr>
+                <tr>
+                  <td><input type="number" class="epi-input" value="68" min="0" max="74"></td>
+                  <td><input type="number" class="epi-input" value="22" min="0"></td>
+                  <td class="ypll-each" style="font-family:var(--font-mono)">7</td>
+                  <td class="ypll-total" style="font-family:var(--font-mono);font-weight:600">154</td>
+                </tr>
+              </tbody>
+            </table>
+            <button class="epi-btn epi-btn-primary" id="ypll-add-btn" style="margin-top:.75rem">+ Add Row</button>
+            <div class="epi-result-grid" id="ypll-results" style="margin-top:1rem"></div>
+          </div>
+        </div>
+
+        <!-- ═══ TAB 6: CONFIDENCE INTERVALS ═══ -->
+        <div class="epi-panel" id="epi-panel-ci">
+          <div class="epi-grid-2">
+            <div class="epi-card">
+              <div class="epi-card-title">Poisson CI for Event Count</div>
+              <div class="epi-form-group">
+                <label class="epi-label">Observed count (n)</label>
+                <input type="number" class="epi-input" id="ci-n" value="5" min="0">
+              </div>
+              <div class="epi-form-group">
+                <label class="epi-label">Population</label>
+                <input type="number" class="epi-input" id="ci-pop" value="8000">
+              </div>
+              <div class="epi-form-group">
+                <label class="epi-label">Rate multiplier</label>
+                <select class="epi-select" id="ci-mult">
+                  <option value="1000">per 1,000</option>
+                  <option value="10000">per 10,000</option>
+                  <option value="100000" selected>per 100,000</option>
+                </select>
+              </div>
+              <div class="epi-result-grid" id="ci-results"></div>
+              <div class="epi-callout rust" id="ci-warn" style="margin-top:1rem"></div>
+            </div>
+            <div class="epi-card">
+              <div class="epi-card-title">Multi-Year Stabilization</div>
+              <div class="epi-card-sub">Rolling average to stabilize small rural counts</div>
+              <table class="epi-table" id="multi-year-table">
+                <thead><tr><th>Year</th><th>Events</th><th>Population</th><th>Crude Rate</th></tr></thead>
+                <tbody id="multi-year-rows">
+                  <tr><td>2020</td><td><input type="number" class="epi-input" value="3" min="0"></td><td><input type="number" class="epi-input" value="7800"></td><td class="my-rate" style="font-family:var(--font-mono)"></td></tr>
+                  <tr><td>2021</td><td><input type="number" class="epi-input" value="7" min="0"></td><td><input type="number" class="epi-input" value="7750"></td><td class="my-rate" style="font-family:var(--font-mono)"></td></tr>
+                  <tr><td>2022</td><td><input type="number" class="epi-input" value="4" min="0"></td><td><input type="number" class="epi-input" value="7900"></td><td class="my-rate" style="font-family:var(--font-mono)"></td></tr>
+                  <tr><td>2023</td><td><input type="number" class="epi-input" value="9" min="0"></td><td><input type="number" class="epi-input" value="7850"></td><td class="my-rate" style="font-family:var(--font-mono)"></td></tr>
+                  <tr><td>2024</td><td><input type="number" class="epi-input" value="5" min="0"></td><td><input type="number" class="epi-input" value="8000"></td><td class="my-rate" style="font-family:var(--font-mono)"></td></tr>
+                </tbody>
+              </table>
+              <div class="epi-result-grid" id="multi-year-results" style="margin-top:1rem"></div>
+            </div>
+          </div>
+          <div class="epi-card">
+            <div class="epi-card-title">CI Width vs. Event Count</div>
+            <div class="epi-card-sub">Why small counts produce wide, unstable confidence intervals</div>
+            <div class="epi-chart-wrap"><canvas id="ciChart"></canvas></div>
+          </div>
+        </div>
+
+      </div><!-- /max-width wrapper -->
+
+      <!-- Educational panels -->
+      <div class="info-panel" style="max-width:1200px; margin:0 auto var(--space-xl); padding:var(--space-lg) var(--space-xl);">
+        <h2>About Rural Epidemiology Methods</h2>
+
+        <details open>
+          <summary>SEIR/SEIRD Compartmental Models</summary>
+          <div class="detail-body">
+            <p>Compartmental models divide a population into <strong>S</strong>usceptible, <strong>E</strong>xposed, <strong>I</strong>nfectious, <strong>R</strong>ecovered, and optionally <strong>D</strong>ead compartments. The ODE system is:</p>
+            <p style="font-family:monospace; background:#f4f4f4; padding:.5rem; border-radius:4px; margin:.5rem 0;">
+              dS/dt = −βSI/N<br>
+              dE/dt = βSI/N − σE<br>
+              dI/dt = σE − γI<br>
+              dR/dt = γ(1−μ)I<br>
+              dD/dt = γμI
+            </p>
+            <p>This simulator uses <strong>4th-order Runge-Kutta</strong> (RK4) with dt = 0.5 days for numerical accuracy. RK4 takes a weighted average of four slope estimates within each step, achieving O(h⁴) local error — far superior to Euler's O(h) method for stiff epidemic curves.</p>
+          </div>
+        </details>
+
+        <details>
+          <summary>R₀, Rₑ, and the Herd Immunity Threshold</summary>
+          <div class="detail-body">
+            <p>The <strong>basic reproduction number R₀</strong> = β/γ is the expected number of secondary cases from one infectious individual in a fully susceptible population. When R₀ &gt; 1, an epidemic can grow; when R₀ &lt; 1, it cannot sustain.</p>
+            <p>The <strong>effective reproduction number</strong> Rₑ = R₀(1−p) accounts for prior immunity fraction p (vaccination + natural immunity). The epidemic is controlled when Rₑ &lt; 1, requiring p &gt; 1 − 1/R₀ — the <strong>Herd Immunity Threshold (HIT)</strong>.</p>
+            <p>The <strong>final attack rate</strong> r satisfies the implicit equation r = 1 − e^(−R₀·r), solved here by fixed-point iteration. For R₀ = 3, the final attack rate is ~94% in a fully susceptible population.</p>
+          </div>
+        </details>
+
+        <details>
+          <summary>Attack Rate Analysis and Outbreak Investigation</summary>
+          <div class="detail-body">
+            <p>In a foodborne outbreak, the <strong>attack rate (AR)</strong> is the proportion of exposed individuals who become ill. The <strong>Risk Ratio (RR)</strong> = AR(exposed) / AR(unexposed) measures the association between a food item and illness. RR ≥ 3 is considered strong evidence of a vehicle; RR near 1 suggests no association.</p>
+            <p>The <strong>Attributable Fraction (AF)</strong> = (RR − 1)/RR estimates the proportion of cases in exposed persons attributable to that food. The <strong>Odds Ratio (OR)</strong> = (a·d)/(b·c) approximates RR when attack rates are low.</p>
+            <p>This tool identifies the <strong>probable vehicle</strong> as the food with the highest RR. In rural settings with small outbreak sizes, Fisher's exact test is preferred over chi-square for significance testing due to small cell counts.</p>
+          </div>
+        </details>
+
+        <details>
+          <summary>Diagnostic Test Performance and Bayes' Theorem</summary>
+          <div class="detail-body">
+            <p><strong>Sensitivity</strong> = TP/(TP+FN) — probability a diseased person tests positive (true positive rate). <strong>Specificity</strong> = TN/(TN+FP) — probability a non-diseased person tests negative (true negative rate).</p>
+            <p><strong>Positive Predictive Value (PPV)</strong> depends critically on <strong>prevalence</strong> via Bayes' theorem: PPV = (Sens × Prev) / (Sens × Prev + (1−Spec) × (1−Prev)). In rural low-prevalence settings, even a highly specific test yields low PPV — a major source of false-positive burden.</p>
+            <p><strong>Likelihood Ratios</strong> (LR+ = Sens/(1−Spec), LR− = (1−Sens)/Spec) are prevalence-independent and express the diagnostic shift. LR+ ≥ 10 is a strong rule-in; LR− ≤ 0.1 is a strong rule-out.</p>
+          </div>
+        </details>
+
+        <details>
+          <summary>Rate Instability and Poisson Confidence Intervals</summary>
+          <div class="detail-body">
+            <p>In rural populations with small denominators, <strong>rate instability</strong> is the primary statistical challenge. The CDC standard: rates based on fewer than 20 events should be suppressed or flagged due to excessive statistical noise.</p>
+            <p>This tool uses the <strong>Byar approximation</strong> for Poisson 95% CI: lower = n·(1 − 1/(9n) − 1.96/√(9n))³, upper = (n+1)·(1 − 1/(9(n+1)) + 1.96/√(9(n+1)))³. The relative CI width = (upper−lower)/point_estimate × 100% is the key stability metric.</p>
+            <p><strong>Multi-year pooling</strong> is the standard remedy: pooling 3–5 years of events increases effective n, narrowing CIs. The <strong>YPLL</strong> (Years of Potential Life Lost before age 75) captures premature mortality burden, giving greater weight to deaths in younger age groups.</p>
+          </div>
+        </details>
+
+        <details>
+          <summary>NNT, ARD, and Clinical Significance</summary>
+          <div class="detail-body">
+            <p>The <strong>Number Needed to Treat (NNT)</strong> = 1/ARD where ARD = Risk(control) − Risk(treatment) is the Absolute Risk Difference. NNT is the number of patients who must receive treatment to prevent one additional adverse outcome. NNT = 1 means every treated patient benefits; NNT = 100 means 100 must be treated to benefit one.</p>
+            <p>When the treatment group has higher risk than control, the same formula gives <strong>Number Needed to Harm (NNH)</strong>. ARD is more clinically meaningful than Relative Risk (RR) or Odds Ratio (OR) because it is sensitive to baseline risk — a 50% relative risk reduction means very different things at 2% vs 40% baseline risk.</p>
+          </div>
+        </details>
+      </div>
+    </div><!-- /module-body -->
+  </div><!-- /module-page -->
+
+  <script type="module" src="./module.js"></script>
+</body>
+</html>

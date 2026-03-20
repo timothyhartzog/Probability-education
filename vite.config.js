@@ -65,6 +65,7 @@ export default defineConfig({
         rhFutureTech: resolve(__dirname, 'src/modules/rh-13-future-tech/index.html'),
         rhModelingToolkit: resolve(__dirname, 'src/modules/rh-14-modeling-toolkit/index.html'),
         rhTextbook: resolve(__dirname, 'src/modules/rh-textbook/index.html'),
+        rhEpiCalculator: resolve(__dirname, 'src/modules/rh-epi-calculator/index.html'),
       },
     },
   },
