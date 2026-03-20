@@ -131,6 +131,27 @@
           It allows us to identify regions where demand far exceeds supply, even if a facility is "nearby."
         </p>
       </section>
+
+      <details>
+        <summary>Two-Step Floating Catchment Area — The Mathematics</summary>
+        <div class="detail-body">
+          <p>The <strong>2SFCA method</strong> computes accessibility in two steps. Step 1: for each supply location j, calculate the supply-to-demand ratio R_j = S_j / Σ_{k: d_{kj} ≤ d_0} D_k, where S_j is supply (beds/providers), D_k is demand (population) at each location k within threshold d_0. Step 2: for each demand location i, sum the ratios of all supply locations within the threshold: A_i = Σ_{j: d_{ij} ≤ d_0} R_j. The result is an accessibility score where higher values indicate better access. The threshold d_0 is a critical modeling choice — too small and rural residents appear unserved; too large and urban facilities dilute rural access scores.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Distance Decay and the Gravity Model</summary>
+        <div class="detail-body">
+          <p>The basic 2SFCA uses a hard distance threshold, but real patient behavior follows <strong>distance decay</strong>: the probability of using a facility decreases continuously with travel time, not abruptly at a cutoff. The <strong>enhanced 2SFCA (E2SFCA)</strong> replaces the binary weight with a decay function W(d): Gaussian W(d) = e^{−d²/β²}, exponential W(d) = e^{−βd}, or inverse power W(d) = d^{−β}. The gravity model P_{ij} = A_j^α / d_{ij}^β (analogous to Newton's gravity) weights destination attractiveness A_j and penalizes distance. Calibrating β from actual patient origin data is essential — rural populations show different decay rates than urban ones, often willing to travel farther for specialized care.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Equity and the Lorenz Curve of Access</summary>
+        <div class="detail-body">
+          <p>Geographic access inequity can be measured with the same tools as income inequality. Plotting cumulative population (sorted by access score) against cumulative access gives a <strong>Lorenz curve</strong>; the <strong>Gini coefficient</strong> of access = (area between Lorenz curve and diagonal) / 0.5 ranges from 0 (perfect equality) to 1 (all access concentrated in one location). Rural areas typically have Gini coefficients for healthcare access above 0.4, versus 0.2–0.3 in urban areas. The <strong>Theil index</strong> is a related decomposition: total inequality = within-region inequality + between-region inequality, allowing attribution of access gaps to geography vs. facility distribution decisions.</p>
+        </div>
+      </details>
     </div>
   </div>
 

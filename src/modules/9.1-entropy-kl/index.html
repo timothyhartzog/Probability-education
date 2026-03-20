@@ -90,6 +90,14 @@
           <p>The Gaussian distribution N(μ, σ²) maximizes differential entropy among all distributions with fixed variance: h = ½ log(2πeσ²). This is the maximum entropy principle — the Gaussian makes no additional assumptions beyond mean and variance, which is why it arises naturally in so many contexts.</p>
         </div>
       </details>
+      <details>
+        <summary>Maximum Entropy Principle — Constrained Uncertainty</summary>
+        <div class="detail-body">
+          <p>The <strong>maximum entropy principle</strong> (MaxEnt) selects the distribution that maximizes entropy subject to constraints encoding known information. Jaynes (1957) argued this produces the least-biased distribution consistent with the constraints — it makes no additional assumptions beyond what the constraints require. The solution is always an <strong>exponential family</strong> distribution.</p>
+          <p>Concretely: if we know only that E[X] = μ and E[X²] = σ² + μ², the maximum entropy distribution on ℝ is N(μ, σ²). If we know only that X ≥ 0 and E[X] = λ, MaxEnt gives the Exponential(1/λ). If we know X ∈ {1,...,k} and nothing else, MaxEnt gives the uniform distribution. The constraint set determines the exponential family; the Lagrange multipliers become the natural parameters.</p>
+          <p>MaxEnt connects entropy to physics: in statistical mechanics, the Boltzmann distribution maximizes entropy subject to a fixed expected energy. The partition function Z = Σ<sub>i</sub> e<sup>−βE<sub>i</sub></sup> is the normalizing constant, and the free energy F = −(1/β) log Z equals the negative of the maximum entropy. The MaxEnt derivation of the Boltzmann distribution requires no additional physical assumptions — it is a statement about information alone.</p>
+        </div>
+      </details>
     </div>
   </div>
   <script type="module" src="./module.js"></script>

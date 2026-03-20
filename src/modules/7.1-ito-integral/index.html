@@ -88,6 +88,14 @@
           <p>The Itô integral M<sub>t</sub> = ∫₀ᵗ f dB is a <strong>local martingale</strong> whenever f is adapted and square-integrable. Under the additional condition E[∫ f² dt] < ∞ it is a true martingale with E[M<sub>t</sub>] = 0 for all t.</p>
         </div>
       </details>
+      <details>
+        <summary>Girsanov's Theorem — Changing the Measure</summary>
+        <div class="detail-body">
+          <p>Under the physical measure P, Brownian motion B<sub>t</sub> has zero drift. <strong>Girsanov's theorem</strong> says we can define a new measure Q under which B̃<sub>t</sub> = B<sub>t</sub> + ∫₀ᵗ θ<sub>s</sub> ds is a Brownian motion, provided the Novikov condition E[exp(½ ∫ θ<sub>s</sub>² ds)] &lt; ∞ holds. The measure change is given by the <strong>Radon-Nikodym derivative</strong> (the Girsanov exponential martingale): dQ/dP = exp(−∫ θ<sub>s</sub> dB<sub>s</sub> − ½ ∫ θ<sub>s</sub>² ds).</p>
+          <p>In finance, Girsanov is used to move from the real-world measure P (where assets grow at their expected return μ) to the risk-neutral measure Q (where all assets grow at the risk-free rate r). The drift shift θ = (μ − r)/σ is the <strong>market price of risk</strong>. Under Q, the discounted asset price is a martingale, and option prices equal expected discounted payoffs.</p>
+          <p>More generally, Girsanov's theorem is the stochastic calculus version of the <strong>likelihood ratio</strong> between two diffusion models. It quantifies how much a drift change costs in terms of probability mass: the KL divergence between Q and P equals ½ E<sub>P</sub>[∫ θ<sub>s</sub>² ds]. This connects to the Donsker-Varadhan large deviations rate function and makes Girsanov the continuous-time analog of exponential tilting in importance sampling.</p>
+        </div>
+      </details>
     </div>
   </div>
   <script type="module" src="./module.js"></script>

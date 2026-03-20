@@ -69,6 +69,22 @@
           <p>Etemadi's proof (1981) obtains the full SLLN from E[|X|] < ∞ alone, without requiring finite variance or independence beyond pairwise independence. The key insight is to work along the subsequence ⌊αk⌋ and interpolate.</p>
         </div>
       </details>
+      <details>
+        <summary>Ergodic Theory — LLN Beyond Independence</summary>
+        <div class="detail-body">
+          <p>The SLLN extends far beyond i.i.d. sequences via ergodic theory. A measure-preserving transformation T on a probability space (Ω, F, P) is <strong>ergodic</strong> if the only T-invariant sets have measure 0 or 1. The <strong>Birkhoff Ergodic Theorem</strong> then guarantees that for any integrable f:</p>
+          <p style="text-align:center"><strong>(1/n) Σ<sub>k=0</sub><sup>n-1</sup> f(T<sup>k</sup>ω) → E[f] almost surely</strong></p>
+          <p>The i.i.d. SLLN is the special case where T is the left shift on the sequence space. But the ergodic theorem covers far more: stationary Markov chains (where it gives the time-average = π-average result), deterministic chaotic systems (where time averages converge to Lebesgue integrals), and stationary processes in signal processing. The key is that ergodicity rules out the existence of "traps" that the system never escapes.</p>
+        </div>
+      </details>
+      <details>
+        <summary>LLN in Statistics — Consistency and the Glivenko-Cantelli Theorem</summary>
+        <div class="detail-body">
+          <p>In statistics, the LLN is the foundation of <strong>consistency</strong>: an estimator θ̂<sub>n</sub> is consistent if θ̂<sub>n</sub> →<sup>p</sup> θ as n → ∞. The sample mean is consistent for E[X]; the sample variance is consistent for Var(X); any continuous function of consistent estimators is consistent (CMT).</p>
+          <p>The <strong>Glivenko-Cantelli theorem</strong> is the LLN for the empirical CDF: sup<sub>x</sub> |F<sub>n</sub>(x) − F(x)| → 0 almost surely. This "uniform LLN" guarantees that the entire empirical distribution converges to the true distribution, not just its mean. It underlies the validity of empirical plug-in estimators and non-parametric methods.</p>
+          <p>The <strong>law of large numbers for Monte Carlo</strong>: if X<sub>1</sub>, ..., X<sub>n</sub> are i.i.d. draws from a distribution with density p, then (1/n) Σ g(X<sub>i</sub>) → E<sub>p</sub>[g(X)] almost surely for any integrable g. This justifies Monte Carlo integration as a universal numerical method — the only requirement is that the expectation exists.</p>
+        </div>
+      </details>
     </div>
   </div>
   <script type="module" src="./module.js"></script>

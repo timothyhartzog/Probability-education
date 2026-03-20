@@ -93,6 +93,14 @@
           <p><strong>Jeffreys priors</strong> are invariant under reparameterization: p(θ) ∝ √det I(θ), where I(θ) is the Fisher information matrix. They represent "uninformative" priors in a precise sense. For the Binomial with parameter p, the Jeffreys prior is Beta(½, ½) — a U-shaped distribution that is more diffuse than the uniform Beta(1,1).</p>
         </div>
       </details>
+      <details>
+        <summary>Posterior Predictive Distribution and Bayesian Model Checking</summary>
+        <div class="detail-body">
+          <p>After observing data y, the <strong>posterior predictive distribution</strong> for a new observation ỹ is p(ỹ | y) = ∫ p(ỹ | θ) p(θ | y) dθ. It averages over all parameter values weighted by the posterior — predictions account for both parameter uncertainty and sampling variability. For conjugate models, the posterior predictive has a closed form: Beta-Binomial, Dirichlet-Multinomial, Normal-t, etc.</p>
+          <p><strong>Bayesian model checking</strong> uses the posterior predictive to assess model fit. A <strong>posterior predictive p-value</strong> measures P(T(ỹ) ≥ T(y<sub>obs</sub>) | y<sub>obs</sub>), where T is a test statistic. Values near 0 or 1 indicate the model cannot replicate key features of the data. Unlike frequentist p-values, these do not have a uniform distribution under H<sub>0</sub> — they are calibrated to the posterior, not a null hypothesis.</p>
+          <p>The <strong>Bayesian information criterion (BIC)</strong> and <strong>WAIC (Widely Applicable Information Criterion)</strong> use the posterior predictive to compare models. WAIC ≈ −2 log p(y | M) + 2p<sub>eff</sub>, where p<sub>eff</sub> is the effective number of parameters estimated from posterior variance. Unlike AIC, WAIC is fully Bayesian and averages over the posterior rather than using a point estimate.</p>
+        </div>
+      </details>
     </div>
   </div>
   <script type="module" src="./module.js"></script>

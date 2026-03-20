@@ -275,6 +275,22 @@
             </p>
           </div>
         </details>
+        <details>
+          <summary>Path Properties — Continuity but Non-Differentiability</summary>
+          <div class="detail-body">
+            <p>Brownian paths are almost surely <strong>continuous everywhere but differentiable nowhere</strong>. This is a consequence of the quadratic variation: if B were differentiable at t, its increments would satisfy |B(t+h) − B(t)| ≤ C|h|, giving quadratic variation ≤ Σ C<sup>2</sup>h<sup>2</sup> → 0, contradicting [B]<sub>t</sub> = t.</p>
+            <p>More precisely, for almost every path, the <strong>Hölder regularity</strong> is exactly 1/2 − ε for any ε > 0: the increments satisfy |B(t+h) − B(t)| ≤ C|h|<sup>1/2−ε</sup> for all t, h (with a random constant C). The exponent 1/2 is sharp — 1/2-Hölder continuity fails. This is encoded in the <strong>law of the iterated logarithm</strong>: lim sup<sub>t→0</sub> B(t)/√(2t log log(1/t)) = 1 almost surely.</p>
+            <p>A Brownian path visits <strong>every real level</strong> on any time interval (the range is all of ℝ, a.s.) and has uncountably many zeros, yet the zero set has Lebesgue measure zero. The zero set is a random <strong>closed, perfect, nowhere-dense</strong> set of Hausdorff dimension 1/2.</p>
+          </div>
+        </details>
+        <details>
+          <summary>The Reflection Principle and Passage Times</summary>
+          <div class="detail-body">
+            <p>The <strong>reflection principle</strong> exploits the strong Markov property: once B hits level a, the future behavior is independent and distributional identical to a fresh Brownian motion started at a. Therefore, after hitting a, the path is equally likely to be above or below a — reflecting the path across level a gives another valid Brownian motion.</p>
+            <p>This gives the distribution of the <strong>first passage time</strong> T<sub>a</sub> = inf{t : B<sub>t</sub> = a}: P(T<sub>a</sub> ≤ t) = P(sup<sub>s≤t</sub> B<sub>s</sub> ≥ a) = 2P(B<sub>t</sub> ≥ a) = 2(1 − Φ(a/√t)). The density is f<sub>T<sub>a</sub></sub>(t) = (a/√(2πt<sup>3</sup>)) e<sup>−a²/2t</sup> — an <strong>inverse Gaussian</strong> distribution with infinite mean (passage times have fat tails).</p>
+            <p>The reflection principle is also the source of the ballot problem and the cycle lemma in combinatorics. In finance, it gives the distribution of the maximum of a geometric Brownian motion, which underlies the pricing of <strong>barrier options</strong> (options that activate or expire when the asset hits a threshold).</p>
+          </div>
+        </details>
       </div>
     </div>
   </div>

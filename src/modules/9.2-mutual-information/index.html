@@ -95,6 +95,14 @@
           <p>In neuroscience, the <strong>neural coding efficiency</strong> question asks how much of the theoretical channel capacity H(stimulus) is actually transmitted by spike trains. Efficient coding theory (Barlow, 1961) predicts that sensory neurons should minimize redundancy and maximize information transmission — equivalent to maximizing I(response; stimulus) subject to metabolic constraints.</p>
         </div>
       </details>
+      <details>
+        <summary>Data Processing Inequality and Sufficient Statistics</summary>
+        <div class="detail-body">
+          <p>The <strong>data processing inequality (DPI)</strong>: if X → Y → Z form a Markov chain (Z is a function of Y only, not X), then I(X; Z) ≤ I(X; Y). Processing data can never increase the information about the original source. Equality holds if and only if Z is a <strong>sufficient statistic</strong> for X given Y.</p>
+          <p>The DPI is fundamental to information theory and has concrete implications: no algorithm applied to sensor data can extract more information about the underlying state than the raw sensor captures; a neural network layer cannot increase the mutual information between its output and the target above that of its input (deep learning thus performs lossy compression, not information amplification); and channel cascades satisfy I(X; output) ≤ min<sub>link</sub> C(link), where C is the channel capacity.</p>
+          <p>A sufficient statistic T(X) for a parameter θ satisfies I(θ; T(X)) = I(θ; X) — no information about θ is lost. The Neyman-Fisher factorization theorem characterizes sufficient statistics by whether the likelihood factors as g(T(x), θ) · h(x). The <strong>minimal sufficient statistic</strong> achieves maximum compression while preserving all information: it is the coarsest sufficient statistic, and the DPI guarantees that any further compression loses information about θ.</p>
+        </div>
+      </details>
     </div>
   </div>
   <script type="module" src="./module.js"></script>

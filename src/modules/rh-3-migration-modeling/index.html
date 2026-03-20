@@ -55,6 +55,27 @@
         </p>
         <div id="math-dependency"></div>
       </section>
+
+      <details>
+        <summary>Cohort-Component Population Projection</summary>
+        <div class="detail-body">
+          <p>The <strong>cohort-component model</strong> projects population by tracking each age-sex cohort forward: P_{a+1,t+1} = P_{a,t} × (1 − m_a) × (1 − d_a) + N_{a+1,t}, where m_a is net out-migration rate at age a, d_a is mortality rate, and N represents in-migration. For rural areas, m_a is strongly age-dependent: youth (18–30) out-migrate for education and jobs, while retirees (65+) may in-migrate or stay. The <strong>Lee-Carter model</strong> extends this by decomposing mortality rates log(m_{a,t}) = α_a + β_a × κ_t, where κ_t is a time trend fit to historical data. This generates probabilistic mortality forecasts as κ_t follows a random walk.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Gravity Model of Migration and Push-Pull Factors</summary>
+        <div class="detail-body">
+          <p>Migration flows between regions follow the <strong>gravity model</strong>: M_{ij} = k × P_i^α × P_j^β / d_{ij}^γ, where P_i and P_j are origin and destination populations, d_{ij} is distance, and k, α, β, γ are calibrated parameters. This mirrors Newton's law of gravitation — large populations "attract" migrants, distance "repels" them. <strong>Push factors</strong> for rural youth: limited job diversity, educational attainment mismatch, income differentials. <strong>Pull factors</strong> toward urban areas: higher wages (typically 30–50% premium), social network effects, amenity preferences. The <strong>wage gradient</strong> model predicts equilibrium migration equalizes real wages; deviations from equilibrium reflect information asymmetries, moving costs, and social capital.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Population Aging and Dependency Ratios</summary>
+        <div class="detail-body">
+          <p>The <strong>old-age dependency ratio</strong> = (population 65+) / (population 20–64) measures the burden on the working-age population. Rural areas are aging faster than urban areas because of youth out-migration, not just differential mortality. A dependency ratio above 0.5 signals fiscal stress for local government and healthcare systems. The <strong>support ratio</strong> for healthcare specifically counts workers in health professions per elderly resident — rural areas with ratios below 1:10 face critical shortages. <strong>Scenario modeling</strong> with different migration and fertility assumptions reveals bifurcating futures: continued decline spirals (fewer workers → fewer services → more out-migration) versus revitalization pathways (remote work influx, retirement migration, healthcare investment).</p>
+        </div>
+      </details>
     </div>
   </div>
   <script type="module" src="./module.js"></script>

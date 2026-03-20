@@ -101,6 +101,27 @@
           the average occupancy remains within theoretical limits.
         </p>
       </section>
+
+      <details>
+        <summary>Erlang's Loss Formula and Target Occupancy</summary>
+        <div class="detail-body">
+          <p>The <strong>Erlang B formula</strong> gives the probability that an arriving patient finds all beds occupied (blocking probability): B(c, a) = (a^c / c!) / Σ_{k=0}^{c} (a^k / k!), where a = λ/μ is the offered load (arrivals × mean length of stay) and c is the number of beds. Healthcare regulators often target 85% occupancy, but this is a compromise: at 85%, blocking probability is low for large hospitals but unacceptably high for small ones with c = 10–20 beds. A 10-bed unit at 85% occupancy has a blocking probability near 15%, meaning 1 in 6 patients would be turned away. <strong>Optimal capacity planning</strong> requires specifying an acceptable blocking probability (e.g., 5%) and solving for c given the demand distribution.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Length of Stay Distributions and Mixture Models</summary>
+        <div class="detail-body">
+          <p>Hospital length of stay (LOS) is not exponentially distributed despite Markovian arrival assumptions. LOS distributions are right-skewed with heavy tails — a minority of patients ("super-utilizers") have extreme LOS values that dominate bed-days. The <strong>log-normal</strong> and <strong>Weibull</strong> distributions fit LOS better than exponential, but the best fit is often a <strong>mixture model</strong>: a mixture of two log-normal components captures short-stay (same-day, 1–3 days) and long-stay (complex or social patients, 7+ days) subpopulations separately. Ignoring this structure leads to systematic underestimation of bed requirements — models calibrated on median LOS miss the tail that drives bed-block and delayed discharges.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Seasonal Demand Cycles and Time-Series Forecasting</summary>
+        <div class="detail-body">
+          <p>Inpatient demand follows predictable seasonal patterns: winter respiratory illness peaks (typically 20–40% above summer baseline), summer trauma and mental health crises, and holiday discharge suppression causing bed-block in early January. <strong>Decomposition</strong> separates demand into trend, seasonal, and irregular components. The <strong>SARIMA model</strong> (Seasonal ARIMA) with period 52 (weeks) or 12 (months) captures autocorrelated demand and seasonal cycles simultaneously. For operational planning, <strong>7-day rolling forecasts</strong> with prediction intervals guide staffing decisions; for capital planning, <strong>5–10 year projections</strong> require demographic trend models. Forecast uncertainty compounds over the planning horizon — 95% PI width approximately doubles for each doubling of the forecast horizon.</p>
+        </div>
+      </details>
     </div>
   </div>
 

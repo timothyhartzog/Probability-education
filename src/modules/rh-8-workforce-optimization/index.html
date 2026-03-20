@@ -57,6 +57,27 @@
         </p>
         <div id="math-workforce"></div>
       </section>
+
+      <details>
+        <summary>Survival Analysis and Clinician Retention</summary>
+        <div class="detail-body">
+          <p>Clinician retention is a <strong>survival analysis</strong> problem. The <strong>survival function</strong> S(t) = P(employed at time t) and <strong>hazard function</strong> h(t) = lim_{Δt→0} P(leave in [t, t+Δt] | employed at t) characterize the departure process. The <strong>Cox proportional hazards model</strong> log h(t | x) = log h₀(t) + β₁x₁ + ... + β_p x_p estimates the effect of covariates (compensation, remote rural location, call burden, years in practice) on the hazard while allowing a flexible baseline hazard h₀(t). For rural physicians, the Kaplan-Meier estimator typically shows median retention of 4–6 years versus 8–10 years in urban settings — a difference with enormous cost implications given that recruiting a rural physician costs $150,000–$300,000.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Shift Scheduling as Integer Programming</summary>
+        <div class="detail-body">
+          <p>Optimal nurse staffing is an <strong>integer programming (IP)</strong> problem: minimize total cost Σ_t Σ_s c_{s,t} x_{s,t} subject to: coverage constraints (Σ_s x_{s,t} ≥ d_t for each time period t), individual constraints (shift limits, rest requirements, hours per week), and fairness constraints (equitable weekend distribution). Solving large IP instances exactly is NP-hard, but practical hospital scheduling instances (100–500 nurses, 2-week horizon) can be solved with branch-and-bound in minutes using modern solvers. Stochastic scheduling models incorporate demand uncertainty: <strong>robust optimization</strong> finds schedules that are feasible across all demand realizations in a specified uncertainty set; <strong>stochastic programming</strong> minimizes expected cost across demand scenarios.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Queuing Networks and Provider Productivity</summary>
+        <div class="detail-body">
+          <p>A healthcare facility is a <strong>queuing network</strong>: patients flow through registration → triage → physician → ancillary services → discharge, with each stage modeled as a queue. <strong>Jackson's theorem</strong> for open queuing networks (networks of M/M/c queues) gives that each queue in the network behaves independently at steady state, allowing analysis of bottlenecks. The <strong>bottleneck station</strong> with the highest utilization ρ_i = λ_i/(c_i μ_i) limits system throughput — adding capacity elsewhere provides no benefit until the bottleneck is relieved. <strong>Throughput analysis</strong> reveals that a rural ED spending 40% of physician time on documentation (a non-patient-care queue) effectively reduces clinical capacity by 40%, which is more tractable than hiring additional physicians.</p>
+        </div>
+      </details>
     </div>
   </div>
   <script type="module" src="./module.js"></script>
