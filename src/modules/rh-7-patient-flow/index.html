@@ -145,6 +145,27 @@
         </p>
         <div id="math-variance"></div>
       </section>
+
+      <details>
+        <summary>Queueing Theory — M/M/c and Rural Emergency Departments</summary>
+        <div class="detail-body">
+          <p>Patient arrivals in emergency departments follow an approximately Poisson process with rate λ (arrivals/hour). Service times are exponentially distributed with rate μ. The <strong>M/M/c queue</strong> with c servers has utilization ρ = λ/(cμ). At ρ < 1, the system is stable; average wait time is W_q = (C(c, λ/μ) / (cμ − λ)), where C is the Erlang-C formula. In a rural ED with c = 2 physicians and ρ = 0.7, a single physician calling in sick raises ρ to 1.4 — causing the queue to grow without bound. <strong>Little's Law</strong> (L = λW) connects average number in system L, arrival rate λ, and average time in system W, providing a model-free verification tool.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>The Small N Problem — When the Law of Large Numbers Fails</summary>
+        <div class="detail-body">
+          <p>Urban hospitals average 150+ ED visits/day; rural critical access hospitals average 10–20. With small sample sizes, the <strong>coefficient of variation</strong> (CV = σ/μ) of daily census remains high and confidence intervals are wide. A rural hospital with mean daily admissions μ = 8 has standard deviation σ ≈ √8 ≈ 2.8 (Poisson), giving CV ≈ 0.35 — versus CV ≈ 0.08 for an urban hospital with μ = 150. This means rural administrators cannot reliably distinguish a true surge from random variation. <strong>Sequential probability ratio tests (SPRT)</strong> and <strong>CUSUM charts</strong> are more appropriate than standard hypothesis tests for small-N sequential monitoring — they allow early stopping when evidence accumulates, rather than waiting for a preset sample size.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Surge Capacity and the 1-in-100-Year Event</summary>
+        <div class="detail-body">
+          <p>Rural hospitals must plan for rare but catastrophic surges: mass casualty incidents, pandemic waves, or seasonal flu extremes. <strong>Extreme value theory</strong> (EVT) models the distribution of maximum demand over a period. The <strong>Generalized Extreme Value (GEV) distribution</strong> and its parameters (location μ, scale σ, shape ξ) describe the tail behavior: ξ > 0 (Fréchet) implies infinite variance and heavy tails; ξ = 0 (Gumbel) gives exponential tails. For healthcare planning, the <strong>return period</strong> R = 1/P(X > x) gives the expected time between events exceeding threshold x. A "1-in-100-year surge" event is not guaranteed to happen once per century — in any 100-year period, P(at least one such event) = 1 − (1 − 0.01)^100 ≈ 63%.</p>
+        </div>
+      </details>
     </div>
   </div>
 

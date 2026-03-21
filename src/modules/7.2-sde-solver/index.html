@@ -90,6 +90,14 @@
           <p>The diffusion coefficient σ√X<sub>t</sub> vanishes at zero, creating a reflecting boundary. The stationary distribution is a scaled Gamma distribution: X<sub>∞</sub> ~ Gamma(2κθ/σ², σ²/2κ). This is the basis of the Heston stochastic volatility model in quantitative finance.</p>
         </div>
       </details>
+      <details>
+        <summary>Feynman-Kac Formula — PDEs from Expectations</summary>
+        <div class="detail-body">
+          <p>The <strong>Feynman-Kac formula</strong> connects stochastic processes to partial differential equations. Given the SDE dX<sub>t</sub> = μ(X<sub>t</sub>) dt + σ(X<sub>t</sub>) dB<sub>t</sub> and a function u(t, x) = E[g(X<sub>T</sub>) | X<sub>t</sub> = x], the Feynman-Kac theorem says u satisfies the PDE: ∂u/∂t + μ(x) ∂u/∂x + ½σ²(x) ∂²u/∂x² = 0 with terminal condition u(T, x) = g(x).</p>
+          <p>The PDE operator ∂u/∂t + μ ∂u/∂x + ½σ² ∂²u/∂x² is the <strong>infinitesimal generator</strong> of the diffusion. It appears in the Black-Scholes PDE (with drift r·S and diffusion σ·S for GBM), in Kolmogorov's forward and backward equations, and in the heat equation (generator of Brownian motion is ½ ∂²/∂x²).</p>
+          <p>The formula runs both ways: a hard PDE can be solved numerically by simulating the associated SDE and averaging (the <strong>Monte Carlo method for PDEs</strong>), and a complicated expectation can be computed by solving a PDE analytically. This duality is exploited in option pricing (Black-Scholes PDE ↔ risk-neutral expectation), in physics (Schrödinger equation ↔ path integrals), and in machine learning (diffusion models use the score function, which satisfies an SDE closely related to Feynman-Kac).</p>
+        </div>
+      </details>
     </div>
   </div>
   <script type="module" src="./module.js"></script>

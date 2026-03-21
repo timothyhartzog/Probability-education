@@ -75,6 +75,14 @@
           <p>The key practical question is: how large does n need to be? As a rough rule: n ≥ 30 suffices for mildly skewed distributions; n may need to be in the hundreds for highly skewed or discrete distributions. The moments panel in this simulation lets you track skewness and kurtosis of Z<sub>n</sub> to see when they reach their Gaussian values (0 and 3).</p>
         </div>
       </details>
+      <details>
+        <summary>Multivariate CLT and the Cramér-Wold Device</summary>
+        <div class="detail-body">
+          <p>For random vectors X<sub>i</sub> ∈ ℝ<sup>d</sup> with mean μ and covariance matrix Σ, the <strong>multivariate CLT</strong> states that √n (X̄<sub>n</sub> − μ) →<sup>d</sup> N(0, Σ). The limiting distribution is a multivariate Gaussian with the same covariance structure as the summands.</p>
+          <p>The <strong>Cramér-Wold device</strong> reduces the multivariate CLT to the univariate case: a sequence of random vectors converges in distribution to a multivariate Gaussian if and only if every linear combination t<sup>T</sup>X<sub>n</sub> converges in distribution to a univariate Gaussian N(0, t<sup>T</sup>Σt). This is both theoretically elegant and practically useful — testing convergence of linear combinations is sufficient.</p>
+          <p>The multivariate CLT underlies the asymptotic theory of maximum likelihood estimators: under regularity conditions, √n(θ̂<sub>MLE</sub> − θ) →<sup>d</sup> N(0, I(θ)<sup>−1</sup>), where I(θ) is the <strong>Fisher information matrix</strong>. This gives simultaneous confidence ellipsoids for all parameters, and the Wald test statistic n(θ̂ − θ<sub>0</sub>)<sup>T</sup>I(θ̂)(θ̂ − θ<sub>0</sub>) →<sup>d</sup> χ²(d).</p>
+        </div>
+      </details>
     </div>
   </div>
   <script type="module" src="./module.js"></script>

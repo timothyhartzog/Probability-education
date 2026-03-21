@@ -604,6 +604,22 @@
         <p><strong>CVaR (Conditional VaR or Expected Shortfall)</strong> is the expected loss given that the loss exceeds VaR. It is sub-additive (diversification never increases CVaR), convex, and monotone — all properties of <strong>coherent risk measures</strong> (Artzner et al. 1999). Regulators under Basel III now require CVaR for internal model capital requirements.</p>
       </div>
     </details>
+    <details>
+      <summary>The Markowitz Efficient Frontier and CAPM</summary>
+      <div class="detail-body">
+        <p>Markowitz (1952) showed that for n assets with mean vector μ and covariance matrix Σ, the set of achievable (risk, return) pairs forms a parabola in σ−μ space. The upper half is the <strong>efficient frontier</strong>: the minimum-variance portfolio achieving at least return μ<sub>p</sub> solves min w<sup>T</sup>Σw subject to w<sup>T</sup>μ = μ<sub>p</sub> and w<sup>T</sup>1 = 1.</p>
+        <p>The <strong>two-fund separation theorem</strong>: every portfolio on the efficient frontier is a convex combination of any two distinct frontier portfolios. Adding a risk-free asset (rate r<sub>f</sub>) creates the <strong>Capital Market Line</strong>: the efficient frontier becomes the ray from (0, r<sub>f</sub>) tangent to the risky frontier. The tangency point is the <strong>market portfolio</strong>.</p>
+        <p>CAPM follows: in equilibrium, every investor holds the market portfolio plus cash. The expected return of any asset is E[R<sub>i</sub>] = r<sub>f</sub> + β<sub>i</sub>(E[R<sub>m</sub>] − r<sub>f</sub>), where β<sub>i</sub> = Cov(R<sub>i</sub>, R<sub>m</sub>)/Var(R<sub>m</sub>). Beta measures systematic (non-diversifiable) risk — the only kind the market rewards, because idiosyncratic risk can be eliminated for free by diversification.</p>
+      </div>
+    </details>
+    <details>
+      <summary>Interest Rate Models — Vasicek, CIR, and the Term Structure</summary>
+      <div class="detail-body">
+        <p>Short-rate models describe the instantaneous risk-free rate r<sub>t</sub> as a stochastic process and derive the entire yield curve from it. The <strong>Vasicek model</strong> dr<sub>t</sub> = κ(θ − r<sub>t</sub>) dt + σ dW<sub>t</sub> has three parameters: the speed of mean reversion κ, the long-run mean θ, and the volatility σ. It admits closed-form bond prices but allows negative rates.</p>
+        <p>The <strong>Cox-Ingersoll-Ross (CIR) model</strong> replaces σ dW<sub>t</sub> with σ√r<sub>t</sub> dW<sub>t</sub>, making volatility proportional to √r<sub>t</sub>. This ensures r<sub>t</sub> ≥ 0 when 2κθ ≥ σ² (Feller condition). CIR is a square-root diffusion — the same process used to model stochastic variance in the <strong>Heston model</strong>.</p>
+        <p>The <strong>term structure arbitrage-free condition</strong> (Heath-Jarrow-Morton) shows that the no-arbitrage constraint precisely determines how the entire forward rate curve must evolve once the volatility structure is chosen. The volatility of forward rates completely determines the drift under the risk-neutral measure — there is no additional freedom. This unifies Vasicek, CIR, Hull-White, and all other short-rate models as special cases of the HJM framework.</p>
+      </div>
+    </details>
   </div>
 
   </div><!-- .module-page -->

@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Applied Probability &amp; Statistical Inference — Interactive Module</title>
+
+  <!-- KaTeX CSS -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
+    integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV"
+    crossorigin="anonymous"
+  />
+
+  <!-- Platform styles -->
+  <link rel="stylesheet" href="../../assets/design-system.css" />
+  <link rel="stylesheet" href="../../assets/module-template.css" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="module-page">
+
+    <!-- Header -->
+    <header class="module-header">
+      <ul class="breadcrumb">
+        <li><a href="../../../index.html">Home</a></li>
+        <li><a href="#">Intro</a></li>
+        <li>Applied Probability &amp; Inference</li>
+      </ul>
+      <h1>Applied Probability &amp; Statistical Inference</h1>
+      <p class="module-subtitle">
+        From Kolmogorov's axioms to the t-test — interactive visualizations of
+        the core theorems and methods of graduate-level probability and statistics.
+      </p>
+    </header>
+
+    <!-- Tab Navigation -->
+    <nav class="tab-nav" role="tablist">
+      <button class="tab-btn active" data-tab="axioms"     role="tab">Axiomatic Foundations</button>
+      <button class="tab-btn"        data-tab="rvexpect"   role="tab">Random Variables &amp; Expectation</button>
+      <button class="tab-btn"        data-tab="limits"     role="tab">Limit Theorems</button>
+      <button class="tab-btn"        data-tab="inference"  role="tab">Statistical Inference</button>
+      <button class="tab-btn"        data-tab="ttest"      role="tab">T-Test</button>
+    </nav>
+
+    <!-- ============================================================
+         TAB 1 — Axiomatic Foundations
+         ============================================================ -->
+    <div id="tab-axioms" class="tab-content active">
+      <div class="module-layout">
+        <div class="viz-area">
+
+          <!-- Venn Diagram -->
+          <div class="card">
+            <h2 class="card-title">Probability of Events — Venn Diagram</h2>
+            <div id="venn-chart" class="chart-container" aria-label="Venn diagram" style="height:320px;"></div>
+          </div>
+
+          <!-- Bayesian Updating -->
+          <div class="card">
+            <h2 class="card-title">Bayesian Updating — Medical Diagnostic Test</h2>
+            <div id="bayes-chart" class="chart-container" aria-label="Bayesian updating chart" style="min-height:180px;"></div>
+          </div>
+
+        </div>
+        <aside class="control-panel">
+          <h2 class="panel-title">Probability Parameters</h2>
+
+          <div class="control-group">
+            <label for="venn-pa">P(A)</label>
+            <input type="range" id="venn-pa" min="0.1" max="0.9" value="0.3" step="0.01" />
+            <output id="venn-pa-val">0.30</output>
+          </div>
+          <div class="control-group">
+            <label for="venn-pb">P(B)</label>
+            <input type="range" id="venn-pb" min="0.1" max="0.9" value="0.5" step="0.01" />
+            <output id="venn-pb-val">0.50</output>
+          </div>
+          <div class="control-group">
+            <label for="venn-pab">P(A ∩ B)</label>
+            <input type="range" id="venn-pab" min="0" max="0.5" value="0.15" step="0.01" />
+            <output id="venn-pab-val">0.15</output>
+          </div>
+          <div class="control-group">
+            <label for="venn-view">View Mode</label>
+            <select id="venn-view">
+              <option value="union">P(A ∪ B) — Union</option>
+              <option value="intersection">P(A ∩ B) — Intersection</option>
+              <option value="conditional">P(A | B) — Conditional</option>
+            </select>
+          </div>
+
+          <hr class="control-divider" />
+
+          <div class="control-section-title">Bayesian Updating</div>
+
+          <div class="control-group">
+            <label for="bayes-prior">Disease Prevalence P(disease)</label>
+            <input type="range" id="bayes-prior" min="0.001" max="0.2" value="0.01" step="0.001" />
+            <output id="bayes-prior-val">0.010</output>
+          </div>
+          <div class="control-group">
+            <label for="bayes-sens">Sensitivity P(+ | disease)</label>
+            <input type="range" id="bayes-sens" min="0.5" max="1.0" value="0.95" step="0.01" />
+            <output id="bayes-sens-val">0.95</output>
+          </div>
+          <div class="control-group">
+            <label for="bayes-spec">Specificity P(− | no disease)</label>
+            <input type="range" id="bayes-spec" min="0.5" max="1.0" value="0.90" step="0.01" />
+            <output id="bayes-spec-val">0.90</output>
+          </div>
+        </aside>
+      </div>
+
+      <!-- Info Panel -->
+      <div class="info-panel" style="margin: 0 var(--space-xl) var(--space-xl);">
+        <h2>Kolmogorov's Axiomatic Framework</h2>
+        <details open>
+          <summary>Kolmogorov Axioms</summary>
+          <div class="detail-body">
+            <p>A <strong>probability space</strong> is a triple (Ω, ℱ, P) where Ω is the sample space, ℱ is a σ-algebra of events, and P is a probability measure satisfying:</p>
+            <div class="equation-block" id="eq-axioms"></div>
+            <p>
+              <strong>Axiom 1</strong> (Non-negativity): P(A) ≥ 0 for all A ∈ ℱ.<br/>
+              <strong>Axiom 2</strong> (Normalization): P(Ω) = 1.<br/>
+              <strong>Axiom 3</strong> (σ-additivity): For disjoint A₁, A₂, … ∈ ℱ, P(⋃ Aᵢ) = Σ P(Aᵢ).
+            </p>
+            <p>These three axioms entail all classical rules: P(∅) = 0, P(Aᶜ) = 1 − P(A), the inclusion-exclusion formula, and monotonicity.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Conditional Probability</summary>
+          <div class="detail-body">
+            <p>The conditional probability of A given that B has occurred (with P(B) > 0) is:</p>
+            <div class="equation-block" id="eq-cond"></div>
+            <p>This is not merely a ratio — it reweights the sample space to Ω′ = B. The definition immediately yields the <strong>multiplication rule</strong>: P(A ∩ B) = P(A | B) · P(B), and more generally the chain rule P(A₁ ∩ ⋯ ∩ Aₙ) = P(A₁) · P(A₂ | A₁) · P(A₃ | A₁ ∩ A₂) ⋯</p>
+          </div>
+        </details>
+        <details>
+          <summary>Bayes' Theorem</summary>
+          <div class="detail-body">
+            <p>Bayes' theorem follows directly from the definition of conditional probability:</p>
+            <div class="equation-block" id="eq-bayes"></div>
+            <p>In the diagnostic testing context, the <strong>posterior</strong> P(disease | +) is the positive predictive value (PPV). Even when sensitivity is high, a low prevalence P(disease) ≪ 1 can make P(disease | +) surprisingly small — a phenomenon sometimes called the <em>false positive paradox</em>. Move the disease prevalence slider from 1% to 10% to see the posterior jump dramatically.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Independence</summary>
+          <div class="detail-body">
+            <p>Events A and B are <strong>independent</strong> if and only if P(A ∩ B) = P(A) · P(B), equivalently P(A | B) = P(A). Independence is a symmetrical property: A independent of B implies B independent of A. <strong>Pairwise independence does not imply mutual independence</strong> — the classic counterexample is the Bernstein coins construction. In the Venn diagram, independence corresponds to the intersection area equalling the product of the two circle areas relative to Ω.</p>
+          </div>
+        </details>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         TAB 2 — Random Variables & Expectation
+         ============================================================ -->
+    <div id="tab-rvexpect" class="tab-content">
+      <div class="module-layout">
+        <div class="viz-area">
+
+          <div class="card">
+            <h2 class="card-title" id="rv-chart-title">Distribution PDF / PMF</h2>
+            <div id="rv-pdf-chart" class="chart-container" aria-label="PDF/PMF chart" style="height:320px;"></div>
+          </div>
+
+          <div class="metrics-row">
+            <div class="metric-card"><div class="metric-label">E[X]</div><div class="metric-value" id="rv-ex">—</div></div>
+            <div class="metric-card"><div class="metric-label">Var(X)</div><div class="metric-value" id="rv-var">—</div></div>
+            <div class="metric-card"><div class="metric-label">SD(X)</div><div class="metric-value" id="rv-sd">—</div></div>
+          </div>
+
+          <div class="card" id="rv-cdf-card" style="display:none;">
+            <h2 class="card-title">Cumulative Distribution Function (CDF)</h2>
+            <div id="rv-cdf-chart" class="chart-container" aria-label="CDF chart" style="height:240px;"></div>
+          </div>
+
+        </div>
+        <aside class="control-panel">
+          <h2 class="panel-title">Distribution Parameters</h2>
+
+          <div class="control-group">
+            <label for="rv-dist">Distribution</label>
+            <select id="rv-dist">
+              <option value="normal">Normal</option>
+              <option value="exponential">Exponential</option>
+              <option value="poisson">Poisson</option>
+              <option value="binomial">Binomial</option>
+              <option value="uniform">Uniform</option>
+            </select>
+          </div>
+          <div class="control-group" id="rv-p1-group">
+            <label for="rv-p1" id="rv-p1-label">μ (mean)</label>
+            <input type="range" id="rv-p1" min="-5" max="5" value="0" step="0.1" />
+            <output id="rv-p1-val">0.0</output>
+          </div>
+          <div class="control-group" id="rv-p2-group">
+            <label for="rv-p2" id="rv-p2-label">σ (std dev)</label>
+            <input type="range" id="rv-p2" min="0.1" max="5" value="1" step="0.1" />
+            <output id="rv-p2-val">1.0</output>
+          </div>
+
+          <div class="control-group">
+            <label class="toggle-control">
+              <input type="checkbox" id="rv-show-cdf" />
+              <span class="toggle-track"></span>
+              <span class="toggle-label">Show CDF</span>
+            </label>
+          </div>
+        </aside>
+      </div>
+
+      <!-- Info Panel -->
+      <div class="info-panel" style="margin: 0 var(--space-xl) var(--space-xl);">
+        <h2>Random Variables &amp; Expectation</h2>
+        <details open>
+          <summary>PMF vs PDF</summary>
+          <div class="detail-body">
+            <p>A <strong>discrete</strong> random variable X has a probability mass function (PMF) p(k) = P(X = k) ≥ 0 with Σₖ p(k) = 1. A <strong>continuous</strong> random variable has a probability density function (PDF) f(x) ≥ 0 with ∫ f(x) dx = 1. Crucially, for a continuous RV P(X = x) = 0 for every single point — probabilities only make sense over intervals: P(a ≤ X ≤ b) = ∫ₐᵇ f(x) dx.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Expected Value</summary>
+          <div class="detail-body">
+            <p>The expected value (mean) is the probability-weighted average of all possible values:</p>
+            <div class="equation-block" id="eq-ev"></div>
+            <p>E[X] is a <strong>linear operator</strong>: E[aX + bY] = aE[X] + bE[Y] always, with no independence assumption. The <strong>Law of the Unconscious Statistician (LOTUS)</strong>: E[g(X)] = Σ g(k) p(k) or ∫ g(x) f(x) dx, without needing the distribution of g(X) itself.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Variance &amp; Standard Deviation</summary>
+          <div class="detail-body">
+            <p>Variance measures spread around the mean:</p>
+            <div class="equation-block" id="eq-var"></div>
+            <p>The computational shortcut Var(X) = E[X²] − (E[X])² is often easier. Standard deviation σ = √Var(X) has the same units as X. Key properties: Var(aX + b) = a² Var(X) (constant shifts don't affect spread), and for independent X, Y: Var(X + Y) = Var(X) + Var(Y). Note this additivity fails for dependent variables — a crucial point in portfolio theory and error propagation.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Moment Generating Functions</summary>
+          <div class="detail-body">
+            <p>The MGF M_X(t) = E[e^{tX}] encodes all moments via M_X^{(k)}(0) = E[X^k]. The MGF uniquely identifies the distribution (when it exists in a neighborhood of 0), and the MGF of a sum of independent RVs is the product of their MGFs. The <strong>characteristic function</strong> φ_X(t) = E[e^{itX}] always exists, making it more general — it is the Fourier transform of the PDF and plays a central role in proving the CLT.</p>
+          </div>
+        </details>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         TAB 3 — Limit Theorems
+         ============================================================ -->
+    <div id="tab-limits" class="tab-content">
+      <div class="module-layout">
+        <div class="viz-area">
+
+          <div class="card">
+            <h2 class="card-title">CLT Simulation — Histogram of Standardized Sums</h2>
+            <div id="clt-chart" class="chart-container" aria-label="CLT histogram" style="height:340px;"></div>
+          </div>
+
+          <div class="metrics-row" id="clt-metrics">
+            <div class="metric-card"><div class="metric-label">Empirical Mean</div><div class="metric-value" id="clt-emp-mean">—</div></div>
+            <div class="metric-card"><div class="metric-label">Empirical SD</div><div class="metric-value" id="clt-emp-sd">—</div></div>
+            <div class="metric-card"><div class="metric-label">Theoretical Mean</div><div class="metric-value" id="clt-th-mean">0.00</div></div>
+            <div class="metric-card"><div class="metric-label">Theoretical SD</div><div class="metric-value" id="clt-th-sd">1.00</div></div>
+          </div>
+
+        </div>
+        <aside class="control-panel">
+          <h2 class="panel-title">CLT Simulation</h2>
+
+          <div class="control-group">
+            <label for="clt-dist">Summand Distribution</label>
+            <select id="clt-dist">
+              <option value="uniform">Uniform(0, 1)</option>
+              <option value="exponential">Exponential(λ=1)</option>
+              <option value="bernoulli">Bernoulli(p=0.3)</option>
+              <option value="poisson">Poisson(λ=2)</option>
+            </select>
+          </div>
+          <div class="control-group">
+            <label for="clt-n">n (summands per sample)</label>
+            <input type="range" id="clt-n" min="1" max="200" value="1" step="1" />
+            <output id="clt-n-val">1</output>
+          </div>
+          <div class="control-group">
+            <label for="clt-sims">Number of samples</label>
+            <input type="range" id="clt-sims" min="500" max="10000" value="2000" step="500" />
+            <output id="clt-sims-val">2000</output>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn btn-primary" id="clt-resample">Resample</button>
+            <button class="btn btn-outline" id="clt-animate">Animate n</button>
+          </div>
+        </aside>
+      </div>
+
+      <!-- Info Panel -->
+      <div class="info-panel" style="margin: 0 var(--space-xl) var(--space-xl);">
+        <h2>Limit Theorems</h2>
+        <details open>
+          <summary>Normal Distribution &amp; Empirical Rule</summary>
+          <div class="detail-body">
+            <p>The <strong>normal distribution</strong> N(μ, σ²) is the ubiquitous bell curve:</p>
+            <div class="equation-block" id="eq-normal-pdf"></div>
+            <p>The <strong>empirical rule</strong>: approximately 68% of mass lies within 1σ, 95% within 2σ, and 99.7% within 3σ of the mean. This is not approximate for the normal — these are exact consequences of the erf function. The standard normal Z ~ N(0,1) is obtained by Z = (X − μ)/σ.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Weak vs Strong Law of Large Numbers</summary>
+          <div class="detail-body">
+            <p>Let X₁, X₂, … be i.i.d. with E[|X|] &lt; ∞ and mean μ. The <strong>Weak LLN</strong> states that for every ε > 0, P(|X̄ₙ − μ| > ε) → 0 as n → ∞ (convergence in probability). The <strong>Strong LLN</strong> (Kolmogorov) strengthens this: P(X̄ₙ → μ) = 1 (almost sure convergence). The key distinction is that a.s. convergence controls an uncountable family of events simultaneously, while weak convergence only pins down marginal probabilities. Almost sure convergence implies convergence in probability, but not vice versa.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Central Limit Theorem</summary>
+          <div class="detail-body">
+            <p>Let X₁, …, Xₙ be i.i.d. with mean μ and variance σ² &lt; ∞. Then:</p>
+            <div class="equation-block" id="eq-clt"></div>
+            <p>Convergence is in <em>distribution</em>: the CDF of Zₙ converges pointwise to Φ(z). The CLT is <strong>universal</strong> — it requires no assumption on the shape of the Xi distribution beyond finite variance, explaining why the normal is so pervasive in nature. The histogram above demonstrates convergence: even with skewed (Exponential) or discrete (Bernoulli, Poisson) summands, the standardized sum rapidly approaches N(0,1).</p>
+          </div>
+        </details>
+        <details>
+          <summary>Berry-Esseen Rate of Convergence</summary>
+          <div class="detail-body">
+            <p>The CLT gives convergence but not rate. The <strong>Berry-Esseen theorem</strong> provides a uniform bound on the CDF error:</p>
+            <div class="equation-block" id="eq-be"></div>
+            <p>where ρ = E[|X − μ|³]/σ³ is the standardized third absolute moment. The constant C ≤ 0.4748 (Shevtsova, 2010). Crucially, the rate is O(1/√n), meaning you need 4× more samples to halve the error. Distributions with heavier tails (large ρ) converge more slowly — compare Exponential vs Uniform in the simulation above.</p>
+          </div>
+        </details>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         TAB 4 — Statistical Inference
+         ============================================================ -->
+    <div id="tab-inference" class="tab-content">
+      <div class="module-layout">
+        <div class="viz-area">
+
+          <div class="card">
+            <h2 class="card-title">Population Distribution</h2>
+            <div id="inf-pop-chart" class="chart-container" aria-label="Population distribution" style="height:220px;"></div>
+          </div>
+
+          <div class="card">
+            <h2 class="card-title">Sampling Distribution of X̄ with Confidence Interval</h2>
+            <div id="inf-samp-chart" class="chart-container" aria-label="Sampling distribution with CI" style="height:280px;"></div>
+          </div>
+
+          <div class="metrics-row" id="inf-metrics">
+            <div class="metric-card"><div class="metric-label">Point Estimate</div><div class="metric-value" id="inf-pe">—</div></div>
+            <div class="metric-card"><div class="metric-label">Margin of Error</div><div class="metric-value" id="inf-moe">—</div></div>
+            <div class="metric-card"><div class="metric-label">CI Lower</div><div class="metric-value" id="inf-ci-lo">—</div></div>
+            <div class="metric-card"><div class="metric-label">CI Upper</div><div class="metric-value" id="inf-ci-hi">—</div></div>
+          </div>
+
+        </div>
+        <aside class="control-panel">
+          <h2 class="panel-title">Inference Parameters</h2>
+
+          <div class="control-group">
+            <label for="inf-pop">Population Distribution</label>
+            <select id="inf-pop">
+              <option value="normal">Normal (symmetric)</option>
+              <option value="skewed">Skewed (Exponential)</option>
+              <option value="bimodal">Bimodal</option>
+            </select>
+          </div>
+          <div class="control-group">
+            <label for="inf-n">Sample size n</label>
+            <input type="range" id="inf-n" min="5" max="200" value="30" step="1" />
+            <output id="inf-n-val">30</output>
+          </div>
+          <div class="control-group">
+            <label for="inf-nsamp">Number of samples</label>
+            <input type="range" id="inf-nsamp" min="100" max="5000" value="1000" step="100" />
+            <output id="inf-nsamp-val">1000</output>
+          </div>
+          <div class="control-group">
+            <label for="inf-conf">Confidence Level</label>
+            <select id="inf-conf">
+              <option value="0.90">90%</option>
+              <option value="0.95" selected>95%</option>
+              <option value="0.99">99%</option>
+            </select>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn btn-primary" id="inf-resample">Resample</button>
+          </div>
+        </aside>
+      </div>
+
+      <!-- Info Panel -->
+      <div class="info-panel" style="margin: 0 var(--space-xl) var(--space-xl);">
+        <h2>Statistical Inference</h2>
+        <details open>
+          <summary>Estimators: Bias, Efficiency, Consistency</summary>
+          <div class="detail-body">
+            <p>An <strong>estimator</strong> T(X₁, …, Xₙ) is a function of the sample used to estimate a parameter θ. Key properties:</p>
+            <ul>
+              <li><strong>Unbiasedness</strong>: E[T] = θ. X̄ is unbiased for μ; the biased variance estimator S²ₙ = (1/n)Σ(Xᵢ − X̄)² has E[S²ₙ] = (n−1)/n · σ².</li>
+              <li><strong>Efficiency</strong>: Among unbiased estimators, the one with smallest variance. The <strong>Cramér-Rao lower bound</strong> gives the minimum achievable variance: Var(T) ≥ 1/I(θ), where I(θ) is the Fisher information.</li>
+              <li><strong>Consistency</strong>: T → θ in probability as n → ∞. The LLN guarantees X̄ is consistent for μ.</li>
+            </ul>
+          </div>
+        </details>
+        <details>
+          <summary>Degrees of Freedom &amp; Bessel's Correction</summary>
+          <div class="detail-body">
+            <p>The unbiased sample variance uses n−1 in the denominator (Bessel's correction): S² = (1/(n−1)) Σ(Xᵢ − X̄)². The reason: the deviations Xᵢ − X̄ lie in an (n−1)-dimensional subspace (they sum to zero), so there are only n−1 free pieces of information. Using n−1 makes E[S²] = σ² exactly. The n−1 is the number of <strong>degrees of freedom</strong>, a recurring concept in χ² and t distributions.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Confidence Interval Interpretation</summary>
+          <div class="detail-body">
+            <p>A 95% CI does <strong>not</strong> mean "there is a 95% probability that μ lies in this interval." The parameter μ is fixed (frequentist view); the interval is random. The correct interpretation: if we repeated the sampling procedure many times, 95% of the constructed intervals would contain μ. The visualization above shows exactly this — resample and observe that approximately 95% of the drawn bands cover the true mean. The CI width scales as σ/√n, so quadrupling n halves the margin of error.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Bernstein-von Mises Theorem</summary>
+          <div class="detail-body">
+            <p>In a Bayesian framework with a prior π(θ) and likelihood L(θ | xₙ), the <strong>Bernstein-von Mises theorem</strong> (also called the Bayesian CLT) states that under regularity conditions, the posterior distribution concentrates around the MLE and is asymptotically normal: π(θ | xₙ) → N(θ̂_MLE, I(θ₀)⁻¹/n). This provides a philosophical reconciliation: as n → ∞, Bayesian credible intervals and frequentist confidence intervals coincide — the choice of prior becomes asymptotically irrelevant, and both frameworks yield the same inference.</p>
+          </div>
+        </details>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         TAB 5 — T-Test
+         ============================================================ -->
+    <div id="tab-ttest" class="tab-content">
+      <div class="module-layout">
+        <div class="viz-area">
+
+          <div class="card">
+            <h2 class="card-title">t-Distribution with Rejection Regions &amp; Test Statistic</h2>
+            <div id="ttest-chart" class="chart-container" aria-label="T-test distribution chart" style="height:360px;"></div>
+          </div>
+
+          <!-- Stats Panel -->
+          <div class="ttest-stats-panel">
+            <div style="display:flex; align-items:baseline; gap:var(--space-md); flex-wrap:wrap;">
+              <div>
+                <div style="font-family:var(--font-heading);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--color-text-secondary);">t-statistic</div>
+                <div class="t-stat-big" id="ttest-t-big">—</div>
+              </div>
+              <div id="ttest-decision-box" class="decision-box fail-reject" style="flex:1;min-width:160px;">
+                Fail to reject H₀
+              </div>
+            </div>
+            <div class="ttest-stats-grid">
+              <div class="ttest-stat-row">
+                <div class="ts-label">Degrees of freedom (df)</div>
+                <div class="ts-value" id="ttest-df">—</div>
+              </div>
+              <div class="ttest-stat-row">
+                <div class="ts-label">Critical value ±t_crit</div>
+                <div class="ts-value" id="ttest-tcrit">—</div>
+              </div>
+              <div class="ttest-stat-row">
+                <div class="ts-label">p-value (two-tailed)</div>
+                <div class="ts-value" id="ttest-pval">—</div>
+              </div>
+              <div class="ttest-stat-row">
+                <div class="ts-label">α level</div>
+                <div class="ts-value">0.05</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CI Chart -->
+          <div class="card">
+            <h2 class="card-title">95% Confidence Interval vs H₀: μ₀ = 0</h2>
+            <div id="ttest-ci-chart" class="chart-container" aria-label="Confidence interval visualization" style="height:120px;"></div>
+          </div>
+
+        </div>
+        <aside class="control-panel">
+          <h2 class="panel-title">One-Sample t-Test</h2>
+
+          <div class="control-group">
+            <label for="ttest-n">Sample size n</label>
+            <input type="range" id="ttest-n" min="2" max="100" value="15" step="1" />
+            <output id="ttest-n-val">15</output>
+          </div>
+          <div class="control-group">
+            <label for="ttest-xbar">Sample mean x̄</label>
+            <input type="range" id="ttest-xbar" min="-5" max="5" value="2.0" step="0.1" />
+            <output id="ttest-xbar-val">2.0</output>
+          </div>
+          <div class="control-group">
+            <label for="ttest-s">Sample std dev s</label>
+            <input type="range" id="ttest-s" min="0.1" max="5" value="1.0" step="0.1" />
+            <output id="ttest-s-val">1.0</output>
+          </div>
+
+          <div style="background:#f8fafc;border-radius:var(--radius-sm);padding:var(--space-sm) var(--space-md);font-family:var(--font-heading);font-size:0.8rem;color:var(--color-text-secondary);border:1px solid #e2e8f0;">
+            Null hypothesis: H₀: μ = 0<br/>
+            Alternative: H₁: μ ≠ 0 (two-tailed)<br/>
+            Significance level α = 0.05
+          </div>
+
+          <div style="font-family:var(--font-heading);font-size:0.8rem;color:var(--color-text-secondary);">
+            <strong>Formula:</strong><br/>
+            t = (x̄ − μ₀) / (s / √n)
+          </div>
+        </aside>
+      </div>
+
+      <!-- Info Panel -->
+      <div class="info-panel" style="margin: 0 var(--space-xl) var(--space-xl);">
+        <h2>Hypothesis Testing &amp; the t-Test</h2>
+        <details open>
+          <summary>Null and Alternative Hypotheses</summary>
+          <div class="detail-body">
+            <p>Hypothesis testing is framed as a decision between two competing claims about a parameter θ. The <strong>null hypothesis</strong> H₀ is the default claim (typically "no effect," μ = 0). The <strong>alternative hypothesis</strong> H₁ is the research claim. A one-sample t-test evaluates whether a sample mean x̄ is inconsistent with H₀: μ = μ₀. The test is <strong>two-tailed</strong> when H₁: μ ≠ μ₀ (evidence in either direction counts), <strong>one-tailed</strong> when H₁: μ > μ₀ or μ &lt; μ₀.</p>
+          </div>
+        </details>
+        <details>
+          <summary>P-value Interpretation</summary>
+          <div class="detail-body">
+            <p>The <strong>p-value</strong> is the probability, under H₀, of observing a test statistic at least as extreme as the one computed. It is NOT the probability that H₀ is true. Formally: p = P(|T_{df}| ≥ |t_obs| | H₀). We reject H₀ at level α if p &lt; α. The cutoff α = 0.05 is a convention, not a law — it means accepting a 5% false positive rate. A p-value just below 0.05 is not meaningfully different from one just above it: the p-value is a continuous measure of evidence, not a binary classifier.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Type I and Type II Errors</summary>
+          <div class="detail-body">
+            <p>There are two kinds of errors: rejecting H₀ when it is true (<strong>Type I error</strong>, rate = α), and failing to reject H₀ when it is false (<strong>Type II error</strong>, rate = β). The <strong>power</strong> of a test is 1 − β. There is an inherent tradeoff: decreasing α (requiring stronger evidence to reject) increases β. Power depends on the effect size (μ − μ₀)/σ, sample size n, and α. Increasing n is the main tool for simultaneously reducing both α and β. The simulation in Tab 3 shows how larger samples concentrate the sampling distribution, increasing the ability to detect small effects.</p>
+          </div>
+        </details>
+        <details>
+          <summary>t-Distribution vs Normal</summary>
+          <div class="detail-body">
+            <p>When σ is unknown and estimated by s, the test statistic T = (X̄ − μ₀)/(s/√n) follows a <strong>Student's t-distribution</strong> with df = n − 1 degrees of freedom, not a standard normal. The t-distribution has heavier tails than N(0,1), reflecting the additional uncertainty from estimating σ. As df → ∞, the t-distribution converges to N(0,1) — for n ≥ 30, the difference is practically negligible. William Sealy Gosset derived the t-distribution in 1908 while working at Guinness Brewery, publishing under the pseudonym "Student" to protect trade secrets.</p>
+          </div>
+        </details>
+        <details>
+          <summary>One-Sample vs Two-Sample Tests</summary>
+          <div class="detail-body">
+            <p>The <strong>one-sample t-test</strong> (this widget) compares a sample mean to a fixed null value. The <strong>two-sample t-test</strong> compares means from two independent groups. For two groups with possibly unequal variances, <strong>Welch's t-test</strong> uses a corrected degrees of freedom (the Welch-Satterthwaite equation). The <strong>paired t-test</strong> handles matched measurements (before/after) by reducing to a one-sample test on the differences — this eliminates between-subject variability and often yields higher power.</p>
+          </div>
+        </details>
+      </div>
+    </div>
+
+  </div><!-- .module-page -->
+
+  <!-- KaTeX JS -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"
+    integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Ez8jszBKY+yrz0w0R+01SXAPDRlQDUBH+pT1n3V"
+    crossorigin="anonymous"
+  ></script>
+
+  <!-- Module JS -->
+  <script type="module" src="./module.js"></script>
+</body>
+</html>

@@ -71,6 +71,27 @@
         </p>
         <div id="math-logistics"></div>
       </section>
+
+      <details>
+        <summary>Inventory Models — EOQ and Safety Stock</summary>
+        <div class="detail-body">
+          <p>The <strong>Economic Order Quantity (EOQ)</strong> model minimizes total annual cost = holding cost + ordering cost: EOQ = √(2DS/H), where D is annual demand, S is ordering cost per order, and H is annual holding cost per unit. In rural healthcare, S includes both monetary ordering cost and the "emergency premium" for urgent resupply of critical items. <strong>Safety stock</strong> = z_{α} × σ_d × √L buffers against demand uncertainty (σ_d = demand standard deviation per period) and lead time L, where z_α is the z-score for service level α. A rural pharmacy targeting 99% service level (z = 2.33) with weekly demand σ = 5 units and 2-week lead time needs safety stock ≈ 2.33 × 5 × √2 ≈ 16.5 units — significant for a low-volume facility.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Last-Mile Logistics and the Vehicle Routing Problem</summary>
+        <div class="detail-body">
+          <p>The <strong>Vehicle Routing Problem (VRP)</strong> asks: given a depot and n customer locations with known demands, find minimum-cost delivery routes for a fleet of vehicles with capacity constraints. VRP is NP-hard (the traveling salesman problem is a special case). For rural healthcare, the VRP captures the trade-off between infrequent bulk deliveries (lower transport cost, higher inventory cost) and frequent small deliveries (lower inventory, higher transport). <strong>Time-window VRP</strong> adds constraints that deliveries occur within specified windows (e.g., cold-chain medications must arrive within 4 hours of refrigeration departure). Drone delivery changes the objective function: drones have lower per-mile cost and no road network constraints but are limited to small payloads and affected by weather.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Stochastic Demand and the Newsvendor Problem</summary>
+        <div class="detail-body">
+          <p>The <strong>newsvendor model</strong> determines the optimal order quantity q* when demand D is random and unsold inventory is wasted (or salvaged at a loss): q* = F^{-1}(c_u / (c_u + c_o)), where c_u is the underage cost (lost sale or patient harm), c_o is the overage cost (waste or holding), and F^{-1} is the inverse CDF of demand. The critical ratio c_u/(c_u + c_o) is the optimal service level. For critical medications (c_u >> c_o), the target service level exceeds 99%; for perishable non-critical supplies, 85–90% may be optimal. The newsvendor is the fundamental model for vaccine ordering, blood product management, and seasonal medication stocking — each setting has a different cost ratio and demand distribution (Poisson for vaccines, log-normal for blood products).</p>
+        </div>
+      </details>
     </div>
   </div>
   <script type="module" src="./module.js"></script>

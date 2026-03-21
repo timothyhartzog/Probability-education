@@ -56,6 +56,27 @@
         </p>
         <div id="math-finance"></div>
       </section>
+
+      <details>
+        <summary>Payer Mix as a Multivariate Random Variable</summary>
+        <div class="detail-body">
+          <p>A rural hospital's <strong>payer mix</strong> (Medicare %, Medicaid %, commercial %, self-pay %) is a probability vector that fluctuates with demographics and economy. Modeled as a <strong>Dirichlet distribution</strong> Dir(α₁, ..., α_k) with concentration parameter α = Σα_i — higher α means more stable mix. Revenue per encounter by payer follows log-normal distributions with different parameters: commercial (μ ≈ $1,800, σ ≈ 0.4), Medicare ($1,200, 0.3), Medicaid ($800, 0.5), self-pay ($200, 1.2). Total revenue per patient = Σ_i p_i × r_i where p_i is the payer probability. Covariance between payer mix and reimbursement rates is negative during economic downturns (commercial patients shift to Medicaid/self-pay while Medicaid rates are cut) — a double hit that creates <strong>left tail risk</strong> for rural facilities.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Monte Carlo Simulation of Revenue at Risk</summary>
+        <div class="detail-body">
+          <p><strong>Revenue at Risk (RaR)</strong> is the analog of financial VaR for hospital operations: the revenue shortfall that will not be exceeded with probability α over a specified period. Monte Carlo simulation of RaR proceeds by: (1) simulating N patient-days (Poisson-distributed volume); (2) for each patient, drawing payer type from current mix distribution; (3) drawing reimbursement from payer-specific log-normal; (4) applying the 340B adjustment, DSH payment, and uncompensated care provision. The distribution of total annual revenue has a left tail shaped by the correlation structure. Critical access hospitals (CAHs) have higher RaR per dollar of revenue than urban hospitals because of volume concentration: a single payer contract renegotiation can shift 20–30% of revenue, versus 2–3% for a large urban system.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Breakeven Analysis and Operating Leverage</summary>
+        <div class="detail-body">
+          <p><strong>Operating leverage</strong> measures the sensitivity of operating income to revenue changes: DOL = (Revenue − Variable Costs) / (Revenue − Variable Costs − Fixed Costs) = Contribution Margin / EBIT. Rural hospitals typically have high fixed cost bases (24/7 staffing, facility maintenance) relative to variable costs, giving DOL values of 3–6 — a 10% revenue decline causes a 30–60% decline in operating income. <strong>Breakeven volume</strong> = Fixed Costs / (Revenue per patient − Variable cost per patient). For a rural hospital with fixed costs of $15M, revenue of $1,800/patient, and variable costs of $400/patient, breakeven is 10,714 patient encounters/year (~29/day). Most rural CAHs operate near or below this breakeven, relying on Medicare cost-based reimbursement and supplemental payments to remain solvent.</p>
+        </div>
+      </details>
     </div>
   </div>
   <script type="module" src="./module.js"></script>

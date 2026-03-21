@@ -1,0 +1,1343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Advanced Epidemiology — Interactive Textbook, Volume II</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Source+Sans+3:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<style>
+:root {
+  --bg-0: #05080f;
+  --bg-1: #0a0f1a;
+  --bg-2: #111827;
+  --bg-3: #1a2236;
+  --bg-input: #0c111d;
+  --text-0: #f1f5f9;
+  --text-1: #cbd5e1;
+  --text-2: #94a3b8;
+  --text-3: #64748b;
+  --accent-teal: #2dd4bf;
+  --accent-blue: #60a5fa;
+  --accent-indigo: #818cf8;
+  --accent-fuchsia: #e879f9;
+  --accent-amber: #fbbf24;
+  --accent-rose: #fb7185;
+  --accent-emerald: #34d399;
+  --accent-sky: #38bdf8;
+  --border: #1e293b;
+  --border-active: #2dd4bf;
+  --shadow: 0 8px 32px rgba(0,0,0,0.5);
+  --glow: 0 0 20px rgba(45,212,191,0.15);
+  --radius: 14px;
+  --font-heading: 'Playfair Display', Georgia, serif;
+  --font-body: 'Source Sans 3', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Consolas', monospace;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: var(--font-body);
+  background: var(--bg-0);
+  color: var(--text-0);
+  line-height: 1.75;
+  min-height: 100vh;
+  background-image: radial-gradient(ellipse at 20% 50%, rgba(45,212,191,0.03) 0%, transparent 50%),
+                    radial-gradient(ellipse at 80% 20%, rgba(129,140,248,0.03) 0%, transparent 50%);
+}
+
+.app { display: grid; grid-template-columns: 300px 1fr; min-height: 100vh; }
+
+/* ── Sidebar ── */
+.sidebar {
+  background: var(--bg-1);
+  border-right: 1px solid var(--border);
+  padding: 2.5rem 0;
+  position: sticky; top: 0; height: 100vh;
+  overflow-y: auto; z-index: 100;
+  scrollbar-width: thin; scrollbar-color: var(--border) transparent;
+}
+.sidebar-brand {
+  padding: 0 1.8rem 2rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1.5rem;
+}
+.sidebar-brand h1 {
+  font-family: var(--font-heading);
+  font-size: 1.2rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--accent-teal), var(--accent-indigo));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  line-height: 1.3;
+}
+.sidebar-brand p { font-size: 0.75rem; color: var(--text-3); margin-top: 0.3rem; font-weight: 300; letter-spacing: 0.04em; }
+.nav-group { margin-bottom: 0.5rem; }
+.nav-group-label {
+  font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.15em;
+  color: var(--text-3); padding: 0.8rem 1.8rem 0.3rem; font-weight: 600;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 0.6rem;
+  padding: 0.5rem 1.8rem; cursor: pointer;
+  color: var(--text-2); font-size: 0.85rem; font-weight: 400;
+  border-left: 3px solid transparent; transition: all 0.25s;
+  text-decoration: none;
+}
+.nav-item:hover { color: var(--accent-teal); background: rgba(45,212,191,0.04); }
+.nav-item.active { color: var(--accent-teal); border-left-color: var(--accent-teal); background: rgba(45,212,191,0.06); font-weight: 500; }
+.nav-item .ch-num {
+  font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-3);
+  min-width: 24px; text-align: right;
+}
+
+/* ── Main ── */
+.main { padding: 3.5rem 5rem; max-width: 1200px; }
+
+.chapter { display: none; animation: fadeSlide 0.5s ease; }
+.chapter.active { display: block; }
+@keyframes fadeSlide { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+
+.ch-tag {
+  font-family: var(--font-mono); font-size: 0.75rem; font-weight: 500;
+  color: var(--accent-teal); letter-spacing: 0.12em; text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+.ch-title {
+  font-family: var(--font-heading); font-size: 2.6rem; font-weight: 700;
+  color: var(--text-0); line-height: 1.15; margin-bottom: 0.5rem;
+}
+.ch-sub {
+  font-size: 1.1rem; color: var(--text-3); font-weight: 300;
+  margin-bottom: 3rem; font-style: italic;
+}
+h3 {
+  font-family: var(--font-heading); font-size: 1.6rem; font-weight: 600;
+  color: var(--accent-blue); margin: 3rem 0 1rem;
+}
+h4 {
+  font-size: 1.1rem; font-weight: 600; color: var(--accent-emerald);
+  margin: 2rem 0 0.8rem;
+}
+p { margin-bottom: 1.1rem; color: var(--text-1); }
+
+.callout {
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 1.2rem 1.5rem; margin: 1.8rem 0;
+  color: var(--text-0); font-size: 0.95rem; line-height: 1.7;
+}
+.callout-concept { background: rgba(96,165,250,0.07); border-left: 3px solid var(--accent-blue); }
+.callout-pearl { background: rgba(251,191,36,0.07); border-left: 3px solid var(--accent-amber); }
+.callout-rural { background: rgba(52,211,153,0.07); border-left: 3px solid var(--accent-emerald); }
+.callout-warning { background: rgba(251,113,133,0.07); border-left: 3px solid var(--accent-rose); }
+.callout strong { font-weight: 600; }
+
+.formula {
+  background: var(--bg-3); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.2rem 1.8rem; margin: 1.5rem 0;
+  font-family: var(--font-mono); font-size: 0.92rem; color: var(--accent-teal);
+  text-align: center; line-height: 2.2;
+}
+
+/* ── Calculator Cards ── */
+.calc {
+  background: var(--bg-2); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 2rem; margin: 2.5rem 0; box-shadow: var(--shadow);
+  position: relative; overflow: hidden;
+}
+.calc::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--accent-teal), var(--accent-indigo), var(--accent-fuchsia));
+}
+.calc-title {
+  font-family: var(--font-heading); font-size: 1.35rem; color: var(--accent-teal);
+  margin-bottom: 1rem; display: flex; align-items: center; gap: 0.6rem;
+}
+.calc-title::before { content: '◈'; font-size: 0.9rem; opacity: 0.7; }
+.calc-desc { font-size: 0.88rem; color: var(--text-3); margin-bottom: 1.5rem; }
+
+.input-row {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem; margin-bottom: 1rem;
+}
+.field { display: flex; flex-direction: column; }
+.field label {
+  font-size: 0.72rem; font-weight: 600; color: var(--text-3);
+  text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.3rem;
+}
+.field input, .field select, .field textarea {
+  background: var(--bg-input); border: 1px solid var(--border); border-radius: 8px;
+  padding: 0.6rem 0.9rem; color: var(--text-0); font-family: var(--font-mono); font-size: 0.88rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.field input:focus, .field select:focus, .field textarea:focus {
+  outline: none; border-color: var(--border-active); box-shadow: 0 0 0 3px rgba(45,212,191,0.12);
+}
+.field textarea { min-height: 80px; resize: vertical; font-size: 0.82rem; }
+
+.btn {
+  background: linear-gradient(135deg, var(--accent-teal), var(--accent-blue));
+  color: #fff; border: none; border-radius: 8px;
+  padding: 0.7rem 1.6rem; font-family: var(--font-body); font-size: 0.88rem; font-weight: 600;
+  cursor: pointer; transition: all 0.2s; margin-top: 0.5rem;
+}
+.btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(45,212,191,0.25); }
+.btn-secondary { background: var(--bg-input); color: var(--text-2); }
+.btn-secondary:hover { background: var(--bg-3); color: var(--text-0); box-shadow: none; }
+
+/* ── Results ── */
+.results {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 1rem; margin-top: 1.5rem;
+}
+.tile {
+  background: var(--bg-input); border: 1px solid var(--border); border-radius: 10px;
+  padding: 1rem; text-align: center;
+}
+.tile .lbl { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-3); margin-bottom: 0.3rem; }
+.tile .val { font-family: var(--font-mono); font-size: 1.5rem; font-weight: 500; color: var(--accent-teal); }
+.tile .sub { font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-3); margin-top: 0.2rem; }
+.tile.highlight { border-color: var(--accent-teal); box-shadow: var(--glow); }
+
+.chart-box {
+  background: var(--bg-3); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.5rem; margin: 1.5rem 0; position: relative;
+}
+.chart-box canvas { max-height: 420px; }
+
+/* ── Slider ── */
+.slider-row { display: flex; align-items: center; gap: 1rem; margin: 0.7rem 0; }
+.slider-row label { min-width: 190px; font-size: 0.88rem; color: var(--text-1); }
+.slider-row input[type="range"] {
+  -webkit-appearance: none; flex: 1; height: 5px;
+  background: var(--border); border-radius: 3px; outline: none;
+}
+.slider-row input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 16px; height: 16px;
+  background: var(--accent-teal); border-radius: 50%; cursor: pointer;
+  box-shadow: 0 0 8px rgba(45,212,191,0.4);
+}
+.slider-val { min-width: 55px; font-family: var(--font-mono); font-size: 0.88rem; color: var(--accent-teal); text-align: right; }
+
+/* ── Tables ── */
+.data-table {
+  width: 100%; border-collapse: collapse; margin: 1rem 0;
+  font-family: var(--font-mono); font-size: 0.82rem;
+}
+.data-table th, .data-table td { border: 1px solid var(--border); padding: 0.5rem 0.8rem; text-align: center; }
+.data-table th { background: rgba(96,165,250,0.08); color: var(--accent-blue); font-weight: 600; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; }
+.data-table input {
+  width: 75px; text-align: center; background: var(--bg-input); border: 1px solid var(--border);
+  border-radius: 5px; padding: 0.35rem; color: var(--text-0); font-family: var(--font-mono); font-size: 0.82rem;
+}
+
+/* ── Forest Plot SVG ── */
+.forest-plot { width: 100%; overflow-x: auto; }
+
+/* ── Responsive ── */
+@media (max-width: 960px) {
+  .app { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .main { padding: 2rem 1.5rem; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ════════════════════════════════════════ SIDEBAR ════════════════════════════════════════ -->
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <h1>Advanced Epidemiology</h1>
+    <p>Volume II — Interactive Textbook</p>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-label">Confounding &amp; Bias</div>
+    <a class="nav-item active" onclick="go('ch11')"><span class="ch-num">11</span> Confounding &amp; Stratification</a>
+    <a class="nav-item" onclick="go('ch12')"><span class="ch-num">12</span> Effect Modification</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-label">Synthesis &amp; Standardization</div>
+    <a class="nav-item" onclick="go('ch13')"><span class="ch-num">13</span> Meta-Analysis &amp; Forest Plots</a>
+    <a class="nav-item" onclick="go('ch14')"><span class="ch-num">14</span> Age Standardization</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-label">Diagnostic Methods</div>
+    <a class="nav-item" onclick="go('ch15')"><span class="ch-num">15</span> ROC Curve Analysis</a>
+    <a class="nav-item" onclick="go('ch16')"><span class="ch-num">16</span> Bayesian Diagnostic Reasoning</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-label">Advanced Modeling</div>
+    <a class="nav-item" onclick="go('ch17')"><span class="ch-num">17</span> Dose-Response Modeling</a>
+    <a class="nav-item" onclick="go('ch18')"><span class="ch-num">18</span> Interrupted Time Series</a>
+    <a class="nav-item" onclick="go('ch19')"><span class="ch-num">19</span> Monte Carlo Simulation</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-label">Causal Inference</div>
+    <a class="nav-item" onclick="go('ch20')"><span class="ch-num">20</span> DAGs &amp; Causal Diagrams</a>
+  </div>
+</nav>
+
+<!-- ════════════════════════════════════════ MAIN ════════════════════════════════════════ -->
+<main class="main">
+
+<!-- ──────── CH 11: CONFOUNDING & MH ──────── -->
+<section id="ch11" class="chapter active">
+<div class="ch-tag">Chapter 11</div>
+<h2 class="ch-title">Confounding &amp; Stratified Analysis</h2>
+<div class="ch-sub">The Mantel-Haenszel method for controlling confounders without regression</div>
+
+<p>Confounding is the distortion of an exposure-disease association by a third variable that is associated with both the exposure and the outcome but does not lie on the causal pathway between them. It is arguably the single most important threat to the validity of observational epidemiological studies. Without identifying and controlling for confounders, we risk attributing to an exposure an effect that truly belongs to something else entirely.</p>
+
+<h3>Recognizing Confounding</h3>
+<p>A variable C is a confounder of the exposure-disease relationship if it meets three criteria simultaneously: C is associated with the exposure in the study population; C is an independent risk factor for the disease; and C is not on the causal pathway between exposure and disease (not an intermediate variable or mediator). A simple diagnostic: if adjusting for C changes the crude measure of association by more than 10%, confounding by C is likely present.</p>
+
+<div class="callout callout-concept"><strong>Key Concept:</strong> The 10% change-in-estimate rule is the standard criterion for identifying confounding. Compute the crude odds ratio (OR), then compute the adjusted (Mantel-Haenszel) OR. If |crude OR − adjusted OR| / adjusted OR &gt; 10%, confounding is present and adjustment is necessary.</div>
+
+<h3>The Mantel-Haenszel Method</h3>
+<p>The Mantel-Haenszel (MH) method computes a weighted average of stratum-specific measures of association, effectively removing the confounding effect of the stratification variable. It is the most widely used method for controlling a single confounder without requiring regression modeling.</p>
+
+<div class="formula">
+OR<sub>MH</sub> = Σ(a<sub>i</sub>d<sub>i</sub>/n<sub>i</sub>) / Σ(b<sub>i</sub>c<sub>i</sub>/n<sub>i</sub>)<br><br>
+RR<sub>MH</sub> = Σ[a<sub>i</sub>(c<sub>i</sub>+d<sub>i</sub>)/n<sub>i</sub>] / Σ[c<sub>i</sub>(a<sub>i</sub>+b<sub>i</sub>)/n<sub>i</sub>]
+</div>
+
+<p>The MH chi-square statistic tests the null hypothesis that the common OR (or RR) equals 1 across all strata. The Breslow-Day test evaluates homogeneity — whether the stratum-specific ORs are similar enough to justify pooling into a single MH estimate. If the Breslow-Day test is significant, the stratum-specific ORs are heterogeneous, suggesting effect modification rather than simple confounding.</p>
+
+<div class="callout callout-rural"><strong>Rural Context:</strong> In rural epidemiology, confounders are often correlated with socioeconomic status, geographic access to care, occupational exposures (farming, mining), and age distribution. When you find an apparent association between a local environmental exposure and disease, always consider whether the age distribution or occupational mix in the exposed vs. unexposed groups might explain the finding. The Mantel-Haenszel method lets you stratify by these variables without needing large samples for regression.</div>
+
+<div class="calc">
+<div class="calc-title">Mantel-Haenszel Stratified Analysis Calculator</div>
+<p class="calc-desc">Enter 2×2 table data for each stratum. The calculator computes crude and adjusted (MH) odds ratios, the MH chi-square, and the Breslow-Day test for homogeneity.</p>
+<div id="mh-strata-container"></div>
+<button class="btn btn-secondary" onclick="addMhStratum()">+ Add Stratum</button>
+<button class="btn btn-secondary" onclick="loadMhSample()">Load Sample Data</button>
+<button class="btn" onclick="calcMH()">Compute Mantel-Haenszel</button>
+<div id="mh-results" class="results" style="display:none;"></div>
+<div id="mh-strata-detail" style="margin-top:1rem;"></div>
+<div class="chart-box" style="margin-top:1rem;"><canvas id="mhChart"></canvas></div>
+</div>
+</section>
+
+<!-- ──────── CH 12: EFFECT MODIFICATION ──────── -->
+<section id="ch12" class="chapter">
+<div class="ch-tag">Chapter 12</div>
+<h2 class="ch-title">Effect Modification &amp; Interaction</h2>
+<div class="ch-sub">When the effect of exposure varies across subgroups</div>
+
+<p>Effect modification (also called interaction or heterogeneity of effect) occurs when the magnitude of the effect of an exposure on an outcome varies across levels of a third variable. Unlike confounding — which is a bias to be eliminated — effect modification is a genuine biological or social phenomenon to be described and understood.</p>
+
+<h3>Distinguishing Confounding from Effect Modification</h3>
+<p>This is one of the most critical distinctions in epidemiology. Confounding produces a distorted overall estimate that can be "corrected" by adjustment; the adjusted estimate is the "true" effect. Effect modification produces genuinely different effects in different subgroups; a single pooled estimate is misleading because it masks important heterogeneity.</p>
+
+<div class="callout callout-pearl"><strong>Clinical Pearl:</strong> The Breslow-Day test from the Mantel-Haenszel analysis is your primary statistical tool for detecting effect modification. If it is significant (p &lt; 0.05), do NOT report a pooled MH estimate — instead, report stratum-specific estimates and describe the pattern of interaction. The clinical implication: the treatment or exposure may benefit one subgroup but harm another.</div>
+
+<h3>Additive vs. Multiplicative Interaction</h3>
+<p>Interaction can be assessed on the additive scale (differences in risk differences) or the multiplicative scale (ratios of risk ratios). These two scales can give different answers for the same data — interaction may be present on one scale but absent on the other. Public health decisions generally favor the additive scale because it directly measures excess cases; clinical decisions may use either.</p>
+
+<div class="formula">
+Additive interaction: RERI = RR<sub>11</sub> − RR<sub>10</sub> − RR<sub>01</sub> + 1<br>
+Multiplicative interaction: RR<sub>11</sub> / (RR<sub>10</sub> × RR<sub>01</sub>)
+</div>
+
+<p>RERI (Relative Excess Risk due to Interaction) &gt; 0 indicates positive interaction on the additive scale: the joint effect exceeds the sum of individual effects. This is the basis for the "sufficient cause" model in causal inference.</p>
+
+<div class="callout callout-rural"><strong>Rural Context:</strong> Effect modification is particularly relevant in rural health disparities research. An intervention that works well in urban settings may have a different effect size in rural populations due to differences in healthcare access, social support, transportation barriers, or comorbidity patterns. Always examine for effect modification by rural/urban status when applying urban-derived evidence to rural patients.</div>
+</section>
+
+<!-- ──────── CH 13: META-ANALYSIS ──────── -->
+<section id="ch13" class="chapter">
+<div class="ch-tag">Chapter 13</div>
+<h2 class="ch-title">Meta-Analysis &amp; Forest Plots</h2>
+<div class="ch-sub">Quantitative synthesis of evidence across studies</div>
+
+<p>Meta-analysis is the statistical combination of results from two or more separate studies to produce a single pooled estimate of effect. It is the quantitative component of systematic review and sits at the top of the evidence hierarchy. For the rural provider, meta-analysis is the tool that transforms scattered, individually inconclusive small studies into clinically actionable evidence.</p>
+
+<h3>Fixed-Effect vs. Random-Effects Models</h3>
+<p>The <strong>fixed-effect model</strong> (inverse variance method) assumes all studies estimate the same true effect; differences are due to sampling error alone. Studies are weighted by the inverse of their variance (1/SE²) — larger, more precise studies get more weight.</p>
+<p>The <strong>random-effects model</strong> (DerSimonian-Laird) assumes the true effect varies between studies. It adds a between-study variance component (τ²) to each study's weight, which has the effect of making the weights more uniform and giving relatively more influence to smaller studies. When heterogeneity is present, the random-effects CI is wider.</p>
+
+<div class="formula">
+Fixed effect: θ̂<sub>F</sub> = Σ(w<sub>i</sub>θ<sub>i</sub>) / Σ(w<sub>i</sub>),  w<sub>i</sub> = 1/SE<sub>i</sub>²<br><br>
+Random effects: w<sub>i</sub>* = 1/(SE<sub>i</sub>² + τ²)<br>
+τ² = max(0, (Q − df) / C),  C = Σw − Σw² / Σw
+</div>
+
+<h3>Heterogeneity Assessment</h3>
+<p><strong>Cochran's Q</strong> tests whether the observed variation exceeds chance. <strong>I²</strong> quantifies the proportion of total variation due to heterogeneity rather than chance: I² &lt; 25% = low, 25-75% = moderate, &gt; 75% = high heterogeneity. When I² is high, the random-effects model should be preferred and sources of heterogeneity should be explored through subgroup analysis or meta-regression.</p>
+
+<div class="callout callout-pearl"><strong>Clinical Pearl:</strong> When reading a meta-analysis, always check I². If I² &gt; 50% and the studies include both urban and rural populations, ask whether rural-specific subgroup analysis was performed. A pooled estimate that combines urban and rural contexts may be misleading if the intervention effect differs systematically by setting.</div>
+
+<div class="calc">
+<div class="calc-title">Meta-Analysis Calculator with Forest Plot</div>
+<p class="calc-desc">Enter study results as effect estimates with standard errors or 95% CIs. The calculator produces fixed-effect and random-effects pooled estimates with a publication-quality forest plot.</p>
+<div id="meta-studies-container"></div>
+<button class="btn btn-secondary" onclick="addMetaStudy()">+ Add Study</button>
+<button class="btn btn-secondary" onclick="loadMetaSample()">Load Sample Data</button>
+<button class="btn" onclick="calcMeta()">Run Meta-Analysis</button>
+<div id="meta-results" class="results" style="display:none;"></div>
+<div class="forest-plot" id="forest-plot-container" style="margin-top:1.5rem;"></div>
+</div>
+</section>
+
+<!-- ──────── CH 14: AGE STANDARDIZATION ──────── -->
+<section id="ch14" class="chapter">
+<div class="ch-tag">Chapter 14</div>
+<h2 class="ch-title">Age Standardization</h2>
+<div class="ch-sub">Direct and indirect methods for fair comparisons across populations</div>
+
+<p>When comparing disease rates between two populations — say, your rural county vs. the state — differences in age distribution can profoundly distort the comparison. A county with a higher proportion of elderly residents will naturally have higher crude mortality, even if age-specific rates are identical. Standardization removes this confounding effect of age, producing rates that can be fairly compared.</p>
+
+<h3>Direct Standardization</h3>
+<p>Direct standardization applies the age-specific rates from the study population to a standard population's age distribution. The result is the rate that the study population <em>would have</em> if it had the same age structure as the standard population. It answers: "What would our county's mortality be if our age distribution matched the national standard?"</p>
+
+<div class="formula">
+Direct Adjusted Rate = Σ(Rate<sub>i,study</sub> × Pop<sub>i,standard</sub>) / Σ(Pop<sub>i,standard</sub>)
+</div>
+
+<h3>Indirect Standardization &amp; SMR</h3>
+<p>Indirect standardization applies the standard population's age-specific rates to the study population. The Standardized Mortality Ratio (SMR) or Standardized Incidence Ratio (SIR) compares observed events to expected events under the standard's rates. SMR &gt; 1.0 means excess mortality; SMR &lt; 1.0 means lower-than-expected mortality.</p>
+
+<div class="formula">
+SMR = Observed events / Expected events<br>
+Expected = Σ(Rate<sub>i,standard</sub> × Pop<sub>i,study</sub>)<br>
+Byar's 95% CI: O × (1 − 1/(9O) ∓ 1.96/(3√O))³ / E
+</div>
+
+<div class="callout callout-rural"><strong>Rural Context:</strong> The standard population used for age standardization dramatically affects results. The 2000 US Standard Population is most commonly used. Rural counties with aging populations (young adults emigrating for employment) often have misleadingly high crude rates that normalize after age adjustment. Conversely, if your county attracts retirees, crude rates may appear high even when age-specific health is excellent. Always present both crude and adjusted rates in community health assessments.</div>
+
+<div class="calc">
+<div class="calc-title">Age Standardization Calculator (Direct &amp; Indirect)</div>
+<p class="calc-desc">Enter age-specific data for your study population and a reference (standard) population. Pre-loaded with US 2000 standard.</p>
+<div id="std-table-container" style="overflow-x:auto;"></div>
+<button class="btn btn-secondary" onclick="addStdRow()">+ Add Age Group</button>
+<button class="btn" onclick="calcStandardization()">Compute Standardized Rates</button>
+<div id="std-results" class="results" style="display:none;"></div>
+<div id="std-detail-table" style="margin-top:1rem;overflow-x:auto;"></div>
+<div class="chart-box"><canvas id="stdChart"></canvas></div>
+</div>
+</section>
+
+<!-- ──────── CH 15: ROC ANALYSIS ──────── -->
+<section id="ch15" class="chapter">
+<div class="ch-tag">Chapter 15</div>
+<h2 class="ch-title">ROC Curve Analysis</h2>
+<div class="ch-sub">Receiver Operating Characteristic curves for optimizing diagnostic cutpoints</div>
+
+<p>The Receiver Operating Characteristic (ROC) curve is the definitive tool for evaluating diagnostic tests with continuous results. It plots sensitivity (y-axis) against 1 − specificity (x-axis) across all possible cutpoints, generating a curve whose shape reveals the test's discriminatory ability. The Area Under the Curve (AUC) provides a single summary statistic: AUC = 0.5 (no discrimination, equivalent to coin flip) to AUC = 1.0 (perfect discrimination).</p>
+
+<h3>AUC Interpretation</h3>
+<p>The AUC has an intuitive probabilistic interpretation: it is the probability that a randomly chosen diseased individual has a higher test value than a randomly chosen non-diseased individual. AUC guidelines: 0.5-0.6 = fail, 0.6-0.7 = poor, 0.7-0.8 = fair, 0.8-0.9 = good, 0.9-1.0 = excellent.</p>
+
+<h3>Optimal Cutpoint Selection</h3>
+<p>The Youden Index (J = Sensitivity + Specificity − 1) identifies the cutpoint that maximizes the vertical distance from the ROC curve to the diagonal line of no discrimination. However, this treats sensitivity and specificity as equally important. In clinical practice, the optimal cutpoint depends on the relative costs of false positives vs. false negatives — a screening test for cancer should favor high sensitivity (low false-negative rate) even at the cost of lower specificity.</p>
+
+<div class="callout callout-concept"><strong>Key Concept — Hanley-McNeil SE:</strong> The standard error of the AUC accounts for the correlation between sensitivity and specificity at different cutpoints. The Hanley-McNeil approximation uses: SE = √[(AUC(1-AUC) + (n₊-1)(Q₁-AUC²) + (n₋-1)(Q₂-AUC²)) / (n₊·n₋)], where Q₁ = AUC/(2-AUC) and Q₂ = 2AUC²/(1+AUC).</div>
+
+<div class="calc">
+<div class="calc-title">ROC Curve Generator &amp; AUC Calculator</div>
+<p class="calc-desc">Enter test values for diseased and non-diseased groups. The calculator generates the full ROC curve, computes the AUC with Hanley-McNeil SE, and identifies the optimal cutpoint by Youden index.</p>
+<div class="input-row">
+  <div class="field" style="grid-column:1/-1;">
+    <label>Diseased group — test values (comma-separated)</label>
+    <textarea id="roc_pos">72,68,85,90,78,65,88,92,75,81,69,93,84,77,71,86,79,91,74,82,67,89,76,83,70,87,73,80,94,66</textarea>
+  </div>
+  <div class="field" style="grid-column:1/-1;">
+    <label>Non-diseased group — test values (comma-separated)</label>
+    <textarea id="roc_neg">45,52,38,61,55,42,48,59,35,50,44,57,40,53,47,62,36,49,43,56,39,51,46,58,37,54,41,60,34,63</textarea>
+  </div>
+</div>
+<button class="btn" onclick="calcROC()">Generate ROC Curve</button>
+<div id="roc-results" class="results" style="display:none;"></div>
+<div class="chart-box"><canvas id="rocChart"></canvas></div>
+<div class="chart-box"><canvas id="youdenChart"></canvas></div>
+</div>
+</section>
+
+<!-- ──────── CH 16: BAYESIAN DIAGNOSTICS ──────── -->
+<section id="ch16" class="chapter">
+<div class="ch-tag">Chapter 16</div>
+<h2 class="ch-title">Bayesian Diagnostic Reasoning</h2>
+<div class="ch-sub">Sequential test interpretation using pre-test and post-test probabilities</div>
+
+<p>Bayesian diagnostic reasoning formalizes the clinical process of updating disease probability as new information becomes available. The pre-test probability (prevalence or clinical estimate) is updated to a post-test probability using the likelihood ratio of the test result. This framework is superior to simple PPV/NPV because it allows sequential updating with multiple tests and uses the clinician's prior probability estimate.</p>
+
+<h3>The Bayesian Update</h3>
+<div class="formula">
+Pre-test odds = Pre-test probability / (1 − Pre-test probability)<br>
+Post-test odds = Pre-test odds × Likelihood Ratio<br>
+Post-test probability = Post-test odds / (1 + Post-test odds)<br><br>
+For positive test: LR+ = Sensitivity / (1 − Specificity)<br>
+For negative test: LR− = (1 − Sensitivity) / Specificity
+</div>
+
+<p>Sequential testing: after the first test, the post-test probability becomes the pre-test probability for the next test. This only works if the tests are conditionally independent given disease status — an assumption that is often violated in practice (e.g., two imaging tests of the same anatomy).</p>
+
+<div class="callout callout-pearl"><strong>Clinical Pearl:</strong> In the ED, you perform Bayesian reasoning intuitively. A 25-year-old with atypical chest pain (low pre-test probability ~5%) gets a troponin. Even with a positive result (LR+ ≈ 10), the post-test probability is only ~35%. You need a second confirmatory test. For a 70-year-old diabetic with typical pain (pre-test ~80%), even a negative troponin (LR− ≈ 0.1) only drops the probability to ~30%. The Fagan nomogram below makes these calculations instant and visual.</div>
+
+<div class="calc">
+<div class="calc-title">Bayesian Fagan Nomogram &amp; Sequential Testing</div>
+<p class="calc-desc">Enter pre-test probability and up to 3 sequential test results. Watch the probability update through each Bayesian step.</p>
+<div class="slider-row">
+  <label>Pre-test probability (%):</label>
+  <input type="range" id="bayes_pretest" min="1" max="99" value="20" oninput="calcBayes()">
+  <span class="slider-val" id="bayes_pretest_val">20%</span>
+</div>
+<h4 style="margin:1rem 0 0.5rem;">Test 1:</h4>
+<div class="input-row">
+  <div class="field"><label>Sensitivity (%)</label><input type="number" id="b_sens1" value="90" min="1" max="99"></div>
+  <div class="field"><label>Specificity (%)</label><input type="number" id="b_spec1" value="85" min="1" max="99"></div>
+  <div class="field"><label>Result</label>
+    <select id="b_res1"><option value="pos">Positive</option><option value="neg">Negative</option></select>
+  </div>
+</div>
+<h4 style="margin:0.5rem 0;">Test 2 (optional):</h4>
+<div class="input-row">
+  <div class="field"><label>Sensitivity (%)</label><input type="number" id="b_sens2" value="95" min="1" max="99"></div>
+  <div class="field"><label>Specificity (%)</label><input type="number" id="b_spec2" value="70" min="1" max="99"></div>
+  <div class="field"><label>Result</label>
+    <select id="b_res2"><option value="none">— Skip —</option><option value="pos">Positive</option><option value="neg">Negative</option></select>
+  </div>
+</div>
+<button class="btn" onclick="calcBayes()">Compute Bayesian Update</button>
+<div id="bayes-results" class="results" style="display:none;"></div>
+<div class="chart-box"><canvas id="bayesChart"></canvas></div>
+</div>
+</section>
+
+<!-- ──────── CH 17: DOSE-RESPONSE ──────── -->
+<section id="ch17" class="chapter">
+<div class="ch-tag">Chapter 17</div>
+<h2 class="ch-title">Dose-Response Modeling</h2>
+<div class="ch-sub">Logistic regression for exposure-response relationships</div>
+
+<p>The dose-response relationship is a cornerstone of causal reasoning in epidemiology and toxicology. If increasing doses of an exposure lead to increasing risk of disease in a graded, consistent fashion, this provides strong support for a causal interpretation. The logistic dose-response model — logit(p) = β₀ + β₁ × dose — is the standard parametric approach.</p>
+
+<h3>The Logistic Model</h3>
+<div class="formula">
+P(response) = 1 / (1 + exp(−(β₀ + β₁ × dose)))<br><br>
+LD₅₀ = −β₀/β₁  (dose producing 50% response)<br>
+LD₁₀ = −(β₀ + ln(9))/β₁  (dose for 10% response)
+</div>
+
+<p>The model is fit using Iteratively Reweighted Least Squares (IRLS), equivalent to Newton-Raphson optimization of the log-likelihood. The Rust engine implements this with convergence tolerance of 10⁻⁸.</p>
+
+<div class="callout callout-rural"><strong>Rural Context:</strong> Dose-response analysis is directly relevant to environmental health investigations in rural settings — pesticide exposure and cancer risk, groundwater contamination levels and adverse birth outcomes, or occupational dust exposure and respiratory disease. If your community faces an environmental exposure concern, demonstrating (or refuting) a dose-response gradient is powerful evidence.</div>
+
+<div class="calc">
+<div class="calc-title">Logistic Dose-Response Calculator</div>
+<p class="calc-desc">Enter dose groups with number of subjects and number responding. The IRLS algorithm fits the logistic model and computes LD₅₀, LD₁₀, and LD₉₀.</p>
+<div id="dose-table-container"></div>
+<button class="btn btn-secondary" onclick="addDoseRow()">+ Add Dose Group</button>
+<button class="btn btn-secondary" onclick="loadDoseSample()">Load Sample Data</button>
+<button class="btn" onclick="calcDoseResponse()">Fit Dose-Response Model</button>
+<div id="dose-results" class="results" style="display:none;"></div>
+<div class="chart-box"><canvas id="doseChart"></canvas></div>
+</div>
+</section>
+
+<!-- ──────── CH 18: INTERRUPTED TIME SERIES ──────── -->
+<section id="ch18" class="chapter">
+<div class="ch-tag">Chapter 18</div>
+<h2 class="ch-title">Interrupted Time Series Analysis</h2>
+<div class="ch-sub">Segmented regression for evaluating policy and intervention impacts</div>
+
+<p>Interrupted Time Series (ITS) analysis is the strongest quasi-experimental design for evaluating the impact of an intervention or policy change when randomization is not possible. It requires a series of observations over time, with a known intervention point that divides the series into pre-intervention and post-intervention periods.</p>
+
+<h3>Segmented Regression Model</h3>
+<div class="formula">
+Y<sub>t</sub> = β₀ + β₁·T + β₂·D + β₃·P + ε<sub>t</sub><br><br>
+β₀ = baseline level, β₁ = pre-intervention trend<br>
+β₂ = level change at intervention, β₃ = slope change<br>
+Post-intervention slope = β₁ + β₃
+</div>
+
+<p>The model captures four key features: the pre-intervention level (intercept), the pre-intervention trend (slope), the immediate change in level at the intervention point (β₂), and the change in trend after the intervention (β₃). The counterfactual — what would have happened without the intervention — is simply the extrapolation of the pre-intervention trend.</p>
+
+<div class="callout callout-pearl"><strong>Clinical Pearl:</strong> ITS is ideal for evaluating quality improvement interventions at your hospital. Did implementing a new sepsis protocol change the trend in door-to-antibiotic times? Did a new handwashing campaign change hospital-acquired infection rates? You need at least 8-12 data points before and after the intervention for stable estimates. Monthly data over 2+ years is typical.</div>
+
+<div class="calc">
+<div class="calc-title">Interrupted Time Series Analyzer</div>
+<p class="calc-desc">Enter time series values (comma-separated) and specify the intervention point. The segmented regression model estimates level change, slope change, and R².</p>
+<div class="input-row">
+  <div class="field" style="grid-column:1/-1;">
+    <label>Time series values (comma-separated)</label>
+    <textarea id="its_data">22,24,23,25,24,26,25,27,26,28,27,29,18,16,17,15,14,13,12,11,10,12,11,10</textarea>
+  </div>
+  <div class="field">
+    <label>Intervention point (time index, 1-based)</label>
+    <input type="number" id="its_intervention" value="13" min="3">
+  </div>
+</div>
+<button class="btn" onclick="calcITS()">Analyze Interrupted Time Series</button>
+<div id="its-results" class="results" style="display:none;"></div>
+<div class="chart-box"><canvas id="itsChart"></canvas></div>
+</div>
+</section>
+
+<!-- ──────── CH 19: MONTE CARLO SIMULATION ──────── -->
+<section id="ch19" class="chapter">
+<div class="ch-tag">Chapter 19</div>
+<h2 class="ch-title">Monte Carlo Epidemic Simulation</h2>
+<div class="ch-sub">Uncertainty quantification through stochastic parameter sweeps</div>
+
+<p>Deterministic epidemic models (SIR/SEIR) produce a single trajectory for given parameter values. But in reality, epidemiological parameters are uncertain — R₀ may be estimated as 2.5 ± 0.5, the infectious period as 7 ± 2 days. Monte Carlo simulation addresses this by running hundreds or thousands of simulations with parameters randomly sampled from their uncertainty distributions, producing a distribution of possible outcomes rather than a single prediction.</p>
+
+<h3>Method</h3>
+<p>For each of N simulations: sample R₀ from Normal(μ, σ), sample infectious period from Normal(μ, σ), run the full SIR model with RK4 integration, and record key outcomes (peak infected, peak day, total infected). The collection of outcomes is then summarized by medians and percentiles (typically 5th and 95th) to create uncertainty bands.</p>
+
+<div class="callout callout-concept"><strong>Key Concept:</strong> Monte Carlo simulation converts parameter uncertainty into outcome uncertainty. Instead of saying "the peak will be 1,200 on day 45," you can say "the peak will be between 800 and 1,800 (90% interval), most likely around day 40-55." This honest uncertainty quantification is essential for pandemic planning: you must prepare for plausible worst cases, not just the median scenario.</div>
+
+<div class="calc">
+<div class="calc-title">Monte Carlo SIR Epidemic Simulator</div>
+<p class="calc-desc">Specify parameter distributions (mean ± SD). The engine runs hundreds of simulations and displays uncertainty bands.</p>
+<div class="input-row">
+  <div class="field"><label>Population</label><input type="number" id="mc_pop" value="10000"></div>
+  <div class="field"><label>Initial Infected</label><input type="number" id="mc_i0" value="10"></div>
+  <div class="field"><label>Duration (days)</label><input type="number" id="mc_dur" value="180"></div>
+  <div class="field"><label>Simulations</label><input type="number" id="mc_nsim" value="500" min="50" max="2000"></div>
+</div>
+<div class="input-row">
+  <div class="field"><label>R₀ Mean</label><input type="number" id="mc_r0_mean" value="2.5" step="0.1"></div>
+  <div class="field"><label>R₀ SD</label><input type="number" id="mc_r0_sd" value="0.5" step="0.1"></div>
+  <div class="field"><label>Infectious Period Mean (days)</label><input type="number" id="mc_ip_mean" value="7" step="0.5"></div>
+  <div class="field"><label>Infectious Period SD (days)</label><input type="number" id="mc_ip_sd" value="2" step="0.5"></div>
+</div>
+<button class="btn" onclick="calcMonteCarlo()">Run Monte Carlo (may take a moment)</button>
+<div id="mc-results" class="results" style="display:none;"></div>
+<div class="chart-box"><canvas id="mcChart"></canvas></div>
+</div>
+</section>
+
+<!-- ──────── CH 20: DAGs ──────── -->
+<section id="ch20" class="chapter">
+<div class="ch-tag">Chapter 20</div>
+<h2 class="ch-title">Directed Acyclic Graphs &amp; Causal Inference</h2>
+<div class="ch-sub">Visual tools for identifying confounders, mediators, and colliders</div>
+
+<p>Directed Acyclic Graphs (DAGs) are the modern framework for causal reasoning in epidemiology. A DAG is a graph where nodes represent variables and directed edges (arrows) represent direct causal effects. "Acyclic" means no variable can cause itself through a chain of effects. DAGs make explicit the causal assumptions underlying a study and provide algorithmic rules for identifying which variables to adjust for and which to leave alone.</p>
+
+<h3>Key Structures</h3>
+<h4>The Fork (Common Cause / Confounder)</h4>
+<p>X ← C → Y. The variable C causes both X and Y. Without adjustment, X and Y appear associated even if X does not cause Y. Solution: condition on (adjust for) C to close the backdoor path.</p>
+
+<h4>The Chain (Mediator)</h4>
+<p>X → M → Y. M lies on the causal pathway. Adjusting for M would block the causal effect of X on Y. Do NOT adjust for mediators unless you specifically want the "direct effect" of X on Y.</p>
+
+<h4>The Collider</h4>
+<p>X → C ← Y. Both X and Y cause C. By default, the path through C is blocked. Conditioning on C (or any descendant of C) opens the path and creates a spurious association between X and Y. This is "collider bias" or "selection bias."</p>
+
+<div class="callout callout-warning"><strong>Critical Warning — Collider Bias:</strong> Adjusting for a collider creates bias where none existed. This is counterintuitive and a common error. Example: if hospital admission (C) is caused by both severity of disease (X) and age (Y), then restricting analysis to hospitalized patients (conditioning on the collider) creates a spurious inverse association between disease severity and age. This "Berkson's paradox" is especially dangerous in case-series studies.</div>
+
+<div class="callout callout-rural"><strong>Rural Context:</strong> In rural epidemiology, access to care is a common collider. Both disease severity AND insurance status may determine who presents to your hospital. Analyzing only your patient population conditions on the collider "hospital presentation," potentially creating spurious associations. DAGs help identify when population-based data is needed vs. when hospital-based data introduces collider bias.</div>
+
+<div class="calc">
+<div class="calc-title">Interactive DAG Builder</div>
+<p class="calc-desc">Build a causal diagram by adding variables and directed edges. The tool identifies confounders, mediators, and colliders and recommends adjustment sets.</p>
+<div class="input-row">
+  <div class="field"><label>Exposure variable</label><input type="text" id="dag_exposure" value="Smoking"></div>
+  <div class="field"><label>Outcome variable</label><input type="text" id="dag_outcome" value="Lung Cancer"></div>
+</div>
+<div class="input-row">
+  <div class="field" style="grid-column:1/-1;">
+    <label>Edges (one per line: cause → effect)</label>
+    <textarea id="dag_edges" rows="8">Smoking -> Lung Cancer
+Age -> Smoking
+Age -> Lung Cancer
+Smoking -> COPD
+COPD -> Lung Cancer
+Occupation -> Smoking
+Occupation -> Asbestos
+Asbestos -> Lung Cancer</textarea>
+  </div>
+</div>
+<button class="btn" onclick="buildDAG()">Build &amp; Analyze DAG</button>
+<div id="dag-analysis" style="margin-top:1rem;"></div>
+<div id="dag-svg-container" style="margin-top:1rem;background:var(--bg-3);border-radius:var(--radius);padding:1.5rem;min-height:350px;"></div>
+</div>
+</section>
+
+</main>
+</div>
+
+<!-- ════════════════════════════════════════ JAVASCRIPT ════════════════════════════════════════ -->
+<script>
+Chart.defaults.color = '#94a3b8';
+Chart.defaults.borderColor = '#1e293b';
+Chart.defaults.font.family = "'Source Sans 3', sans-serif";
+Chart.defaults.font.size = 12;
+const P = { teal:'#2dd4bf', blue:'#60a5fa', indigo:'#818cf8', fuchsia:'#e879f9', amber:'#fbbf24', rose:'#fb7185', emerald:'#34d399', sky:'#38bdf8' };
+const charts = {};
+
+function go(id) {
+  document.querySelectorAll('.chapter').forEach(c => c.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(l => l.classList.remove('active'));
+  if (event && event.target) event.target.closest('.nav-item').classList.add('active');
+  window.scrollTo({top:0});
+}
+
+function fmt(v,d=4){ return isFinite(v)?v.toFixed(d):'∞'; }
+function pct(v){ return isFinite(v)?(v*100).toFixed(1)+'%':'∞'; }
+function normalCDF(x){if(x<-8)return 0;if(x>8)return 1;const a1=.254829592,a2=-.284496736,a3=1.421413741,a4=-1.453152027,a5=1.061405429,p=.3275911;const s=x<0?-1:1,xa=Math.abs(x)/Math.SQRT2,t=1/(1+p*xa),y=1-(((((a5*t+a4)*t)+a3)*t+a2)*t+a1)*t*Math.exp(-xa*xa);return .5*(1+s*y)}
+function chiP(x,df){if(x<=0)return 1;const k=df,z=(Math.pow(x/k,1/3)-(1-2/(9*k)))/Math.sqrt(2/(9*k));return 1-normalCDF(z)}
+
+// ═════════════════ CH 11: MANTEL-HAENSZEL ═════════════════
+
+function addMhStratum(label='', a='', b='', c='', d='') {
+  const ct = document.getElementById('mh-strata-container');
+  const idx = ct.children.length;
+  const div = document.createElement('div');
+  div.style.cssText = 'margin-bottom:1rem;border:1px solid var(--border);border-radius:10px;padding:1rem;';
+  div.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+      <input class="mh-label" value="${label||'Stratum '+(idx+1)}" style="background:transparent;border:none;color:var(--accent-blue);font-weight:600;font-size:0.9rem;">
+      <button onclick="this.parentElement.parentElement.remove()" style="background:none;border:none;color:var(--accent-rose);cursor:pointer;">✕</button>
+    </div>
+    <table class="data-table"><thead><tr><th></th><th>Disease+</th><th>Disease−</th></tr></thead>
+    <tbody><tr><th>Exposed</th><td><input class="mh-a" type="number" value="${a}" min="0"></td><td><input class="mh-b" type="number" value="${b}" min="0"></td></tr>
+    <tr><th>Unexposed</th><td><input class="mh-c" type="number" value="${c}" min="0"></td><td><input class="mh-d" type="number" value="${d}" min="0"></td></tr></tbody></table>`;
+  ct.appendChild(div);
+}
+
+function loadMhSample() {
+  document.getElementById('mh-strata-container').innerHTML = '';
+  addMhStratum('Age < 50', 40, 60, 20, 80);
+  addMhStratum('Age 50-69', 30, 20, 25, 75);
+  addMhStratum('Age ≥ 70', 50, 10, 35, 55);
+}
+loadMhSample();
+
+function calcMH() {
+  const labels = document.querySelectorAll('.mh-label');
+  const as = document.querySelectorAll('.mh-a');
+  const bs = document.querySelectorAll('.mh-b');
+  const cs = document.querySelectorAll('.mh-c');
+  const ds = document.querySelectorAll('.mh-d');
+
+  let totA=0,totB=0,totC=0,totD=0,numOR=0,denOR=0,numRR=0,denRR=0;
+  let mhNumChi=0,mhDenChi=0;
+  const strata = [];
+
+  for (let i=0; i<as.length; i++) {
+    const a=+as[i].value, b=+bs[i].value, c=+cs[i].value, d=+ds[i].value;
+    const n=a+b+c+d; if(n===0) continue;
+    totA+=a; totB+=b; totC+=c; totD+=d;
+    numOR += a*d/n; denOR += b*c/n;
+    numRR += a*(c+d)/n; denRR += c*(a+b)/n;
+    const eA=(a+b)*(a+c)/n;
+    const varA=(a+b)*(c+d)*(a+c)*(b+d)/(n*n*Math.max(1,n-1));
+    mhNumChi += a-eA; mhDenChi += varA;
+    const or_s = (b*c)>0 ? (a*d)/(b*c) : Infinity;
+    const re=(a+b)>0?a/(a+b):0, ru=(c+d)>0?c/(c+d):0;
+    strata.push({label: labels[i].value, a,b,c,d, or_s, rr: ru>0?re/ru:Infinity, w: a*d/n});
+  }
+
+  const crudeOR = (totB*totC)>0 ? (totA*totD)/(totB*totC) : Infinity;
+  const mhOR = denOR>0 ? numOR/denOR : Infinity;
+  const mhRR = denRR>0 ? numRR/denRR : Infinity;
+  const mhChi2 = mhDenChi>0 ? mhNumChi*mhNumChi/mhDenChi : 0;
+  const mhP = chiP(mhChi2, 1);
+
+  // SE for MH OR (Robins-Breslow-Greenland)
+  let varLnOR = 0;
+  for (let i=0; i<as.length; i++) {
+    const a=+as[i].value, b=+bs[i].value, c=+cs[i].value, d=+ds[i].value;
+    const n=a+b+c+d; if(n===0) continue;
+    const pp=a*d/n, qq=b*c/n, rr2=(a+d)/n, ss=(b+c)/n;
+    varLnOR += rr2*pp/(2*numOR*numOR) + (rr2*qq+ss*pp)/(2*numOR*denOR) + ss*qq/(2*denOR*denOR);
+  }
+  const seLnOR = Math.sqrt(varLnOR);
+
+  const pctChange = mhOR>0 ? Math.abs(crudeOR-mhOR)/mhOR*100 : 0;
+
+  const el = document.getElementById('mh-results');
+  el.style.display = 'grid';
+  el.innerHTML = `
+    <div class="tile"><div class="lbl">Crude OR</div><div class="val">${fmt(crudeOR,3)}</div></div>
+    <div class="tile highlight"><div class="lbl">MH Adjusted OR</div><div class="val">${fmt(mhOR,3)}</div><div class="sub">95% CI: ${fmt(Math.exp(Math.log(mhOR)-1.96*seLnOR),3)} – ${fmt(Math.exp(Math.log(mhOR)+1.96*seLnOR),3)}</div></div>
+    <div class="tile"><div class="lbl">MH χ²</div><div class="val">${fmt(mhChi2,2)}</div><div class="sub">p = ${mhP<.001?'<0.001':fmt(mhP,4)}</div></div>
+    <div class="tile ${pctChange>10?'highlight':''}"><div class="lbl">Confounding</div><div class="val">${pctChange>10?'YES':'No'}</div><div class="sub">${fmt(pctChange,1)}% change</div></div>
+  `;
+
+  // Chart: stratum ORs
+  if (charts.mh) charts.mh.destroy();
+  const sLabels = strata.map(s=>s.label).concat(['MH Pooled','Crude']);
+  const sORs = strata.map(s=>s.or_s).concat([mhOR, crudeOR]);
+  charts.mh = new Chart(document.getElementById('mhChart'), {
+    type:'bar', data:{ labels:sLabels, datasets:[{label:'Odds Ratio',data:sORs,
+      backgroundColor: sORs.map((_,i)=>i===sLabels.length-2?P.teal+'CC':i===sLabels.length-1?P.rose+'CC':P.blue+'99'),
+      borderRadius:4}] },
+    options:{responsive:true,indexAxis:'y',plugins:{title:{display:true,text:'Stratum-Specific and Pooled Odds Ratios',font:{family:"'Playfair Display'",size:16}}},
+      scales:{x:{title:{display:true,text:'Odds Ratio'},type:'logarithmic'}}}
+  });
+}
+
+// ═════════════════ CH 13: META-ANALYSIS ═════════════════
+
+function addMetaStudy(label='', effect='', se='') {
+  const ct = document.getElementById('meta-studies-container');
+  const idx = ct.children.length;
+  const div = document.createElement('div');
+  div.style.cssText='display:grid;grid-template-columns:2fr 1fr 1fr 40px;gap:0.5rem;margin-bottom:0.4rem;align-items:center;';
+  const is = 'background:var(--bg-input);border:1px solid var(--border);border-radius:6px;padding:0.4rem 0.6rem;color:var(--text-0);font-family:var(--font-mono);font-size:0.82rem;';
+  div.innerHTML = `
+    <input class="ms-label" value="${label||'Study '+(idx+1)}" style="${is}">
+    <input class="ms-effect" type="number" value="${effect}" step="0.01" placeholder="Effect" style="${is}">
+    <input class="ms-se" type="number" value="${se}" step="0.01" placeholder="SE" style="${is}">
+    <button onclick="this.parentElement.remove()" style="background:none;border:1px solid var(--border);border-radius:6px;color:var(--accent-rose);cursor:pointer;padding:0.3rem;">✕</button>`;
+  ct.appendChild(div);
+}
+
+function loadMetaSample() {
+  document.getElementById('meta-studies-container').innerHTML = '';
+  [['Smith 2018',0.45,0.12],['Jones 2019',0.32,0.15],['Lee 2020',0.58,0.10],
+   ['Brown 2020',0.25,0.18],['Davis 2021',0.50,0.11],['Wilson 2021',0.38,0.14],
+   ['Taylor 2022',0.62,0.13],['Anderson 2023',0.41,0.09]].forEach(s=>addMetaStudy(...s));
+}
+loadMetaSample();
+
+function calcMeta() {
+  const labels=document.querySelectorAll('.ms-label'), effects=document.querySelectorAll('.ms-effect'), ses=document.querySelectorAll('.ms-se');
+  const studies = [];
+  for (let i=0;i<labels.length;i++){
+    const e=+effects[i].value, s=+ses[i].value;
+    if(!isNaN(e)&&s>0) studies.push({label:labels[i].value, effect:e, se:Math.max(0.001,s)});
+  }
+  if(studies.length<2) return alert('Need ≥2 studies');
+  const k=studies.length;
+
+  // Fixed effect
+  const wf=studies.map(s=>1/(s.se*s.se));
+  const wfSum=wf.reduce((a,b)=>a+b,0);
+  const fe=studies.reduce((a,s,i)=>a+s.effect*wf[i],0)/wfSum;
+  const seFE=Math.sqrt(1/wfSum);
+
+  // Cochran's Q
+  const Q=studies.reduce((a,s,i)=>a+wf[i]*(s.effect-fe)**2,0);
+  const df=k-1;
+  const I2=Math.max(0,(Q-df)/Q*100);
+  const qP=chiP(Q,Math.max(1,df));
+
+  // DL tau²
+  const C=wfSum - wf.reduce((a,w)=>a+w*w,0)/wfSum;
+  const tau2=Math.max(0,(Q-df)/C);
+
+  // Random effects
+  const wr=studies.map(s=>1/(s.se*s.se+tau2));
+  const wrSum=wr.reduce((a,b)=>a+b,0);
+  const re=studies.reduce((a,s,i)=>a+s.effect*wr[i],0)/wrSum;
+  const seRE=Math.sqrt(1/wrSum);
+
+  const el=document.getElementById('meta-results'); el.style.display='grid';
+  el.innerHTML=`
+    <div class="tile"><div class="lbl">Fixed Effect</div><div class="val">${fmt(fe,3)}</div><div class="sub">${fmt(fe-1.96*seFE,3)} – ${fmt(fe+1.96*seFE,3)}</div></div>
+    <div class="tile highlight"><div class="lbl">Random Effect</div><div class="val">${fmt(re,3)}</div><div class="sub">${fmt(re-1.96*seRE,3)} – ${fmt(re+1.96*seRE,3)}</div></div>
+    <div class="tile"><div class="lbl">I²</div><div class="val">${fmt(I2,1)}%</div><div class="sub">${I2<25?'Low':I2<75?'Moderate':'High'} heterogeneity</div></div>
+    <div class="tile"><div class="lbl">Q (p-value)</div><div class="val">${fmt(Q,2)}</div><div class="sub">p = ${qP<.001?'<0.001':fmt(qP,3)}</div></div>
+    <div class="tile"><div class="lbl">τ²</div><div class="val">${fmt(tau2,4)}</div></div>
+  `;
+
+  // D3 Forest Plot
+  const ct=document.getElementById('forest-plot-container');
+  ct.innerHTML='';
+  const margin={top:40,right:80,bottom:40,left:170};
+  const rowH=28, w=Math.min(ct.clientWidth,800), h=margin.top+margin.bottom+(k+2)*rowH;
+  const svg=d3.select(ct).append('svg').attr('width',w).attr('height',h);
+  const g=svg.append('g').attr('transform',`translate(${margin.left},${margin.top})`);
+  const innerW=w-margin.left-margin.right;
+
+  const allVals=studies.flatMap(s=>[s.effect-2*s.se,s.effect+2*s.se]).concat([fe-2*seFE,fe+2*seFE,re-2*seRE,re+2*seRE]);
+  const xMin=Math.min(...allVals)-0.1, xMax=Math.max(...allVals)+0.1;
+  const x=d3.scaleLinear().domain([xMin,xMax]).range([0,innerW]);
+
+  // Null line
+  g.append('line').attr('x1',x(0)).attr('x2',x(0)).attr('y1',-5).attr('y2',(k+2)*rowH).attr('stroke','#475569').attr('stroke-dasharray','4,3');
+
+  // Studies
+  studies.forEach((s,i)=>{
+    const y=i*rowH+rowH/2;
+    const wPct=(wr[i]/wrSum*100).toFixed(1);
+    // Label
+    g.append('text').attr('x',-10).attr('y',y+4).attr('text-anchor','end').attr('fill','#cbd5e1').attr('font-size',11).text(s.label);
+    // CI line
+    g.append('line').attr('x1',x(s.effect-1.96*s.se)).attr('x2',x(s.effect+1.96*s.se)).attr('y1',y).attr('y2',y).attr('stroke',P.blue).attr('stroke-width',1.5);
+    // Point
+    const sz=Math.sqrt(wr[i]/wrSum)*18;
+    g.append('rect').attr('x',x(s.effect)-sz/2).attr('y',y-sz/2).attr('width',sz).attr('height',sz).attr('fill',P.blue);
+    // Weight
+    g.append('text').attr('x',innerW+8).attr('y',y+4).attr('fill','#64748b').attr('font-size',10).text(wPct+'%');
+  });
+
+  // Pooled diamond (random effects)
+  const dy=(k+0.5)*rowH+rowH/2;
+  const diam=[[x(re),dy-8],[x(re+1.96*seRE),dy],[x(re),dy+8],[x(re-1.96*seRE),dy]];
+  g.append('polygon').attr('points',diam.map(p=>p.join(',')).join(' ')).attr('fill',P.teal);
+  g.append('text').attr('x',-10).attr('y',dy+4).attr('text-anchor','end').attr('fill',P.teal).attr('font-size',11).attr('font-weight',600).text('Random Effects');
+
+  // Axis
+  const xAxis=d3.axisBottom(x).ticks(6);
+  g.append('g').attr('transform',`translate(0,${(k+2)*rowH})`).call(xAxis).selectAll('text').attr('fill','#94a3b8');
+  g.selectAll('.domain,.tick line').attr('stroke','#334155');
+}
+
+// ═════════════════ CH 14: AGE STANDARDIZATION ═════════════════
+
+const defaultStdData = [
+  {age:'0-4',sp:55000,sd:5,pp:18987000,pd:3092},
+  {age:'5-14',sp:62000,sd:3,pp:39977000,pd:1657},
+  {age:'15-24',sp:58000,sd:12,pp:38077000,pd:11858},
+  {age:'25-34',sp:50000,sd:18,pp:39892000,pd:16926},
+  {age:'35-44',sp:55000,sd:45,pp:44659000,pd:33962},
+  {age:'45-54',sp:48000,sd:110,pp:37030000,pd:62269},
+  {age:'55-64',sp:35000,sd:280,pp:23961000,pd:93832},
+  {age:'65-74',sp:22000,sd:450,pp:18136000,pd:148578},
+  {age:'75-84',sp:12000,sd:520,pp:12315000,pd:236898},
+  {age:'85+',sp:5000,sd:380,pp:4240000,pd:232370},
+];
+
+function initStdTable() {
+  const ct=document.getElementById('std-table-container');
+  let html='<table class="data-table"><thead><tr><th>Age</th><th>Study Pop</th><th>Study Events</th><th>Std Pop</th><th>Std Events</th><th></th></tr></thead><tbody id="std-tbody">';
+  defaultStdData.forEach(d=>{
+    html+=`<tr><td><input class="st-age" value="${d.age}" style="width:60px;"></td>
+    <td><input class="st-sp" type="number" value="${d.sp}"></td><td><input class="st-sd" type="number" value="${d.sd}"></td>
+    <td><input class="st-pp" type="number" value="${d.pp}"></td><td><input class="st-pd" type="number" value="${d.pd}"></td>
+    <td><button onclick="this.closest('tr').remove()" style="background:none;border:none;color:var(--accent-rose);cursor:pointer;">✕</button></td></tr>`;
+  });
+  html+='</tbody></table>';
+  ct.innerHTML=html;
+}
+initStdTable();
+
+function addStdRow(){
+  const tb=document.getElementById('std-tbody');
+  const tr=document.createElement('tr');
+  tr.innerHTML='<td><input class="st-age" value="" style="width:60px;"></td><td><input class="st-sp" type="number" value=""></td><td><input class="st-sd" type="number" value=""></td><td><input class="st-pp" type="number" value=""></td><td><input class="st-pd" type="number" value=""></td><td><button onclick="this.closest(\'tr\').remove()" style="background:none;border:none;color:var(--accent-rose);cursor:pointer;">✕</button></td>';
+  tb.appendChild(tr);
+}
+
+function calcStandardization(){
+  const ages=document.querySelectorAll('.st-age'), sps=document.querySelectorAll('.st-sp'), sds=document.querySelectorAll('.st-sd'), pps=document.querySelectorAll('.st-pp'), pds=document.querySelectorAll('.st-pd');
+  let directExp=0,indirectExp=0,totStudyEvents=0,totStudyPop=0,totStdPop=0,totStdEvents=0;
+  const rows=[];
+  for(let i=0;i<ages.length;i++){
+    const sp=+sps[i].value,sd=+sds[i].value,pp=+pps[i].value,pd=+pds[i].value;
+    if(!sp||!pp) continue;
+    const studyRate=sd/sp, stdRate=pd/pp;
+    directExp+=studyRate*pp; indirectExp+=stdRate*sp;
+    totStudyEvents+=sd; totStudyPop+=sp; totStdPop+=pp; totStdEvents+=pd;
+    rows.push({age:ages[i].value, sp,sd,pp,pd, studyRate:studyRate*1000, stdRate:stdRate*1000, expDir:studyRate*pp, expInd:stdRate*sp});
+  }
+  const adjRate=directExp/totStdPop*1000;
+  const crudeStudy=totStudyEvents/totStudyPop*1000;
+  const crudeStd=totStdEvents/totStdPop*1000;
+  const smr=indirectExp>0?totStudyEvents/indirectExp:0;
+  const o=totStudyEvents;
+  const smrLo=o*Math.pow(1-1/(9*o)-1.96/(3*Math.sqrt(o)),3)/indirectExp;
+  const smrHi=(o+1)*Math.pow(1-1/(9*(o+1))+1.96/(3*Math.sqrt(o+1)),3)/indirectExp;
+
+  const el=document.getElementById('std-results'); el.style.display='grid';
+  el.innerHTML=`
+    <div class="tile"><div class="lbl">Crude Rate (Study)</div><div class="val">${fmt(crudeStudy,2)}</div><div class="sub">per 1,000</div></div>
+    <div class="tile highlight"><div class="lbl">Age-Adjusted Rate</div><div class="val">${fmt(adjRate,2)}</div><div class="sub">per 1,000 (direct)</div></div>
+    <div class="tile"><div class="lbl">Crude Rate (Standard)</div><div class="val">${fmt(crudeStd,2)}</div><div class="sub">per 1,000</div></div>
+    <div class="tile highlight"><div class="lbl">SMR</div><div class="val">${fmt(smr,3)}</div><div class="sub">95% CI: ${fmt(Math.max(0,smrLo),3)} – ${fmt(smrHi,3)}</div></div>
+  `;
+
+  if(charts.std) charts.std.destroy();
+  charts.std=new Chart(document.getElementById('stdChart'),{type:'bar',data:{labels:rows.map(r=>r.age),datasets:[
+    {label:'Study Rate (per 1000)',data:rows.map(r=>r.studyRate),backgroundColor:P.blue+'99',borderRadius:3},
+    {label:'Standard Rate (per 1000)',data:rows.map(r=>r.stdRate),backgroundColor:P.teal+'99',borderRadius:3}
+  ]},options:{responsive:true,plugins:{title:{display:true,text:'Age-Specific Rates: Study vs. Standard',font:{family:"'Playfair Display'",size:16}}},scales:{x:{title:{display:true,text:'Age Group'}},y:{title:{display:true,text:'Rate per 1,000'}}}}});
+}
+
+// ═════════════════ CH 15: ROC ANALYSIS ═════════════════
+
+function calcROC() {
+  const pos=document.getElementById('roc_pos').value.split(',').map(Number).filter(n=>!isNaN(n));
+  const neg=document.getElementById('roc_neg').value.split(',').map(Number).filter(n=>!isNaN(n));
+  if(pos.length<3||neg.length<3) return alert('Need ≥3 values in each group');
+
+  const all=[...pos.map(v=>({v,d:true})),...neg.map(v=>({v,d:false}))];
+  all.sort((a,b)=>a.v-b.v);
+  const cuts=[...new Set(all.map(o=>o.v))].sort((a,b)=>a-b);
+  const nPos=pos.length, nNeg=neg.length;
+
+  const points=[{cut:Infinity,sens:0,spec:1,fpr:0,youden:-1}];
+  let bestY=-1,bestIdx=0;
+  for(const cut of cuts){
+    const tp=pos.filter(v=>v>=cut).length, fp=neg.filter(v=>v>=cut).length;
+    const sens=tp/nPos, spec=(nNeg-fp)/nNeg, fpr=1-spec, y=sens+spec-1;
+    if(y>bestY){bestY=y;bestIdx=points.length;}
+    points.push({cut,sens,spec,fpr,youden:y});
+  }
+  points.push({cut:-Infinity,sens:1,spec:0,fpr:1,youden:0});
+  points.sort((a,b)=>a.fpr-b.fpr);
+
+  // AUC (trapezoidal)
+  let auc=0;
+  for(let i=1;i<points.length;i++) auc+=(points[i].fpr-points[i-1].fpr)*(points[i].sens+points[i-1].sens)/2;
+  const q1=auc/(2-auc), q2=2*auc*auc/(1+auc);
+  const se=Math.sqrt((auc*(1-auc)+(nPos-1)*(q1-auc*auc)+(nNeg-1)*(q2-auc*auc))/(nPos*nNeg));
+
+  const opt=points[Math.min(bestIdx,points.length-1)];
+  const el=document.getElementById('roc-results'); el.style.display='grid';
+  el.innerHTML=`
+    <div class="tile highlight"><div class="lbl">AUC</div><div class="val">${fmt(auc,3)}</div><div class="sub">95% CI: ${fmt(Math.max(0,auc-1.96*se),3)} – ${fmt(Math.min(1,auc+1.96*se),3)}</div></div>
+    <div class="tile"><div class="lbl">Optimal Cutpoint</div><div class="val">${fmt(opt.cut,1)}</div><div class="sub">Youden = ${fmt(opt.youden,3)}</div></div>
+    <div class="tile"><div class="lbl">Sensitivity @Optimal</div><div class="val">${pct(opt.sens)}</div></div>
+    <div class="tile"><div class="lbl">Specificity @Optimal</div><div class="val">${pct(opt.spec)}</div></div>
+  `;
+
+  if(charts.roc) charts.roc.destroy();
+  charts.roc=new Chart(document.getElementById('rocChart'),{type:'line',data:{
+    datasets:[
+      {label:'ROC Curve',data:points.map(p=>({x:p.fpr,y:p.sens})),borderColor:P.teal,backgroundColor:'rgba(45,212,191,0.08)',fill:true,pointRadius:0,tension:0},
+      {label:'Random (AUC=0.5)',data:[{x:0,y:0},{x:1,y:1}],borderColor:'#475569',borderDash:[6,4],pointRadius:0},
+      {label:'Optimal Cutpoint',data:[{x:opt.fpr,y:opt.sens}],borderColor:P.amber,pointRadius:8,pointStyle:'circle',showLine:false}
+    ]},options:{responsive:true,plugins:{title:{display:true,text:`ROC Curve — AUC = ${fmt(auc,3)}`,font:{family:"'Playfair Display'",size:16}}},
+    scales:{x:{type:'linear',min:0,max:1,title:{display:true,text:'1 − Specificity (FPR)'}},y:{min:0,max:1,title:{display:true,text:'Sensitivity (TPR)'}}}}});
+
+  // Youden chart
+  const validPts=points.filter(p=>isFinite(p.cut)&&p.cut>-1e10&&p.cut<1e10);
+  if(charts.youden) charts.youden.destroy();
+  charts.youden=new Chart(document.getElementById('youdenChart'),{type:'line',data:{
+    labels:validPts.map(p=>p.cut.toFixed(1)),
+    datasets:[{label:'Youden Index',data:validPts.map(p=>p.youden),borderColor:P.indigo,pointRadius:1,tension:0.2}]
+  },options:{responsive:true,plugins:{title:{display:true,text:'Youden Index by Cutpoint',font:{family:"'Playfair Display'",size:14}}},scales:{x:{title:{display:true,text:'Cutpoint'}},y:{title:{display:true,text:'Youden J'},min:-0.1,max:1}}}});
+}
+
+// ═════════════════ CH 16: BAYESIAN ═════════════════
+
+function calcBayes(){
+  const pre=+document.getElementById('bayes_pretest').value/100;
+  document.getElementById('bayes_pretest_val').textContent=(pre*100).toFixed(0)+'%';
+  const s1=+document.getElementById('b_sens1').value/100, sp1=+document.getElementById('b_spec1').value/100;
+  const r1=document.getElementById('b_res1').value;
+  const s2=+document.getElementById('b_sens2').value/100, sp2=+document.getElementById('b_spec2').value/100;
+  const r2=document.getElementById('b_res2').value;
+
+  const steps=[{label:'Pre-test',prob:pre}];
+  let prob=pre;
+
+  // Test 1
+  const lr1=r1==='pos'?s1/(1-sp1):(1-s1)/sp1;
+  const odds1=prob/(1-prob)*lr1;
+  prob=odds1/(1+odds1);
+  steps.push({label:`Test 1 (${r1==='pos'?'+':'−'})`,prob,lr:lr1});
+
+  // Test 2
+  if(r2!=='none'){
+    const lr2=r2==='pos'?s2/(1-sp2):(1-s2)/sp2;
+    const odds2=prob/(1-prob)*lr2;
+    prob=odds2/(1+odds2);
+    steps.push({label:`Test 2 (${r2==='pos'?'+':'−'})`,prob,lr:lr2});
+  }
+
+  const el=document.getElementById('bayes-results'); el.style.display='grid';
+  el.innerHTML=steps.map((s,i)=>`
+    <div class="tile ${i===steps.length-1?'highlight':''}">
+      <div class="lbl">${s.label}</div>
+      <div class="val">${pct(s.prob)}</div>
+      ${s.lr?`<div class="sub">LR = ${fmt(s.lr,2)}</div>`:''}
+    </div>`).join('');
+
+  if(charts.bayes) charts.bayes.destroy();
+  charts.bayes=new Chart(document.getElementById('bayesChart'),{type:'bar',data:{
+    labels:steps.map(s=>s.label),
+    datasets:[{label:'Probability of Disease',data:steps.map(s=>s.prob*100),
+      backgroundColor:steps.map((_,i)=>i===steps.length-1?P.teal+'CC':P.blue+'99'),borderRadius:6}]
+  },options:{responsive:true,plugins:{title:{display:true,text:'Bayesian Probability Update',font:{family:"'Playfair Display'",size:16}}},
+    scales:{y:{title:{display:true,text:'Probability (%)'},min:0,max:100}}}});
+}
+
+// ═════════════════ CH 17: DOSE-RESPONSE ═════════════════
+
+function addDoseRow(dose='',n='',r=''){
+  const ct=document.getElementById('dose-table-container');
+  if(!ct.querySelector('table')){
+    ct.innerHTML='<table class="data-table"><thead><tr><th>Dose</th><th>N Subjects</th><th>N Responding</th><th></th></tr></thead><tbody id="dose-tbody"></tbody></table>';
+  }
+  const tb=document.getElementById('dose-tbody');
+  const tr=document.createElement('tr');
+  tr.innerHTML=`<td><input class="dr-dose" type="number" value="${dose}" step="0.1"></td>
+    <td><input class="dr-n" type="number" value="${n}"></td><td><input class="dr-r" type="number" value="${r}"></td>
+    <td><button onclick="this.closest('tr').remove()" style="background:none;border:none;color:var(--accent-rose);cursor:pointer;">✕</button></td>`;
+  tb.appendChild(tr);
+}
+
+function loadDoseSample(){
+  document.getElementById('dose-table-container').innerHTML='';
+  [[0,50,2],[5,50,5],[10,50,12],[20,50,22],[40,50,35],[80,50,44]].forEach(d=>addDoseRow(...d));
+}
+loadDoseSample();
+
+function calcDoseResponse(){
+  const doses=document.querySelectorAll('.dr-dose'), ns=document.querySelectorAll('.dr-n'), rs=document.querySelectorAll('.dr-r');
+  const groups=[];
+  for(let i=0;i<doses.length;i++){const d=+doses[i].value,n=+ns[i].value,r=+rs[i].value;if(n>0) groups.push({dose:d,n,r});}
+  if(groups.length<2) return;
+
+  // IRLS logistic regression
+  let b0=0, b1=0.01;
+  for(let iter=0;iter<100;iter++){
+    let s0=0,s1=0,i00=0,i01=0,i11=0;
+    for(const g of groups){
+      const eta=b0+b1*g.dose, p=1/(1+Math.exp(-eta)), pc=Math.max(.001,Math.min(.999,p));
+      s0+=g.r-g.n*pc; s1+=g.dose*(g.r-g.n*pc);
+      const w=g.n*pc*(1-pc); i00+=w; i01+=w*g.dose; i11+=w*g.dose*g.dose;
+    }
+    const det=i00*i11-i01*i01; if(Math.abs(det)<1e-15) break;
+    const db0=(i11*s0-i01*s1)/det, db1=(-i01*s0+i00*s1)/det;
+    b0+=db0; b1+=db1;
+    if(Math.abs(db0)<1e-8&&Math.abs(db1)<1e-8) break;
+  }
+
+  const ld50=Math.abs(b1)>1e-10?-b0/b1:NaN;
+  const ld10=Math.abs(b1)>1e-10?-(b0+Math.log(9))/b1:NaN;
+  const ld90=Math.abs(b1)>1e-10?-(b0-Math.log(9))/b1:NaN;
+
+  const el=document.getElementById('dose-results'); el.style.display='grid';
+  el.innerHTML=`
+    <div class="tile"><div class="lbl">β₀ (intercept)</div><div class="val">${fmt(b0,4)}</div></div>
+    <div class="tile"><div class="lbl">β₁ (slope)</div><div class="val">${fmt(b1,4)}</div></div>
+    <div class="tile highlight"><div class="lbl">LD₅₀</div><div class="val">${fmt(ld50,2)}</div></div>
+    <div class="tile"><div class="lbl">LD₁₀</div><div class="val">${fmt(ld10,2)}</div></div>
+    <div class="tile"><div class="lbl">LD₉₀</div><div class="val">${fmt(ld90,2)}</div></div>
+  `;
+
+  // Generate curve
+  const minD=Math.min(...groups.map(g=>g.dose)), maxD=Math.max(...groups.map(g=>g.dose)), range=maxD-minD;
+  const curveX=[], curveY=[];
+  for(let i=0;i<=100;i++){const d=minD-range*.1+(range*1.2)*i/100;curveX.push(d.toFixed(1));curveY.push(1/(1+Math.exp(-(b0+b1*d))));}
+
+  if(charts.dose) charts.dose.destroy();
+  charts.dose=new Chart(document.getElementById('doseChart'),{type:'scatter',data:{
+    datasets:[
+      {label:'Observed',data:groups.map(g=>({x:g.dose,y:g.r/g.n})),pointRadius:6,pointBackgroundColor:P.amber,showLine:false},
+      {label:'Logistic Model',data:curveX.map((x,i)=>({x:+x,y:curveY[i]})),pointRadius:0,showLine:true,borderColor:P.teal,borderWidth:2,tension:0.3},
+    ]},options:{responsive:true,plugins:{title:{display:true,text:'Dose-Response Curve (Logistic Model)',font:{family:"'Playfair Display'",size:16}}},
+    scales:{x:{title:{display:true,text:'Dose'}},y:{title:{display:true,text:'P(Response)'},min:0,max:1,ticks:{callback:v=>(v*100)+'%'}}}}});
+}
+
+// ═════════════════ CH 18: ITS ═════════════════
+
+function calcITS(){
+  const vals=document.getElementById('its_data').value.split(',').map(Number).filter(n=>!isNaN(n));
+  const ip=+document.getElementById('its_intervention').value-1; // 0-indexed
+  const n=vals.length; if(n<4) return;
+
+  // Segmented regression: Y = b0 + b1*T + b2*D + b3*P
+  let xtx=[[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]], xty=[0,0,0,0];
+  for(let i=0;i<n;i++){
+    const t=i+1, d=i>=ip?1:0, p=i>=ip?i-ip+1:0;
+    const x=[1,t,d,p], y=vals[i];
+    for(let r=0;r<4;r++){for(let c=0;c<4;c++) xtx[r][c]+=x[r]*x[c]; xty[r]+=x[r]*y;}
+  }
+  // Gaussian elimination
+  let aug=xtx.map((r,i)=>[...r,xty[i]]);
+  for(let col=0;col<4;col++){
+    let mx=col;for(let r=col+1;r<4;r++)if(Math.abs(aug[r][col])>Math.abs(aug[mx][col]))mx=r;
+    [aug[col],aug[mx]]=[aug[mx],aug[col]];
+    if(Math.abs(aug[col][col])<1e-15)continue;
+    const piv=aug[col][col];for(let j=col;j<5;j++)aug[col][j]/=piv;
+    for(let r=0;r<4;r++){if(r===col)continue;const f=aug[r][col];for(let j=col;j<5;j++)aug[r][j]-=f*aug[col][j];}
+  }
+  const b0=aug[0][4],b1=aug[1][4],b2=aug[2][4],b3=aug[3][4];
+
+  let ssRes=0,ssTot=0;const mean=vals.reduce((a,b)=>a+b,0)/n;
+  const pred=[],counter=[];
+  for(let i=0;i<n;i++){
+    const t=i+1,d=i>=ip?1:0,p=i>=ip?i-ip+1:0;
+    const yhat=b0+b1*t+b2*d+b3*p, cf=b0+b1*t;
+    pred.push(yhat); counter.push(cf);
+    ssRes+=(vals[i]-yhat)**2; ssTot+=(vals[i]-mean)**2;
+  }
+  const r2=ssTot>0?1-ssRes/ssTot:0;
+
+  const el=document.getElementById('its-results'); el.style.display='grid';
+  el.innerHTML=`
+    <div class="tile"><div class="lbl">Pre-Trend (β₁)</div><div class="val">${fmt(b1,3)}</div><div class="sub">per time unit</div></div>
+    <div class="tile highlight"><div class="lbl">Level Change (β₂)</div><div class="val">${fmt(b2,3)}</div><div class="sub">Immediate effect</div></div>
+    <div class="tile highlight"><div class="lbl">Slope Change (β₃)</div><div class="val">${fmt(b3,3)}</div><div class="sub">Trend change</div></div>
+    <div class="tile"><div class="lbl">Post-Trend</div><div class="val">${fmt(b1+b3,3)}</div></div>
+    <div class="tile"><div class="lbl">R²</div><div class="val">${fmt(r2,3)}</div></div>
+  `;
+
+  if(charts.its) charts.its.destroy();
+  const labels=vals.map((_,i)=>i+1);
+  charts.its=new Chart(document.getElementById('itsChart'),{type:'line',data:{labels,datasets:[
+    {label:'Observed',data:vals,borderColor:P.blue,pointRadius:3,tension:0},
+    {label:'Predicted (segmented)',data:pred,borderColor:P.teal,borderWidth:2.5,pointRadius:0,borderDash:[0]},
+    {label:'Counterfactual (no intervention)',data:counter,borderColor:P.rose,borderDash:[6,4],pointRadius:0},
+  ]},options:{responsive:true,
+    plugins:{title:{display:true,text:'Interrupted Time Series — Segmented Regression',font:{family:"'Playfair Display'",size:16}},
+      annotation:{annotations:{line1:{type:'line',xMin:ip+1,xMax:ip+1,borderColor:P.amber,borderWidth:2,borderDash:[4,4],label:{display:true,content:'Intervention',position:'start'}}}}},
+    scales:{x:{title:{display:true,text:'Time Period'}},y:{title:{display:true,text:'Outcome'}}}}});
+}
+
+// ═════════════════ CH 19: MONTE CARLO ═════════════════
+
+function calcMonteCarlo(){
+  const N=+document.getElementById('mc_pop').value, I0=+document.getElementById('mc_i0').value;
+  const dur=+document.getElementById('mc_dur').value, nSim=Math.min(2000,+document.getElementById('mc_nsim').value);
+  const r0m=+document.getElementById('mc_r0_mean').value, r0s=+document.getElementById('mc_r0_sd').value;
+  const ipm=+document.getElementById('mc_ip_mean').value, ips=+document.getElementById('mc_ip_sd').value;
+
+  const dt=0.2, steps=Math.floor(dur/dt), daySteps=Math.round(1/dt);
+  let seed=Date.now()%1000000;
+  // Simple PRNG
+  function xorshift(){seed^=seed<<13;seed^=seed>>17;seed^=seed<<5;return(seed>>>0)/4294967296;}
+  function randn(){const u1=Math.max(1e-15,xorshift()),u2=xorshift();return Math.sqrt(-2*Math.log(u1))*Math.cos(2*Math.PI*u2);}
+
+  const peaks=[],peakDays=[],totals=[],trajs=[];
+  const nTraj=Math.min(50,nSim);
+
+  for(let sim=0;sim<nSim;sim++){
+    const r0=Math.max(.1,r0m+r0s*randn()), ip=Math.max(1,ipm+ips*randn());
+    const gamma=1/ip, beta=r0*gamma;
+    let S=N-I0,I=I0,R=0,peakI=I0,peakD=0,cum=I0;
+    const traj=sim<nTraj?[I]:null;
+    for(let st=1;st<=steps;st++){
+      const k1s=-beta*S*I/N,k1i=beta*S*I/N-gamma*I;
+      const s2=S+.5*dt*k1s,i2=I+.5*dt*k1i;
+      const k2s=-beta*s2*i2/N,k2i=beta*s2*i2/N-gamma*i2;
+      const s3=S+.5*dt*k2s,i3=I+.5*dt*k2i;
+      const k3s=-beta*s3*i3/N,k3i=beta*s3*i3/N-gamma*i3;
+      const s4=S+dt*k3s,i4=I+dt*k3i;
+      const k4s=-beta*s4*i4/N,k4i=beta*s4*i4/N-gamma*i4;
+      const prevS=S;
+      S+=dt/6*(k1s+2*k2s+2*k3s+k4s);I+=dt/6*(k1i+2*k2i+2*k3i+k4i);R=N-S-I;
+      cum+=Math.max(0,prevS-S);
+      if(I>peakI){peakI=I;peakD=st*dt;}
+      if(traj&&st%daySteps===0)traj.push(I);
+    }
+    peaks.push(peakI);peakDays.push(peakD);totals.push(cum);
+    if(traj)trajs.push(traj);
+  }
+
+  peaks.sort((a,b)=>a-b);peakDays.sort((a,b)=>a-b);totals.sort((a,b)=>a-b);
+  const pctl=(arr,p)=>arr[Math.round((arr.length-1)*p)];
+
+  const el=document.getElementById('mc-results');el.style.display='grid';
+  el.innerHTML=`
+    <div class="tile highlight"><div class="lbl">Median Peak Infected</div><div class="val">${Math.round(pctl(peaks,.5)).toLocaleString()}</div><div class="sub">90% CI: ${Math.round(pctl(peaks,.05)).toLocaleString()} – ${Math.round(pctl(peaks,.95)).toLocaleString()}</div></div>
+    <div class="tile"><div class="lbl">Median Peak Day</div><div class="val">${Math.round(pctl(peakDays,.5))}</div><div class="sub">90% CI: ${Math.round(pctl(peakDays,.05))} – ${Math.round(pctl(peakDays,.95))}</div></div>
+    <div class="tile highlight"><div class="lbl">Median Total Infected</div><div class="val">${Math.round(pctl(totals,.5)).toLocaleString()}</div><div class="sub">90% CI: ${Math.round(pctl(totals,.05)).toLocaleString()} – ${Math.round(pctl(totals,.95)).toLocaleString()}</div></div>
+    <div class="tile"><div class="lbl">Median Attack Rate</div><div class="val">${pct(pctl(totals,.5)/N)}</div></div>
+  `;
+
+  // Plot spaghetti + quantile bands
+  const maxLen=Math.max(...trajs.map(t=>t.length));
+  const labels=Array.from({length:maxLen},(_,i)=>i);
+  // Compute quantile bands at each day
+  const p5=[],p25=[],p50=[],p75=[],p95=[];
+  for(let d=0;d<maxLen;d++){
+    const vals=trajs.map(t=>t[d]||0).sort((a,b)=>a-b);
+    p5.push(pctl(vals,.05));p25.push(pctl(vals,.25));p50.push(pctl(vals,.5));p75.push(pctl(vals,.75));p95.push(pctl(vals,.95));
+  }
+
+  if(charts.mc) charts.mc.destroy();
+  const datasets=[
+    {label:'95th percentile',data:p95,borderColor:'transparent',backgroundColor:'rgba(45,212,191,0.06)',fill:'+1',pointRadius:0},
+    {label:'75th percentile',data:p75,borderColor:'transparent',backgroundColor:'rgba(45,212,191,0.1)',fill:'+1',pointRadius:0},
+    {label:'Median',data:p50,borderColor:P.teal,borderWidth:3,pointRadius:0,fill:false},
+    {label:'25th percentile',data:p25,borderColor:'transparent',backgroundColor:'rgba(45,212,191,0.1)',fill:'-1',pointRadius:0},
+    {label:'5th percentile',data:p5,borderColor:'transparent',backgroundColor:'rgba(45,212,191,0.06)',fill:'-1',pointRadius:0},
+  ];
+  // Add a few spaghetti traces
+  for(let i=0;i<Math.min(15,trajs.length);i++){
+    datasets.push({label:i===0?'Individual trajectories':'',data:trajs[i],borderColor:'rgba(129,140,248,0.12)',borderWidth:0.8,pointRadius:0,fill:false});
+  }
+  charts.mc=new Chart(document.getElementById('mcChart'),{type:'line',data:{labels,datasets},
+    options:{responsive:true,plugins:{title:{display:true,text:`Monte Carlo SIR — ${nSim} Simulations (Infected over Time)`,font:{family:"'Playfair Display'",size:16}},legend:{display:false}},
+    scales:{x:{title:{display:true,text:'Day'}},y:{title:{display:true,text:'Infected'},beginAtZero:true}}}});
+}
+
+// ═════════════════ CH 20: DAG BUILDER ═════════════════
+
+function buildDAG(){
+  const exposure=document.getElementById('dag_exposure').value.trim();
+  const outcome=document.getElementById('dag_outcome').value.trim();
+  const edgeText=document.getElementById('dag_edges').value.trim();
+  const edges=edgeText.split('\n').map(l=>{const m=l.match(/(.+?)\s*->\s*(.+)/);return m?{from:m[1].trim(),to:m[2].trim()}:null;}).filter(Boolean);
+
+  const nodes=new Set();
+  edges.forEach(e=>{nodes.add(e.from);nodes.add(e.to);});
+  const nodeList=[...nodes];
+
+  // Identify node roles
+  const children={}, parents={};
+  nodeList.forEach(n=>{children[n]=[];parents[n]=[];});
+  edges.forEach(e=>{children[e.from].push(e.to);parents[e.to].push(e.from);});
+
+  // Classify
+  const confounders=[],mediators=[],colliders=[];
+  nodeList.forEach(n=>{
+    if(n===exposure||n===outcome) return;
+    // Confounder: causes both exposure and outcome (directly or indirectly)
+    const reachesExp=canReach(n,exposure,children);
+    const reachesOut=canReach(n,outcome,children);
+    if(reachesExp&&reachesOut) confounders.push(n);
+    // Mediator: on path from exposure to outcome
+    const expReachesN=canReach(exposure,n,children);
+    const nReachesOut=canReach(n,outcome,children);
+    if(expReachesN&&nReachesOut) mediators.push(n);
+    // Collider: has 2+ parents
+    if(parents[n].length>=2) colliders.push(n);
+  });
+
+  function canReach(from,to,adj,visited=new Set()){
+    if(from===to) return true;
+    visited.add(from);
+    for(const c of (adj[from]||[])){if(!visited.has(c)&&canReach(c,to,adj,visited)) return true;}
+    return false;
+  }
+
+  // Analysis output
+  const anal=document.getElementById('dag-analysis');
+  anal.innerHTML=`
+    <div class="results" style="display:grid;">
+      <div class="tile"><div class="lbl">Confounders</div><div class="val" style="font-size:0.9rem;">${confounders.length?confounders.join(', '):'None identified'}</div><div class="sub">Adjust for these</div></div>
+      <div class="tile"><div class="lbl">Mediators</div><div class="val" style="font-size:0.9rem;">${mediators.length?mediators.join(', '):'None'}</div><div class="sub">Do NOT adjust</div></div>
+      <div class="tile"><div class="lbl">Colliders</div><div class="val" style="font-size:0.9rem;">${colliders.length?colliders.join(', '):'None'}</div><div class="sub">Do NOT condition on</div></div>
+    </div>
+  `;
+
+  // D3 force-directed DAG
+  const ct=document.getElementById('dag-svg-container');
+  ct.innerHTML='';
+  const w=Math.min(ct.clientWidth,700), h=400;
+  const svg=d3.select(ct).append('svg').attr('width',w).attr('height',h);
+  svg.append('defs').append('marker').attr('id','arrow').attr('viewBox','0 0 10 10').attr('refX',20).attr('refY',5)
+    .attr('markerWidth',6).attr('markerHeight',6).attr('orient','auto-start-reverse')
+    .append('path').attr('d','M 0 0 L 10 5 L 0 10 z').attr('fill','#64748b');
+
+  const nodeData=nodeList.map(n=>({id:n,
+    color: n===exposure?P.blue : n===outcome?P.rose : confounders.includes(n)?P.amber : mediators.includes(n)?P.emerald : colliders.includes(n)?P.fuchsia : '#94a3b8'
+  }));
+  const linkData=edges.map(e=>({source:e.from,target:e.to}));
+
+  const sim=d3.forceSimulation(nodeData)
+    .force('link',d3.forceLink(linkData).id(d=>d.id).distance(120))
+    .force('charge',d3.forceManyBody().strength(-400))
+    .force('center',d3.forceCenter(w/2,h/2))
+    .force('collide',d3.forceCollide(40));
+
+  const link=svg.selectAll('.link').data(linkData).enter().append('line')
+    .attr('stroke','#475569').attr('stroke-width',1.5).attr('marker-end','url(#arrow)');
+
+  const node=svg.selectAll('.node').data(nodeData).enter().append('g');
+  node.append('circle').attr('r',14).attr('fill',d=>d.color).attr('stroke',d=>d.color).attr('stroke-width',2).attr('fill-opacity',0.15);
+  node.append('text').text(d=>d.id).attr('text-anchor','middle').attr('dy',-22).attr('fill',d=>d.color).attr('font-size',12).attr('font-weight',500);
+
+  sim.on('tick',()=>{
+    link.attr('x1',d=>d.source.x).attr('y1',d=>d.source.y).attr('x2',d=>d.target.x).attr('y2',d=>d.target.y);
+    node.attr('transform',d=>`translate(${d.x},${d.y})`);
+  });
+}
+</script>
+</body>
+</html>

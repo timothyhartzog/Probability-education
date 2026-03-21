@@ -1,0 +1,383 @@
+/* ============================================================
+   Module: Applied Probability & Statistical Inference
+   ============================================================ */
+
+/* --- Tab Navigation ---------------------------------------- */
+.tab-nav {
+  display: flex;
+  gap: 0;
+  background: var(--color-surface);
+  border-bottom: 2px solid #e2e8f0;
+  padding: 0 var(--space-xl);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.tab-btn {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  padding: var(--space-md) var(--space-lg);
+  border: none;
+  background: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  transition: color var(--transition-fast), border-color var(--transition-fast);
+  white-space: nowrap;
+}
+
+.tab-btn:hover {
+  color: var(--color-primary);
+}
+
+.tab-btn.active {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+  font-weight: 600;
+}
+
+/* --- Tab Content ------------------------------------------- */
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+/* --- Viz Area ---------------------------------------------- */
+.viz-area {
+  flex: 1 1 65%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+/* --- Metrics Row ------------------------------------------- */
+.metrics-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: var(--space-md);
+}
+
+.metric-card {
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: var(--space-md);
+  text-align: center;
+  border: 1px solid #e2e8f0;
+}
+
+.metric-label {
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-xs);
+}
+
+.metric-value {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+/* --- Card Component --------------------------------------- */
+.card {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: var(--space-lg);
+  border: 1px solid #e2e8f0;
+}
+
+.card-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: var(--space-md);
+}
+
+/* --- Panel Title ------------------------------------------ */
+.panel-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  padding-bottom: var(--space-sm);
+  border-bottom: 2px solid var(--color-primary-light);
+  margin-bottom: 0;
+}
+
+/* --- Module Subtitle -------------------------------------- */
+.module-subtitle {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+  margin-top: var(--space-xs);
+  margin-bottom: 0;
+}
+
+/* --- Parameter Help Text ----------------------------------- */
+.param-help {
+  font-family: var(--font-heading);
+  font-size: 0.72rem;
+  color: var(--color-text-secondary);
+  margin-top: 2px;
+  opacity: 0.8;
+}
+
+/* --- Control Section Title --------------------------------- */
+.control-section-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-primary);
+  padding-top: var(--space-sm);
+  border-top: 1px solid #e2e8f0;
+  margin-bottom: 0 !important;
+}
+
+/* --- Button Row -------------------------------------------- */
+.btn-row {
+  display: flex;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+/* --- D3 Chart Styles -------------------------------------- */
+.chart-container svg {
+  width: 100%;
+}
+
+.axis text {
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  fill: var(--color-text-secondary);
+}
+
+.axis line,
+.axis path {
+  stroke: #e2e8f0;
+}
+
+.axis-label {
+  font-family: var(--font-heading);
+  font-size: 0.78rem;
+  fill: var(--color-text-secondary);
+}
+
+.grid line {
+  stroke: #f1f5f9;
+  stroke-dasharray: 2, 2;
+}
+
+.grid path {
+  stroke: none;
+}
+
+/* --- Histogram bars ---------------------------------------- */
+.hist-bar {
+  transition: opacity var(--transition-fast);
+}
+
+.hist-bar:hover {
+  opacity: 1 !important;
+}
+
+/* --- Stats Display ----------------------------------------- */
+.stats-display {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: var(--space-sm);
+  background: #f8fafc;
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  border: 1px solid #e2e8f0;
+}
+
+.stats-display .stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.stats-display .stat-item .s-label {
+  font-family: var(--font-heading);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-secondary);
+}
+
+.stats-display .stat-item .s-value {
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+/* --- Decision Labels --------------------------------------- */
+.reject-label {
+  color: var(--color-error);
+  font-weight: 700;
+  font-family: var(--font-heading);
+}
+
+.accept-label {
+  color: var(--color-accent);
+  font-weight: 700;
+  font-family: var(--font-heading);
+}
+
+/* --- T-Test Stats Panel ------------------------------------ */
+.ttest-stats-panel {
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  border: 1px solid #e2e8f0;
+  box-shadow: var(--shadow-sm);
+}
+
+.ttest-stats-panel .t-stat-big {
+  font-family: var(--font-mono);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  line-height: 1.1;
+}
+
+.ttest-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-sm) var(--space-md);
+  margin-top: var(--space-md);
+}
+
+.ttest-stat-row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ttest-stat-row .ts-label {
+  font-family: var(--font-heading);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-secondary);
+}
+
+.ttest-stat-row .ts-value {
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.decision-box {
+  margin-top: var(--space-md);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-heading);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.decision-box.reject {
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
+  color: var(--color-error);
+}
+
+.decision-box.fail-reject {
+  background: #f0fdf4;
+  border: 1px solid #86efac;
+  color: var(--color-accent);
+}
+
+/* --- Bayesian Bar Chart ------------------------------------ */
+.bayes-bar-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-sm);
+}
+
+.bayes-bar-label {
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  width: 160px;
+  flex-shrink: 0;
+  text-align: right;
+}
+
+.bayes-bar-track {
+  flex: 1;
+  height: 20px;
+  background: #f1f5f9;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  position: relative;
+}
+
+.bayes-bar-fill {
+  height: 100%;
+  border-radius: var(--radius-sm);
+  transition: width var(--transition-normal);
+}
+
+.bayes-bar-val {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--color-text);
+  width: 55px;
+  flex-shrink: 0;
+}
+
+/* --- Equation blocks --------------------------------------- */
+.equation-block {
+  margin: var(--space-md) 0;
+  padding: var(--space-md) var(--space-lg);
+  background: #f8fafc;
+  border-radius: var(--radius-md);
+  overflow-x: auto;
+  text-align: center;
+  border-left: 3px solid var(--color-primary-light);
+}
+
+/* --- Responsive -------------------------------------------- */
+@media (max-width: 768px) {
+  .tab-nav {
+    padding: 0 var(--space-md);
+  }
+
+  .tab-btn {
+    padding: var(--space-sm) var(--space-md);
+    font-size: 0.78rem;
+  }
+
+  .metrics-row {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .ttest-stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .metrics-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

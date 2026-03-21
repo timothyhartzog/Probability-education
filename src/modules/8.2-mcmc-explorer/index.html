@@ -100,6 +100,14 @@
           </ul>
         </div>
       </details>
+          <details>
+            <summary>Hamiltonian Monte Carlo — Gradient-Guided Sampling</summary>
+            <div class="detail-body">
+              <p><strong>Hamiltonian Monte Carlo (HMC)</strong> introduces auxiliary momentum variables p ∈ ℝ<sup>d</sup> and simulates Hamiltonian dynamics H(θ, p) = −log π(θ) + p<sup>T</sup>p/2. The position θ evolves by following the gradient of log π, which allows proposals that are far from the current point but still accepted with high probability. The acceptance rate of well-tuned HMC approaches 65–80%, versus ~23% for random-walk Metropolis in high dimensions.</p>
+              <p>HMC scales dramatically better than random-walk proposals in high dimensions: random walk requires O(d) steps to traverse the target, while HMC requires O(d<sup>1/4</sup>) steps. This is the algorithm underlying <strong>Stan</strong> and modern Bayesian workflow. The <strong>No-U-Turn Sampler (NUTS)</strong> automatically tunes the trajectory length by detecting when the simulation starts to "U-turn" back toward its start — eliminating the need to tune the number of leapfrog steps by hand.</p>
+              <p>HMC requires a differentiable log-posterior, making it ideal for continuous parameters but inapplicable to discrete latent variables. For discrete structures, alternatives include Gibbs sampling (exact conditional sampling), slice sampling, or reparameterization tricks that embed discrete variables in a continuous space.</p>
+            </div>
+          </details>
     </div>
   </div>
   <script type="module" src="./module.js"></script>
