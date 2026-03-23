@@ -1,8 +1,11 @@
-name: Deploy to GitHub Pages
+name: Deploy Interactive Textbook to GitHub Pages
 
 on:
   push:
     branches: [main]
+    paths:
+      - 'interactive-textbook/**'
+      - '.github/workflows/deploy.yml'
   workflow_dispatch:
 
 permissions:
@@ -15,30 +18,39 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-
-      - run: npm ci
-
-      - run: npm run build
-
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: dist
-
   deploy:
-    needs: build
     runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - id: deployment
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Verify files exist
+        run: |
+          echo "=== Interactive Textbook Files ==="
+          ls -lh interactive-textbook/
+          echo ""
+          echo "=== File count ==="
+          find interactive-textbook/ -name "*.html" | wc -l
+          echo " HTML files found"
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: interactive-textbook
+
+      - name: Deploy to GitHub Pages
+        id: deployment
         uses: actions/deploy-pages@v4
+
+      - name: Output URL
+        run: |
+          echo "============================================"
+          echo "  Site deployed successfully!"
+          echo "  URL: ${{ steps.deployment.outputs.page_url }}"
+          echo "============================================"
