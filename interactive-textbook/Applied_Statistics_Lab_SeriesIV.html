@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Applied Statistics Lab — Interactive D3.js Education Series IV</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#070d18;--bg2:#0c1322;--card:#10182a;--card2:#182036;--text:#e2e8f0;--muted:#94a3b8;--dim:#64748b;--faint:#475569;--border:#1c2640;--border2:#2d3f5e;--blue:#60a5fa;--purple:#a78bfa;--green:#34d399;--orange:#fb923c;--pink:#f472b6;--cyan:#22d3ee;--yellow:#fbbf24;--red:#f87171;--lime:#a3e635;--glow:rgba(96,165,250,.10);--serif:'DM Serif Display',serif;--body:'IBM Plex Sans',sans-serif;--mono:'IBM Plex Mono',monospace;--prose:'Crimson Pro',serif}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+body{font-family:var(--body);background:var(--bg);color:var(--text);line-height:1.7;font-size:15px;overflow-x:hidden}
+nav{position:fixed;top:0;left:0;width:256px;height:100vh;background:var(--card);border-right:1px solid var(--border);overflow-y:auto;z-index:100;padding:18px 0;scrollbar-width:thin;scrollbar-color:var(--border2) transparent}
+nav::-webkit-scrollbar{width:3px}nav::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.nb{font-family:var(--serif);font-size:14px;color:var(--yellow);padding:0 14px 12px;border-bottom:1px solid var(--border);margin-bottom:6px;line-height:1.3}
+.nb small{display:block;font-family:var(--mono);font-size:8px;color:var(--dim);letter-spacing:.12em;text-transform:uppercase;margin-top:3px}
+nav a{display:block;padding:4px 14px 4px 18px;color:var(--muted);text-decoration:none;font-size:11.5px;transition:all .2s;border-left:2px solid transparent}
+nav a:hover,nav a.active{color:var(--yellow);background:rgba(251,191,36,.06);border-left-color:var(--yellow)}
+main{margin-left:256px;max-width:1020px;padding:28px 36px 100px}
+.hero{text-align:center;padding:52px 0 40px;border-bottom:1px solid var(--border);margin-bottom:44px;position:relative}
+.hero::before{content:'';position:absolute;inset:-50px -180px;background:radial-gradient(ellipse at 50% 40%,rgba(251,191,36,.04) 0%,transparent 60%);pointer-events:none}
+.hero h1{font-family:var(--serif);font-size:40px;line-height:1.15;margin-bottom:6px;position:relative}.hero h1 span{color:var(--yellow)}
+.hero .sub{font-family:var(--prose);font-style:italic;font-size:17px;color:var(--muted)}
+.lab{margin:36px 0;scroll-margin-top:18px}
+.lh{display:flex;align-items:flex-start;gap:14px;margin-bottom:16px}
+.ln{font-family:var(--mono);font-size:10px;font-weight:700;color:var(--bg);background:var(--yellow);width:26px;height:26px;border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.lh h2{font-family:var(--serif);font-size:22px;color:var(--text);line-height:1.25}.lh h2 small{display:block;font-family:var(--body);font-size:12px;color:var(--dim);font-weight:400;margin-top:2px}
+.lab p{font-family:var(--prose);font-size:16px;line-height:1.8;color:var(--muted);margin-bottom:12px;max-width:800px}.lab p strong{color:var(--text)}
+.panel{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:22px;margin:18px 0;position:relative;overflow:hidden}
+.panel::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--yellow),var(--orange),var(--pink))}
+.tag{position:absolute;top:9px;right:12px;font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--green);background:rgba(52,211,153,.08);padding:2px 6px;border-radius:3px}
+.ctrls{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:14px;align-items:center}
+.cg{display:flex;align-items:center;gap:5px}
+.cg label{font-family:var(--mono);font-size:10px;color:var(--dim);min-width:18px}
+.cg input[type=range]{-webkit-appearance:none;width:120px;height:3px;background:var(--border2);border-radius:2px;outline:none}
+.cg input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;background:var(--yellow);border-radius:50%;cursor:pointer;box-shadow:0 0 5px rgba(251,191,36,.35)}
+.cg .v{font-family:var(--mono);font-size:11px;color:var(--yellow);min-width:30px;text-align:right;font-weight:500}
+select.sel{background:var(--bg2);color:var(--text);border:1px solid var(--border2);padding:3px 7px;border-radius:4px;font-family:var(--mono);font-size:10px}
+button.btn{background:var(--yellow);color:var(--bg);border:none;padding:4px 12px;border-radius:5px;font-family:var(--mono);font-size:10px;cursor:pointer;font-weight:600;transition:all .15s}
+button.btn:hover{filter:brightness(1.15);transform:translateY(-1px)}
+button.b2{background:var(--purple)}button.b3{background:var(--green)}button.b4{background:var(--orange)}button.b5{background:var(--pink)}
+.stats{display:flex;gap:18px;margin-top:8px;flex-wrap:wrap}
+.si{font-family:var(--mono);font-size:10px;color:var(--dim)}.si span{color:var(--yellow);font-weight:500}
+.si.p span{color:var(--purple)}.si.g span{color:var(--green)}.si.o span{color:var(--orange)}.si.pk span{color:var(--pink)}.si.r span{color:var(--red)}.si.c span{color:var(--cyan)}
+.insight{background:linear-gradient(135deg,rgba(251,191,36,.04),rgba(251,147,60,.03));border:1px solid var(--border2);border-left:3px solid var(--yellow);border-radius:5px;padding:12px 16px;margin:14px 0;font-family:var(--prose);font-size:14px;color:var(--muted);line-height:1.7}
+.insight .il{font-family:var(--mono);font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--yellow);margin-bottom:3px}
+svg text{font-family:var(--mono)}.axis text{fill:var(--dim);font-size:9px}.axis path,.axis line{stroke:var(--border2)}.grid line{stroke:var(--border);stroke-opacity:.3}.grid path{display:none}
+.mob{display:none;position:fixed;top:8px;left:8px;z-index:200;background:var(--card);border:1px solid var(--border);color:var(--yellow);width:34px;height:34px;border-radius:5px;font-size:15px;cursor:pointer;align-items:center;justify-content:center}
+@media(max-width:860px){.mob{display:flex}nav{transform:translateX(-100%);transition:transform .3s}nav.open{transform:translateX(0)}main{margin-left:0;padding:28px 14px 80px}}
+</style>
+</head>
+<body>
+<button class="mob" onclick="document.querySelector('nav').classList.toggle('open')">☰</button>
+<nav>
+<div class="nb">Applied Statistics<br>Interactive Lab<small>Series IV · Inference & Testing</small></div>
+<a href="#lab1">1 — Hypothesis Testing Engine</a>
+<a href="#lab2">2 — Power & Sample Size</a>
+<a href="#lab3">3 — p-Value Misconceptions</a>
+<a href="#lab4">4 — ROC Curve Builder</a>
+<a href="#lab5">5 — Chi-Squared Goodness of Fit</a>
+<a href="#lab6">6 — ANOVA Visualizer</a>
+<a href="#lab7">7 — Kaplan-Meier Survival</a>
+<a href="#lab8">8 — EM Algorithm</a>
+<a href="#lab9">9 — MCMC Metropolis Sampler</a>
+<a href="#lab10">10 — Birthday Problem</a>
+<a href="#lab11">11 — Monty Hall Simulator</a>
+<a href="#lab12">12 — Copulas & Dependence</a>
+</nav>
+<main>
+<div class="hero"><h1>Applied <span>Statistics</span> Lab</h1><div class="sub">12 Interactive Simulations on Inference, Testing & Famous Problems</div></div>
+
+<!-- ═══ LAB 1: HYPOTHESIS TESTING ═══ -->
+<div class="lab" id="lab1">
+<div class="lh"><div class="ln">1</div><h2>Hypothesis Testing Engine<small>Type I error, Type II error, and the rejection region — all visible at once</small></h2></div>
+<p>A hypothesis test compares a null hypothesis H₀: μ=μ₀ against an alternative H₁: μ=μ₁. The <strong>significance level α</strong> sets the false positive rate (Type I error). The <strong>power = 1−β</strong> is the probability of correctly detecting a true effect. This visualization shows <strong>both distributions simultaneously</strong>, with the rejection region, α area, and β area all shaded.</p>
+<div class="panel"><span class="tag">Dual Distribution</span>
+<div class="ctrls">
+  <div class="cg"><label>μ₀</label><input type="range" id="ht-m0" min="-2" max="2" step=".25" value="0"><span class="v" id="ht-m0-v">0.0</span></div>
+  <div class="cg"><label>μ₁</label><input type="range" id="ht-m1" min="-1" max="4" step=".25" value="1.5"><span class="v" id="ht-m1-v">1.5</span></div>
+  <div class="cg"><label>σ/√n</label><input type="range" id="ht-se" min=".3" max="2" step=".1" value="1"><span class="v" id="ht-se-v">1.0</span></div>
+  <div class="cg"><label>α</label><input type="range" id="ht-a" min=".005" max=".20" step=".005" value=".05"><span class="v" id="ht-a-v">0.05</span></div>
+</div>
+<div id="ht-chart"></div>
+<div class="stats" id="ht-stats"></div>
+</div>
+<div class="insight"><div class="il">The Tradeoff</div>Reducing α (fewer false positives) always increases β (more false negatives) unless you increase sample size. The only way to simultaneously lower both is to <strong>collect more data</strong> — reducing σ/√n.</div>
+</div>
+
+<!-- ═══ LAB 2: POWER ═══ -->
+<div class="lab" id="lab2">
+<div class="lh"><div class="ln">2</div><h2>Power & Sample Size Calculator<small>How many subjects do you need to detect an effect?</small></h2></div>
+<p>Statistical <strong>power</strong> is the probability of rejecting H₀ when it's actually false. It depends on effect size, sample size, α, and variability. This power curve shows how power grows with n — and where it crosses common thresholds like 80% and 90%.</p>
+<div class="panel"><span class="tag">Power Curve</span>
+<div class="ctrls">
+  <div class="cg"><label>Effect d</label><input type="range" id="pw-d" min=".1" max="1.5" step=".05" value=".5"><span class="v" id="pw-d-v">0.50</span></div>
+  <div class="cg"><label>α</label><input type="range" id="pw-a" min=".01" max=".10" step=".005" value=".05"><span class="v" id="pw-a-v">0.05</span></div>
+</div>
+<div id="pw-chart"></div>
+<div class="stats" id="pw-stats"></div>
+</div>
+</div>
+
+<!-- ═══ LAB 3: P-VALUE ═══ -->
+<div class="lab" id="lab3">
+<div class="lh"><div class="ln">3</div><h2>p-Value Misconceptions<small>What the p-value is — and what it absolutely is not</small></h2></div>
+<p>The p-value is the probability of observing a test statistic <strong>at least as extreme</strong> as the one computed, <em>assuming H₀ is true</em>. It is <strong>NOT</strong> the probability that H₀ is true. This simulator generates thousands of experiments under both true and false nulls to show the <strong>distribution of p-values</strong> in each scenario.</p>
+<div class="panel"><span class="tag">p-Value Distribution</span>
+<div class="ctrls">
+  <div class="cg"><label>True effect</label><input type="range" id="pv-eff" min="0" max="2" step=".1" value="0"><span class="v" id="pv-eff-v">0.0</span></div>
+  <div class="cg"><label>n per study</label><input type="range" id="pv-n" min="5" max="100" step="5" value="20"><span class="v" id="pv-n-v">20</span></div>
+  <button class="btn" id="pv-run">▶ Run 5000 Studies</button>
+</div>
+<div id="pv-chart"></div>
+<div class="stats" id="pv-stats"></div>
+</div>
+<div class="insight"><div class="il">Key Insight</div>When H₀ is true (effect = 0), p-values are <strong>uniformly distributed</strong> on [0,1] — exactly 5% fall below 0.05 by design. When a real effect exists, p-values pile up near zero. This is why a single p-value tells you very little without context.</div>
+</div>
+
+<!-- ═══ LAB 4: ROC CURVE ═══ -->
+<div class="lab" id="lab4">
+<div class="lh"><div class="ln">4</div><h2>ROC Curve Builder<small>Sensitivity vs. specificity tradeoff for diagnostic classification</small></h2></div>
+<p>The ROC (Receiver Operating Characteristic) curve plots <strong>sensitivity vs. (1−specificity)</strong> as the diagnostic threshold varies. The <strong>AUC</strong> (area under the curve) summarizes discriminative ability: 0.5 = useless, 1.0 = perfect. Adjust the overlap between healthy and diseased populations to see how separation drives AUC.</p>
+<div class="panel"><span class="tag">Clinical Diagnostics</span>
+<div class="ctrls">
+  <div class="cg"><label>μ₁−μ₀ (separation)</label><input type="range" id="roc-sep" min="0" max="4" step=".25" value="1.5"><span class="v" id="roc-sep-v">1.5</span></div>
+  <div class="cg"><label>σ (diseased)</label><input type="range" id="roc-sd" min=".5" max="2.5" step=".25" value="1.2"><span class="v" id="roc-sd-v">1.2</span></div>
+</div>
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+  <div style="flex:1;min-width:340px" id="roc-dists"></div>
+  <div style="flex:1;min-width:340px" id="roc-curve"></div>
+</div>
+<div class="stats" id="roc-stats"></div>
+</div>
+</div>
+
+<!-- ═══ LAB 5: CHI-SQUARED ═══ -->
+<div class="lab" id="lab5">
+<div class="lh"><div class="ln">5</div><h2>Chi-Squared Goodness of Fit<small>Does the observed data match the expected distribution?</small></h2></div>
+<p>The χ² test compares observed frequencies O to expected frequencies E: χ² = Σ(O−E)²/E. Under H₀, this follows a chi-squared distribution with k−1 degrees of freedom. <strong>Click categories to modify observed counts</strong> and watch the test statistic change.</p>
+<div class="panel"><span class="tag">Interactive Test</span>
+<div class="ctrls">
+  <div class="cg"><label>Scenario</label><select class="sel" id="chi-sc"><option value="fair">Fair die (uniform)</option><option value="loaded">Loaded die</option><option value="genetic">Genetic ratio 9:3:3:1</option></select></div>
+  <button class="btn" id="chi-roll">▶ Roll 120 Times</button>
+  <button class="btn b2" id="chi-reset">Reset</button>
+</div>
+<div id="chi-chart"></div>
+<div class="stats" id="chi-stats"></div>
+</div>
+</div>
+
+<!-- ═══ LAB 6: ANOVA ═══ -->
+<div class="lab" id="lab6">
+<div class="lh"><div class="ln">6</div><h2>One-Way ANOVA Visualizer<small>Decomposing variance into between-group and within-group components</small></h2></div>
+<p>ANOVA tests whether group means differ by comparing the <strong>between-group variance</strong> (signal) to the <strong>within-group variance</strong> (noise). The F-statistic = MS_between / MS_within. If groups are truly different, F is large. <strong>Drag group means apart</strong> to watch F grow and the p-value shrink.</p>
+<div class="panel"><span class="tag">Variance Decomposition</span>
+<div class="ctrls">
+  <div class="cg"><label>μ₁</label><input type="range" id="av-m1" min="-3" max="3" step=".25" value="0"><span class="v" id="av-m1-v">0.0</span></div>
+  <div class="cg"><label>μ₂</label><input type="range" id="av-m2" min="-3" max="3" step=".25" value="0"><span class="v" id="av-m2-v">0.0</span></div>
+  <div class="cg"><label>μ₃</label><input type="range" id="av-m3" min="-3" max="3" step=".25" value="0"><span class="v" id="av-m3-v">0.0</span></div>
+  <div class="cg"><label>σ within</label><input type="range" id="av-sw" min=".5" max="3" step=".25" value="1"><span class="v" id="av-sw-v">1.0</span></div>
+  <div class="cg"><label>n/group</label><input type="range" id="av-n" min="5" max="40" step="5" value="15"><span class="v" id="av-n-v">15</span></div>
+  <button class="btn" id="av-run">▶ Simulate</button>
+</div>
+<div id="av-chart"></div>
+<div class="stats" id="av-stats"></div>
+</div>
+</div>
+
+<!-- ═══ LAB 7: KAPLAN-MEIER ═══ -->
+<div class="lab" id="lab7">
+<div class="lh"><div class="ln">7</div><h2>Kaplan-Meier Survival Estimator<small>Estimating survival probability with censored data</small></h2></div>
+<p>The Kaplan-Meier estimator handles <strong>censored observations</strong> — patients lost to follow-up who haven't yet experienced the event. The step function drops at each event time, while censored observations are marked but don't cause drops. Compare treatment vs. control groups visually.</p>
+<div class="panel"><span class="tag">Survival Analysis</span>
+<div class="ctrls">
+  <div class="cg"><label>n/group</label><input type="range" id="km-n" min="10" max="60" step="5" value="30"><span class="v" id="km-n-v">30</span></div>
+  <div class="cg"><label>λ control</label><input type="range" id="km-l0" min=".05" max=".3" step=".01" value=".15"><span class="v" id="km-l0-v">0.15</span></div>
+  <div class="cg"><label>λ treatment</label><input type="range" id="km-l1" min=".02" max=".3" step=".01" value=".08"><span class="v" id="km-l1-v">0.08</span></div>
+  <div class="cg"><label>Censoring</label><input type="range" id="km-c" min="0" max=".5" step=".05" value=".2"><span class="v" id="km-c-v">20%</span></div>
+  <button class="btn" id="km-run">▶ Simulate Trial</button>
+</div>
+<div id="km-chart"></div>
+<div class="stats" id="km-stats"></div>
+</div>
+</div>
+
+<!-- ═══ LAB 8: EM ALGORITHM ═══ -->
+<div class="lab" id="lab8">
+<div class="lh"><div class="ln">8</div><h2>EM Algorithm<small>Watch Expectation-Maximization separate a Gaussian mixture step by step</small></h2></div>
+<p>The EM algorithm iterates between <strong>E-step</strong> (assign soft cluster memberships given current parameters) and <strong>M-step</strong> (re-estimate parameters given memberships). It provably increases the likelihood at every iteration. <strong>Step through each iteration</strong> to watch the component means and variances converge.</p>
+<div class="panel"><span class="tag">Step-by-Step</span>
+<div class="ctrls">
+  <button class="btn" id="em-init">Initialize</button>
+  <button class="btn b3" id="em-step">▶ E-step + M-step</button>
+  <button class="btn b4" id="em-auto">Auto (20 steps)</button>
+  <button class="btn b2" id="em-reset">Reset</button>
+  <span class="v" id="em-iter" style="color:var(--green)">Iteration: 0</span>
+</div>
+<div id="em-chart"></div>
+<div class="stats" id="em-stats"></div>
+</div>
+</div>
+
+<!-- ═══ LAB 9: MCMC ═══ -->
+<div class="lab" id="lab9">
+<div class="lh"><div class="ln">9</div><h2>MCMC Metropolis-Hastings Sampler<small>Random walk that converges to any target distribution</small></h2></div>
+<p>Metropolis-Hastings generates a Markov chain whose stationary distribution equals the target. At each step: propose x' from a symmetric proposal, accept with probability min(1, f(x')/f(x)). The chain explores the target density — <strong>watch the histogram fill in the target shape</strong>.</p>
+<div class="panel"><span class="tag">MCMC Trace</span>
+<div class="ctrls">
+  <div class="cg"><label>Target</label><select class="sel" id="mh-tgt"><option value="bimodal">Bimodal mixture</option><option value="skewed">Gamma(3,1)</option><option value="banana">Banana-shaped</option></select></div>
+  <div class="cg"><label>σ proposal</label><input type="range" id="mh-sp" min=".2" max="5" step=".2" value="1"><span class="v" id="mh-sp-v">1.0</span></div>
+  <button class="btn" id="mh-run">▶ Run 5000 Steps</button>
+  <button class="btn b2" id="mh-reset">Reset</button>
+</div>
+<div id="mh-chart"></div>
+<div class="stats" id="mh-stats"></div>
+</div>
+<div class="insight"><div class="il">Proposal Width Matters</div>Too small σ → high acceptance but slow exploration (random walk). Too large → many rejections, chain gets stuck. The optimal acceptance rate for a random-walk Metropolis is roughly <strong>23%</strong> (Roberts et al. 1997).</div>
+</div>
+
+<!-- ═══ LAB 10: BIRTHDAY ═══ -->
+<div class="lab" id="lab10">
+<div class="lh"><div class="ln">10</div><h2>Birthday Problem<small>Why 23 people give you a 50% chance of a shared birthday</small></h2></div>
+<p>In a room of n people, the probability of <strong>at least one shared birthday</strong> is P = 1 − 365!/((365−n)!·365ⁿ). Human intuition dramatically underestimates this because we think about specific pairs, not all possible pairs. With 23 people there are C(23,2) = 253 pairs — and 50% of the time, at least one pair matches.</p>
+<div class="panel"><span class="tag">Probability Calculator</span>
+<div class="ctrls">
+  <div class="cg"><label>People</label><input type="range" id="bd-n" min="2" max="80" step="1" value="23"><span class="v" id="bd-n-v">23</span></div>
+  <button class="btn" id="bd-sim">▶ Simulate 10,000 Rooms</button>
+</div>
+<div id="bd-chart"></div>
+<div class="stats" id="bd-stats"></div>
+</div>
+</div>
+
+<!-- ═══ LAB 11: MONTY HALL ═══ -->
+<div class="lab" id="lab11">
+<div class="lh"><div class="ln">11</div><h2>Monty Hall Simulator<small>Should you switch? Simulate 10,000 games and see.</small></h2></div>
+<p>Behind three doors: one car, two goats. You pick a door. Monty (who knows what's behind them) opens a goat door. Should you <strong>switch</strong>? Intuition says 50/50, but switching wins <strong>2/3 of the time</strong>. Your initial pick had 1/3 probability; the remaining 2/3 collapses onto the other unopened door.</p>
+<div class="panel"><span class="tag">Mass Simulation</span>
+<div class="ctrls">
+  <button class="btn" id="mh2-run">▶ Play 10,000 Games</button>
+  <button class="btn b2" id="mh2-reset">Reset</button>
+</div>
+<div id="mh2-chart"></div>
+<div class="stats" id="mh2-stats"></div>
+</div>
+</div>
+
+<!-- ═══ LAB 12: COPULAS ═══ -->
+<div class="lab" id="lab12">
+<div class="lh"><div class="ln">12</div><h2>Copulas & Dependence<small>Beyond correlation — how variables can be dependent without being linearly related</small></h2></div>
+<p>A <strong>copula</strong> separates the marginal distributions from the dependence structure. Two variables can have identical marginals and identical correlation but vastly different joint behavior — especially in the tails. The <strong>Gaussian copula</strong> has symmetric tail dependence (none), while the <strong>Clayton copula</strong> concentrates dependence in the lower tail (joint crashes).</p>
+<div class="panel"><span class="tag">Joint Scatter</span>
+<div class="ctrls">
+  <div class="cg"><label>Copula</label><select class="sel" id="cop-type"><option value="gaussian">Gaussian</option><option value="clayton">Clayton (lower tail)</option><option value="gumbel">Gumbel (upper tail)</option><option value="independent">Independent</option></select></div>
+  <div class="cg"><label>θ (dependence)</label><input type="range" id="cop-th" min=".1" max="5" step=".1" value="2"><span class="v" id="cop-th-v">2.0</span></div>
+  <button class="btn" id="cop-run">▶ Generate 1000</button>
+</div>
+<div id="cop-chart"></div>
+<div class="stats" id="cop-stats"></div>
+</div>
+<div class="insight"><div class="il">Why Copulas Matter</div>The 2008 financial crisis was partly blamed on overreliance on the Gaussian copula for pricing CDOs — it dramatically underestimated the probability of <strong>joint defaults</strong> (lower tail dependence). Clayton or Student-t copulas would have warned of much higher systemic risk.</div>
+</div>
+
+</main>
+<script>
+// ═════════════════════════════════════
+// UTILITIES
+// ═════════════════════════════════════
+const W=860,H=340,M_={top:18,right:28,bottom:38,left:50},iW_=W-M_.left-M_.right,iH_=H-M_.top-M_.bottom;
+const nP=(x,m,s)=>(1/(s*Math.sqrt(2*Math.PI)))*Math.exp(-.5*((x-m)/s)**2);
+const rN=()=>{let u,v,s;do{u=2*Math.random()-1;v=2*Math.random()-1;s=u*u+v*v}while(s>=1||s===0);return u*Math.sqrt(-2*Math.log(s)/s)};
+const rE=l=>-Math.log(1-Math.random())/l;
+const erf_=x=>{const a1=.254829592,a2=-.284496736,a3=1.421413741,a4=-1.453152027,a5=1.061405429,p=.3275911;const s=x<0?-1:1;x=Math.abs(x);const t=1/(1+p*x);return s*(1-(((((a5*t+a4)*t)+a3)*t+a2)*t+a1)*t*Math.exp(-x*x))};
+const NC=x=>.5*(1+erf_(x/Math.sqrt(2)));
+const NQ=p=>{// Rational approx of inverse normal
+  if(p<=0)return-Infinity;if(p>=1)return Infinity;
+  let t=p<.5?Math.sqrt(-2*Math.log(p)):Math.sqrt(-2*Math.log(1-p));
+  let q=t-(2.515517+.802853*t+.010328*t*t)/(1+1.432788*t+.189269*t*t+.001308*t*t*t);
+  return p<.5?-q:q;
+};
+const lnG=x=>{if(x<=0)return 0;const c=[76.18009172947146,-86.50532032941677,24.01409824083091,-1.231739572450155,.1208650973866179e-2,-.5395239384953e-5];let y=x,t=x+5.5;t-=(x+.5)*Math.log(t);let s=1.000000000190015;for(let j=0;j<6;j++)s+=c[j]/++y;return-t+Math.log(2.5066282746310005*s/x)};
+const gFn=x=>Math.exp(lnG(x));
+const rG=(a,b)=>{if(a<1){return rG(a+1,b)*Math.pow(Math.random(),1/a)}let d=a-1/3,c=1/Math.sqrt(9*d),x,v;do{do{x=rN();v=1+c*x}while(v<=0);v=v*v*v;const u=Math.random();if(u<1-.0331*(x*x)*(x*x))return d*v/b;if(Math.log(u)<.5*x*x+d*(1-v+Math.log(v)))return d*v/b}while(true)};
+function mk(sel,w=W,h=H,m=M_){d3.select(sel).selectAll('svg').remove();const svg=d3.select(sel).append('svg').attr('viewBox',`0 0 ${w} ${h}`).attr('width','100%').style('max-height',h+'px');return{svg,g:svg.append('g').attr('transform',`translate(${m.left},${m.top})`),iw:w-m.left-m.right,ih:h-m.top-m.bottom}}
+
+// ═════ LAB 1: HYPOTHESIS TESTING ═════
+(function(){
+  function render(){
+    const m0=+document.getElementById('ht-m0').value,m1=+document.getElementById('ht-m1').value,se=+document.getElementById('ht-se').value,alpha=+document.getElementById('ht-a').value;
+    ['ht-m0','ht-m1','ht-se','ht-a'].forEach(id=>{const e=document.getElementById(id);document.getElementById(id+'-v').textContent=(+e.value).toFixed(id==='ht-a'?3:1)});
+    const crit=m0+NQ(1-alpha)*se;
+    const power=1-NC((crit-m1)/se);
+    const{g,iw,ih}=mk('#ht-chart');
+    const lo=Math.min(m0,m1)-4*se,hi=Math.max(m0,m1)+4*se;
+    const x=d3.scaleLinear().domain([lo,hi]).range([0,iw]);
+    const yMax=nP(m0,m0,se)*1.1;
+    const y=d3.scaleLinear().domain([0,yMax]).range([ih,0]);
+    g.append('g').attr('class','grid').call(d3.axisLeft(y).ticks(5).tickSize(-iw).tickFormat(''));
+    const line=d3.line().x(d=>x(d.x)).y(d=>y(d.y)).curve(d3.curveBasis);
+    const area=d3.area().x(d=>x(d.x)).y0(ih).y1(d=>y(d.y)).curve(d3.curveBasis);
+    // H0 distribution
+    const d0=[],d1=[];for(let xx=lo;xx<=hi;xx+=(hi-lo)/400){d0.push({x:xx,y:nP(xx,m0,se)});d1.push({x:xx,y:nP(xx,m1,se)})}
+    // Alpha region (right tail of H0 beyond crit)
+    const alphaData=d0.filter(d=>d.x>=crit);
+    g.append('path').datum(alphaData).attr('d',area).attr('fill','rgba(248,113,113,.25)');
+    // Beta region (left tail of H1 below crit)
+    const betaData=d1.filter(d=>d.x<=crit);
+    g.append('path').datum(betaData).attr('d',area).attr('fill','rgba(251,191,36,.15)');
+    // Power region
+    const powerData=d1.filter(d=>d.x>=crit);
+    g.append('path').datum(powerData).attr('d',area).attr('fill','rgba(52,211,153,.12)');
+    // Curves
+    g.append('path').datum(d0).attr('d',line).attr('fill','none').attr('stroke','#60a5fa').attr('stroke-width',2.5);
+    g.append('path').datum(d1).attr('d',line).attr('fill','none').attr('stroke','#a78bfa').attr('stroke-width',2.5);
+    // Critical line
+    g.append('line').attr('x1',x(crit)).attr('x2',x(crit)).attr('y1',0).attr('y2',ih).attr('stroke','#f87171').attr('stroke-width',2).attr('stroke-dasharray','5,3');
+    g.append('text').attr('x',x(crit)+4).attr('y',12).text(`crit = ${crit.toFixed(2)}`).attr('fill','#f87171').attr('font-size',10);
+    g.append('g').attr('class','axis').attr('transform',`translate(0,${ih})`).call(d3.axisBottom(x).ticks(8));
+    g.append('g').attr('class','axis').call(d3.axisLeft(y).ticks(5).tickFormat(d3.format('.3f')));
+    g.append('text').attr('x',x(m0)).attr('y',y(nP(m0,m0,se))-8).text('H₀').attr('fill','#60a5fa').attr('font-size',12).attr('text-anchor','middle').attr('font-weight',700);
+    g.append('text').attr('x',x(m1)).attr('y',y(nP(m1,m1,se))-8).text('H₁').attr('fill','#a78bfa').attr('font-size',12).attr('text-anchor','middle').attr('font-weight',700);
+    document.getElementById('ht-stats').innerHTML=`<div class="si r">α (Type I): <span>${(alpha*100).toFixed(1)}%</span></div><div class="si o">β (Type II): <span>${((1-power)*100).toFixed(1)}%</span></div><div class="si g">Power (1−β): <span>${(power*100).toFixed(1)}%</span></div><div class="si">Effect size: <span>${((m1-m0)/se).toFixed(2)}σ</span></div>`;
+  }
+  ['ht-m0','ht-m1','ht-se','ht-a'].forEach(id=>document.getElementById(id).oninput=render);render();
+})();
+
+// ═════ LAB 2: POWER CURVE ═════
+(function(){
+  function render(){
+    const d=+document.getElementById('pw-d').value,alpha=+document.getElementById('pw-a').value;
+    document.getElementById('pw-d-v').textContent=d.toFixed(2);document.getElementById('pw-a-v').textContent=alpha.toFixed(3);
+    const za=NQ(1-alpha);
+    const{g,iw,ih}=mk('#pw-chart');
+    const x=d3.scaleLinear().domain([5,200]).range([0,iw]);
+    const y=d3.scaleLinear().domain([0,1]).range([ih,0]);
+    g.append('g').attr('class','grid').call(d3.axisLeft(y).ticks(5).tickSize(-iw).tickFormat(''));
+    const data=[];let n80=null,n90=null;
+    for(let n=5;n<=200;n++){const power=1-NC(za-d*Math.sqrt(n));data.push({x:n,y:power});if(!n80&&power>=.8)n80=n;if(!n90&&power>=.9)n90=n;}
+    g.append('path').datum(data).attr('d',d3.area().x(d=>x(d.x)).y0(ih).y1(d=>y(d.y)).curve(d3.curveBasis)).attr('fill','rgba(251,191,36,.08)');
+    g.append('path').datum(data).attr('d',d3.line().x(d=>x(d.x)).y(d=>y(d.y)).curve(d3.curveBasis)).attr('fill','none').attr('stroke','#fbbf24').attr('stroke-width',2.5);
+    [.8,.9].forEach(t=>{g.append('line').attr('x1',0).attr('x2',iw).attr('y1',y(t)).attr('y2',y(t)).attr('stroke',t===.8?'#34d399':'#f472b6').attr('stroke-width',1).attr('stroke-dasharray','4,3');g.append('text').attr('x',iw-4).attr('y',y(t)-4).text(`${t*100}%`).attr('fill',t===.8?'#34d399':'#f472b6').attr('font-size',10).attr('text-anchor','end')});
+    if(n80){g.append('line').attr('x1',x(n80)).attr('x2',x(n80)).attr('y1',0).attr('y2',ih).attr('stroke','#34d399').attr('stroke-width',1).attr('stroke-dasharray','3,3')}
+    g.append('g').attr('class','axis').attr('transform',`translate(0,${ih})`).call(d3.axisBottom(x).ticks(10));
+    g.append('g').attr('class','axis').call(d3.axisLeft(y).ticks(5).tickFormat(d3.format('.0%')));
+    g.append('text').attr('x',iw/2).attr('y',ih+32).text('Sample size (n)').attr('fill','var(--muted)').attr('font-size',11).attr('text-anchor','middle');
+    document.getElementById('pw-stats').innerHTML=`<div class="si g">n for 80% power: <span>${n80||'>200'}</span></div><div class="si pk">n for 90% power: <span>${n90||'>200'}</span></div><div class="si">Effect size d: <span>${d.toFixed(2)}</span></div>`;
+  }
+  ['pw-d','pw-a'].forEach(id=>document.getElementById(id).oninput=render);render();
+})();
+
+// ═════ LAB 3: P-VALUE ═════
+(function(){
+  document.getElementById('pv-run').onclick=()=>{
+    const eff=+document.getElementById('pv-eff').value,n=+document.getElementById('pv-n').value;
+    document.getElementById('pv-eff-v').textContent=eff.toFixed(1);document.getElementById('pv-n-v').textContent=n;
+    const pvals=[];
+    for(let i=0;i<5000;i++){let s=0;for(let j=0;j<n;j++)s+=rN()+eff;const xbar=s/n;const z=xbar/(1/Math.sqrt(n));const p=2*(1-NC(Math.abs(z)));pvals.push(p)}
+    const{g,iw,ih}=mk('#pv-chart');
+    const bins=d3.bin().thresholds(40).domain([0,1])(pvals);
+    const x=d3.scaleLinear().domain([0,1]).range([0,iw]);
+    const y=d3.scaleLinear().domain([0,d3.max(bins,b=>b.length)*1.15]).range([ih,0]);
+    g.append('g').attr('class','grid').call(d3.axisLeft(y).ticks(5).tickSize(-iw).tickFormat(''));
+    bins.forEach(b=>{const inAlpha=b.x0<.05;g.append('rect').attr('x',x(b.x0)+1).attr('y',y(b.length)).attr('width',Math.max(1,x(b.x1)-x(b.x0)-2)).attr('height',ih-y(b.length)).attr('fill',inAlpha?'#f87171':'#60a5fa').attr('opacity',.7).attr('rx',1)});
+    g.append('line').attr('x1',x(.05)).attr('x2',x(.05)).attr('y1',0).attr('y2',ih).attr('stroke','#f87171').attr('stroke-width',2).attr('stroke-dasharray','5,3');
+    g.append('text').attr('x',x(.05)+4).attr('y',12).text('α = 0.05').attr('fill','#f87171').attr('font-size',10);
+    if(eff===0){const unifLine=5000/40;g.append('line').attr('x1',0).attr('x2',iw).attr('y1',y(unifLine)).attr('y2',y(unifLine)).attr('stroke','#34d399').attr('stroke-width',1.5).attr('stroke-dasharray','4,3');g.append('text').attr('x',iw-4).attr('y',y(unifLine)-4).text('Uniform (H₀ true)').attr('fill','#34d399').attr('font-size',10).attr('text-anchor','end')}
+    g.append('g').attr('class','axis').attr('transform',`translate(0,${ih})`).call(d3.axisBottom(x).ticks(10));
+    g.append('g').attr('class','axis').call(d3.axisLeft(y).ticks(5));
+    const sig=pvals.filter(p=>p<.05).length;
+    document.getElementById('pv-stats').innerHTML=`<div class="si r">p < 0.05: <span>${sig} / 5000 (${(sig/50).toFixed(1)}%)</span></div><div class="si">Median p: <span>${d3.median(pvals).toFixed(3)}</span></div><div class="si">${eff===0?'<span style="color:var(--green)">H₀ true → p should be Uniform</span>':'<span style="color:var(--orange)">H₁ true → p piles up near 0</span>'}</div>`;
+  };
+  document.getElementById('pv-run').click();
+})();
+
+// ═════ LAB 4: ROC ═════
+(function(){
+  function render(){
+    const sep=+document.getElementById('roc-sep').value,sd=+document.getElementById('roc-sd').value;
+    document.getElementById('roc-sep-v').textContent=sep.toFixed(2);document.getElementById('roc-sd-v').textContent=sd.toFixed(2);
+    const m={top:18,right:16,bottom:34,left:44};
+    // Left: Two distributions
+    const{g:gL,iw:lw,ih:lh}=mk('#roc-dists',420,300,m);
+    const lo=-4,hi_=sep+4*sd;
+    const x1=d3.scaleLinear().domain([lo,hi_]).range([0,lw]);
+    const d0=[],d1=[];for(let xx=lo;xx<=hi_;xx+=.03){d0.push({x:xx,y:nP(xx,0,1)});d1.push({x:xx,y:nP(xx,sep,sd)})}
+    const yMax=Math.max(d3.max(d0,d=>d.y),d3.max(d1,d=>d.y));
+    const y1=d3.scaleLinear().domain([0,yMax*1.1]).range([lh,0]);
+    gL.append('g').attr('class','grid').call(d3.axisLeft(y1).ticks(4).tickSize(-lw).tickFormat(''));
+    const line=d3.line().x(d=>x1(d.x)).y(d=>y1(d.y)).curve(d3.curveBasis);
+    gL.append('path').datum(d0).attr('d',d3.area().x(d=>x1(d.x)).y0(lh).y1(d=>y1(d.y)).curve(d3.curveBasis)).attr('fill','rgba(96,165,250,.12)');
+    gL.append('path').datum(d0).attr('d',line).attr('fill','none').attr('stroke','#60a5fa').attr('stroke-width',2);
+    gL.append('path').datum(d1).attr('d',d3.area().x(d=>x1(d.x)).y0(lh).y1(d=>y1(d.y)).curve(d3.curveBasis)).attr('fill','rgba(248,113,113,.1)');
+    gL.append('path').datum(d1).attr('d',line).attr('fill','none').attr('stroke','#f87171').attr('stroke-width',2);
+    gL.append('g').attr('class','axis').attr('transform',`translate(0,${lh})`).call(d3.axisBottom(x1).ticks(6));
+    gL.append('g').attr('class','axis').call(d3.axisLeft(y1).ticks(4).tickFormat(d3.format('.2f')));
+    gL.append('text').attr('x',x1(0)).attr('y',12).text('Healthy').attr('fill','#60a5fa').attr('font-size',10).attr('text-anchor','middle');
+    gL.append('text').attr('x',x1(sep)).attr('y',12).text('Diseased').attr('fill','#f87171').attr('font-size',10).attr('text-anchor','middle');
+    // Right: ROC curve
+    const{g:gR,iw:rw,ih:rh}=mk('#roc-curve',420,300,m);
+    const rocData=[];let auc=0;
+    for(let t=-5;t<=10;t+=.05){const sens=1-NC((t-sep)/sd);const spec=NC(t);const fpr=1-spec;rocData.push({x:fpr,y:sens})}
+    rocData.sort((a,b)=>a.x-b.x);
+    for(let i=1;i<rocData.length;i++)auc+=.5*(rocData[i].y+rocData[i-1].y)*(rocData[i].x-rocData[i-1].x);
+    const x2=d3.scaleLinear().domain([0,1]).range([0,rw]);
+    const y2=d3.scaleLinear().domain([0,1]).range([rh,0]);
+    gR.append('g').attr('class','grid').call(d3.axisLeft(y2).ticks(5).tickSize(-rw).tickFormat(''));
+    gR.append('line').attr('x1',0).attr('x2',rw).attr('y1',rh).attr('y2',0).attr('stroke','var(--faint)').attr('stroke-width',1).attr('stroke-dasharray','4,3');
+    gR.append('path').datum(rocData).attr('d',d3.area().x(d=>x2(d.x)).y0(rh).y1(d=>y2(d.y)).curve(d3.curveBasis)).attr('fill','rgba(251,191,36,.1)');
+    gR.append('path').datum(rocData).attr('d',d3.line().x(d=>x2(d.x)).y(d=>y2(d.y)).curve(d3.curveBasis)).attr('fill','none').attr('stroke','#fbbf24').attr('stroke-width',2.5);
+    gR.append('g').attr('class','axis').attr('transform',`translate(0,${rh})`).call(d3.axisBottom(x2).ticks(5).tickFormat(d3.format('.0%')));
+    gR.append('g').attr('class','axis').call(d3.axisLeft(y2).ticks(5).tickFormat(d3.format('.0%')));
+    gR.append('text').attr('x',rw/2).attr('y',rh+28).text('1 − Specificity (FPR)').attr('fill','var(--muted)').attr('font-size',10).attr('text-anchor','middle');
+    gR.append('text').attr('x',rw/2).attr('y',y2(.5)+4).text(`AUC = ${auc.toFixed(3)}`).attr('fill','#fbbf24').attr('font-size',13).attr('text-anchor','middle').attr('font-weight',600);
+    document.getElementById('roc-stats').innerHTML=`<div class="si">AUC: <span>${auc.toFixed(3)}</span></div><div class="si">${auc>.9?'<span style="color:var(--green)">Excellent discrimination</span>':auc>.7?'<span style="color:var(--yellow)">Acceptable discrimination</span>':'<span style="color:var(--red)">Poor discrimination</span>'}</div><div class="si p">d\' = <span>${(sep/Math.sqrt((1+sd*sd)/2)).toFixed(2)}</span></div>`;
+  }
+  ['roc-sep','roc-sd'].forEach(id=>document.getElementById(id).oninput=render);render();
+})();
+
+// ═════ LAB 5: CHI-SQUARED ═════
+(function(){
+  let observed;
+  function roll(){
+    const sc=document.getElementById('chi-sc').value;
+    let probs,labels;
+    if(sc==='fair'){probs=[1/6,1/6,1/6,1/6,1/6,1/6];labels=['1','2','3','4','5','6']}
+    else if(sc==='loaded'){probs=[.1,.1,.1,.1,.1,.5];labels=['1','2','3','4','5','6']}
+    else{probs=[9/16,3/16,3/16,1/16];labels=['AB','Ab','aB','ab']}
+    const n=120;observed=new Array(probs.length).fill(0);
+    for(let i=0;i<n;i++){const u=Math.random();let c=0;for(let j=0;j<probs.length;j++){c+=probs[j];if(u<=c){observed[j]++;break}}}
+    render(probs,labels,n);
+  }
+  function render(probs,labels,n){
+    const expected=probs.map(p=>p*n);
+    const chi2=observed.reduce((s,o,i)=>s+(o-expected[i])**2/expected[i],0);
+    const df=probs.length-1;
+    // Approximate p-value from chi-squared
+    const pval=1-gammaInc(df/2,chi2/2);
+    const{g,iw,ih}=mk('#chi-chart');
+    const x=d3.scaleBand().domain(labels).range([0,iw]).padding(.25);
+    const yMax=Math.max(d3.max(observed),d3.max(expected))*1.2;
+    const y=d3.scaleLinear().domain([0,yMax]).range([ih,0]);
+    g.append('g').attr('class','grid').call(d3.axisLeft(y).ticks(5).tickSize(-iw).tickFormat(''));
+    labels.forEach((l,i)=>{
+      g.append('rect').attr('x',x(l)).attr('y',y(observed[i])).attr('width',x.bandwidth()/2).attr('height',ih-y(observed[i])).attr('fill','#60a5fa').attr('rx',2).attr('opacity',.8);
+      g.append('rect').attr('x',x(l)+x.bandwidth()/2).attr('y',y(expected[i])).attr('width',x.bandwidth()/2).attr('height',ih-y(expected[i])).attr('fill','#fb923c').attr('rx',2).attr('opacity',.6);
+    });
+    g.append('g').attr('class','axis').attr('transform',`translate(0,${ih})`).call(d3.axisBottom(x));
+    g.append('g').attr('class','axis').call(d3.axisLeft(y).ticks(5));
+    g.append('text').attr('x',iw-4).attr('y',14).text('■ Observed  ■ Expected').attr('fill','var(--muted)').attr('font-size',10).attr('text-anchor','end');
+    document.getElementById('chi-stats').innerHTML=`<div class="si">χ²: <span>${chi2.toFixed(2)}</span></div><div class="si p">df: <span>${df}</span></div><div class="si ${pval<.05?'r':'g'}">p-value: <span>${pval.toFixed(4)}</span></div><div class="si">${pval<.05?'<span style="color:var(--red)">Reject H₀ at α=0.05</span>':'<span style="color:var(--green)">Fail to reject H₀</span>'}</div>`;
+  }
+  // Regularized incomplete gamma (simple series approx)
+  function gammaInc(a,x){if(x<0)return 0;let sum=1/a,term=1/a;for(let n=1;n<200;n++){term*=x/(a+n);sum+=term;if(Math.abs(term)<1e-12)break}return sum*Math.exp(-x+a*Math.log(x)-lnG(a))}
+  document.getElementById('chi-roll').onclick=roll;
+  document.getElementById('chi-reset').onclick=()=>{d3.select('#chi-chart').selectAll('svg').remove();document.getElementById('chi-stats').innerHTML=''};
+  roll();
+})();
+
+// ═════ LAB 6: ANOVA ═════
+(function(){
+  document.getElementById('av-run').onclick=()=>{
+    const mus=[+document.getElementById('av-m1').value,+document.getElementById('av-m2').value,+document.getElementById('av-m3').value];
+    const sw=+document.getElementById('av-sw').value,n=+document.getElementById('av-n').value;
+    ['av-m1','av-m2','av-m3','av-sw','av-n'].forEach(id=>document.getElementById(id+'-v').textContent=(+document.getElementById(id).value).toFixed(id==='av-n'?0:1));
+    const groups=mus.map(mu=>Array.from({length:n},()=>rN()*sw+mu));
+    const allData=groups.flat();
+    const grandMean=d3.mean(allData);
+    const groupMeans=groups.map(g=>d3.mean(g));
+    const SSB=n*groupMeans.reduce((s,m)=>s+(m-grandMean)**2,0);
+    const SSW=groups.reduce((s,g,i)=>s+g.reduce((ss,x)=>ss+(x-groupMeans[i])**2,0),0);
+    const k=3,dfB=k-1,dfW=k*n-k;
+    const F=(SSB/dfB)/(SSW/dfW);
+    const{g:gC,iw,ih}=mk('#av-chart');
+    const colors=['#60a5fa','#a78bfa','#34d399'];
+    const lo=d3.min(allData)-1,hi_=d3.max(allData)+1;
+    const x=d3.scaleLinear().domain([lo,hi_]).range([0,iw]);
+    const y=d3.scaleBand().domain(['Group 1','Group 2','Group 3']).range([0,ih]).padding(.3);
+    gC.append('g').attr('class','axis').attr('transform',`translate(0,${ih})`).call(d3.axisBottom(x).ticks(8));
+    // Grand mean
+    gC.append('line').attr('x1',x(grandMean)).attr('x2',x(grandMean)).attr('y1',0).attr('y2',ih).attr('stroke','#fbbf24').attr('stroke-width',2).attr('stroke-dasharray','5,3');
+    groups.forEach((grp,i)=>{
+      const yy=y('Group '+(i+1))+y.bandwidth()/2;
+      grp.forEach(d=>{gC.append('circle').attr('cx',x(d)).attr('cy',yy+(Math.random()-.5)*y.bandwidth()*.6).attr('r',3).attr('fill',colors[i]).attr('opacity',.5)});
+      gC.append('line').attr('x1',x(groupMeans[i])).attr('x2',x(groupMeans[i])).attr('y1',y('Group '+(i+1))).attr('y2',y('Group '+(i+1))+y.bandwidth()).attr('stroke',colors[i]).attr('stroke-width',3);
+      gC.append('text').attr('x',4).attr('y',yy+4).text('G'+(i+1)+': μ̂='+groupMeans[i].toFixed(2)).attr('fill',colors[i]).attr('font-size',10);
+    });
+    // p-value approx (F distribution CDF using incomplete beta)
+    const pval=1-betaI(dfB/2,dfW/2,dfB*F/(dfB*F+dfW));
+    document.getElementById('av-stats').innerHTML=`<div class="si">F(${dfB},${dfW}): <span>${F.toFixed(2)}</span></div><div class="si o">SS Between: <span>${SSB.toFixed(1)}</span></div><div class="si c">SS Within: <span>${SSW.toFixed(1)}</span></div><div class="si ${pval<.05?'r':'g'}">p: <span>≈${pval.toFixed(4)}</span></div><div class="si">η²: <span>${(SSB/(SSB+SSW)).toFixed(3)}</span></div>`;
+  };
+  function betaI(a,b,x){if(x<=0)return 0;if(x>=1)return 1;let sum=0,term=1;for(let n=0;n<200;n++){if(n>0)term*=(n-1-b+1)*x/n;const t2=term*Math.pow(x,a)/(a+n);sum+=t2;if(Math.abs(t2)<1e-12)break}return sum*Math.exp(a*Math.log(x)+lnG(a+b)-lnG(a)-lnG(b))/a*a}
+  document.getElementById('av-run').click();
+})();
+
+// ═════ LAB 7: KAPLAN-MEIER ═════
+(function(){
+  document.getElementById('km-run').onclick=()=>{
+    const n=+document.getElementById('km-n').value,l0=+document.getElementById('km-l0').value,l1=+document.getElementById('km-l1').value,cRate=+document.getElementById('km-c').value;
+    ['km-n','km-l0','km-l1'].forEach(id=>document.getElementById(id+'-v').textContent=(+document.getElementById(id).value).toFixed(2));
+    document.getElementById('km-c-v').textContent=Math.round(cRate*100)+'%';
+    const maxT=30;
+    function genGroup(lam){
+      const data=[];
+      for(let i=0;i<n;i++){const t=rE(lam);const cens=Math.random()<cRate;const ct=rE(lam*.3);data.push({time:cens?Math.min(t,ct):t,event:cens?(t<=ct?1:0):1})}
+      return data.sort((a,b)=>a.time-b.time);
+    }
+    function kmCurve(data){
+      const curve=[{time:0,surv:1}];let nRisk=data.length,surv=1;
+      data.forEach(d=>{if(d.event){surv*=(nRisk-1)/nRisk;curve.push({time:d.time,surv})}nRisk--});
+      curve.push({time:maxT,surv});return curve;
+    }
+    const ctrl=genGroup(l0),trt=genGroup(l1);
+    const km0=kmCurve(ctrl),km1=kmCurve(trt);
+    const{g,iw,ih}=mk('#km-chart');
+    const x=d3.scaleLinear().domain([0,maxT]).range([0,iw]);
+    const y=d3.scaleLinear().domain([0,1.05]).range([ih,0]);
+    g.append('g').attr('class','grid').call(d3.axisLeft(y).ticks(5).tickSize(-iw).tickFormat(''));
+    function drawStep(data,color){
+      const line=d3.line().x(d=>x(d.time)).y(d=>y(d.surv)).curve(d3.curveStepAfter);
+      g.append('path').datum(data).attr('d',line).attr('fill','none').attr('stroke',color).attr('stroke-width',2.5);
+    }
+    drawStep(km0,'#f87171');drawStep(km1,'#34d399');
+    // Censoring marks
+    ctrl.filter(d=>!d.event).forEach(d=>{g.append('line').attr('x1',x(d.time)).attr('x2',x(d.time)).attr('y1',y(km0.filter(k=>k.time<=d.time).pop().surv)-4).attr('y2',y(km0.filter(k=>k.time<=d.time).pop().surv)+4).attr('stroke','#f87171').attr('stroke-width',1.5)});
+    trt.filter(d=>!d.event).forEach(d=>{g.append('line').attr('x1',x(d.time)).attr('x2',x(d.time)).attr('y1',y(km1.filter(k=>k.time<=d.time).pop().surv)-4).attr('y2',y(km1.filter(k=>k.time<=d.time).pop().surv)+4).attr('stroke','#34d399').attr('stroke-width',1.5)});
+    g.append('g').attr('class','axis').attr('transform',`translate(0,${ih})`).call(d3.axisBottom(x).ticks(8));
+    g.append('g').attr('class','axis').call(d3.axisLeft(y).ticks(5).tickFormat(d3.format('.0%')));
+    g.append('text').attr('x',iw-4).attr('y',14).text('— Treatment').attr('fill','#34d399').attr('font-size',10).attr('text-anchor','end');
+    g.append('text').attr('x',iw-4).attr('y',28).text('— Control').attr('fill','#f87171').attr('font-size',10).attr('text-anchor','end');
+    g.append('text').attr('x',iw/2).attr('y',ih+32).text('Time').attr('fill','var(--muted)').attr('font-size',11).attr('text-anchor','middle');
+    const medCtrl=km0.find(d=>d.surv<=.5),medTrt=km1.find(d=>d.surv<=.5);
+    document.getElementById('km-stats').innerHTML=`<div class="si r">Control median: <span>${medCtrl?medCtrl.time.toFixed(1):'not reached'}</span></div><div class="si g">Treatment median: <span>${medTrt?medTrt.time.toFixed(1):'not reached'}</span></div><div class="si">Hazard ratio: <span>≈${(l1/l0).toFixed(2)}</span></div><div class="si">| = censored</div>`;
+  };
+  document.getElementById('km-run').click();
+})();
+
+// ═════ LAB 8: EM ALGORITHM ═════
+(function(){
+  let data=[],iter=0,params;
+  function init(){
+    data=[];for(let i=0;i<150;i++)data.push(Math.random()<.4?rN()*.7-2:rN()*1+2.5);
+    params={mu:[d3.min(data),d3.max(data)],sig:[1,1],w:[.5,.5]};
+    iter=0;document.getElementById('em-iter').textContent='Iteration: 0';renderEM();
+  }
+  function step(){
+    // E-step: compute responsibilities
+    const resp=data.map(x=>{
+      const p0=params.w[0]*nP(x,params.mu[0],params.sig[0]);
+      const p1=params.w[1]*nP(x,params.mu[1],params.sig[1]);
+      return p0/(p0+p1);
+    });
+    // M-step
+    const n0=resp.reduce((a,r)=>a+r,0),n1=data.length-n0;
+    params.w=[n0/data.length,n1/data.length];
+    params.mu[0]=resp.reduce((a,r,i)=>a+r*data[i],0)/n0;
+    params.mu[1]=resp.reduce((a,r,i)=>a+(1-r)*data[i],0)/n1;
+    params.sig[0]=Math.sqrt(resp.reduce((a,r,i)=>a+r*(data[i]-params.mu[0])**2,0)/n0);
+    params.sig[1]=Math.sqrt(resp.reduce((a,r,i)=>a+(1-r)*(data[i]-params.mu[1])**2,0)/n1);
+    iter++;document.getElementById('em-iter').textContent='Iteration: '+iter;
+    renderEM();
+  }
+  function renderEM(){
+    const{g,iw,ih}=mk('#em-chart');
+    const lo=d3.min(data)-2,hi_=d3.max(data)+2;
+    const x=d3.scaleLinear().domain([lo,hi_]).range([0,iw]);
+    const bins=d3.bin().thresholds(30).domain([lo,hi_])(data);
+    const bw=bins[0]?bins[0].x1-bins[0].x0:.3;
+    const yMax=d3.max(bins,b=>b.length/(data.length*bw))*1.2;
+    const y=d3.scaleLinear().domain([0,yMax]).range([ih,0]);
+    g.append('g').attr('class','grid').call(d3.axisLeft(y).ticks(5).tickSize(-iw).tickFormat(''));
+    bins.forEach(b=>{g.append('rect').attr('x',x(b.x0)+1).attr('y',y(b.length/(data.length*bw))).attr('width',Math.max(1,x(b.x1)-x(b.x0)-2)).attr('height',ih-y(b.length/(data.length*bw))).attr('fill','#475569').attr('opacity',.5).attr('rx',1)});
+    const line=d3.line().x(d=>x(d.x)).y(d=>y(d.y)).curve(d3.curveBasis);
+    const colors=['#60a5fa','#f472b6'];
+    const mixData=[];
+    params.mu.forEach((mu,k)=>{
+      const cData=[];for(let xx=lo;xx<=hi_;xx+=(hi_-lo)/300)cData.push({x:xx,y:params.w[k]*nP(xx,mu,params.sig[k])});
+      g.append('path').datum(cData).attr('d',line).attr('fill','none').attr('stroke',colors[k]).attr('stroke-width',2).attr('stroke-dasharray','5,3');
+      if(mixData.length===0)cData.forEach((d,i)=>mixData.push({x:d.x,y:d.y}));
+      else cData.forEach((d,i)=>mixData[i].y+=d.y);
+    });
+    g.append('path').datum(mixData).attr('d',line).attr('fill','none').attr('stroke','#fbbf24').attr('stroke-width',2.5);
+    g.append('g').attr('class','axis').attr('transform',`translate(0,${ih})`).call(d3.axisBottom(x).ticks(8));
+    g.append('g').attr('class','axis').call(d3.axisLeft(y).ticks(5).tickFormat(d3.format('.2f')));
+    document.getElementById('em-stats').innerHTML=`<div class="si">μ₁: <span>${params.mu[0].toFixed(3)}</span></div><div class="si pk">μ₂: <span>${params.mu[1].toFixed(3)}</span></div><div class="si">σ₁: <span>${params.sig[0].toFixed(3)}</span></div><div class="si pk">σ₂: <span>${params.sig[1].toFixed(3)}</span></div><div class="si o">w₁: <span>${params.w[0].toFixed(3)}</span></div>`;
+  }
+  document.getElementById('em-init').onclick=init;
+  document.getElementById('em-step').onclick=()=>{if(data.length)step()};
+  document.getElementById('em-auto').onclick=()=>{if(!data.length)init();for(let i=0;i<20;i++)step()};
+  document.getElementById('em-reset').onclick=()=>{data=[];d3.select('#em-chart').selectAll('svg').remove();document.getElementById('em-stats').innerHTML='';document.getElementById('em-iter').textContent='Iteration: 0'};
+  init();
+})();
+
+// ═════ LAB 9: MCMC ═════
+(function(){
+  document.getElementById('mh-run').onclick=()=>{
+    const tgt=document.getElementById('mh-tgt').value,sp=+document.getElementById('mh-sp').value;
+    document.getElementById('mh-sp-v').textContent=sp.toFixed(1);
+    let logTarget;
+    if(tgt==='bimodal')logTarget=x=>Math.log(.4*nP(x,-2,.8)+.6*nP(x,2,1));
+    else if(tgt==='skewed')logTarget=x=>x>0?(2*Math.log(x)-x):(-1e10);
+    else logTarget=x=>-0.5*(x*x/4+4/(1+x*x));
+    let chain=[0],accepted=0;
+    for(let i=0;i<5000;i++){
+      const curr=chain[chain.length-1];
+      const prop=curr+rN()*sp;
+      const logA=logTarget(prop)-logTarget(curr);
+      if(Math.log(Math.random())<logA){chain.push(prop);accepted++}else chain.push(curr);
+    }
+    const{g,iw,ih}=mk('#mh-chart',W,400);
+    const ih2=400-M_.top-M_.bottom;
+    // Top: trace plot
+    const traceH=ih2*.35;
+    const xT=d3.scaleLinear().domain([0,chain.length]).range([0,iw]);
+    const yExt=[d3.min(chain),d3.max(chain)];
+    const yT=d3.scaleLinear().domain(yExt).range([traceH,0]);
+    const traceLine=d3.line().x((_,i)=>xT(i)).y(d=>yT(d));
+    g.append('path').datum(chain).attr('d',traceLine).attr('fill','none').attr('stroke','#60a5fa').attr('stroke-width',.5).attr('opacity',.6);
+    g.append('g').attr('class','axis').attr('transform',`translate(0,${traceH})`).call(d3.axisBottom(xT).ticks(6));
+    g.append('text').attr('x',4).attr('y',10).text('Trace plot').attr('fill','var(--muted)').attr('font-size',10);
+    // Bottom: histogram + target
+    const histTop=traceH+40;
+    const histH=ih2-histTop;
+    const gH=g.append('g').attr('transform',`translate(0,${histTop})`);
+    const burnin=chain.slice(500);
+    const bins=d3.bin().thresholds(50)(burnin);
+    const bw_=bins[0]?bins[0].x1-bins[0].x0:.2;
+    const xH=d3.scaleLinear().domain([yExt[0]-.5,yExt[1]+.5]).range([0,iw]);
+    const yMaxH=d3.max(bins,b=>b.length/(burnin.length*bw_));
+    const yH=d3.scaleLinear().domain([0,yMaxH*1.2]).range([histH,0]);
+    bins.forEach(b=>{gH.append('rect').attr('x',xH(b.x0)+1).attr('y',yH(b.length/(burnin.length*bw_))).attr('width',Math.max(1,xH(b.x1)-xH(b.x0)-2)).attr('height',histH-yH(b.length/(burnin.length*bw_))).attr('fill','#60a5fa').attr('opacity',.5).attr('rx',1)});
+    // Target overlay
+    const tData=[];for(let xx=yExt[0]-.5;xx<=yExt[1]+.5;xx+=(yExt[1]-yExt[0]+1)/200){const v=Math.exp(logTarget(xx));tData.push({x:xx,y:v})}
+    const tMax=d3.max(tData,d=>d.y);tData.forEach(d=>d.y=d.y/tMax*yMaxH);
+    gH.append('path').datum(tData).attr('d',d3.line().x(d=>xH(d.x)).y(d=>yH(d.y)).curve(d3.curveBasis)).attr('fill','none').attr('stroke','#f472b6').attr('stroke-width',2);
+    gH.append('g').attr('class','axis').attr('transform',`translate(0,${histH})`).call(d3.axisBottom(xH).ticks(8));
+    const rate=accepted/5000;
+    document.getElementById('mh-stats').innerHTML=`<div class="si">Acceptance rate: <span>${(rate*100).toFixed(1)}%</span></div><div class="si">${rate>.15&&rate<.35?'<span style="color:var(--green)">Good (near optimal 23%)</span>':rate<.15?'<span style="color:var(--red)">Too low — σ too large</span>':'<span style="color:var(--orange)">High — σ might be too small</span>'}</div><div class="si">Burn-in: <span>500</span></div>`;
+  };
+  document.getElementById('mh-run').click();
+  document.getElementById('mh-reset').onclick=()=>{d3.select('#mh-chart').selectAll('svg').remove();document.getElementById('mh-stats').innerHTML=''};
+})();
+
+// ═════ LAB 10: BIRTHDAY ═════
+(function(){
+  function render(){
+    const nPeople=+document.getElementById('bd-n').value;document.getElementById('bd-n-v').textContent=nPeople;
+    const{g,iw,ih}=mk('#bd-chart');
+    const x=d3.scaleLinear().domain([2,80]).range([0,iw]);
+    const y=d3.scaleLinear().domain([0,1]).range([ih,0]);
+    g.append('g').attr('class','grid').call(d3.axisLeft(y).ticks(5).tickSize(-iw).tickFormat(''));
+    const data=[];for(let n=2;n<=80;n++){let p=1;for(let i=0;i<n;i++)p*=(365-i)/365;data.push({x:n,y:1-p})}
+    g.append('path').datum(data).attr('d',d3.area().x(d=>x(d.x)).y0(ih).y1(d=>y(d.y)).curve(d3.curveBasis)).attr('fill','rgba(251,191,36,.08)');
+    g.append('path').datum(data).attr('d',d3.line().x(d=>x(d.x)).y(d=>y(d.y)).curve(d3.curveBasis)).attr('fill','none').attr('stroke','#fbbf24').attr('stroke-width',2.5);
+    // Current marker
+    const pNow=data.find(d=>d.x===nPeople);
+    if(pNow){g.append('circle').attr('cx',x(pNow.x)).attr('cy',y(pNow.y)).attr('r',6).attr('fill','#fbbf24').attr('stroke','#fff').attr('stroke-width',2);
+    g.append('line').attr('x1',x(pNow.x)).attr('x2',x(pNow.x)).attr('y1',y(pNow.y)).attr('y2',ih).attr('stroke','#fbbf24').attr('stroke-width',1).attr('stroke-dasharray','3,3')}
+    g.append('line').attr('x1',0).attr('x2',iw).attr('y1',y(.5)).attr('y2',y(.5)).attr('stroke','#f472b6').attr('stroke-width',1).attr('stroke-dasharray','4,3');
+    g.append('text').attr('x',iw-4).attr('y',y(.5)-4).text('50%').attr('fill','#f472b6').attr('font-size',10).attr('text-anchor','end');
+    g.append('g').attr('class','axis').attr('transform',`translate(0,${ih})`).call(d3.axisBottom(x).ticks(10));
+    g.append('g').attr('class','axis').call(d3.axisLeft(y).ticks(5).tickFormat(d3.format('.0%')));
+    g.append('text').attr('x',iw/2).attr('y',ih+32).text('Number of people').attr('fill','var(--muted)').attr('font-size',11).attr('text-anchor','middle');
+    const pairs=nPeople*(nPeople-1)/2;
+    document.getElementById('bd-stats').innerHTML=`<div class="si">P(match) with ${nPeople} people: <span>${pNow?(pNow.y*100).toFixed(1)+'%':'—'}</span></div><div class="si p">Pairs: <span>C(${nPeople},2) = ${pairs}</span></div><div class="si">50% threshold: <span>23 people</span></div><div class="si o">99% threshold: <span>57 people</span></div>`;
+  }
+  document.getElementById('bd-n').oninput=render;
+  document.getElementById('bd-sim').onclick=()=>{
+    const nPeople=+document.getElementById('bd-n').value;let matches=0;
+    for(let trial=0;trial<10000;trial++){const bdays=new Set();let found=false;for(let i=0;i<nPeople;i++){const b=Math.floor(Math.random()*365);if(bdays.has(b)){found=true;break}bdays.add(b)}if(found)matches++}
+    const existing=document.getElementById('bd-stats').innerHTML;
+    document.getElementById('bd-stats').innerHTML=existing+`<div class="si g">Simulation: <span>${matches}/10000 = ${(matches/100).toFixed(1)}%</span></div>`;
+  };
+  render();
+})();
+
+// ═════ LAB 11: MONTY HALL ═════
+(function(){
+  document.getElementById('mh2-run').onclick=()=>{
+    let switchWins=0,stayWins=0;
+    for(let i=0;i<10000;i++){
+      const car=Math.floor(Math.random()*3);
+      const pick=Math.floor(Math.random()*3);
+      if(pick===car)stayWins++;else switchWins++;
+    }
+    const{g,iw,ih}=mk('#mh2-chart',W,260);
+    const ih2=260-M_.top-M_.bottom;
+    const x=d3.scaleBand().domain(['Stay','Switch']).range([iw*.2,iw*.8]).padding(.35);
+    const y=d3.scaleLinear().domain([0,10000]).range([ih2,0]);
+    g.append('g').attr('class','grid').call(d3.axisLeft(y).ticks(5).tickSize(-iw).tickFormat(''));
+    g.append('rect').attr('x',x('Stay')).attr('y',y(stayWins)).attr('width',x.bandwidth()).attr('height',ih2-y(stayWins)).attr('fill','#f87171').attr('rx',4);
+    g.append('rect').attr('x',x('Switch')).attr('y',y(switchWins)).attr('width',x.bandwidth()).attr('height',ih2-y(switchWins)).attr('fill','#34d399').attr('rx',4);
+    g.append('text').attr('x',x('Stay')+x.bandwidth()/2).attr('y',y(stayWins)-8).text(`${stayWins} (${(stayWins/100).toFixed(1)}%)`).attr('fill','#f87171').attr('font-size',12).attr('text-anchor','middle').attr('font-weight',600);
+    g.append('text').attr('x',x('Switch')+x.bandwidth()/2).attr('y',y(switchWins)-8).text(`${switchWins} (${(switchWins/100).toFixed(1)}%)`).attr('fill','#34d399').attr('font-size',12).attr('text-anchor','middle').attr('font-weight',600);
+    g.append('g').attr('class','axis').attr('transform',`translate(0,${ih2})`).call(d3.axisBottom(x));
+    g.append('g').attr('class','axis').call(d3.axisLeft(y).ticks(5));
+    // Theory lines
+    [10000/3,20000/3].forEach((v,i)=>{g.append('line').attr('x1',0).attr('x2',iw).attr('y1',y(v)).attr('y2',y(v)).attr('stroke','#fbbf24').attr('stroke-width',1).attr('stroke-dasharray','4,3')});
+    document.getElementById('mh2-stats').innerHTML=`<div class="si r">Stay wins: <span>${(stayWins/100).toFixed(1)}%</span> (theory: 33.3%)</div><div class="si g">Switch wins: <span>${(switchWins/100).toFixed(1)}%</span> (theory: 66.7%)</div><div class="si">Verdict: <span style="color:var(--green);font-weight:700">ALWAYS SWITCH!</span></div>`;
+  };
+  document.getElementById('mh2-run').click();
+})();
+
+// ═════ LAB 12: COPULAS ═════
+(function(){
+  document.getElementById('cop-run').onclick=()=>{
+    const type=document.getElementById('cop-type').value,th=+document.getElementById('cop-th').value;
+    document.getElementById('cop-th-v').textContent=th.toFixed(1);
+    const n=1000,pts=[];
+    if(type==='gaussian'){
+      const rho=Math.tanh(th/3);// map theta to correlation
+      for(let i=0;i<n;i++){const z1=rN(),z2=rN();const x=z1,y_=rho*z1+Math.sqrt(1-rho*rho)*z2;pts.push({x:NC(x),y:NC(y_)})}
+    }else if(type==='clayton'){
+      for(let i=0;i<n;i++){const u=Math.random(),w=Math.random();const v=Math.pow(u,(-th))*Math.pow(w,(-th/(1+th)))-u,v2=Math.pow(Math.max(v,0)+1,-1/th);pts.push({x:u,y:isFinite(v2)?Math.max(0,Math.min(1,v2)):Math.random()})}
+    }else if(type==='gumbel'){
+      // Approx Gumbel copula via Marshall-Olkin
+      for(let i=0;i<n;i++){const s=rG(1/th,1);const e1=rE(1),e2=rE(1);const u=Math.exp(-Math.pow(e1/s,1/th)),v=Math.exp(-Math.pow(e2/s,1/th));pts.push({x:u,y:v})}
+    }else{
+      for(let i=0;i<n;i++)pts.push({x:Math.random(),y:Math.random()});
+    }
+    const{g,iw,ih}=mk('#cop-chart',W,400);
+    const ih2=400-M_.top-M_.bottom;
+    const x=d3.scaleLinear().domain([0,1]).range([0,iw]);
+    const y=d3.scaleLinear().domain([0,1]).range([ih2,0]);
+    g.append('g').attr('class','grid').call(d3.axisLeft(y).ticks(5).tickSize(-iw).tickFormat(''));
+    pts.forEach(p=>{
+      const inLower=p.x<.2&&p.y<.2,inUpper=p.x>.8&&p.y>.8;
+      g.append('circle').attr('cx',x(p.x)).attr('cy',y(p.y)).attr('r',2)
+        .attr('fill',inLower?'#f87171':inUpper?'#34d399':'#60a5fa').attr('opacity',inLower||inUpper?.8:.35);
+    });
+    g.append('g').attr('class','axis').attr('transform',`translate(0,${ih2})`).call(d3.axisBottom(x).ticks(5));
+    g.append('g').attr('class','axis').call(d3.axisLeft(y).ticks(5));
+    g.append('text').attr('x',iw/2).attr('y',ih2+32).text('U₁').attr('fill','var(--muted)').attr('font-size',11).attr('text-anchor','middle');
+    // Tail dependence
+    const lowerTail=pts.filter(p=>p.x<.1&&p.y<.1).length/(pts.filter(p=>p.x<.1).length||1);
+    const upperTail=pts.filter(p=>p.x>.9&&p.y>.9).length/(pts.filter(p=>p.x>.9).length||1);
+    const labels={gaussian:'Symmetric — no tail dependence',clayton:'Lower tail dependence (joint crashes)',gumbel:'Upper tail dependence (joint booms)',independent:'No dependence'};
+    document.getElementById('cop-stats').innerHTML=`<div class="si">Type: <span>${type}</span></div><div class="si r">Lower tail dep.: <span>${(lowerTail*100).toFixed(1)}%</span></div><div class="si g">Upper tail dep.: <span>${(upperTail*100).toFixed(1)}%</span></div><div class="si o">${labels[type]}</div>`;
+  };
+  document.getElementById('cop-run').click();
+})();
+
+// NAV
+const secs=document.querySelectorAll('.lab');const nls=document.querySelectorAll('nav a');
+const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){nls.forEach(l=>l.classList.remove('active'));const l=document.querySelector(`nav a[href="#${e.target.id}"]`);if(l)l.classList.add('active')}})},{rootMargin:'-15% 0px -70% 0px'});
+secs.forEach(s=>obs.observe(s));
+</script>
+</body>
+</html>

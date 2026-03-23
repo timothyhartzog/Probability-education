@@ -326,6 +326,7 @@ body {
 .welcome .wcard:nth-child(1)::before { background: linear-gradient(90deg, var(--blue), var(--purple)); }
 .welcome .wcard:nth-child(2)::before { background: linear-gradient(90deg, var(--green), var(--cyan)); }
 .welcome .wcard:nth-child(3)::before { background: linear-gradient(90deg, var(--orange), var(--pink)); }
+.welcome .wcard:nth-child(4)::before { background: linear-gradient(90deg, var(--yellow), var(--red)); }
 .welcome .wcard:hover {
   border-color: var(--border2);
   transform: translateY(-2px);
@@ -432,6 +433,11 @@ body {
     <button class="series-tab" data-series="2">
       <span class="tab-icon">⚙</span>
       Methods & Estimation
+      <span class="tab-count">12 labs</span>
+    </button>
+    <button class="series-tab" data-series="3">
+      <span class="tab-icon">🧪</span>
+      Applied Statistics
       <span class="tab-count">12 labs</span>
     </button>
   </div>
@@ -616,6 +622,45 @@ body {
     <a data-series="2" data-hash="lab12" data-search="sufficient statistics fisher neyman factorization sample mean likelihood">
       <span class="num">12</span> Sufficient Statistics <span class="lab-type interactive">demo</span>
     </a>
+
+    <!-- SERIES IV -->
+    <div class="section-label" data-series="3">Series IV — Applied Statistics & Testing</div>
+    <a data-series="3" data-hash="lab1" data-search="hypothesis testing type I type II error rejection region alpha beta">
+      <span class="num">1</span> Hypothesis Testing <span class="lab-type interactive">demo</span>
+    </a>
+    <a data-series="3" data-hash="lab2" data-search="power analysis sample size effect size calculation">
+      <span class="num">2</span> Power & Sample Size <span class="lab-type interactive">demo</span>
+    </a>
+    <a data-series="3" data-hash="lab3" data-search="p-value misconceptions distribution uniform null alternative">
+      <span class="num">3</span> p-Value Misconceptions <span class="lab-type animated">anim</span>
+    </a>
+    <a data-series="3" data-hash="lab4" data-search="roc curve auc sensitivity specificity diagnostic clinical">
+      <span class="num">4</span> ROC Curve Builder <span class="lab-type interactive">demo</span>
+    </a>
+    <a data-series="3" data-hash="lab5" data-search="chi-squared goodness of fit expected observed frequencies">
+      <span class="num">5</span> Chi-Squared Test <span class="lab-type interactive">demo</span>
+    </a>
+    <a data-series="3" data-hash="lab6" data-search="anova f-test between within variance groups means">
+      <span class="num">6</span> ANOVA Visualizer <span class="lab-type animated">anim</span>
+    </a>
+    <a data-series="3" data-hash="lab7" data-search="kaplan meier survival analysis censoring hazard treatment">
+      <span class="num">7</span> Kaplan-Meier Survival <span class="lab-type animated">anim</span>
+    </a>
+    <a data-series="3" data-hash="lab8" data-search="em algorithm expectation maximization gaussian mixture clustering">
+      <span class="num">8</span> EM Algorithm <span class="lab-type animated">anim</span>
+    </a>
+    <a data-series="3" data-hash="lab9" data-search="mcmc metropolis hastings markov chain monte carlo sampling posterior">
+      <span class="num">9</span> MCMC Sampler <span class="lab-type animated">anim</span>
+    </a>
+    <a data-series="3" data-hash="lab10" data-search="birthday problem paradox probability pairs combinatorics">
+      <span class="num">10</span> Birthday Problem <span class="lab-type interactive">demo</span>
+    </a>
+    <a data-series="3" data-hash="lab11" data-search="monty hall problem doors switch stay goat car">
+      <span class="num">11</span> Monty Hall Simulator <span class="lab-type animated">anim</span>
+    </a>
+    <a data-series="3" data-hash="lab12" data-search="copulas dependence structure tail gaussian clayton gumbel joint risk">
+      <span class="num">12</span> Copulas & Dependence <span class="lab-type interactive">demo</span>
+    </a>
   </div>
 
   <!-- CONTENT -->
@@ -623,7 +668,7 @@ body {
     <!-- Welcome screen -->
     <div class="welcome" id="welcome">
       <h2>Interactive <span>Probability</span><br>Distributions</h2>
-      <div class="sub">36 interactive D3.js visualizations, 18 textbook chapters, and a complete reference — unified in a single learning environment.</div>
+      <div class="sub">48 interactive D3.js visualizations, 18 textbook chapters, and a complete reference — unified in a single learning environment.</div>
       <div class="cards">
         <div class="wcard" data-open="0">
           <div class="wc-series">Series I</div>
@@ -643,6 +688,12 @@ body {
           <p>MLE, KDE, rejection sampling, bootstrap, bivariate normal, Markov chains, entropy, tail analysis, and sufficient statistics.</p>
           <div class="wc-count">12 interactive labs</div>
         </div>
+        <div class="wcard" data-open="3">
+          <div class="wc-series">Series IV</div>
+          <h3>Applied Statistics</h3>
+          <p>Hypothesis testing, power analysis, ROC curves, ANOVA, Kaplan-Meier survival, EM algorithm, MCMC, and famous probability puzzles.</p>
+          <div class="wc-count">12 interactive labs</div>
+        </div>
       </div>
     </div>
 
@@ -650,6 +701,7 @@ body {
     <iframe id="frame-0" data-src="Probability_Distributions_Interactive_Textbook.html"></iframe>
     <iframe id="frame-1" data-src="Advanced_Probability_Visualizations.html"></iframe>
     <iframe id="frame-2" data-src="Probability_Methods_Lab_SeriesIII.html"></iframe>
+    <iframe id="frame-3" data-src="Applied_Statistics_Lab_SeriesIV.html"></iframe>
   </div>
 </div>
 
@@ -657,7 +709,7 @@ body {
 <div class="statusbar">
   <span class="dot"></span>
   <span>All systems active</span>
-  <span id="status-info">36 interactive visualizations · D3.js 7.8.5</span>
+  <span id="status-info">48 interactive visualizations · D3.js 7.8.5</span>
   <div class="right">
     <span id="status-series">Series I — Textbook</span>
     <span>Probability Distributions · 2026</span>
@@ -672,10 +724,11 @@ let activeSeries = -1; // -1 = welcome
 const frames = [
   document.getElementById('frame-0'),
   document.getElementById('frame-1'),
-  document.getElementById('frame-2')
+  document.getElementById('frame-2'),
+  document.getElementById('frame-3')
 ];
-const loaded = [false, false, false];
-const seriesNames = ['Series I — Textbook', 'Series II — Simulations', 'Series III — Methods'];
+const loaded = [false, false, false, false];
+const seriesNames = ['Series I — Textbook', 'Series II — Simulations', 'Series III — Methods', 'Series IV — Applied Statistics'];
 
 // ═══════════════════════════════════════════
 // LOAD FRAME
