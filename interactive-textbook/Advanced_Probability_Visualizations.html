@@ -135,9 +135,9 @@ canvas{border-radius:8px;display:block;margin:0 auto;}
 <div class="panel">
 <span class="tag">Animated Simulation</span>
 <div class="ctrls">
-  <div class="cg"><label>Rows</label><input type="range" id="g-rows" min="6" max="20" step="1" value="12"><span class="v" id="g-rows-v">12</span></div>
-  <div class="cg"><label>p</label><input type="range" id="g-p" min="0.1" max="0.9" step="0.05" value="0.5"><span class="v" id="g-p-v">0.50</span></div>
-  <div class="cg"><label>Speed</label><input type="range" id="g-speed" min="1" max="10" step="1" value="5"><span class="v" id="g-speed-v">5</span></div>
+  <div class="cg"><label data-tip="<b>Rows</b> — Number of peg rows in the Galton board. Each row is one Bernoulli trial. More rows = closer to Normal (CLT).">Rows</label><input type="range" id="g-rows" min="6" max="20" step="1" value="12"><span class="v" id="g-rows-v">12</span></div>
+  <div class="cg"><label data-tip="<b>p</b> — The <i>probability of success</i> on each trial. Must be between 0 and 1.">p</label><input type="range" id="g-p" min="0.1" max="0.9" step="0.05" value="0.5"><span class="v" id="g-p-v">0.50</span></div>
+  <div class="cg"><label data-tip="<b>Speed</b> — Animation speed. Higher = faster ball drops.">Speed</label><input type="range" id="g-speed" min="1" max="10" step="1" value="5"><span class="v" id="g-speed-v">5</span></div>
   <button class="btn" id="g-start">▶ Drop 200 Balls</button>
   <button class="btn btn2" id="g-reset">Reset</button>
 </div>
@@ -164,9 +164,9 @@ The Galton board demonstrates that the <strong>sum of many independent binary ch
 <div class="panel">
 <span class="tag">Live Simulation</span>
 <div class="ctrls">
-  <div class="cg"><label>True p</label><input type="range" id="b-true" min="0.05" max="0.95" step="0.05" value="0.7"><span class="v" id="b-true-v">0.70</span></div>
-  <div class="cg"><label>Prior α</label><input type="range" id="b-a" min="0.5" max="10" step="0.5" value="1"><span class="v" id="b-a-v">1.0</span></div>
-  <div class="cg"><label>Prior β</label><input type="range" id="b-b" min="0.5" max="10" step="0.5" value="1"><span class="v" id="b-b-v">1.0</span></div>
+  <div class="cg"><label data-tip="<b>True p</b> — The actual (hidden) probability of heads for this coin. The Bayesian posterior will converge to this value as data accumulates.">True p</label><input type="range" id="b-true" min="0.05" max="0.95" step="0.05" value="0.7"><span class="v" id="b-true-v">0.70</span></div>
+  <div class="cg"><label data-tip="<b>Prior α</b> — First parameter of the Beta prior. Think of it as &apos;pseudo-counts of prior heads&apos;. α=β=1 is a flat (uninformative) prior.">Prior α</label><input type="range" id="b-a" min="0.5" max="10" step="0.5" value="1"><span class="v" id="b-a-v">1.0</span></div>
+  <div class="cg"><label data-tip="<b>Prior β</b> — Second parameter of the Beta prior. Think of it as &apos;pseudo-counts of prior tails&apos;.">Prior β</label><input type="range" id="b-b" min="0.5" max="10" step="0.5" value="1"><span class="v" id="b-b-v">1.0</span></div>
   <button class="btn" id="b-flip1">Flip 1</button>
   <button class="btn" id="b-flip10">Flip 10</button>
   <button class="btn btn3" id="b-flip100">Flip 100</button>
@@ -195,7 +195,7 @@ The Galton board demonstrates that the <strong>sum of many independent binary ch
 <div class="panel">
 <span class="tag">Dual-View Simulation</span>
 <div class="ctrls">
-  <div class="cg"><label>λ (rate)</label><input type="range" id="pp-lam" min="0.5" max="8" step="0.5" value="3"><span class="v" id="pp-lam-v">3.0</span></div>
+  <div class="cg"><label data-tip="<b>λ (lambda)</b> — The <i>rate parameter</i>. Average number of events per unit time in a Poisson process.">λ (rate)</label><input type="range" id="pp-lam" min="0.5" max="8" step="0.5" value="3"><span class="v" id="pp-lam-v">3.0</span></div>
   <button class="btn" id="pp-run">▶ Simulate 60s</button>
   <button class="btn btn2" id="pp-reset">Reset</button>
 </div>
@@ -272,8 +272,8 @@ No matter how non-normal the source distribution — whether uniform, exponentia
 <div class="panel">
 <span class="tag">Visual Proof</span>
 <div class="ctrls">
-  <div class="cg"><label>λ</label><input type="range" id="ml-lam" min="0.2" max="3" step="0.1" value="1"><span class="v" id="ml-lam-v">1.0</span></div>
-  <div class="cg"><label>s (waited)</label><input type="range" id="ml-s" min="0.5" max="5" step="0.25" value="2"><span class="v" id="ml-s-v">2.0</span></div>
+  <div class="cg"><label data-tip="<b>λ (lambda)</b> — The <i>rate parameter</i>. For Poisson: average events per interval. For Exponential: events per unit time. Mean = 1/λ.">λ</label><input type="range" id="ml-lam" min="0.2" max="3" step="0.1" value="1"><span class="v" id="ml-lam-v">1.0</span></div>
+  <div class="cg"><label data-tip="<b>s</b> — Time already waited without an event. The memoryless property means this waiting time is &apos;forgotten&apos; — future survival probability is unchanged.">s (waited)</label><input type="range" id="ml-s" min="0.5" max="5" step="0.25" value="2"><span class="v" id="ml-s-v">2.0</span></div>
 </div>
 <div id="memoryless-chart"></div>
 <div class="stats" id="ml-stats"></div>
@@ -309,7 +309,7 @@ Toggle to a Weibull(k>1): the conditional survival curve shifts <em>below</em> t
       <option value="mixed">Contaminated Normal — outliers</option>
     </select>
   </div>
-  <div class="cg"><label>n</label><input type="range" id="qq-n" min="20" max="500" step="10" value="100"><span class="v" id="qq-n-v">100</span></div>
+  <div class="cg"><label data-tip="<b>n</b> — The <i>sample size</i>. Number of observations or trials. Larger n gives more precise estimates.">n</label><input type="range" id="qq-n" min="20" max="500" step="10" value="100"><span class="v" id="qq-n-v">100</span></div>
   <button class="btn" id="qq-gen">Generate</button>
 </div>
 <div id="qq-chart"></div>
@@ -331,8 +331,8 @@ Toggle to a Weibull(k>1): the conditional survival curve shifts <em>below</em> t
 <span class="tag">Convergence Demo</span>
 <div class="ctrls">
   <div class="cg"><label>P(a < X < b):</label></div>
-  <div class="cg"><label>a</label><input type="range" id="mc-a" min="-3" max="0" step="0.1" value="-1"><span class="v" id="mc-a-v">-1.0</span></div>
-  <div class="cg"><label>b</label><input type="range" id="mc-b" min="0" max="3" step="0.1" value="1"><span class="v" id="mc-b-v">1.0</span></div>
+  <div class="cg"><label data-tip="<b>a</b> — Lower bound of the interval or distribution support.">a</label><input type="range" id="mc-a" min="-3" max="0" step="0.1" value="-1"><span class="v" id="mc-a-v">-1.0</span></div>
+  <div class="cg"><label data-tip="<b>b</b> — Upper bound of the interval or distribution support.">b</label><input type="range" id="mc-b" min="0" max="3" step="0.1" value="1"><span class="v" id="mc-b-v">1.0</span></div>
   <button class="btn" id="mc-run">▶ Drop 2000 Points</button>
   <button class="btn btn2" id="mc-reset">Reset</button>
 </div>
@@ -382,7 +382,7 @@ Toggle to a Weibull(k>1): the conditional survival curve shifts <em>below</em> t
       <option value="bernoulli">Bernoulli(0.3) — μ=0.3</option>
     </select>
   </div>
-  <div class="cg"><label>Paths</label><input type="range" id="rw-paths" min="1" max="20" step="1" value="8"><span class="v" id="rw-paths-v">8</span></div>
+  <div class="cg"><label data-tip="<b>Paths</b> — Number of independent random walks to simulate simultaneously. All converge to μ by the Law of Large Numbers.">Paths</label><input type="range" id="rw-paths" min="1" max="20" step="1" value="8"><span class="v" id="rw-paths-v">8</span></div>
   <button class="btn" id="rw-run">▶ Simulate</button>
 </div>
 <div id="rw-chart"></div>
@@ -410,7 +410,7 @@ Toggle to a Weibull(k>1): the conditional survival curve shifts <em>below</em> t
       <option value="beta-uniform">Beta → Uniform (α,β→1)</option>
     </select>
   </div>
-  <div class="cg"><label>Morph</label><input type="range" id="morph-t" min="0" max="100" step="1" value="0"><span class="v" id="morph-t-v">0%</span></div>
+  <div class="cg"><label data-tip="<b>Morph</b> — Interpolation slider. 0% = starting distribution, 100% = limiting distribution. Watch the shape smoothly deform between them.">Morph</label><input type="range" id="morph-t" min="0" max="100" step="1" value="0"><span class="v" id="morph-t-v">0%</span></div>
 </div>
 <div id="morph-chart"></div>
 <div class="stats" id="morph-stats"></div>
@@ -1378,5 +1378,34 @@ const navLinks=document.querySelectorAll('nav a');
 const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){navLinks.forEach(l=>l.classList.remove('active'));const l=document.querySelector(`nav a[href="#${e.target.id}"]`);if(l)l.classList.add('active');}});},{rootMargin:'-15% 0px -70% 0px'});
 secs.forEach(s=>obs.observe(s));
 </script>
+<!-- TOOLTIP SYSTEM -->
+<div id="tip-box" style="display:none;position:fixed;z-index:9999;max-width:280px;padding:10px 14px;background:#1a2332;border:1px solid #334155;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.5);pointer-events:none;font-family:'IBM Plex Sans',sans-serif;font-size:12px;color:#e2e8f0;line-height:1.5;"></div>
+<style>
+[data-tip]{cursor:help;position:relative;border-bottom:1px dotted rgba(148,163,184,.3)}
+[data-tip]:hover{color:#60a5fa}
+#tip-box b{color:#60a5fa;font-weight:600}
+#tip-box i{color:#a78bfa;font-style:normal}
+</style>
+<script>
+(function(){
+  var box=document.getElementById('tip-box');
+  document.addEventListener('mouseover',function(e){
+    var el=e.target.closest('[data-tip]');
+    if(!el)return;
+    box.innerHTML=el.getAttribute('data-tip');
+    box.style.display='block';
+    var r=el.getBoundingClientRect();
+    var left=r.left,top=r.bottom+8;
+    if(left+290>window.innerWidth)left=window.innerWidth-300;
+    if(left<8)left=8;
+    if(top+box.offsetHeight>window.innerHeight)top=r.top-box.offsetHeight-8;
+    box.style.left=left+'px';box.style.top=top+'px';
+  });
+  document.addEventListener('mouseout',function(e){
+    if(e.target.closest('[data-tip]'))box.style.display='none';
+  });
+})();
+</script>
+
 </body>
 </html>

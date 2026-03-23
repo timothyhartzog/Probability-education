@@ -434,17 +434,17 @@ svg text { font-family: var(--mono); }
   <p style="font-size:13px;color:var(--text-dim);margin-bottom:16px;">Adjust prevalence, sensitivity, and specificity to see how positive predictive value (PPV) changes.</p>
   <div class="controls">
     <div class="control-group">
-      <label>Prevalence</label>
+      <label data-tip="<b>Prevalence</b> — The proportion of the population that actually has the disease. Low prevalence dramatically reduces positive predictive value.">Prevalence</label>
       <input type="range" id="bayes-prev" min="0.1" max="50" step="0.1" value="5">
       <span class="val" id="bayes-prev-val">5%</span>
     </div>
     <div class="control-group">
-      <label>Sensitivity</label>
+      <label data-tip="<b>Sensitivity</b> — P(test+ | disease+). The probability of a positive test given the patient truly has the disease. Also called the <i>true positive rate</i>.">Sensitivity</label>
       <input type="range" id="bayes-sens" min="50" max="100" step="1" value="95">
       <span class="val" id="bayes-sens-val">95%</span>
     </div>
     <div class="control-group">
-      <label>Specificity</label>
+      <label data-tip="<b>Specificity</b> — P(test− | disease−). The probability of a negative test given the patient is truly healthy. Also called the <i>true negative rate</i>.">Specificity</label>
       <input type="range" id="bayes-spec" min="50" max="100" step="1" value="90">
       <span class="val" id="bayes-spec-val">90%</span>
     </div>
@@ -489,12 +489,12 @@ svg text { font-family: var(--mono); }
   <h5>Binomial Distribution — PMF Explorer</h5>
   <div class="controls">
     <div class="control-group">
-      <label>n</label>
+      <label data-tip="<b>n</b> — The <i>sample size</i>. Number of observations or trials. Larger n gives more precise estimates.">n</label>
       <input type="range" id="binom-n" min="1" max="60" step="1" value="20">
       <span class="val" id="binom-n-val">20</span>
     </div>
     <div class="control-group">
-      <label>p</label>
+      <label data-tip="<b>p</b> — The <i>probability of success</i> on each trial. Must be between 0 and 1.">p</label>
       <input type="range" id="binom-p" min="0.01" max="0.99" step="0.01" value="0.5">
       <span class="val" id="binom-p-val">0.50</span>
     </div>
@@ -520,7 +520,7 @@ svg text { font-family: var(--mono); }
   <h5>Geometric Distribution — PMF Explorer</h5>
   <div class="controls">
     <div class="control-group">
-      <label>p</label>
+      <label data-tip="<b>p</b> — The <i>probability of success</i> on each trial. Must be between 0 and 1.">p</label>
       <input type="range" id="geom-p" min="0.05" max="0.95" step="0.01" value="0.3">
       <span class="val" id="geom-p-val">0.30</span>
     </div>
@@ -542,7 +542,7 @@ svg text { font-family: var(--mono); }
   <h5>Poisson Distribution — PMF Explorer</h5>
   <div class="controls">
     <div class="control-group">
-      <label>λ</label>
+      <label data-tip="<b>λ (lambda)</b> — The <i>rate parameter</i>. For Poisson: average events per interval. For Exponential: events per unit time. Mean = 1/λ.">λ</label>
       <input type="range" id="pois-lam" min="0.5" max="25" step="0.5" value="5">
       <span class="val" id="pois-lam-val">5.0</span>
     </div>
@@ -564,17 +564,17 @@ svg text { font-family: var(--mono); }
   <h5>Hypergeometric Distribution — PMF Explorer</h5>
   <div class="controls">
     <div class="control-group">
-      <label>N</label>
+      <label data-tip="<b>N</b> — The <i>population size</i>. Total number of items in the entire population before sampling.">N</label>
       <input type="range" id="hyp-N" min="10" max="100" step="1" value="50">
       <span class="val" id="hyp-N-val">50</span>
     </div>
     <div class="control-group">
-      <label>K</label>
+      <label data-tip="<b>K</b> — The number of <i>success items</i> in the population. The items you&apos;re looking for.">K</label>
       <input type="range" id="hyp-K" min="1" max="49" step="1" value="15">
       <span class="val" id="hyp-K-val">15</span>
     </div>
     <div class="control-group">
-      <label>n</label>
+      <label data-tip="<b>n</b> — The <i>sample size</i>. Number of observations or trials. Larger n gives more precise estimates.">n</label>
       <input type="range" id="hyp-n" min="1" max="49" step="1" value="10">
       <span class="val" id="hyp-n-val">10</span>
     </div>
@@ -606,12 +606,12 @@ svg text { font-family: var(--mono); }
   <h5>Continuous Uniform — PDF & CDF</h5>
   <div class="controls">
     <div class="control-group">
-      <label>a</label>
+      <label data-tip="<b>a</b> — Lower bound of the interval or distribution support.">a</label>
       <input type="range" id="unif-a" min="-5" max="4" step="0.5" value="0">
       <span class="val" id="unif-a-val">0.0</span>
     </div>
     <div class="control-group">
-      <label>b</label>
+      <label data-tip="<b>b</b> — Upper bound of the interval or distribution support.">b</label>
       <input type="range" id="unif-b" min="-4" max="10" step="0.5" value="5">
       <span class="val" id="unif-b-val">5.0</span>
     </div>
@@ -637,12 +637,12 @@ svg text { font-family: var(--mono); }
   <h5>Normal Distribution — PDF Explorer</h5>
   <div class="controls">
     <div class="control-group">
-      <label>μ</label>
+      <label data-tip="<b>μ (mu)</b> — The <i>mean</i> or expected value. The center of the distribution, where data clusters around.">μ</label>
       <input type="range" id="norm-mu" min="-5" max="5" step="0.1" value="0">
       <span class="val" id="norm-mu-val">0.0</span>
     </div>
     <div class="control-group">
-      <label>σ</label>
+      <label data-tip="<b>σ (sigma)</b> — The <i>standard deviation</i>. Measures how spread out values are from the mean. Larger σ = wider distribution.">σ</label>
       <input type="range" id="norm-sig" min="0.3" max="4" step="0.1" value="1">
       <span class="val" id="norm-sig-val">1.0</span>
     </div>
@@ -668,7 +668,7 @@ svg text { font-family: var(--mono); }
       </select>
     </div>
     <div class="control-group">
-      <label>n</label>
+      <label data-tip="<b>n</b> — The <i>sample size</i>. Number of observations or trials. Larger n gives more precise estimates.">n</label>
       <input type="range" id="clt-n" min="1" max="50" step="1" value="1">
       <span class="val" id="clt-n-val">1</span>
     </div>
@@ -695,12 +695,12 @@ svg text { font-family: var(--mono); }
   <h5>Exponential & Gamma — PDF Explorer</h5>
   <div class="controls">
     <div class="control-group">
-      <label>α</label>
+      <label data-tip="<b>α (alpha)</b> — The <i>significance level</i> in testing, or the <i>shape parameter</i> for Gamma/Beta distributions. In testing: the maximum false positive rate you&apos;ll tolerate (typically 0.05).">α</label>
       <input type="range" id="gamma-a" min="0.5" max="10" step="0.5" value="1">
       <span class="val" id="gamma-a-val">1.0</span>
     </div>
     <div class="control-group">
-      <label>β</label>
+      <label data-tip="<b>β (beta)</b> — The <i>rate parameter</i> for Gamma, or the <i>second shape parameter</i> for Beta distributions.">β</label>
       <input type="range" id="gamma-b" min="0.5" max="5" step="0.25" value="1">
       <span class="val" id="gamma-b-val">1.0</span>
     </div>
@@ -722,12 +722,12 @@ svg text { font-family: var(--mono); }
   <h5>Beta Distribution — PDF Explorer</h5>
   <div class="controls">
     <div class="control-group">
-      <label>α</label>
+      <label data-tip="<b>α (alpha)</b> — The <i>significance level</i> in testing, or the <i>shape parameter</i> for Gamma/Beta distributions. In testing: the maximum false positive rate you&apos;ll tolerate (typically 0.05).">α</label>
       <input type="range" id="beta-a" min="0.1" max="10" step="0.1" value="2">
       <span class="val" id="beta-a-val">2.0</span>
     </div>
     <div class="control-group">
-      <label>β</label>
+      <label data-tip="<b>β (beta)</b> — The <i>rate parameter</i> for Gamma, or the <i>second shape parameter</i> for Beta distributions.">β</label>
       <input type="range" id="beta-b" min="0.1" max="10" step="0.1" value="5">
       <span class="val" id="beta-b-val">5.0</span>
     </div>
@@ -749,12 +749,12 @@ svg text { font-family: var(--mono); }
   <h5>Weibull Distribution — PDF & Hazard Function</h5>
   <div class="controls">
     <div class="control-group">
-      <label>k</label>
+      <label data-tip="<b>k</b> — The <i>shape parameter</i> (Weibull) or the <i>rank</i> (order statistics). In Weibull: k&lt;1 = decreasing hazard, k=1 = constant, k&gt;1 = increasing hazard.">k</label>
       <input type="range" id="weib-k" min="0.3" max="5" step="0.1" value="1.5">
       <span class="val" id="weib-k-val">1.5</span>
     </div>
     <div class="control-group">
-      <label>λ</label>
+      <label data-tip="<b>λ (lambda)</b> — The <i>rate parameter</i>. For Poisson: average events per interval. For Exponential: events per unit time. Mean = 1/λ.">λ</label>
       <input type="range" id="weib-l" min="0.5" max="5" step="0.25" value="2">
       <span class="val" id="weib-l-val">2.0</span>
     </div>
@@ -834,10 +834,10 @@ svg text { font-family: var(--mono); }
 <tr><td>Binomial(n,p)</td><td>Discrete</td><td>np</td><td>np(1−p)</td><td>Count of successes in n trials</td></tr>
 <tr><td>Geometric(p)</td><td>Discrete</td><td>1/p</td><td>(1−p)/p²</td><td>Trials until first success</td></tr>
 <tr><td>NegBin(r,p)</td><td>Discrete</td><td>r/p</td><td>r(1−p)/p²</td><td>Trials until r-th success</td></tr>
-<tr><td>Poisson(λ)</td><td>Discrete</td><td>λ</td><td>λ</td><td>Events per interval</td></tr>
+<tr><td>Poisson(λ)</td><td>Discrete</td><td data-tip="<b>λ (lambda)</b> — The <i>rate parameter</i>. For Poisson: average events per interval. For Exponential: events per unit time. Mean = 1/λ.">λ</td><td data-tip="<b>λ (lambda)</b> — The <i>rate parameter</i>. For Poisson: average events per interval. For Exponential: events per unit time. Mean = 1/λ.">λ</td><td>Events per interval</td></tr>
 <tr><td>Hypergeometric</td><td>Discrete</td><td>nK/N</td><td>complex</td><td>Sampling without replacement</td></tr>
 <tr><td>Uniform(a,b)</td><td>Continuous</td><td>(a+b)/2</td><td>(b−a)²/12</td><td>Equal likelihood</td></tr>
-<tr><td>Normal(μ,σ²)</td><td>Continuous</td><td>μ</td><td>σ²</td><td>CLT, measurement errors</td></tr>
+<tr><td>Normal(μ,σ²)</td><td>Continuous</td><td data-tip="<b>μ (mu)</b> — The <i>mean</i> or expected value. The center of the distribution, where data clusters around.">μ</td><td>σ²</td><td>CLT, measurement errors</td></tr>
 <tr><td>Exponential(λ)</td><td>Continuous</td><td>1/λ</td><td>1/λ²</td><td>Time between events</td></tr>
 <tr><td>Gamma(α,β)</td><td>Continuous</td><td>α/β</td><td>α/β²</td><td>Wait for α-th event</td></tr>
 <tr><td>Beta(α,β)</td><td>Continuous</td><td>α/(α+β)</td><td>complex</td><td>Proportions, Bayesian priors</td></tr>
@@ -1356,6 +1356,35 @@ const observer = new IntersectionObserver(entries => {
   });
 }, {rootMargin: '-20% 0px -70% 0px'});
 sections.forEach(s => { if(s.id) observer.observe(s); });
+</script>
+
+<!-- TOOLTIP SYSTEM -->
+<div id="tip-box" style="display:none;position:fixed;z-index:9999;max-width:280px;padding:10px 14px;background:#1a2332;border:1px solid #334155;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.5);pointer-events:none;font-family:'IBM Plex Sans',sans-serif;font-size:12px;color:#e2e8f0;line-height:1.5;"></div>
+<style>
+[data-tip]{cursor:help;position:relative;border-bottom:1px dotted rgba(148,163,184,.3)}
+[data-tip]:hover{color:#60a5fa}
+#tip-box b{color:#60a5fa;font-weight:600}
+#tip-box i{color:#a78bfa;font-style:normal}
+</style>
+<script>
+(function(){
+  var box=document.getElementById('tip-box');
+  document.addEventListener('mouseover',function(e){
+    var el=e.target.closest('[data-tip]');
+    if(!el)return;
+    box.innerHTML=el.getAttribute('data-tip');
+    box.style.display='block';
+    var r=el.getBoundingClientRect();
+    var left=r.left,top=r.bottom+8;
+    if(left+290>window.innerWidth)left=window.innerWidth-300;
+    if(left<8)left=8;
+    if(top+box.offsetHeight>window.innerHeight)top=r.top-box.offsetHeight-8;
+    box.style.left=left+'px';box.style.top=top+'px';
+  });
+  document.addEventListener('mouseout',function(e){
+    if(e.target.closest('[data-tip]'))box.style.display='none';
+  });
+})();
 </script>
 
 </body>

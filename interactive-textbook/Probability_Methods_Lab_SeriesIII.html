@@ -128,8 +128,8 @@ canvas{border-radius:6px;display:block;margin:0 auto}
 <p>KDE places a small "bump" (kernel) at each data point, then sums them. The <strong>bandwidth h</strong> controls smoothness: too small → spiky (overfitting); too large → oversmoothed (underfitting). This visualization shows <strong>each individual kernel</strong> plus their sum, compared to the true density.</p>
 <div class="panel"><span class="tag">Kernel Decomposition</span>
 <div class="ctrls">
-  <div class="cg"><label>n</label><input type="range" id="kde-n" min="5" max="80" step="5" value="20"><span class="v" id="kde-n-v">20</span></div>
-  <div class="cg"><label>h (bandwidth)</label><input type="range" id="kde-h" min="0.1" max="2" step="0.05" value="0.4"><span class="v" id="kde-h-v">0.40</span></div>
+  <div class="cg"><label data-tip="<b>n</b> — The <i>sample size</i>. Number of observations or trials. Larger n gives more precise estimates.">n</label><input type="range" id="kde-n" min="5" max="80" step="5" value="20"><span class="v" id="kde-n-v">20</span></div>
+  <div class="cg"><label data-tip="<b>h (bandwidth)</b> — Controls KDE smoothness. Too small → spiky (overfitting). Too large → blobby (underfitting). Silverman&apos;s rule: h ≈ 1.06σn^{−1/5}.">h (bandwidth)</label><input type="range" id="kde-h" min="0.1" max="2" step="0.05" value="0.4"><span class="v" id="kde-h-v">0.40</span></div>
   <div class="cg"><label>Source</label><select class="sel" id="kde-src"><option value="bimodal">Bimodal mixture</option><option value="skewed">Skewed (Gamma)</option><option value="normal">Normal(0,1)</option></select></div>
   <button class="btn" id="kde-gen">Regenerate</button>
 </div>
@@ -180,8 +180,8 @@ canvas{border-radius:6px;display:block;margin:0 auto}
 <p>Given n i.i.d. samples, the k-th smallest value X₍ₖ₎ is the k-th <strong>order statistic</strong>. For Uniform(0,1) parents, X₍ₖ₎ ~ Beta(k, n−k+1). This explains why the sample median concentrates around the true median, and why extremes (min, max) have predictable distributions. <strong>Select any rank k to see its density.</strong></p>
 <div class="panel"><span class="tag">Rank Selector</span>
 <div class="ctrls">
-  <div class="cg"><label>n</label><input type="range" id="os-n" min="3" max="30" step="1" value="10"><span class="v" id="os-n-v">10</span></div>
-  <div class="cg"><label>k</label><input type="range" id="os-k" min="1" max="10" step="1" value="1"><span class="v" id="os-k-v">1 (min)</span></div>
+  <div class="cg"><label data-tip="<b>n</b> — The <i>sample size</i>. Number of observations or trials. Larger n gives more precise estimates.">n</label><input type="range" id="os-n" min="3" max="30" step="1" value="10"><span class="v" id="os-n-v">10</span></div>
+  <div class="cg"><label data-tip="<b>k</b> — The <i>shape parameter</i> (Weibull) or the <i>rank</i> (order statistics). In Weibull: k&lt;1 = decreasing hazard, k=1 = constant, k&gt;1 = increasing hazard.">k</label><input type="range" id="os-k" min="1" max="10" step="1" value="1"><span class="v" id="os-k-v">1 (min)</span></div>
   <button class="btn" id="os-sim">Simulate 3000</button>
 </div>
 <div id="os-chart"></div>
@@ -213,8 +213,8 @@ canvas{border-radius:6px;display:block;margin:0 auto}
 <div class="panel"><span class="tag">Non-Parametric Inference</span>
 <div class="ctrls">
   <div class="cg"><label>True dist</label><select class="sel" id="bs-src"><option value="normal">Normal(3,1)</option><option value="exponential">Exponential(0.5)</option><option value="bimodal">Bimodal</option></select></div>
-  <div class="cg"><label>n</label><input type="range" id="bs-n" min="5" max="50" step="5" value="15"><span class="v" id="bs-n-v">15</span></div>
-  <div class="cg"><label>B resamples</label><input type="range" id="bs-B" min="100" max="5000" step="100" value="2000"><span class="v" id="bs-B-v">2000</span></div>
+  <div class="cg"><label data-tip="<b>n</b> — The <i>sample size</i>. Number of observations or trials. Larger n gives more precise estimates.">n</label><input type="range" id="bs-n" min="5" max="50" step="5" value="15"><span class="v" id="bs-n-v">15</span></div>
+  <div class="cg"><label data-tip="<b>B</b> — Number of bootstrap resamples. More resamples → smoother bootstrap distribution → more stable confidence intervals. 2000+ is standard.">B resamples</label><input type="range" id="bs-B" min="100" max="5000" step="100" value="2000"><span class="v" id="bs-B-v">2000</span></div>
   <button class="btn" id="bs-run">▶ Bootstrap</button>
 </div>
 <div id="bs-chart"></div>
@@ -230,10 +230,10 @@ canvas{border-radius:6px;display:block;margin:0 auto}
 <p>The bivariate normal is defined by means μ₁, μ₂, standard deviations σ₁, σ₂, and correlation ρ. <strong>Adjusting ρ tilts the elliptical contours</strong>. The conditional distribution X|Y=y is always normal — its mean shifts linearly with y, and its variance shrinks by factor (1−ρ²). This is the geometry behind linear regression.</p>
 <div class="panel"><span class="tag">2D Contour Map</span>
 <div class="ctrls">
-  <div class="cg"><label>ρ</label><input type="range" id="bv-rho" min="-0.95" max="0.95" step="0.05" value="0.6"><span class="v" id="bv-rho-v">0.60</span></div>
-  <div class="cg"><label>σ₁</label><input type="range" id="bv-s1" min="0.5" max="2.5" step="0.25" value="1"><span class="v" id="bv-s1-v">1.0</span></div>
-  <div class="cg"><label>σ₂</label><input type="range" id="bv-s2" min="0.5" max="2.5" step="0.25" value="1.5"><span class="v" id="bv-s2-v">1.5</span></div>
-  <div class="cg"><label>Y=</label><input type="range" id="bv-yc" min="-3" max="3" step="0.25" value="1"><span class="v" id="bv-yc-v">1.0</span></div>
+  <div class="cg"><label data-tip="<b>ρ (rho)</b> — The <i>correlation coefficient</i>. Measures linear dependence between two variables. ρ=0: independent, ρ=±1: perfect linear relationship.">ρ</label><input type="range" id="bv-rho" min="-0.95" max="0.95" step="0.05" value="0.6"><span class="v" id="bv-rho-v">0.60</span></div>
+  <div class="cg"><label data-tip="<b>σ₁</b> — Standard deviation of the first variable (X₁). Controls the horizontal spread.">σ₁</label><input type="range" id="bv-s1" min="0.5" max="2.5" step="0.25" value="1"><span class="v" id="bv-s1-v">1.0</span></div>
+  <div class="cg"><label data-tip="<b>σ₂</b> — Standard deviation of the second variable (X₂). Controls the vertical spread.">σ₂</label><input type="range" id="bv-s2" min="0.5" max="2.5" step="0.25" value="1.5"><span class="v" id="bv-s2-v">1.5</span></div>
+  <div class="cg"><label data-tip="<b>Y = y</b> — The conditioning value. Shows the conditional distribution X₁|X₂=y — always Normal for a bivariate Normal, with mean shifted by ρ·(σ₁/σ₂)·y.">Y=</label><input type="range" id="bv-yc" min="-3" max="3" step="0.25" value="1"><span class="v" id="bv-yc-v">1.0</span></div>
 </div>
 <div style="display:flex;gap:4px;flex-wrap:wrap">
   <div style="flex:1;min-width:380px" id="bv-contour"></div>
@@ -290,7 +290,7 @@ canvas{border-radius:6px;display:block;margin:0 auto}
 <p>A statistic T(X) is <strong>sufficient</strong> for parameter θ if the conditional distribution of X given T doesn't depend on θ. For Normal(μ,1), the sample mean X̄ is sufficient for μ — knowing X̄, the individual observations provide <strong>zero additional information</strong> about μ. This demonstration shows that two datasets with the same X̄ produce identical likelihood functions.</p>
 <div class="panel"><span class="tag">Information Compression</span>
 <div class="ctrls">
-  <div class="cg"><label>n</label><input type="range" id="ss-n" min="3" max="20" step="1" value="6"><span class="v" id="ss-n-v">6</span></div>
+  <div class="cg"><label data-tip="<b>n</b> — The <i>sample size</i>. Number of observations or trials. Larger n gives more precise estimates.">n</label><input type="range" id="ss-n" min="3" max="20" step="1" value="6"><span class="v" id="ss-n-v">6</span></div>
   <button class="btn" id="ss-gen">Generate Two Datasets (Same X̄)</button>
 </div>
 <div id="ss-chart"></div>
@@ -534,8 +534,8 @@ function mk(sel,w=W,h=H,m=M_){d3.select(sel).selectAll('svg').remove();const svg
     for(let i=0;i<k;i++){
       html+=`<div class="ctrls" style="margin-bottom:6px">
         <div class="cg"><label style="color:${['#60a5fa','#a78bfa','#34d399','#fb923c'][i]}">C${i+1}</label></div>
-        <div class="cg"><label>μ</label><input type="range" class="gm-mu" min="-5" max="5" step="0.25" value="${defaultMu[i]}"><span class="v gm-mu-v">${defaultMu[i]}</span></div>
-        <div class="cg"><label>σ</label><input type="range" class="gm-sig" min="0.2" max="3" step="0.1" value="${defaultSig[i]}"><span class="v gm-sig-v">${defaultSig[i]}</span></div>
+        <div class="cg"><label data-tip="<b>μ (mu)</b> — The <i>mean</i> or expected value. The center of the distribution, where data clusters around.">μ</label><input type="range" class="gm-mu" min="-5" max="5" step="0.25" value="${defaultMu[i]}"><span class="v gm-mu-v">${defaultMu[i]}</span></div>
+        <div class="cg"><label data-tip="<b>σ (sigma)</b> — The <i>standard deviation</i>. Measures how spread out values are from the mean. Larger σ = wider distribution.">σ</label><input type="range" class="gm-sig" min="0.2" max="3" step="0.1" value="${defaultSig[i]}"><span class="v gm-sig-v">${defaultSig[i]}</span></div>
         <div class="cg"><label>w</label><input type="range" class="gm-w" min="0.05" max="1" step="0.05" value="${defaultW[i]}"><span class="v gm-w-v">${defaultW[i]}</span></div>
       </div>`;
     }
@@ -861,5 +861,34 @@ const secs=document.querySelectorAll('.lab');const nls=document.querySelectorAll
 const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){nls.forEach(l=>l.classList.remove('active'));const l=document.querySelector(`nav a[href="#${e.target.id}"]`);if(l)l.classList.add('active')}})},{rootMargin:'-15% 0px -70% 0px'});
 secs.forEach(s=>obs.observe(s));
 </script>
+<!-- TOOLTIP SYSTEM -->
+<div id="tip-box" style="display:none;position:fixed;z-index:9999;max-width:280px;padding:10px 14px;background:#1a2332;border:1px solid #334155;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.5);pointer-events:none;font-family:'IBM Plex Sans',sans-serif;font-size:12px;color:#e2e8f0;line-height:1.5;"></div>
+<style>
+[data-tip]{cursor:help;position:relative;border-bottom:1px dotted rgba(148,163,184,.3)}
+[data-tip]:hover{color:#60a5fa}
+#tip-box b{color:#60a5fa;font-weight:600}
+#tip-box i{color:#a78bfa;font-style:normal}
+</style>
+<script>
+(function(){
+  var box=document.getElementById('tip-box');
+  document.addEventListener('mouseover',function(e){
+    var el=e.target.closest('[data-tip]');
+    if(!el)return;
+    box.innerHTML=el.getAttribute('data-tip');
+    box.style.display='block';
+    var r=el.getBoundingClientRect();
+    var left=r.left,top=r.bottom+8;
+    if(left+290>window.innerWidth)left=window.innerWidth-300;
+    if(left<8)left=8;
+    if(top+box.offsetHeight>window.innerHeight)top=r.top-box.offsetHeight-8;
+    box.style.left=left+'px';box.style.top=top+'px';
+  });
+  document.addEventListener('mouseout',function(e){
+    if(e.target.closest('[data-tip]'))box.style.display='none';
+  });
+})();
+</script>
+
 </body>
 </html>

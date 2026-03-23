@@ -75,10 +75,10 @@ svg text{font-family:var(--mono)}.axis text{fill:var(--dim);font-size:9px}.axis 
 <p>A hypothesis test compares a null hypothesis H₀: μ=μ₀ against an alternative H₁: μ=μ₁. The <strong>significance level α</strong> sets the false positive rate (Type I error). The <strong>power = 1−β</strong> is the probability of correctly detecting a true effect. This visualization shows <strong>both distributions simultaneously</strong>, with the rejection region, α area, and β area all shaded.</p>
 <div class="panel"><span class="tag">Dual Distribution</span>
 <div class="ctrls">
-  <div class="cg"><label>μ₀</label><input type="range" id="ht-m0" min="-2" max="2" step=".25" value="0"><span class="v" id="ht-m0-v">0.0</span></div>
-  <div class="cg"><label>μ₁</label><input type="range" id="ht-m1" min="-1" max="4" step=".25" value="1.5"><span class="v" id="ht-m1-v">1.5</span></div>
-  <div class="cg"><label>σ/√n</label><input type="range" id="ht-se" min=".3" max="2" step=".1" value="1"><span class="v" id="ht-se-v">1.0</span></div>
-  <div class="cg"><label>α</label><input type="range" id="ht-a" min=".005" max=".20" step=".005" value=".05"><span class="v" id="ht-a-v">0.05</span></div>
+  <div class="cg"><label data-tip="<b>μ₀</b> — The <i>null hypothesis mean</i>. The value we assume is true before seeing data.">μ₀</label><input type="range" id="ht-m0" min="-2" max="2" step=".25" value="0"><span class="v" id="ht-m0-v">0.0</span></div>
+  <div class="cg"><label data-tip="<b>μ₁</b> — The <i>alternative hypothesis mean</i>. The true value we&apos;re trying to detect." data-tip="<b>μ₁</b> — Mean of Group 1. Drag to separate groups and watch the F-statistic grow.">μ₁</label><input type="range" id="ht-m1" min="-1" max="4" step=".25" value="1.5"><span class="v" id="ht-m1-v">1.5</span></div>
+  <div class="cg"><label data-tip="<b>σ/√n</b> — The <i>standard error</i>. How much the sample mean varies from sample to sample. Decreases as n grows.">σ/√n</label><input type="range" id="ht-se" min=".3" max="2" step=".1" value="1"><span class="v" id="ht-se-v">1.0</span></div>
+  <div class="cg"><label data-tip="<b>α (alpha)</b> — The <i>significance level</i> in testing, or the <i>shape parameter</i> for Gamma/Beta distributions. In testing: the maximum false positive rate you&apos;ll tolerate (typically 0.05).">α</label><input type="range" id="ht-a" min=".005" max=".20" step=".005" value=".05"><span class="v" id="ht-a-v">0.05</span></div>
 </div>
 <div id="ht-chart"></div>
 <div class="stats" id="ht-stats"></div>
@@ -92,8 +92,8 @@ svg text{font-family:var(--mono)}.axis text{fill:var(--dim);font-size:9px}.axis 
 <p>Statistical <strong>power</strong> is the probability of rejecting H₀ when it's actually false. It depends on effect size, sample size, α, and variability. This power curve shows how power grows with n — and where it crosses common thresholds like 80% and 90%.</p>
 <div class="panel"><span class="tag">Power Curve</span>
 <div class="ctrls">
-  <div class="cg"><label>Effect d</label><input type="range" id="pw-d" min=".1" max="1.5" step=".05" value=".5"><span class="v" id="pw-d-v">0.50</span></div>
-  <div class="cg"><label>α</label><input type="range" id="pw-a" min=".01" max=".10" step=".005" value=".05"><span class="v" id="pw-a-v">0.05</span></div>
+  <div class="cg"><label data-tip="<b>Cohen&apos;s d</b> — <i>Standardized effect size</i> = (μ₁−μ₀)/σ. Small=0.2, Medium=0.5, Large=0.8. Determines how many subjects you need.">Effect d</label><input type="range" id="pw-d" min=".1" max="1.5" step=".05" value=".5"><span class="v" id="pw-d-v">0.50</span></div>
+  <div class="cg"><label data-tip="<b>α (alpha)</b> — The <i>significance level</i> in testing, or the <i>shape parameter</i> for Gamma/Beta distributions. In testing: the maximum false positive rate you&apos;ll tolerate (typically 0.05).">α</label><input type="range" id="pw-a" min=".01" max=".10" step=".005" value=".05"><span class="v" id="pw-a-v">0.05</span></div>
 </div>
 <div id="pw-chart"></div>
 <div class="stats" id="pw-stats"></div>
@@ -106,8 +106,8 @@ svg text{font-family:var(--mono)}.axis text{fill:var(--dim);font-size:9px}.axis 
 <p>The p-value is the probability of observing a test statistic <strong>at least as extreme</strong> as the one computed, <em>assuming H₀ is true</em>. It is <strong>NOT</strong> the probability that H₀ is true. This simulator generates thousands of experiments under both true and false nulls to show the <strong>distribution of p-values</strong> in each scenario.</p>
 <div class="panel"><span class="tag">p-Value Distribution</span>
 <div class="ctrls">
-  <div class="cg"><label>True effect</label><input type="range" id="pv-eff" min="0" max="2" step=".1" value="0"><span class="v" id="pv-eff-v">0.0</span></div>
-  <div class="cg"><label>n per study</label><input type="range" id="pv-n" min="5" max="100" step="5" value="20"><span class="v" id="pv-n-v">20</span></div>
+  <div class="cg"><label data-tip="<b>True effect</b> — The real difference between H₁ and H₀ in units of σ. When 0, H₀ is true and p-values should be Uniform(0,1).">True effect</label><input type="range" id="pv-eff" min="0" max="2" step=".1" value="0"><span class="v" id="pv-eff-v">0.0</span></div>
+  <div class="cg"><label data-tip="<b>n per study</b> — Sample size in each simulated experiment. Larger n → more power → p-values pile up closer to 0 when H₁ is true.">n per study</label><input type="range" id="pv-n" min="5" max="100" step="5" value="20"><span class="v" id="pv-n-v">20</span></div>
   <button class="btn" id="pv-run">▶ Run 5000 Studies</button>
 </div>
 <div id="pv-chart"></div>
@@ -154,11 +154,11 @@ svg text{font-family:var(--mono)}.axis text{fill:var(--dim);font-size:9px}.axis 
 <p>ANOVA tests whether group means differ by comparing the <strong>between-group variance</strong> (signal) to the <strong>within-group variance</strong> (noise). The F-statistic = MS_between / MS_within. If groups are truly different, F is large. <strong>Drag group means apart</strong> to watch F grow and the p-value shrink.</p>
 <div class="panel"><span class="tag">Variance Decomposition</span>
 <div class="ctrls">
-  <div class="cg"><label>μ₁</label><input type="range" id="av-m1" min="-3" max="3" step=".25" value="0"><span class="v" id="av-m1-v">0.0</span></div>
-  <div class="cg"><label>μ₂</label><input type="range" id="av-m2" min="-3" max="3" step=".25" value="0"><span class="v" id="av-m2-v">0.0</span></div>
-  <div class="cg"><label>μ₃</label><input type="range" id="av-m3" min="-3" max="3" step=".25" value="0"><span class="v" id="av-m3-v">0.0</span></div>
-  <div class="cg"><label>σ within</label><input type="range" id="av-sw" min=".5" max="3" step=".25" value="1"><span class="v" id="av-sw-v">1.0</span></div>
-  <div class="cg"><label>n/group</label><input type="range" id="av-n" min="5" max="40" step="5" value="15"><span class="v" id="av-n-v">15</span></div>
+  <div class="cg"><label data-tip="<b>μ₁</b> — The <i>alternative hypothesis mean</i>. The true value we&apos;re trying to detect." data-tip="<b>μ₁</b> — Mean of Group 1. Drag to separate groups and watch the F-statistic grow.">μ₁</label><input type="range" id="av-m1" min="-3" max="3" step=".25" value="0"><span class="v" id="av-m1-v">0.0</span></div>
+  <div class="cg"><label data-tip="<b>μ₂</b> — Mean of Group 2.">μ₂</label><input type="range" id="av-m2" min="-3" max="3" step=".25" value="0"><span class="v" id="av-m2-v">0.0</span></div>
+  <div class="cg"><label data-tip="<b>μ₃</b> — Mean of Group 3.">μ₃</label><input type="range" id="av-m3" min="-3" max="3" step=".25" value="0"><span class="v" id="av-m3-v">0.0</span></div>
+  <div class="cg"><label data-tip="<b>σ within</b> — The within-group standard deviation (noise). Larger σ makes it harder to detect differences between group means.">σ within</label><input type="range" id="av-sw" min=".5" max="3" step=".25" value="1"><span class="v" id="av-sw-v">1.0</span></div>
+  <div class="cg"><label data-tip="<b>n per group</b> — Number of observations in each group. More observations → narrower distributions → easier to detect real differences.">n/group</label><input type="range" id="av-n" min="5" max="40" step="5" value="15"><span class="v" id="av-n-v">15</span></div>
   <button class="btn" id="av-run">▶ Simulate</button>
 </div>
 <div id="av-chart"></div>
@@ -172,10 +172,10 @@ svg text{font-family:var(--mono)}.axis text{fill:var(--dim);font-size:9px}.axis 
 <p>The Kaplan-Meier estimator handles <strong>censored observations</strong> — patients lost to follow-up who haven't yet experienced the event. The step function drops at each event time, while censored observations are marked but don't cause drops. Compare treatment vs. control groups visually.</p>
 <div class="panel"><span class="tag">Survival Analysis</span>
 <div class="ctrls">
-  <div class="cg"><label>n/group</label><input type="range" id="km-n" min="10" max="60" step="5" value="30"><span class="v" id="km-n-v">30</span></div>
+  <div class="cg"><label data-tip="<b>n per group</b> — Number of observations in each group. More observations → narrower distributions → easier to detect real differences.">n/group</label><input type="range" id="km-n" min="10" max="60" step="5" value="30"><span class="v" id="km-n-v">30</span></div>
   <div class="cg"><label>λ control</label><input type="range" id="km-l0" min=".05" max=".3" step=".01" value=".15"><span class="v" id="km-l0-v">0.15</span></div>
   <div class="cg"><label>λ treatment</label><input type="range" id="km-l1" min=".02" max=".3" step=".01" value=".08"><span class="v" id="km-l1-v">0.08</span></div>
-  <div class="cg"><label>Censoring</label><input type="range" id="km-c" min="0" max=".5" step=".05" value=".2"><span class="v" id="km-c-v">20%</span></div>
+  <div class="cg"><label data-tip="<b>Censoring rate</b> — Fraction of patients lost to follow-up before the event. Censored observations are marked with tick marks on the KM curve.">Censoring</label><input type="range" id="km-c" min="0" max=".5" step=".05" value=".2"><span class="v" id="km-c-v">20%</span></div>
   <button class="btn" id="km-run">▶ Simulate Trial</button>
 </div>
 <div id="km-chart"></div>
@@ -207,7 +207,7 @@ svg text{font-family:var(--mono)}.axis text{fill:var(--dim);font-size:9px}.axis 
 <div class="panel"><span class="tag">MCMC Trace</span>
 <div class="ctrls">
   <div class="cg"><label>Target</label><select class="sel" id="mh-tgt"><option value="bimodal">Bimodal mixture</option><option value="skewed">Gamma(3,1)</option><option value="banana">Banana-shaped</option></select></div>
-  <div class="cg"><label>σ proposal</label><input type="range" id="mh-sp" min=".2" max="5" step=".2" value="1"><span class="v" id="mh-sp-v">1.0</span></div>
+  <div class="cg"><label data-tip="<b>σ proposal</b> — Standard deviation of the Metropolis random-walk proposal. Too small → slow exploration. Too large → many rejections. Optimal acceptance ≈ 23%.">σ proposal</label><input type="range" id="mh-sp" min=".2" max="5" step=".2" value="1"><span class="v" id="mh-sp-v">1.0</span></div>
   <button class="btn" id="mh-run">▶ Run 5000 Steps</button>
   <button class="btn b2" id="mh-reset">Reset</button>
 </div>
@@ -223,7 +223,7 @@ svg text{font-family:var(--mono)}.axis text{fill:var(--dim);font-size:9px}.axis 
 <p>In a room of n people, the probability of <strong>at least one shared birthday</strong> is P = 1 − 365!/((365−n)!·365ⁿ). Human intuition dramatically underestimates this because we think about specific pairs, not all possible pairs. With 23 people there are C(23,2) = 253 pairs — and 50% of the time, at least one pair matches.</p>
 <div class="panel"><span class="tag">Probability Calculator</span>
 <div class="ctrls">
-  <div class="cg"><label>People</label><input type="range" id="bd-n" min="2" max="80" step="1" value="23"><span class="v" id="bd-n-v">23</span></div>
+  <div class="cg"><label data-tip="<b>People</b> — Number of people in the room. With 23 people there are C(23,2)=253 possible pairs — giving a 50.7% chance of at least one shared birthday.">People</label><input type="range" id="bd-n" min="2" max="80" step="1" value="23"><span class="v" id="bd-n-v">23</span></div>
   <button class="btn" id="bd-sim">▶ Simulate 10,000 Rooms</button>
 </div>
 <div id="bd-chart"></div>
@@ -252,7 +252,7 @@ svg text{font-family:var(--mono)}.axis text{fill:var(--dim);font-size:9px}.axis 
 <div class="panel"><span class="tag">Joint Scatter</span>
 <div class="ctrls">
   <div class="cg"><label>Copula</label><select class="sel" id="cop-type"><option value="gaussian">Gaussian</option><option value="clayton">Clayton (lower tail)</option><option value="gumbel">Gumbel (upper tail)</option><option value="independent">Independent</option></select></div>
-  <div class="cg"><label>θ (dependence)</label><input type="range" id="cop-th" min=".1" max="5" step=".1" value="2"><span class="v" id="cop-th-v">2.0</span></div>
+  <div class="cg"><label data-tip="<b>θ (theta)</b> — The copula <i>dependence parameter</i>. Higher θ → stronger dependence between variables, especially in the tails.">θ (dependence)</label><input type="range" id="cop-th" min=".1" max="5" step=".1" value="2"><span class="v" id="cop-th-v">2.0</span></div>
   <button class="btn" id="cop-run">▶ Generate 1000</button>
 </div>
 <div id="cop-chart"></div>
@@ -744,5 +744,34 @@ const secs=document.querySelectorAll('.lab');const nls=document.querySelectorAll
 const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){nls.forEach(l=>l.classList.remove('active'));const l=document.querySelector(`nav a[href="#${e.target.id}"]`);if(l)l.classList.add('active')}})},{rootMargin:'-15% 0px -70% 0px'});
 secs.forEach(s=>obs.observe(s));
 </script>
+<!-- TOOLTIP SYSTEM -->
+<div id="tip-box" style="display:none;position:fixed;z-index:9999;max-width:280px;padding:10px 14px;background:#1a2332;border:1px solid #334155;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.5);pointer-events:none;font-family:'IBM Plex Sans',sans-serif;font-size:12px;color:#e2e8f0;line-height:1.5;"></div>
+<style>
+[data-tip]{cursor:help;position:relative;border-bottom:1px dotted rgba(148,163,184,.3)}
+[data-tip]:hover{color:#60a5fa}
+#tip-box b{color:#60a5fa;font-weight:600}
+#tip-box i{color:#a78bfa;font-style:normal}
+</style>
+<script>
+(function(){
+  var box=document.getElementById('tip-box');
+  document.addEventListener('mouseover',function(e){
+    var el=e.target.closest('[data-tip]');
+    if(!el)return;
+    box.innerHTML=el.getAttribute('data-tip');
+    box.style.display='block';
+    var r=el.getBoundingClientRect();
+    var left=r.left,top=r.bottom+8;
+    if(left+290>window.innerWidth)left=window.innerWidth-300;
+    if(left<8)left=8;
+    if(top+box.offsetHeight>window.innerHeight)top=r.top-box.offsetHeight-8;
+    box.style.left=left+'px';box.style.top=top+'px';
+  });
+  document.addEventListener('mouseout',function(e){
+    if(e.target.closest('[data-tip]'))box.style.display='none';
+  });
+})();
+</script>
+
 </body>
 </html>
