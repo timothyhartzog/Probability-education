@@ -1,0 +1,1382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Advanced Probability Visualizations — D3.js Interactive Lab</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#080e1a; --bg2:#0d1526; --card:#111827; --card2:#1a2332;
+  --text:#e2e8f0; --muted:#94a3b8; --dim:#64748b; --faint:#475569;
+  --border:#1e293b; --border2:#334155;
+  --blue:#60a5fa; --purple:#a78bfa; --green:#34d399; --orange:#fb923c;
+  --pink:#f472b6; --cyan:#22d3ee; --yellow:#fbbf24; --red:#f87171;
+  --blueGlow:rgba(96,165,250,0.12); --purpleGlow:rgba(167,139,250,0.08);
+  --serif:'DM Serif Display',serif; --body:'IBM Plex Sans',sans-serif;
+  --mono:'IBM Plex Mono',monospace; --prose:'Crimson Pro',serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--body);background:var(--bg);color:var(--text);line-height:1.7;font-size:15px;overflow-x:hidden;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;width:260px;height:100vh;background:var(--card);border-right:1px solid var(--border);overflow-y:auto;z-index:100;padding:20px 0;scrollbar-width:thin;scrollbar-color:var(--border2) transparent;}
+nav::-webkit-scrollbar{width:3px;}
+nav::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+.nav-brand{font-family:var(--serif);font-size:15px;color:var(--blue);padding:0 16px 14px;border-bottom:1px solid var(--border);margin-bottom:8px;line-height:1.3;}
+.nav-brand small{display:block;font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:0.12em;text-transform:uppercase;margin-top:4px;}
+nav a{display:block;padding:5px 16px 5px 20px;color:var(--muted);text-decoration:none;font-size:12px;transition:all .2s;border-left:2px solid transparent;}
+nav a:hover,nav a.active{color:var(--blue);background:var(--blueGlow);border-left-color:var(--blue);}
+nav .sep{height:1px;background:var(--border);margin:8px 16px;}
+
+/* MAIN */
+main{margin-left:260px;max-width:1020px;padding:32px 40px 120px;}
+.hero{text-align:center;padding:60px 0 48px;border-bottom:1px solid var(--border);margin-bottom:48px;position:relative;}
+.hero::before{content:'';position:absolute;inset:-60px -200px;background:radial-gradient(ellipse at 50% 40%,rgba(96,165,250,0.06) 0%,transparent 65%);pointer-events:none;}
+.hero h1{font-family:var(--serif);font-size:42px;line-height:1.15;margin-bottom:8px;position:relative;}
+.hero h1 span{color:var(--blue);}
+.hero .sub{font-family:var(--prose);font-style:italic;font-size:18px;color:var(--muted);}
+
+/* VIZ PANELS */
+.lab{margin:40px 0;scroll-margin-top:20px;}
+.lab-header{display:flex;align-items:flex-start;gap:16px;margin-bottom:20px;}
+.lab-num{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--bg);background:var(--blue);width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.lab-header h2{font-family:var(--serif);font-size:24px;color:var(--text);line-height:1.25;}
+.lab-header h2 small{display:block;font-family:var(--body);font-size:13px;color:var(--dim);font-weight:400;margin-top:2px;}
+.lab p{font-family:var(--prose);font-size:16px;line-height:1.8;color:var(--muted);margin-bottom:14px;max-width:800px;}
+.lab p strong{color:var(--text);font-weight:600;}
+
+.panel{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;margin:20px 0;position:relative;overflow:hidden;}
+.panel::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--blue),var(--purple),var(--green));}
+.panel .tag{position:absolute;top:10px;right:14px;font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--green);background:rgba(52,211,153,.1);padding:2px 7px;border-radius:3px;}
+
+/* CONTROLS */
+.ctrls{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:16px;align-items:center;}
+.cg{display:flex;align-items:center;gap:6px;}
+.cg label{font-family:var(--mono);font-size:11px;color:var(--dim);min-width:20px;}
+.cg input[type=range]{-webkit-appearance:none;width:130px;height:3px;background:var(--border2);border-radius:2px;outline:none;}
+.cg input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;background:var(--blue);border-radius:50%;cursor:pointer;box-shadow:0 0 6px rgba(96,165,250,.4);}
+.cg .v{font-family:var(--mono);font-size:12px;color:var(--blue);min-width:32px;text-align:right;font-weight:500;}
+select.sel{background:var(--bg2);color:var(--text);border:1px solid var(--border2);padding:4px 8px;border-radius:4px;font-family:var(--mono);font-size:11px;}
+button.btn{background:var(--blue);color:var(--bg);border:none;padding:5px 14px;border-radius:6px;font-family:var(--mono);font-size:11px;cursor:pointer;font-weight:600;transition:all .15s;}
+button.btn:hover{filter:brightness(1.15);transform:translateY(-1px);}
+button.btn2{background:var(--purple);}
+button.btn3{background:var(--green);}
+button.btn-sm{padding:3px 10px;font-size:10px;border-radius:4px;}
+.stats{display:flex;gap:20px;margin-top:10px;flex-wrap:wrap;}
+.si{font-family:var(--mono);font-size:11px;color:var(--dim);}
+.si span{color:var(--blue);font-weight:500;}
+.si.purple span{color:var(--purple);}
+.si.green span{color:var(--green);}
+.si.orange span{color:var(--orange);}
+
+/* SVG */
+svg text{font-family:var(--mono);}
+.axis text{fill:var(--dim);font-size:10px;}
+.axis path,.axis line{stroke:var(--border2);}
+.grid line{stroke:var(--border);stroke-opacity:.35;}
+.grid path{display:none;}
+
+/* Annotations */
+.annotation{font-family:var(--mono);font-size:10px;fill:var(--muted);}
+.annotation-highlight{fill:var(--yellow);font-weight:500;}
+
+/* Insight boxes */
+.insight{background:linear-gradient(135deg,rgba(96,165,250,.06),rgba(167,139,250,.04));border:1px solid var(--border2);border-left:3px solid var(--purple);border-radius:6px;padding:14px 18px;margin:16px 0;font-family:var(--prose);font-size:15px;color:var(--muted);line-height:1.7;}
+.insight .il{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--purple);margin-bottom:4px;}
+
+/* Mobile */
+.mob{display:none;position:fixed;top:10px;left:10px;z-index:200;background:var(--card);border:1px solid var(--border);color:var(--blue);width:36px;height:36px;border-radius:6px;font-size:16px;cursor:pointer;align-items:center;justify-content:center;}
+@media(max-width:860px){.mob{display:flex;}nav{transform:translateX(-100%);transition:transform .3s;}nav.open{transform:translateX(0);}main{margin-left:0;padding:32px 16px 100px;}}
+
+/* Canvas for Galton */
+canvas{border-radius:8px;display:block;margin:0 auto;}
+</style>
+</head>
+<body>
+
+<button class="mob" onclick="document.querySelector('nav').classList.toggle('open')">☰</button>
+
+<nav>
+<div class="nav-brand">Advanced Probability<br>Visualizations<small>D3.js Interactive Lab</small></div>
+<a href="#lab1">1 — Galton Board (CLT)</a>
+<a href="#lab2">2 — Bayesian Live Updating</a>
+<a href="#lab3">3 — Poisson Process Sim</a>
+<a href="#lab4">4 — Distribution Relationships</a>
+<a href="#lab5">5 — Convolution Visualizer</a>
+<a href="#lab6">6 — Memoryless Property</a>
+<a href="#lab7">7 — QQ-Plot Explorer</a>
+<a href="#lab8">8 — Monte Carlo Integration</a>
+<a href="#lab9">9 — Hazard Function Lab</a>
+<a href="#lab10">10 — Random Walk & LLN</a>
+<a href="#lab11">11 — Distribution Morpher</a>
+<a href="#lab12">12 — Confidence Interval Coverage</a>
+</nav>
+
+<main>
+
+<div class="hero">
+<h1>Advanced <span>Probability</span> Lab</h1>
+<div class="sub">12 Interactive D3.js Simulations for Deep Conceptual Understanding</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- LAB 1: GALTON BOARD -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="lab" id="lab1">
+<div class="lab-header">
+  <div class="lab-num">1</div>
+  <h2>Galton Board — The CLT in Action<small>Watch individual Bernoulli trials aggregate into a binomial → normal distribution</small></h2>
+</div>
+<p>Sir Francis Galton's "bean machine" is the physical embodiment of the Central Limit Theorem. Each ball makes n independent left/right decisions (Bernoulli trials). The sum of these decisions — a Binomial(n, 0.5) random variable — converges to a normal distribution as n grows. <strong>Watch the histogram emerge in real time.</strong></p>
+
+<div class="panel">
+<span class="tag">Animated Simulation</span>
+<div class="ctrls">
+  <div class="cg"><label>Rows</label><input type="range" id="g-rows" min="6" max="20" step="1" value="12"><span class="v" id="g-rows-v">12</span></div>
+  <div class="cg"><label>p</label><input type="range" id="g-p" min="0.1" max="0.9" step="0.05" value="0.5"><span class="v" id="g-p-v">0.50</span></div>
+  <div class="cg"><label>Speed</label><input type="range" id="g-speed" min="1" max="10" step="1" value="5"><span class="v" id="g-speed-v">5</span></div>
+  <button class="btn" id="g-start">▶ Drop 200 Balls</button>
+  <button class="btn btn2" id="g-reset">Reset</button>
+</div>
+<canvas id="galton-canvas" width="860" height="520"></canvas>
+<div class="stats" id="g-stats"></div>
+</div>
+
+<div class="insight">
+<div class="il">Key Insight</div>
+The Galton board demonstrates that the <strong>sum of many independent binary choices</strong> produces a bell curve — the essence of the CLT. When p ≠ 0.5, the distribution shifts and becomes skewed for small n, but still converges to normal as n grows.
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- LAB 2: BAYESIAN UPDATING -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="lab" id="lab2">
+<div class="lab-header">
+  <div class="lab-num">2</div>
+  <h2>Bayesian Live Updating<small>Watch the posterior evolve with each new observation</small></h2>
+</div>
+<p>Start with a Beta prior on the probability of heads for an unknown coin. Each flip updates the posterior via <strong>conjugacy</strong>: Beta(α,β) + k heads in n flips → Beta(α+k, β+n−k). Watch the posterior concentrate around the true parameter as evidence accumulates.</p>
+
+<div class="panel">
+<span class="tag">Live Simulation</span>
+<div class="ctrls">
+  <div class="cg"><label>True p</label><input type="range" id="b-true" min="0.05" max="0.95" step="0.05" value="0.7"><span class="v" id="b-true-v">0.70</span></div>
+  <div class="cg"><label>Prior α</label><input type="range" id="b-a" min="0.5" max="10" step="0.5" value="1"><span class="v" id="b-a-v">1.0</span></div>
+  <div class="cg"><label>Prior β</label><input type="range" id="b-b" min="0.5" max="10" step="0.5" value="1"><span class="v" id="b-b-v">1.0</span></div>
+  <button class="btn" id="b-flip1">Flip 1</button>
+  <button class="btn" id="b-flip10">Flip 10</button>
+  <button class="btn btn3" id="b-flip100">Flip 100</button>
+  <button class="btn btn2" id="b-reset">Reset</button>
+</div>
+<div id="bayes-chart"></div>
+<div class="stats" id="b-stats"></div>
+</div>
+
+<div class="insight">
+<div class="il">Key Insight</div>
+<strong>The prior matters less as data accumulates.</strong> Even a strongly wrong prior (e.g., Beta(10,1) for a fair coin) gets overwhelmed by sufficient evidence. The posterior mean converges to the maximum likelihood estimate — the observed proportion of heads.
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- LAB 3: POISSON PROCESS -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="lab" id="lab3">
+<div class="lab-header">
+  <div class="lab-num">3</div>
+  <h2>Poisson Process Simulator<small>Events, inter-arrival times, and the exponential connection</small></h2>
+</div>
+<p>A Poisson process generates events at a constant rate λ. The <strong>number of events</strong> in any interval follows a Poisson(λt) distribution. The <strong>time between events</strong> follows an Exponential(λ) distribution. This simulation shows both simultaneously.</p>
+
+<div class="panel">
+<span class="tag">Dual-View Simulation</span>
+<div class="ctrls">
+  <div class="cg"><label>λ (rate)</label><input type="range" id="pp-lam" min="0.5" max="8" step="0.5" value="3"><span class="v" id="pp-lam-v">3.0</span></div>
+  <button class="btn" id="pp-run">▶ Simulate 60s</button>
+  <button class="btn btn2" id="pp-reset">Reset</button>
+</div>
+<div id="pp-timeline"></div>
+<div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:8px;">
+  <div style="flex:1;min-width:300px;" id="pp-count-hist"></div>
+  <div style="flex:1;min-width:300px;" id="pp-inter-hist"></div>
+</div>
+<div class="stats" id="pp-stats"></div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- LAB 4: DISTRIBUTION RELATIONSHIPS -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="lab" id="lab4">
+<div class="lab-header">
+  <div class="lab-num">4</div>
+  <h2>Distribution Relationship Network<small>How every distribution connects to every other</small></h2>
+</div>
+<p>Probability distributions form a rich family tree — through <strong>limits</strong>, <strong>special cases</strong>, <strong>transformations</strong>, and <strong>conjugate pairs</strong>. Hover over any node to highlight its connections. Drag to rearrange.</p>
+
+<div class="panel">
+<span class="tag">Interactive Network</span>
+<div id="network-chart"></div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- LAB 5: CONVOLUTION VISUALIZER -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="lab" id="lab5">
+<div class="lab-header">
+  <div class="lab-num">5</div>
+  <h2>Convolution Visualizer<small>See what happens when you add independent random variables</small></h2>
+</div>
+<p>The distribution of X+Y (for independent X, Y) is the <strong>convolution</strong> of their individual distributions. This is the mathematical engine behind the CLT: adding more and more variables makes the sum approach normality. <strong>Stack up to 8 distributions and watch the convolved result evolve.</strong></p>
+
+<div class="panel">
+<span class="tag">Build-Up Demo</span>
+<div class="ctrls">
+  <div class="cg"><label>Source</label>
+    <select class="sel" id="cv-src">
+      <option value="uniform">Uniform(0,1)</option>
+      <option value="exponential">Exponential(1)</option>
+      <option value="bernoulli">Bernoulli(0.5)</option>
+      <option value="dice">Fair Die (1–6)</option>
+    </select>
+  </div>
+  <button class="btn" id="cv-add">+ Add One</button>
+  <button class="btn btn2" id="cv-reset">Reset</button>
+  <span class="v" id="cv-count" style="color:var(--green);">n = 0</span>
+</div>
+<div id="conv-chart"></div>
+<div class="stats" id="cv-stats"></div>
+</div>
+
+<div class="insight">
+<div class="il">Key Insight</div>
+No matter how non-normal the source distribution — whether uniform, exponential, Bernoulli, or discrete dice — the <strong>convolution (sum) approaches a bell curve</strong> by n = 4–6. This is the CLT made visual. The pink overlay shows the theoretical N(nμ, nσ²).
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- LAB 6: MEMORYLESS PROPERTY -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="lab" id="lab6">
+<div class="lab-header">
+  <div class="lab-num">6</div>
+  <h2>Memoryless Property<small>Why the exponential "forgets" how long it has waited</small></h2>
+</div>
+<p>The exponential distribution has a unique property: <strong>P(X > s+t | X > s) = P(X > t)</strong>. Given that no event has occurred in the first s time units, the probability of waiting at least t more is exactly the same as the unconditional probability. This visualization compares the conditional survival with the unconditional — they're <em>identical</em>.</p>
+
+<div class="panel">
+<span class="tag">Visual Proof</span>
+<div class="ctrls">
+  <div class="cg"><label>λ</label><input type="range" id="ml-lam" min="0.2" max="3" step="0.1" value="1"><span class="v" id="ml-lam-v">1.0</span></div>
+  <div class="cg"><label>s (waited)</label><input type="range" id="ml-s" min="0.5" max="5" step="0.25" value="2"><span class="v" id="ml-s-v">2.0</span></div>
+</div>
+<div id="memoryless-chart"></div>
+<div class="stats" id="ml-stats"></div>
+</div>
+
+<div class="insight">
+<div class="il">Contrast — Weibull Is Not Memoryless</div>
+Toggle to a Weibull(k>1): the conditional survival curve shifts <em>below</em> the unconditional — having waited longer makes failure more imminent (increasing hazard). Only the exponential's constant hazard produces memorylessness.
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- LAB 7: QQ-PLOT -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="lab" id="lab7">
+<div class="lab-header">
+  <div class="lab-num">7</div>
+  <h2>QQ-Plot Explorer<small>The most powerful visual normality diagnostic</small></h2>
+</div>
+<p>A QQ (quantile-quantile) plot compares the quantiles of your sample against the quantiles of a theoretical distribution. <strong>If the data follow that distribution, points fall on the diagonal.</strong> Deviations reveal skewness, heavy tails, or distributional mismatch. Generate samples from different distributions and see how the QQ plot detects non-normality.</p>
+
+<div class="panel">
+<span class="tag">Diagnostic Tool</span>
+<div class="ctrls">
+  <div class="cg"><label>Sample from</label>
+    <select class="sel" id="qq-src">
+      <option value="normal">Normal(0,1)</option>
+      <option value="t3">Student's t(3) — heavy tails</option>
+      <option value="t10">Student's t(10) — mild heavy tails</option>
+      <option value="exponential">Exponential(1) — right skew</option>
+      <option value="uniform">Uniform(0,1) — light tails</option>
+      <option value="lognormal">Log-Normal(0,0.5) — right skew</option>
+      <option value="mixed">Contaminated Normal — outliers</option>
+    </select>
+  </div>
+  <div class="cg"><label>n</label><input type="range" id="qq-n" min="20" max="500" step="10" value="100"><span class="v" id="qq-n-v">100</span></div>
+  <button class="btn" id="qq-gen">Generate</button>
+</div>
+<div id="qq-chart"></div>
+<div class="stats" id="qq-stats"></div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- LAB 8: MONTE CARLO INTEGRATION -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="lab" id="lab8">
+<div class="lab-header">
+  <div class="lab-num">8</div>
+  <h2>Monte Carlo Integration<small>Computing probabilities by throwing random darts</small></h2>
+</div>
+<p>Monte Carlo methods estimate integrals (probabilities, areas) by <strong>random sampling</strong>. Drop random points under the normal PDF and watch the estimated probability converge to the true value. The convergence rate is O(1/√n) — quadrupling samples halves the error.</p>
+
+<div class="panel">
+<span class="tag">Convergence Demo</span>
+<div class="ctrls">
+  <div class="cg"><label>P(a < X < b):</label></div>
+  <div class="cg"><label>a</label><input type="range" id="mc-a" min="-3" max="0" step="0.1" value="-1"><span class="v" id="mc-a-v">-1.0</span></div>
+  <div class="cg"><label>b</label><input type="range" id="mc-b" min="0" max="3" step="0.1" value="1"><span class="v" id="mc-b-v">1.0</span></div>
+  <button class="btn" id="mc-run">▶ Drop 2000 Points</button>
+  <button class="btn btn2" id="mc-reset">Reset</button>
+</div>
+<div id="mc-chart"></div>
+<div class="stats" id="mc-stats"></div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- LAB 9: HAZARD FUNCTION LAB -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="lab" id="lab9">
+<div class="lab-header">
+  <div class="lab-num">9</div>
+  <h2>Hazard Function Laboratory<small>The bathtub curve and failure rate modeling</small></h2>
+</div>
+<p>The <strong>hazard function</strong> h(t) = f(t)/S(t) gives the instantaneous failure rate at time t, given survival to t. The "bathtub curve" combines: infant mortality (decreasing hazard, Weibull k<1), useful life (constant hazard, exponential), and wear-out (increasing hazard, Weibull k>1). <strong>Compare four distributions simultaneously.</strong></p>
+
+<div class="panel">
+<span class="tag">Multi-Distribution Comparison</span>
+<div id="hazard-chart"></div>
+<div class="ctrls" style="margin-top:12px;">
+  <div class="cg"><label>Weibull k₁</label><input type="range" id="hz-k1" min="0.3" max="0.9" step="0.05" value="0.5"><span class="v" id="hz-k1-v">0.5</span></div>
+  <div class="cg"><label>Weibull k₂</label><input type="range" id="hz-k2" min="1.5" max="5" step="0.25" value="2.5"><span class="v" id="hz-k2-v">2.5</span></div>
+</div>
+<div class="stats" id="hz-stats"></div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- LAB 10: RANDOM WALK & LLN -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="lab" id="lab10">
+<div class="lab-header">
+  <div class="lab-num">10</div>
+  <h2>Random Walk & Law of Large Numbers<small>Watch the running average converge to the true mean</small></h2>
+</div>
+<p>The <strong>Strong Law of Large Numbers</strong> guarantees that the sample mean X̄ₙ → μ almost surely. Generate multiple independent random walks and watch all running averages converge to the population mean — with the ±2σ/√n confidence band shrinking to zero.</p>
+
+<div class="panel">
+<span class="tag">Multi-Path Simulation</span>
+<div class="ctrls">
+  <div class="cg"><label>Distribution</label>
+    <select class="sel" id="rw-src">
+      <option value="uniform">Uniform(0,1) — μ=0.5</option>
+      <option value="exponential">Exponential(1) — μ=1</option>
+      <option value="bernoulli">Bernoulli(0.3) — μ=0.3</option>
+    </select>
+  </div>
+  <div class="cg"><label>Paths</label><input type="range" id="rw-paths" min="1" max="20" step="1" value="8"><span class="v" id="rw-paths-v">8</span></div>
+  <button class="btn" id="rw-run">▶ Simulate</button>
+</div>
+<div id="rw-chart"></div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- LAB 11: DISTRIBUTION MORPHER -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="lab" id="lab11">
+<div class="lab-header">
+  <div class="lab-num">11</div>
+  <h2>Distribution Morpher<small>Smoothly transform between distributions by adjusting parameters</small></h2>
+</div>
+<p>Many distributions are <strong>special cases or limits</strong> of each other. This morpher lets you smoothly transition: Binomial → Poisson (n→∞, p→0, np=λ), Gamma → Exponential (α→1), Beta → Uniform (α,β→1), Student's t → Normal (ν→∞). <strong>Watch the shape deform in real time.</strong></p>
+
+<div class="panel">
+<span class="tag">Morphing Animation</span>
+<div class="ctrls">
+  <div class="cg"><label>Transition</label>
+    <select class="sel" id="morph-type">
+      <option value="binom-poisson">Binomial → Poisson (n↑, p↓)</option>
+      <option value="t-normal">Student's t → Normal (ν↑)</option>
+      <option value="gamma-exp">Gamma → Exponential (α→1)</option>
+      <option value="beta-uniform">Beta → Uniform (α,β→1)</option>
+    </select>
+  </div>
+  <div class="cg"><label>Morph</label><input type="range" id="morph-t" min="0" max="100" step="1" value="0"><span class="v" id="morph-t-v">0%</span></div>
+</div>
+<div id="morph-chart"></div>
+<div class="stats" id="morph-stats"></div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- LAB 12: CONFIDENCE INTERVAL COVERAGE -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="lab" id="lab12">
+<div class="lab-header">
+  <div class="lab-num">12</div>
+  <h2>Confidence Interval Coverage<small>What "95% confidence" really means</small></h2>
+</div>
+<p>A 95% confidence interval does <strong>not</strong> mean "95% probability the parameter is in this interval." It means: if we repeat the experiment many times, ~95% of the computed intervals will contain the true parameter. <strong>Watch 100 intervals — ~5 will miss.</strong></p>
+
+<div class="panel">
+<span class="tag">Repeated Sampling</span>
+<div class="ctrls">
+  <div class="cg"><label>True μ</label><input type="range" id="ci-mu" min="-3" max="3" step="0.5" value="0"><span class="v" id="ci-mu-v">0.0</span></div>
+  <div class="cg"><label>n per sample</label><input type="range" id="ci-n" min="5" max="100" step="5" value="25"><span class="v" id="ci-n-v">25</span></div>
+  <div class="cg"><label>Level</label>
+    <select class="sel" id="ci-level">
+      <option value="0.90">90%</option>
+      <option value="0.95" selected>95%</option>
+      <option value="0.99">99%</option>
+    </select>
+  </div>
+  <button class="btn" id="ci-run">▶ Generate 100 CIs</button>
+</div>
+<div id="ci-chart"></div>
+<div class="stats" id="ci-stats"></div>
+</div>
+</div>
+
+</main>
+
+<script>
+// ═══════════════════════════════════════════════
+// UTILITIES
+// ═══════════════════════════════════════════════
+const W=880,H=360,M={top:20,right:30,bottom:40,left:55};
+const iW=W-M.left-M.right, iH=H-M.top-M.bottom;
+const normalPDF=(x,m,s)=>(1/(s*Math.sqrt(2*Math.PI)))*Math.exp(-.5*((x-m)/s)**2);
+const lnGamma=x=>{if(x<=0)return 0;const c=[76.18009172947146,-86.50532032941677,24.01409824083091,-1.231739572450155,.1208650973866179e-2,-.5395239384953e-5];let y=x,t=x+5.5;t-=(x+.5)*Math.log(t);let s=1.000000000190015;for(let j=0;j<6;j++)s+=c[j]/++y;return-t+Math.log(2.5066282746310005*s/x);};
+const gammaFn=x=>Math.exp(lnGamma(x));
+const betaPDF=(x,a,b)=>{const B=gammaFn(a)*gammaFn(b)/gammaFn(a+b);return Math.pow(x,a-1)*Math.pow(1-x,b-1)/B;};
+const C=(n,k)=>{if(k<0||k>n)return 0;if(k===0||k===n)return 1;let r=1;for(let i=0;i<Math.min(k,n-k);i++)r=r*(n-i)/(i+1);return r;};
+const fact=n=>{let r=1;for(let i=2;i<=n;i++)r*=i;return r;};
+const poisPMF=(k,l)=>Math.exp(-l)*Math.pow(l,k)/fact(k);
+const randExp=(lam)=>-Math.log(1-Math.random())/lam;
+const randNorm=()=>{let u,v,s;do{u=2*Math.random()-1;v=2*Math.random()-1;s=u*u+v*v;}while(s>=1||s===0);return u*Math.sqrt(-2*Math.log(s)/s);};
+const randT=(nu)=>{const z=randNorm();let c=0;for(let i=0;i<nu;i++)c+=randNorm()**2;return z/Math.sqrt(c/nu);};
+const erf=(x)=>{const a1=.254829592,a2=-.284496736,a3=1.421413741,a4=-1.453152027,a5=1.061405429,p=.3275911;const s=x<0?-1:1;x=Math.abs(x);const t=1/(1+p*x);const y=1-(((((a5*t+a4)*t)+a3)*t+a2)*t+a1)*t*Math.exp(-x*x);return s*y;};
+const normalCDF=(x)=>.5*(1+erf(x/Math.sqrt(2)));
+
+function mkSVG(sel,w=W,h=H){d3.select(sel).selectAll('svg').remove();const svg=d3.select(sel).append('svg').attr('viewBox',`0 0 ${w} ${h}`).attr('width','100%').style('max-height',h+'px');return svg.append('g').attr('transform',`translate(${M.left},${M.top})`);}
+
+// ═══════════════════════════════════════════════
+// LAB 1: GALTON BOARD (Canvas)
+// ═══════════════════════════════════════════════
+(function(){
+  const canvas=document.getElementById('galton-canvas');
+  const ctx=canvas.getContext('2d');
+  let rows,p,balls=[],bins=[],animId,running=false;
+
+  function reset(){
+    cancelAnimationFrame(animId);running=false;
+    rows=+document.getElementById('g-rows').value;
+    p=+document.getElementById('g-p').value;
+    bins=new Array(rows+1).fill(0);
+    balls=[];draw();
+    document.getElementById('g-stats').innerHTML='';
+  }
+
+  function draw(){
+    const cw=canvas.width,ch=canvas.height;
+    ctx.fillStyle='#0d1526';ctx.fillRect(0,0,cw,ch);
+    const pegR=2.5,gapX=cw/(rows+2),gapY=(ch*0.55)/rows;
+    const startY=30;
+
+    // Pegs
+    ctx.fillStyle='#334155';
+    for(let r=0;r<rows;r++){
+      const nPegs=r+1;
+      const xOff=(cw-(nPegs-1)*gapX)/2;
+      for(let c=0;c<nPegs;c++){
+        ctx.beginPath();
+        ctx.arc(xOff+c*gapX, startY+r*gapY, pegR, 0, Math.PI*2);
+        ctx.fill();
+      }
+    }
+
+    // Bins histogram
+    const binW=gapX*0.85, maxBin=Math.max(...bins,1);
+    const binBase=ch-10, maxBinH=ch*0.3;
+    const xOff0=(cw-rows*gapX)/2;
+    for(let i=0;i<=rows;i++){
+      const h=(bins[i]/maxBin)*maxBinH;
+      const bx=xOff0+i*gapX-binW/2;
+      // Gradient bar
+      const grad=ctx.createLinearGradient(bx,binBase-h,bx,binBase);
+      grad.addColorStop(0,'#60a5fa');grad.addColorStop(1,'#3b82f6');
+      ctx.fillStyle=grad;
+      ctx.beginPath();ctx.roundRect(bx,binBase-h,binW,h,3);ctx.fill();
+      // Count label
+      if(bins[i]>0){
+        ctx.fillStyle='#94a3b8';ctx.font='10px IBM Plex Mono';ctx.textAlign='center';
+        ctx.fillText(bins[i], xOff0+i*gapX, binBase-h-4);
+      }
+    }
+
+    // Normal overlay
+    const totalBalls=bins.reduce((a,b)=>a+b,0);
+    if(totalBalls>10){
+      const mu=rows*p, sig=Math.sqrt(rows*p*(1-p));
+      ctx.strokeStyle='#f472b6';ctx.lineWidth=2;ctx.setLineDash([5,4]);ctx.beginPath();
+      for(let i=0;i<=rows;i++){
+        const nPdf=normalPDF(i,mu,sig)*totalBalls;
+        const h=(nPdf/maxBin)*maxBinH;
+        const x=xOff0+i*gapX;
+        i===0?ctx.moveTo(x,binBase-h):ctx.lineTo(x,binBase-h);
+      }
+      ctx.stroke();ctx.setLineDash([]);
+    }
+
+    // Balls
+    balls.forEach(b=>{
+      ctx.fillStyle=b.done?'rgba(96,165,250,0.3)':'#fbbf24';
+      ctx.beginPath();ctx.arc(b.x,b.y,3.5,0,Math.PI*2);ctx.fill();
+      if(!b.done){ctx.strokeStyle='rgba(251,191,36,0.4)';ctx.lineWidth=1;ctx.stroke();}
+    });
+  }
+
+  function dropBalls(){
+    if(running) return;running=true;
+    const speed=+document.getElementById('g-speed').value;
+    const cw=canvas.width,gapX=cw/(rows+2),gapY=(cw>0?(canvas.height*0.55)/rows:30);
+    const startY=30;
+    let toSpawn=200,spawnTimer=0;
+
+    function frame(){
+      spawnTimer++;
+      if(toSpawn>0 && spawnTimer%(Math.max(1,12-speed))===0){
+        const path=[];
+        let col=0;
+        for(let r=0;r<rows;r++){col+=(Math.random()<p)?1:0;path.push(col);}
+        const xOff=(cw-(0)*gapX)/2;
+        balls.push({x:cw/2, y:5, row:0, path, step:0, done:false});
+        toSpawn--;
+      }
+      // Animate balls
+      balls.forEach(b=>{
+        if(b.done) return;
+        if(b.row>=rows){
+          const bin=b.path[rows-1];
+          const xOff0=(cw-rows*gapX)/2;
+          b.y+=(canvas.height-20-b.y)*0.15;
+          b.x+=(xOff0+bin*gapX-b.x)*0.15;
+          if(Math.abs(b.y-(canvas.height-20))<2){b.done=true;bins[bin]++;}
+        } else {
+          const tgtRow=b.row;
+          const nPegs=tgtRow+1;
+          const xOff=(cw-(nPegs)*gapX)/2;
+          const nextCol=b.path[tgtRow];
+          const tgtX=xOff+(nextCol)*gapX + gapX/2;
+          const tgtY=startY+tgtRow*gapY+gapY*0.8;
+          b.x+=(tgtX-b.x)*0.2;
+          b.y+=(tgtY-b.y)*0.2;
+          if(Math.abs(b.y-tgtY)<3) b.row++;
+        }
+      });
+      draw();
+      // Stats
+      const total=bins.reduce((a,b)=>a+b,0);
+      if(total>0){
+        const mean=bins.reduce((s,c,i)=>s+i*c,0)/total;
+        const variance=bins.reduce((s,c,i)=>s+(i-mean)**2*c,0)/total;
+        document.getElementById('g-stats').innerHTML=
+          `<div class="si">Balls: <span>${total}</span></div>
+           <div class="si">Observed mean: <span>${mean.toFixed(2)}</span></div>
+           <div class="si purple">Theory (np): <span>${(rows*p).toFixed(2)}</span></div>
+           <div class="si">Observed σ: <span>${Math.sqrt(variance).toFixed(2)}</span></div>
+           <div class="si purple">Theory: <span>${Math.sqrt(rows*p*(1-p)).toFixed(2)}</span></div>`;
+      }
+      if(toSpawn>0||balls.some(b=>!b.done)) animId=requestAnimationFrame(frame);
+      else running=false;
+    }
+    frame();
+  }
+
+  ['g-rows','g-p','g-speed'].forEach(id=>{
+    const el=document.getElementById(id);
+    el.addEventListener('input',()=>{
+      document.getElementById(id+'-v').textContent=id==='g-p'?(+el.value).toFixed(2):el.value;
+      reset();
+    });
+  });
+  document.getElementById('g-start').addEventListener('click',dropBalls);
+  document.getElementById('g-reset').addEventListener('click',reset);
+  reset();
+})();
+
+// ═══════════════════════════════════════════════
+// LAB 2: BAYESIAN UPDATING
+// ═══════════════════════════════════════════════
+(function(){
+  let priorA,priorB,postA,postB,heads=0,tails=0;
+
+  function reset(){
+    priorA=+document.getElementById('b-a').value;
+    priorB=+document.getElementById('b-b').value;
+    postA=priorA;postB=priorB;heads=0;tails=0;
+    render();
+  }
+
+  function flip(n){
+    const trueP=+document.getElementById('b-true').value;
+    for(let i=0;i<n;i++){
+      if(Math.random()<trueP){heads++;postA++;}else{tails++;postB++;}
+    }
+    render();
+  }
+
+  function render(){
+    const g=mkSVG('#bayes-chart');
+    const x=d3.scaleLinear().domain([0,1]).range([0,iW]);
+    const priorData=[],postData=[];
+    for(let p=0.005;p<=0.995;p+=0.005){
+      priorData.push({x:p,y:betaPDF(p,priorA,priorB)});
+      postData.push({x:p,y:betaPDF(p,postA,postB)});
+    }
+    const yMax=d3.max([...priorData,...postData],d=>d.y);
+    const y=d3.scaleLinear().domain([0,Math.min(yMax*1.1,50)]).range([iH,0]);
+
+    g.append('g').attr('class','grid').call(d3.axisLeft(y).ticks(5).tickSize(-iW).tickFormat(''));
+
+    const area=d3.area().x(d=>x(d.x)).y0(iH).y1(d=>y(Math.min(d.y,yMax*1.1))).curve(d3.curveBasis);
+    const line=d3.line().x(d=>x(d.x)).y(d=>y(Math.min(d.y,yMax*1.1))).curve(d3.curveBasis);
+
+    // Prior
+    g.append('path').datum(priorData).attr('d',area).attr('fill','rgba(167,139,250,0.1)');
+    g.append('path').datum(priorData).attr('d',line).attr('fill','none').attr('stroke','#a78bfa').attr('stroke-width',1.5).attr('stroke-dasharray','5,4');
+
+    // Posterior
+    g.append('path').datum(postData).attr('d',area).attr('fill','rgba(96,165,250,0.15)');
+    g.append('path').datum(postData).attr('d',line).attr('fill','none').attr('stroke','#60a5fa').attr('stroke-width',2.5);
+
+    // True p line
+    const trueP=+document.getElementById('b-true').value;
+    g.append('line').attr('x1',x(trueP)).attr('x2',x(trueP)).attr('y1',0).attr('y2',iH)
+      .attr('stroke','#34d399').attr('stroke-width',1.5).attr('stroke-dasharray','4,3');
+    g.append('text').attr('x',x(trueP)+4).attr('y',14).text('true p').attr('fill','#34d399').attr('font-size',10);
+
+    g.append('g').attr('class','axis').attr('transform',`translate(0,${iH})`).call(d3.axisBottom(x).ticks(10));
+    g.append('g').attr('class','axis').call(d3.axisLeft(y).ticks(5).tickFormat(d3.format('.1f')));
+
+    // Legend
+    g.append('text').attr('x',iW-8).attr('y',14).text('— Posterior').attr('fill','#60a5fa').attr('font-size',10).attr('text-anchor','end');
+    g.append('text').attr('x',iW-8).attr('y',28).text('--- Prior').attr('fill','#a78bfa').attr('font-size',10).attr('text-anchor','end');
+
+    const postMean=postA/(postA+postB);
+    document.getElementById('b-stats').innerHTML=
+      `<div class="si">Flips: <span>${heads+tails}</span></div>
+       <div class="si green">Heads: <span>${heads}</span></div>
+       <div class="si orange">Tails: <span>${tails}</span></div>
+       <div class="si">Posterior mean: <span>${postMean.toFixed(4)}</span></div>
+       <div class="si purple">Prior: Beta(${priorA.toFixed(1)}, ${priorB.toFixed(1)})</div>
+       <div class="si">Posterior: <span>Beta(${postA.toFixed(1)}, ${postB.toFixed(1)})</span></div>`;
+  }
+
+  ['b-true','b-a','b-b'].forEach(id=>{
+    document.getElementById(id).addEventListener('input',function(){
+      document.getElementById(id+'-v').textContent=(+this.value).toFixed(id==='b-true'?2:1);
+      reset();
+    });
+  });
+  document.getElementById('b-flip1').addEventListener('click',()=>flip(1));
+  document.getElementById('b-flip10').addEventListener('click',()=>flip(10));
+  document.getElementById('b-flip100').addEventListener('click',()=>flip(100));
+  document.getElementById('b-reset').addEventListener('click',reset);
+  reset();
+})();
+
+// ═══════════════════════════════════════════════
+// LAB 3: POISSON PROCESS
+// ═══════════════════════════════════════════════
+(function(){
+  function run(){
+    const lam=+document.getElementById('pp-lam').value;
+    document.getElementById('pp-lam-v').textContent=lam.toFixed(1);
+    const T=60;
+
+    // Simulate events
+    const events=[];let t=0;
+    while(t<T){t+=randExp(lam);if(t<T)events.push(t);}
+    const interArrivals=events.map((e,i)=>i===0?e:e-events[i-1]);
+
+    // Timeline
+    const g1=mkSVG('#pp-timeline',W,140);
+    const x1=d3.scaleLinear().domain([0,T]).range([0,iW]);
+    g1.append('line').attr('x1',0).attr('x2',iW).attr('y1',50).attr('y2',50).attr('stroke','#334155').attr('stroke-width',2);
+    events.forEach((e,i)=>{
+      g1.append('line').attr('x1',x1(e)).attr('x2',x1(e)).attr('y1',35).attr('y2',65).attr('stroke','#60a5fa').attr('stroke-width',1.5);
+      g1.append('circle').attr('cx',x1(e)).attr('cy',50).attr('r',3).attr('fill','#60a5fa');
+    });
+    g1.append('g').attr('class','axis').attr('transform','translate(0,70)').call(d3.axisBottom(x1).ticks(12).tickFormat(d=>d+'s'));
+    g1.append('text').attr('x',0).attr('y',16).text(`${events.length} events in ${T}s (rate λ=${lam})`).attr('fill','#94a3b8').attr('font-size',11);
+
+    // Count histogram (1-second windows)
+    const counts=new Array(T).fill(0);
+    events.forEach(e=>{const bin=Math.floor(e);if(bin<T)counts[bin]++;});
+    const countBins=d3.bin().thresholds(d3.range(0,d3.max(counts)+2,1))(counts);
+    const g2=mkSVG('#pp-count-hist',440,220);
+    const iW2=440-M.left-M.right,iH2=220-M.top-M.bottom;
+    const x2=d3.scaleBand().domain(countBins.map(b=>b.x0)).range([0,iW2]).padding(0.2);
+    const y2=d3.scaleLinear().domain([0,d3.max(countBins,b=>b.length)*1.1]).range([iH2,0]);
+    countBins.forEach(b=>{
+      g2.append('rect').attr('x',x2(b.x0)).attr('y',y2(b.length)).attr('width',x2.bandwidth())
+        .attr('height',iH2-y2(b.length)).attr('fill','#60a5fa').attr('rx',2).attr('opacity',.8);
+    });
+    // Poisson overlay
+    const maxK=d3.max(counts)+2;
+    for(let k=0;k<=maxK;k++){
+      const expected=T*poisPMF(k,lam);
+      if(x2(k)!==undefined) g2.append('circle').attr('cx',x2(k)+x2.bandwidth()/2).attr('cy',y2(expected)).attr('r',4).attr('fill','none').attr('stroke','#f472b6').attr('stroke-width',2);
+    }
+    g2.append('g').attr('class','axis').attr('transform',`translate(0,${iH2})`).call(d3.axisBottom(x2));
+    g2.append('g').attr('class','axis').call(d3.axisLeft(y2).ticks(4));
+    g2.append('text').attr('x',iW2/2).attr('y',-4).text('Events per 1s window').attr('fill','#94a3b8').attr('font-size',10).attr('text-anchor','middle');
+
+    // Inter-arrival histogram
+    const iaBins=d3.bin().thresholds(20)(interArrivals);
+    const g3=mkSVG('#pp-inter-hist',440,220);
+    const x3=d3.scaleLinear().domain([0,d3.max(interArrivals)*1.1]).range([0,iW2]);
+    const y3=d3.scaleLinear().domain([0,d3.max(iaBins,b=>b.length)*1.1]).range([iH2,0]);
+    iaBins.forEach(b=>{
+      g3.append('rect').attr('x',x3(b.x0)).attr('y',y3(b.length)).attr('width',Math.max(1,x3(b.x1)-x3(b.x0)-1))
+        .attr('height',iH2-y3(b.length)).attr('fill','#a78bfa').attr('rx',1).attr('opacity',.8);
+    });
+    // Exp overlay
+    const expData=[];
+    for(let t=0.01;t<=d3.max(interArrivals)*1.1;t+=0.02){
+      expData.push({x:t, y: lam*Math.exp(-lam*t)*events.length*(iaBins[0].x1-iaBins[0].x0)});
+    }
+    const eLine=d3.line().x(d=>x3(d.x)).y(d=>y3(d.y)).curve(d3.curveBasis);
+    g3.append('path').datum(expData).attr('d',eLine).attr('fill','none').attr('stroke','#f472b6').attr('stroke-width',2);
+    g3.append('g').attr('class','axis').attr('transform',`translate(0,${iH2})`).call(d3.axisBottom(x3).ticks(6));
+    g3.append('g').attr('class','axis').call(d3.axisLeft(y3).ticks(4));
+    g3.append('text').attr('x',iW2/2).attr('y',-4).text('Inter-arrival times').attr('fill','#94a3b8').attr('font-size',10).attr('text-anchor','middle');
+
+    const meanIA=interArrivals.reduce((a,b)=>a+b,0)/interArrivals.length;
+    document.getElementById('pp-stats').innerHTML=
+      `<div class="si">Events: <span>${events.length}</span></div>
+       <div class="si">Observed rate: <span>${(events.length/T).toFixed(2)}/s</span></div>
+       <div class="si purple">True λ: <span>${lam.toFixed(1)}/s</span></div>
+       <div class="si">Mean inter-arrival: <span>${meanIA.toFixed(3)}s</span></div>
+       <div class="si purple">Theory (1/λ): <span>${(1/lam).toFixed(3)}s</span></div>`;
+  }
+  document.getElementById('pp-lam').addEventListener('input',function(){document.getElementById('pp-lam-v').textContent=(+this.value).toFixed(1);});
+  document.getElementById('pp-run').addEventListener('click',run);
+  document.getElementById('pp-reset').addEventListener('click',()=>{['#pp-timeline','#pp-count-hist','#pp-inter-hist'].forEach(s=>d3.select(s).selectAll('svg').remove());document.getElementById('pp-stats').innerHTML='';});
+  run();
+})();
+
+// ═══════════════════════════════════════════════
+// LAB 4: DISTRIBUTION RELATIONSHIP NETWORK
+// ═══════════════════════════════════════════════
+(function(){
+  const nodes=[
+    {id:'Bernoulli',group:1},{id:'Binomial',group:1},{id:'Geometric',group:1},{id:'NegBinomial',group:1},
+    {id:'Poisson',group:1},{id:'Hypergeometric',group:1},{id:'Multinomial',group:1},
+    {id:'Normal',group:2},{id:'Uniform',group:2},{id:'Exponential',group:2},{id:'Gamma',group:2},
+    {id:'Beta',group:2},{id:'Weibull',group:2},{id:'LogNormal',group:2},{id:'Cauchy',group:2},
+    {id:'Chi-squared',group:3},{id:"Student's t",group:3},{id:'F',group:3},{id:'Pareto',group:2}
+  ];
+  const links=[
+    {source:'Bernoulli',target:'Binomial',type:'sum',label:'sum of n'},
+    {source:'Binomial',target:'Poisson',type:'limit',label:'n→∞, np=λ'},
+    {source:'Binomial',target:'Normal',type:'limit',label:'CLT (n large)'},
+    {source:'Bernoulli',target:'Geometric',type:'derive',label:'trials to 1st'},
+    {source:'Geometric',target:'NegBinomial',type:'special',label:'r=1'},
+    {source:'Geometric',target:'Exponential',type:'analog',label:'continuous analog'},
+    {source:'Exponential',target:'Gamma',type:'special',label:'α=1'},
+    {source:'Gamma',target:'Chi-squared',type:'special',label:'α=ν/2,β=½'},
+    {source:'Normal',target:'Chi-squared',type:'derive',label:'Z² ~ χ²(1)'},
+    {source:'Normal',target:"Student's t",type:'derive',label:'Z/√(χ²/ν)'},
+    {source:'Chi-squared',target:'F',type:'derive',label:'ratio of χ²'},
+    {source:"Student's t",target:'Normal',type:'limit',label:'ν→∞'},
+    {source:'Normal',target:'LogNormal',type:'derive',label:'e^X'},
+    {source:'Normal',target:'Cauchy',type:'derive',label:'Z₁/Z₂'},
+    {source:"Student's t",target:'Cauchy',type:'special',label:'ν=1'},
+    {source:'Poisson',target:'Exponential',type:'derive',label:'inter-arrivals'},
+    {source:'Beta',target:'Uniform',type:'special',label:'α=β=1'},
+    {source:'Beta',target:'Binomial',type:'conjugate',label:'conjugate prior'},
+    {source:'Gamma',target:'Poisson',type:'conjugate',label:'conjugate prior'},
+    {source:'Binomial',target:'Hypergeometric',type:'analog',label:'without replacement'},
+    {source:'Binomial',target:'Multinomial',type:'special',label:'k=2'},
+    {source:'Exponential',target:'Weibull',type:'special',label:'k=1'},
+    {source:'NegBinomial',target:'Poisson',type:'derive',label:'Gamma-Poisson mix'},
+  ];
+
+  const colors={1:'#60a5fa',2:'#34d399',3:'#fb923c'};
+  const typeColors={limit:'#f472b6',sum:'#60a5fa',derive:'#a78bfa',special:'#34d399',analog:'#fbbf24',conjugate:'#22d3ee'};
+
+  const nW=880,nH=480;
+  d3.select('#network-chart').selectAll('svg').remove();
+  const svg=d3.select('#network-chart').append('svg').attr('viewBox',`0 0 ${nW} ${nH}`).attr('width','100%').style('max-height',nH+'px');
+
+  const sim=d3.forceSimulation(nodes)
+    .force('link',d3.forceLink(links).id(d=>d.id).distance(110))
+    .force('charge',d3.forceManyBody().strength(-350))
+    .force('center',d3.forceCenter(nW/2,nH/2))
+    .force('collision',d3.forceCollide(35));
+
+  // Arrow markers
+  Object.entries(typeColors).forEach(([type,color])=>{
+    svg.append('defs').append('marker').attr('id','arrow-'+type).attr('viewBox','0 -3 6 6').attr('refX',22).attr('refY',0).attr('markerWidth',6).attr('markerHeight',6).attr('orient','auto')
+      .append('path').attr('d','M0,-3L6,0L0,3').attr('fill',color).attr('opacity',.6);
+  });
+
+  const link=svg.append('g').selectAll('line').data(links).enter().append('line')
+    .attr('stroke',d=>typeColors[d.type]||'#475569').attr('stroke-width',1.5).attr('stroke-opacity',.5)
+    .attr('marker-end',d=>'url(#arrow-'+d.type+')');
+
+  const linkLabel=svg.append('g').selectAll('text').data(links).enter().append('text')
+    .text(d=>d.label).attr('fill','#64748b').attr('font-size',8).attr('text-anchor','middle').attr('dy',-4);
+
+  const node=svg.append('g').selectAll('g').data(nodes).enter().append('g')
+    .call(d3.drag().on('start',(e,d)=>{if(!e.active)sim.alphaTarget(.3).restart();d.fx=d.x;d.fy=d.y;})
+      .on('drag',(e,d)=>{d.fx=e.x;d.fy=e.y;}).on('end',(e,d)=>{if(!e.active)sim.alphaTarget(0);d.fx=null;d.fy=null;}));
+
+  node.append('circle').attr('r',18).attr('fill',d=>colors[d.group]).attr('fill-opacity',.15)
+    .attr('stroke',d=>colors[d.group]).attr('stroke-width',1.5).style('cursor','pointer');
+  node.append('text').text(d=>d.id).attr('fill','#e2e8f0').attr('font-size',9).attr('text-anchor','middle').attr('dy',3).style('pointer-events','none');
+
+  // Hover highlight
+  node.on('mouseenter',(_,d)=>{
+    const connected=new Set();links.forEach(l=>{if(l.source.id===d.id||l.target.id===d.id){connected.add(l.source.id);connected.add(l.target.id);}});
+    node.select('circle').attr('fill-opacity',n=>connected.has(n.id)||n.id===d.id?.3:.05).attr('stroke-opacity',n=>connected.has(n.id)||n.id===d.id?1:.15);
+    node.select('text').attr('fill-opacity',n=>connected.has(n.id)||n.id===d.id?1:.15);
+    link.attr('stroke-opacity',l=>(l.source.id===d.id||l.target.id===d.id)?.9:.07).attr('stroke-width',l=>(l.source.id===d.id||l.target.id===d.id)?2.5:1);
+    linkLabel.attr('fill-opacity',l=>(l.source.id===d.id||l.target.id===d.id)?1:0);
+  }).on('mouseleave',()=>{
+    node.select('circle').attr('fill-opacity',.15).attr('stroke-opacity',1);
+    node.select('text').attr('fill-opacity',1);
+    link.attr('stroke-opacity',.5).attr('stroke-width',1.5);
+    linkLabel.attr('fill-opacity',1);
+  });
+
+  sim.on('tick',()=>{
+    link.attr('x1',d=>d.source.x).attr('y1',d=>d.source.y).attr('x2',d=>d.target.x).attr('y2',d=>d.target.y);
+    linkLabel.attr('x',d=>(d.source.x+d.target.x)/2).attr('y',d=>(d.source.y+d.target.y)/2);
+    node.attr('transform',d=>`translate(${d.x},${d.y})`);
+  });
+})();
+
+// ═══════════════════════════════════════════════
+// LAB 5: CONVOLUTION VISUALIZER
+// ═══════════════════════════════════════════════
+(function(){
+  let nConv=0, samples=[];
+  const srcStats={uniform:{mu:.5,sig:Math.sqrt(1/12)},exponential:{mu:1,sig:1},bernoulli:{mu:.5,sig:.5},dice:{mu:3.5,sig:Math.sqrt(35/12)}};
+  const gens={uniform:()=>Math.random(),exponential:()=>randExp(1),bernoulli:()=>Math.random()<.5?1:0,dice:()=>Math.floor(Math.random()*6)+1};
+
+  function addOne(){
+    const src=document.getElementById('cv-src').value;
+    nConv++;
+    if(samples.length===0) samples=Array(5000).fill(0);
+    const gen=gens[src];
+    for(let i=0;i<samples.length;i++) samples[i]+=gen();
+    document.getElementById('cv-count').textContent='n = '+nConv;
+    render(src);
+  }
+  function resetConv(){nConv=0;samples=[];document.getElementById('cv-count').textContent='n = 0';d3.select('#conv-chart').selectAll('svg').remove();document.getElementById('cv-stats').innerHTML='';}
+
+  function render(src){
+    const bins=d3.bin().thresholds(50)(samples);
+    const maxC=d3.max(bins,b=>b.length);
+    const g=mkSVG('#conv-chart');
+    const xDom=[d3.min(samples)-.2,d3.max(samples)+.2];
+    const x=d3.scaleLinear().domain(xDom).range([0,iW]);
+    const y=d3.scaleLinear().domain([0,maxC*1.15]).range([iH,0]);
+    g.append('g').attr('class','grid').call(d3.axisLeft(y).ticks(5).tickSize(-iW).tickFormat(''));
+    bins.forEach(b=>{
+      g.append('rect').attr('x',x(b.x0)+1).attr('y',y(b.length)).attr('width',Math.max(1,x(b.x1)-x(b.x0)-2))
+        .attr('height',iH-y(b.length)).attr('fill','#60a5fa').attr('opacity',.7).attr('rx',1);
+    });
+    // Normal overlay
+    const st=srcStats[src];
+    if(nConv>=2){
+      const mu=nConv*st.mu, sig=st.sig*Math.sqrt(nConv);
+      const normData=[];const bw=bins[0].x1-bins[0].x0;
+      for(let xx=xDom[0];xx<=xDom[1];xx+=(xDom[1]-xDom[0])/200)
+        normData.push({x:xx, y:normalPDF(xx,mu,sig)*samples.length*bw});
+      const line=d3.line().x(d=>x(d.x)).y(d=>y(d.y)).curve(d3.curveBasis);
+      g.append('path').datum(normData).attr('d',line).attr('fill','none').attr('stroke','#f472b6').attr('stroke-width',2).attr('stroke-dasharray','5,3');
+      g.append('text').attr('x',iW-8).attr('y',16).text(`N(${mu.toFixed(1)}, ${(sig**2).toFixed(2)})`).attr('fill','#f472b6').attr('font-size',10).attr('text-anchor','end');
+    }
+    g.append('g').attr('class','axis').attr('transform',`translate(0,${iH})`).call(d3.axisBottom(x).ticks(8));
+    g.append('g').attr('class','axis').call(d3.axisLeft(y).ticks(5));
+
+    const sMean=d3.mean(samples),sStd=d3.deviation(samples);
+    document.getElementById('cv-stats').innerHTML=
+      `<div class="si">n: <span>${nConv}</span></div>
+       <div class="si">Sample mean: <span>${sMean.toFixed(3)}</span></div>
+       <div class="si purple">Theory (nμ): <span>${(nConv*st.mu).toFixed(3)}</span></div>
+       <div class="si">Sample σ: <span>${sStd.toFixed(3)}</span></div>
+       <div class="si purple">Theory (σ√n): <span>${(st.sig*Math.sqrt(nConv)).toFixed(3)}</span></div>`;
+  }
+  document.getElementById('cv-add').addEventListener('click',addOne);
+  document.getElementById('cv-reset').addEventListener('click',resetConv);
+})();
+
+// ═══════════════════════════════════════════════
+// LAB 6: MEMORYLESS PROPERTY
+// ═══════════════════════════════════════════════
+(function(){
+  function render(){
+    const lam=+document.getElementById('ml-lam').value;
+    const s=+document.getElementById('ml-s').value;
+    document.getElementById('ml-lam-v').textContent=lam.toFixed(1);
+    document.getElementById('ml-s-v').textContent=s.toFixed(1);
+
+    const maxT=s+5/lam;
+    const g=mkSVG('#memoryless-chart');
+    const x=d3.scaleLinear().domain([0,maxT]).range([0,iW]);
+    const y=d3.scaleLinear().domain([0,1.05]).range([iH,0]);
+    g.append('g').attr('class','grid').call(d3.axisLeft(y).ticks(5).tickSize(-iW).tickFormat(''));
+
+    // Unconditional survival S(t) = e^{-λt}
+    const sData=[];for(let t=0;t<=maxT;t+=0.05)sData.push({x:t,y:Math.exp(-lam*t)});
+    const line=d3.line().x(d=>x(d.x)).y(d=>y(d.y)).curve(d3.curveBasis);
+    g.append('path').datum(sData).attr('d',line).attr('fill','none').attr('stroke','#60a5fa').attr('stroke-width',2.5);
+
+    // Conditional: P(X>t | X>s) = e^{-λ(t-s)} for t>s, shifted to start at t=s
+    const cData=[];for(let t=s;t<=maxT;t+=0.05)cData.push({x:t,y:Math.exp(-lam*(t-s))});
+    g.append('path').datum(cData).attr('d',line).attr('fill','none').attr('stroke','#34d399').attr('stroke-width',2.5).attr('stroke-dasharray','6,3');
+
+    // s marker
+    g.append('line').attr('x1',x(s)).attr('x2',x(s)).attr('y1',0).attr('y2',iH).attr('stroke','#fbbf24').attr('stroke-width',1).attr('stroke-dasharray','3,3');
+    g.append('text').attr('x',x(s)+4).attr('y',14).text(`s = ${s}`).attr('fill','#fbbf24').attr('font-size',10);
+
+    // They overlap! Show annotation
+    g.append('text').attr('x',x(s+(maxT-s)*0.4)).attr('y',y(.5)-16).text('Identical curves!').attr('fill','#f472b6').attr('font-size',12).attr('text-anchor','middle').attr('font-weight',600);
+
+    g.append('g').attr('class','axis').attr('transform',`translate(0,${iH})`).call(d3.axisBottom(x).ticks(8));
+    g.append('g').attr('class','axis').call(d3.axisLeft(y).ticks(5).tickFormat(d3.format('.1f')));
+    g.append('text').attr('x',iW-8).attr('y',14).text('— S(t) unconditional').attr('fill','#60a5fa').attr('font-size',10).attr('text-anchor','end');
+    g.append('text').attr('x',iW-8).attr('y',28).text('--- P(X>t|X>s) conditional').attr('fill','#34d399').attr('font-size',10).attr('text-anchor','end');
+
+    document.getElementById('ml-stats').innerHTML=
+      `<div class="si">P(X>${s.toFixed(1)}): <span>${Math.exp(-lam*s).toFixed(4)}</span></div>
+       <div class="si green">P(X>${(s+1).toFixed(1)} | X>${s.toFixed(1)}): <span>${Math.exp(-lam*1).toFixed(4)}</span></div>
+       <div class="si">P(X>1): <span>${Math.exp(-lam*1).toFixed(4)}</span></div>
+       <div class="si purple">Equal? <span>Yes — memoryless!</span></div>`;
+  }
+  ['ml-lam','ml-s'].forEach(id=>document.getElementById(id).addEventListener('input',render));
+  render();
+})();
+
+// ═══════════════════════════════════════════════
+// LAB 7: QQ-PLOT
+// ═══════════════════════════════════════════════
+(function(){
+  function generate(){
+    const src=document.getElementById('qq-src').value;
+    const n=+document.getElementById('qq-n').value;
+    document.getElementById('qq-n-v').textContent=n;
+    const gens={
+      normal:()=>randNorm(),
+      t3:()=>randT(3),t10:()=>randT(10),
+      exponential:()=>randExp(1),
+      uniform:()=>Math.random(),
+      lognormal:()=>Math.exp(randNorm()*.5),
+      mixed:()=>Math.random()<.9?randNorm():randNorm()*3+4
+    };
+    const data=Array.from({length:n},gens[src]).sort((a,b)=>a-b);
+
+    // Theoretical quantiles (standard normal)
+    const theoretical=data.map((_,i)=>{
+      const p=(i+0.5)/n;
+      // Approximate inverse normal using rational approximation
+      let t=p<.5?Math.sqrt(-2*Math.log(p)):Math.sqrt(-2*Math.log(1-p));
+      let q=t-(2.515517+.802853*t+.010328*t*t)/(1+1.432788*t+.189269*t*t+.001308*t*t*t);
+      return p<.5?-q:q;
+    });
+
+    const g=mkSVG('#qq-chart');
+    const extent=[Math.min(d3.min(data),d3.min(theoretical))-0.3,Math.max(d3.max(data),d3.max(theoretical))+0.3];
+    const x=d3.scaleLinear().domain(extent).range([0,iW]);
+    const y=d3.scaleLinear().domain(extent).range([iH,0]);
+    g.append('g').attr('class','grid').call(d3.axisLeft(y).ticks(6).tickSize(-iW).tickFormat(''));
+
+    // 45° line
+    g.append('line').attr('x1',x(extent[0])).attr('y1',y(extent[0])).attr('x2',x(extent[1])).attr('y2',y(extent[1]))
+      .attr('stroke','#f472b6').attr('stroke-width',1.5).attr('stroke-dasharray','6,4');
+
+    // Points
+    data.forEach((d,i)=>{
+      g.append('circle').attr('cx',x(theoretical[i])).attr('cy',y(d)).attr('r',2.5)
+        .attr('fill','#60a5fa').attr('fill-opacity',.7);
+    });
+
+    g.append('g').attr('class','axis').attr('transform',`translate(0,${iH})`).call(d3.axisBottom(x).ticks(8));
+    g.append('g').attr('class','axis').call(d3.axisLeft(y).ticks(8));
+    g.append('text').attr('x',iW/2).attr('y',iH+35).text('Theoretical Normal Quantiles').attr('fill','#94a3b8').attr('font-size',11).attr('text-anchor','middle');
+    g.append('text').attr('transform','rotate(-90)').attr('x',-iH/2).attr('y',-40).text('Sample Quantiles').attr('fill','#94a3b8').attr('font-size',11).attr('text-anchor','middle');
+
+    const labels={normal:'Normal → on the line',t3:'t(3) → heavy tails (S-curve)',t10:'t(10) → mild heavy tails',exponential:'Exp → right skew (curves up)',uniform:'Uniform → light tails (curves inward)',lognormal:'Log-Normal → right skew',mixed:'Contaminated → outlier bumps'};
+    document.getElementById('qq-stats').innerHTML=`<div class="si">Pattern: <span>${labels[src]}</span></div><div class="si">n: <span>${n}</span></div>`;
+  }
+  document.getElementById('qq-gen').addEventListener('click',generate);
+  document.getElementById('qq-n').addEventListener('input',function(){document.getElementById('qq-n-v').textContent=this.value;});
+  generate();
+})();
+
+// ═══════════════════════════════════════════════
+// LAB 8: MONTE CARLO
+// ═══════════════════════════════════════════════
+(function(){
+  let points=[], mcAnim;
+  function run(){
+    const a=+document.getElementById('mc-a').value, b=+document.getElementById('mc-b').value;
+    document.getElementById('mc-a-v').textContent=a.toFixed(1);
+    document.getElementById('mc-b-v').textContent=b.toFixed(1);
+    points=[];let idx=0;
+    const trueP=normalCDF(b)-normalCDF(a);
+    const yMaxPDF=normalPDF(0,0,1)*1.05;
+
+    function frame(){
+      const batch=40;
+      for(let i=0;i<batch&&idx<2000;i++,idx++){
+        const px=-4+Math.random()*8;
+        const py=Math.random()*yMaxPDF;
+        const pdf=normalPDF(px,0,1);
+        const inside=px>=a&&px<=b&&py<=pdf;
+        const underCurve=py<=pdf;
+        points.push({x:px,y:py,inside,underCurve});
+      }
+      // Draw
+      const g=mkSVG('#mc-chart');
+      const x=d3.scaleLinear().domain([-4,4]).range([0,iW]);
+      const y=d3.scaleLinear().domain([0,yMaxPDF]).range([iH,0]);
+
+      // PDF curve
+      const pdfData=[];for(let xx=-4;xx<=4;xx+=0.03)pdfData.push({x:xx,y:normalPDF(xx,0,1)});
+      const line=d3.line().x(d=>x(d.x)).y(d=>y(d.y)).curve(d3.curveBasis);
+      const areaPath=d3.area().x(d=>x(d.x)).y0(iH).y1(d=>y(d.y)).curve(d3.curveBasis);
+
+      // Shaded region
+      const shadeData=pdfData.filter(d=>d.x>=a&&d.x<=b);
+      g.append('path').datum(shadeData).attr('d',areaPath).attr('fill','rgba(52,211,153,0.12)');
+      g.append('path').datum(pdfData).attr('d',line).attr('fill','none').attr('stroke','#60a5fa').attr('stroke-width',2);
+
+      // Points
+      points.forEach(p=>{
+        g.append('circle').attr('cx',x(p.x)).attr('cy',y(p.y)).attr('r',1.5)
+          .attr('fill',p.inside?'#34d399':p.underCurve?'#60a5fa':'#334155').attr('opacity',p.inside?.8:.3);
+      });
+
+      g.append('g').attr('class','axis').attr('transform',`translate(0,${iH})`).call(d3.axisBottom(x).ticks(8));
+      g.append('g').attr('class','axis').call(d3.axisLeft(y).ticks(5).tickFormat(d3.format('.2f')));
+
+      // Estimate
+      const underTotal=points.filter(p=>p.underCurve).length;
+      const insideTotal=points.filter(p=>p.inside).length;
+      const totalArea=8*yMaxPDF; // bounding box area
+      const estArea=underTotal/points.length*totalArea;
+      const estP=insideTotal/points.length*totalArea;
+
+      document.getElementById('mc-stats').innerHTML=
+        `<div class="si">Points: <span>${points.length}</span></div>
+         <div class="si green">In region: <span>${insideTotal}</span></div>
+         <div class="si">MC estimate P(${a}≤X≤${b}): <span>${(insideTotal/points.length*totalArea).toFixed(4)}</span></div>
+         <div class="si purple">True value: <span>${trueP.toFixed(4)}</span></div>
+         <div class="si orange">Error: <span>${Math.abs(insideTotal/points.length*totalArea-trueP).toFixed(4)}</span></div>`;
+
+      if(idx<2000) mcAnim=requestAnimationFrame(frame);
+    }
+    frame();
+  }
+  ['mc-a','mc-b'].forEach(id=>document.getElementById(id).addEventListener('input',function(){document.getElementById(id+'-v').textContent=(+this.value).toFixed(1);}));
+  document.getElementById('mc-run').addEventListener('click',()=>{cancelAnimationFrame(mcAnim);run();});
+  document.getElementById('mc-reset').addEventListener('click',()=>{cancelAnimationFrame(mcAnim);points=[];d3.select('#mc-chart').selectAll('svg').remove();document.getElementById('mc-stats').innerHTML='';});
+  run();
+})();
+
+// ═══════════════════════════════════════════════
+// LAB 9: HAZARD FUNCTIONS
+// ═══════════════════════════════════════════════
+(function(){
+  function render(){
+    const k1=+document.getElementById('hz-k1').value, k2=+document.getElementById('hz-k2').value;
+    document.getElementById('hz-k1-v').textContent=k1.toFixed(2);
+    document.getElementById('hz-k2-v').textContent=k2.toFixed(1);
+    const maxT=5;
+    const g=mkSVG('#hazard-chart');
+    const x=d3.scaleLinear().domain([0.05,maxT]).range([0,iW]);
+
+    // Weibull hazard: h(t) = (k/λ)(t/λ)^{k-1}, λ=1
+    const d1=[],d2=[],d3data=[],d4=[];
+    for(let t=0.05;t<=maxT;t+=0.02){
+      d1.push({x:t,y:k1*Math.pow(t,k1-1)});
+      d2.push({x:t,y:1}); // Exponential
+      d3data.push({x:t,y:k2*Math.pow(t,k2-1)});
+      // Bathtub composite: min of decreasing + constant base + increasing
+      const bath=0.5*k1*Math.pow(t,k1-1)+0.3+0.2*(t>2?k2*Math.pow(t-2,k2-1):0);
+      d4.push({x:t,y:bath});
+    }
+    const yMax=Math.min(d3.max([...d1,...d3data,...d4],d=>d.y),8);
+    const y=d3.scaleLinear().domain([0,yMax]).range([iH,0]);
+    g.append('g').attr('class','grid').call(d3.axisLeft(y).ticks(5).tickSize(-iW).tickFormat(''));
+    const line=d3.line().x(d=>x(d.x)).y(d=>y(Math.min(d.y,yMax))).curve(d3.curveBasis);
+
+    g.append('path').datum(d1).attr('d',line).attr('fill','none').attr('stroke','#fb923c').attr('stroke-width',2);
+    g.append('path').datum(d2).attr('d',line).attr('fill','none').attr('stroke','#60a5fa').attr('stroke-width',2).attr('stroke-dasharray','4,3');
+    g.append('path').datum(d3data).attr('d',line).attr('fill','none').attr('stroke','#f472b6').attr('stroke-width',2);
+    g.append('path').datum(d4).attr('d',line).attr('fill','none').attr('stroke','#34d399').attr('stroke-width',2.5);
+
+    g.append('g').attr('class','axis').attr('transform',`translate(0,${iH})`).call(d3.axisBottom(x).ticks(8));
+    g.append('g').attr('class','axis').call(d3.axisLeft(y).ticks(5));
+
+    // Legend
+    const leg=[['DFR (k='+k1.toFixed(2)+')','#fb923c'],['CFR (Exponential)','#60a5fa'],['IFR (k='+k2.toFixed(1)+')','#f472b6'],['Bathtub (composite)','#34d399']];
+    leg.forEach((l,i)=>g.append('text').attr('x',iW-8).attr('y',14+i*14).text(l[0]).attr('fill',l[1]).attr('font-size',10).attr('text-anchor','end'));
+
+    document.getElementById('hz-stats').innerHTML=
+      `<div class="si orange">k<1: <span>Infant mortality (DFR)</span></div>
+       <div class="si">k=1: <span>Constant hazard (Exponential)</span></div>
+       <div class="si" style="color:var(--pink)">k>1: <span>Wear-out failures (IFR)</span></div>
+       <div class="si green">Bathtub: <span>All three phases combined</span></div>`;
+  }
+  ['hz-k1','hz-k2'].forEach(id=>document.getElementById(id).addEventListener('input',render));
+  render();
+})();
+
+// ═══════════════════════════════════════════════
+// LAB 10: RANDOM WALK & LLN
+// ═══════════════════════════════════════════════
+(function(){
+  document.getElementById('rw-run').addEventListener('click',()=>{
+    const src=document.getElementById('rw-src').value;
+    const nPaths=+document.getElementById('rw-paths').value;
+    document.getElementById('rw-paths-v').textContent=nPaths;
+    const N=500;
+    const gens={uniform:()=>Math.random(),exponential:()=>randExp(1),bernoulli:()=>Math.random()<.3?1:0};
+    const mus={uniform:.5,exponential:1,bernoulli:.3};
+    const sigs={uniform:Math.sqrt(1/12),exponential:1,bernoulli:Math.sqrt(.21)};
+    const mu=mus[src],sig=sigs[src];
+
+    const paths=[];
+    for(let p=0;p<nPaths;p++){
+      const path=[{x:1,y:gens[src]()}];
+      for(let i=1;i<N;i++){
+        const val=gens[src]();
+        const runMean=(path[i-1].y*i+val)/(i+1);
+        path.push({x:i+1,y:runMean});
+      }
+      paths.push(path);
+    }
+
+    const g=mkSVG('#rw-chart');
+    const x=d3.scaleLinear().domain([1,N]).range([0,iW]);
+    const yExt=[mu-3*sig,mu+3*sig];
+    const y=d3.scaleLinear().domain(yExt).range([iH,0]);
+    g.append('g').attr('class','grid').call(d3.axisLeft(y).ticks(5).tickSize(-iW).tickFormat(''));
+
+    // Confidence band ±2σ/√n
+    const bandData=[];
+    for(let n=1;n<=N;n++) bandData.push({x:n,hi:mu+2*sig/Math.sqrt(n),lo:mu-2*sig/Math.sqrt(n)});
+    const area=d3.area().x(d=>x(d.x)).y0(d=>y(d.lo)).y1(d=>y(d.hi)).curve(d3.curveBasis);
+    g.append('path').datum(bandData).attr('d',area).attr('fill','rgba(96,165,250,0.08)');
+
+    // True mean
+    g.append('line').attr('x1',0).attr('x2',iW).attr('y1',y(mu)).attr('y2',y(mu))
+      .attr('stroke','#f472b6').attr('stroke-width',1.5).attr('stroke-dasharray','6,4');
+
+    // Paths
+    const colors=d3.scaleOrdinal(d3.schemeTableau10);
+    const line=d3.line().x(d=>x(d.x)).y(d=>y(d.y));
+    paths.forEach((p,i)=>{
+      g.append('path').datum(p).attr('d',line).attr('fill','none')
+        .attr('stroke',colors(i)).attr('stroke-width',1).attr('opacity',.6);
+    });
+
+    g.append('g').attr('class','axis').attr('transform',`translate(0,${iH})`).call(d3.axisBottom(x).ticks(8));
+    g.append('g').attr('class','axis').call(d3.axisLeft(y).ticks(6));
+    g.append('text').attr('x',iW-8).attr('y',y(mu)-6).text(`μ = ${mu}`).attr('fill','#f472b6').attr('font-size',10).attr('text-anchor','end');
+    g.append('text').attr('x',iW/2).attr('y',iH+35).text('Number of observations (n)').attr('fill','#94a3b8').attr('font-size',11).attr('text-anchor','middle');
+  });
+  document.getElementById('rw-run').click();
+})();
+
+// ═══════════════════════════════════════════════
+// LAB 11: DISTRIBUTION MORPHER
+// ═══════════════════════════════════════════════
+(function(){
+  function render(){
+    const type=document.getElementById('morph-type').value;
+    const t=+document.getElementById('morph-t').value/100;
+    document.getElementById('morph-t-v').textContent=Math.round(t*100)+'%';
+
+    const g=mkSVG('#morph-chart');
+    let data=[],label='',xDom,yMax=0;
+
+    if(type==='binom-poisson'){
+      const lam=5;
+      const n=Math.round(10+t*490); // 10 to 500
+      const p=lam/n;
+      const maxK=Math.min(n,Math.ceil(lam+4*Math.sqrt(lam)+3));
+      for(let k=0;k<=maxK;k++){
+        const binP=C(n,k)*Math.pow(p,k)*Math.pow(1-p,n-k);
+        const poisP=Math.exp(-lam)*Math.pow(lam,k)/fact(k);
+        data.push({k,binP,poisP});
+      }
+      label=`Bin(${n}, ${p.toFixed(4)}) → Poi(${lam})`;
+      xDom=[0,maxK];yMax=d3.max(data,d=>Math.max(d.binP,d.poisP));
+
+      const x=d3.scaleBand().domain(data.map(d=>d.k)).range([0,iW]).padding(.15);
+      const y=d3.scaleLinear().domain([0,yMax*1.15]).range([iH,0]);
+      g.append('g').attr('class','grid').call(d3.axisLeft(y).ticks(5).tickSize(-iW).tickFormat(''));
+      data.forEach(d=>{
+        g.append('rect').attr('x',x(d.k)).attr('y',y(d.binP)).attr('width',x.bandwidth())
+          .attr('height',iH-y(d.binP)).attr('fill','#60a5fa').attr('opacity',.7).attr('rx',1);
+        g.append('circle').attr('cx',x(d.k)+x.bandwidth()/2).attr('cy',y(d.poisP)).attr('r',3)
+          .attr('fill','none').attr('stroke','#f472b6').attr('stroke-width',2);
+      });
+      g.append('g').attr('class','axis').attr('transform',`translate(0,${iH})`)
+        .call(d3.axisBottom(x).tickValues(x.domain().filter((_,i)=>i%Math.max(1,Math.ceil(data.length/15))===0)));
+      g.append('g').attr('class','axis').call(d3.axisLeft(y).ticks(5).tickFormat(d3.format('.3f')));
+    }
+    else if(type==='t-normal'){
+      const nu=Math.round(1+t*99); // 1 to 100
+      xDom=[-5,5];
+      const tData=[],nData=[];
+      for(let xx=-5;xx<=5;xx+=0.04){
+        const tPdf=gammaFn((nu+1)/2)/(Math.sqrt(nu*Math.PI)*gammaFn(nu/2))*Math.pow(1+xx*xx/nu,-(nu+1)/2);
+        tData.push({x:xx,y:tPdf});
+        nData.push({x:xx,y:normalPDF(xx,0,1)});
+      }
+      yMax=d3.max([...tData,...nData],d=>d.y);
+      const x=d3.scaleLinear().domain(xDom).range([0,iW]);
+      const y=d3.scaleLinear().domain([0,yMax*1.1]).range([iH,0]);
+      const line=d3.line().x(d=>x(d.x)).y(d=>y(d.y)).curve(d3.curveBasis);
+      g.append('g').attr('class','grid').call(d3.axisLeft(y).ticks(5).tickSize(-iW).tickFormat(''));
+      g.append('path').datum(nData).attr('d',line).attr('fill','none').attr('stroke','#f472b6').attr('stroke-width',1.5).attr('stroke-dasharray','5,3');
+      g.append('path').datum(tData).attr('d',d3.area().x(d=>x(d.x)).y0(iH).y1(d=>y(d.y)).curve(d3.curveBasis)).attr('fill','rgba(96,165,250,0.12)');
+      g.append('path').datum(tData).attr('d',line).attr('fill','none').attr('stroke','#60a5fa').attr('stroke-width',2.5);
+      g.append('g').attr('class','axis').attr('transform',`translate(0,${iH})`).call(d3.axisBottom(x).ticks(8));
+      g.append('g').attr('class','axis').call(d3.axisLeft(y).ticks(5).tickFormat(d3.format('.3f')));
+      label=`t(${nu}) → N(0,1)`;
+    }
+    else if(type==='gamma-exp'){
+      const alpha=1+t*9*(1-t<0.01?0:1); // morph from high α back to 1
+      const a=1+(1-t)*9; // goes from 10 to 1
+      const b=1;
+      const maxX=a/b+5*Math.sqrt(a)/b;
+      const gData=[],eData=[];
+      for(let xx=0.01;xx<=maxX;xx+=maxX/200){
+        const gPdf=Math.pow(b,a)/gammaFn(a)*Math.pow(xx,a-1)*Math.exp(-b*xx);
+        gData.push({x:xx,y:isFinite(gPdf)?gPdf:0});
+        eData.push({x:xx,y:b*Math.exp(-b*xx)});
+      }
+      yMax=d3.max([...gData,...eData],d=>d.y);
+      const x=d3.scaleLinear().domain([0,maxX]).range([0,iW]);
+      const y=d3.scaleLinear().domain([0,yMax*1.1]).range([iH,0]);
+      const line=d3.line().x(d=>x(d.x)).y(d=>y(d.y)).curve(d3.curveBasis);
+      g.append('g').attr('class','grid').call(d3.axisLeft(y).ticks(5).tickSize(-iW).tickFormat(''));
+      g.append('path').datum(eData).attr('d',line).attr('fill','none').attr('stroke','#f472b6').attr('stroke-width',1.5).attr('stroke-dasharray','5,3');
+      g.append('path').datum(gData).attr('d',d3.area().x(d=>x(d.x)).y0(iH).y1(d=>y(d.y)).curve(d3.curveBasis)).attr('fill','rgba(96,165,250,0.12)');
+      g.append('path').datum(gData).attr('d',line).attr('fill','none').attr('stroke','#60a5fa').attr('stroke-width',2.5);
+      g.append('g').attr('class','axis').attr('transform',`translate(0,${iH})`).call(d3.axisBottom(x).ticks(8));
+      g.append('g').attr('class','axis').call(d3.axisLeft(y).ticks(5).tickFormat(d3.format('.3f')));
+      label=`Gamma(${a.toFixed(1)}, 1) → Exp(1)`;
+    }
+    else if(type==='beta-uniform'){
+      const a=1+(1-t)*4, b=1+(1-t)*4; // from 5,5 to 1,1
+      const bData=[],uData=[];
+      for(let xx=0.01;xx<=0.99;xx+=0.005){
+        bData.push({x:xx,y:betaPDF(xx,a,b)});
+        uData.push({x:xx,y:1});
+      }
+      yMax=d3.max(bData,d=>d.y);
+      const x=d3.scaleLinear().domain([0,1]).range([0,iW]);
+      const y=d3.scaleLinear().domain([0,Math.max(yMax,1.5)*1.1]).range([iH,0]);
+      const line=d3.line().x(d=>x(d.x)).y(d=>y(d.y)).curve(d3.curveBasis);
+      g.append('g').attr('class','grid').call(d3.axisLeft(y).ticks(5).tickSize(-iW).tickFormat(''));
+      g.append('path').datum(uData).attr('d',line).attr('fill','none').attr('stroke','#f472b6').attr('stroke-width',1.5).attr('stroke-dasharray','5,3');
+      g.append('path').datum(bData).attr('d',d3.area().x(d=>x(d.x)).y0(iH).y1(d=>y(d.y)).curve(d3.curveBasis)).attr('fill','rgba(96,165,250,0.12)');
+      g.append('path').datum(bData).attr('d',line).attr('fill','none').attr('stroke','#60a5fa').attr('stroke-width',2.5);
+      g.append('g').attr('class','axis').attr('transform',`translate(0,${iH})`).call(d3.axisBottom(x).ticks(8));
+      g.append('g').attr('class','axis').call(d3.axisLeft(y).ticks(5).tickFormat(d3.format('.2f')));
+      label=`Beta(${a.toFixed(1)}, ${b.toFixed(1)}) → Uniform(0,1)`;
+    }
+
+    document.getElementById('morph-stats').innerHTML=`<div class="si">Transition: <span>${label}</span></div>`;
+  }
+  ['morph-type','morph-t'].forEach(id=>document.getElementById(id).addEventListener('input',render));
+  render();
+})();
+
+// ═══════════════════════════════════════════════
+// LAB 12: CONFIDENCE INTERVAL COVERAGE
+// ═══════════════════════════════════════════════
+(function(){
+  document.getElementById('ci-run').addEventListener('click',()=>{
+    const mu=+document.getElementById('ci-mu').value;
+    const n=+document.getElementById('ci-n').value;
+    const level=+document.getElementById('ci-level').value;
+    document.getElementById('ci-mu-v').textContent=mu.toFixed(1);
+    document.getElementById('ci-n-v').textContent=n;
+    const z={0.90:1.645,0.95:1.96,0.99:2.576}[level];
+    const nCI=100;
+
+    const intervals=[];
+    let covered=0;
+    for(let i=0;i<nCI;i++){
+      let sum=0;for(let j=0;j<n;j++) sum+=randNorm()+mu;
+      const xbar=sum/n;
+      const se=1/Math.sqrt(n); // known σ=1
+      const lo=xbar-z*se, hi=xbar+z*se;
+      const covers=lo<=mu&&hi>=mu;
+      if(covers) covered++;
+      intervals.push({xbar,lo,hi,covers});
+    }
+
+    const ciW=880,ciH=Math.max(420,nCI*4+60);
+    d3.select('#ci-chart').selectAll('svg').remove();
+    const svg=d3.select('#ci-chart').append('svg').attr('viewBox',`0 0 ${ciW} ${ciH}`).attr('width','100%').style('max-height',ciH+'px');
+    const gM={top:20,right:20,bottom:30,left:50};
+    const g=svg.append('g').attr('transform',`translate(${gM.left},${gM.top})`);
+    const cW=ciW-gM.left-gM.right, cH=ciH-gM.top-gM.bottom;
+
+    const allVals=intervals.flatMap(d=>[d.lo,d.hi]);
+    const x=d3.scaleLinear().domain([d3.min(allVals)-.2,d3.max(allVals)+.2]).range([0,cW]);
+    const y=d3.scaleBand().domain(d3.range(nCI)).range([0,cH]).padding(0.2);
+
+    // True mu line
+    g.append('line').attr('x1',x(mu)).attr('x2',x(mu)).attr('y1',0).attr('y2',cH)
+      .attr('stroke','#f472b6').attr('stroke-width',2);
+
+    intervals.forEach((ci,i)=>{
+      const color=ci.covers?'#60a5fa':'#f87171';
+      g.append('line').attr('x1',x(ci.lo)).attr('x2',x(ci.hi)).attr('y1',y(i)+y.bandwidth()/2).attr('y2',y(i)+y.bandwidth()/2)
+        .attr('stroke',color).attr('stroke-width',ci.covers?1.5:2.5).attr('opacity',ci.covers?.6:1);
+      g.append('circle').attr('cx',x(ci.xbar)).attr('cy',y(i)+y.bandwidth()/2).attr('r',ci.covers?1.5:2.5)
+        .attr('fill',color);
+    });
+
+    g.append('g').attr('class','axis').attr('transform',`translate(0,${cH})`).call(d3.axisBottom(x).ticks(8));
+
+    document.getElementById('ci-stats').innerHTML=
+      `<div class="si green">Coverage: <span>${covered}/${nCI} = ${(covered/nCI*100).toFixed(0)}%</span></div>
+       <div class="si purple">Nominal: <span>${(level*100).toFixed(0)}%</span></div>
+       <div class="si" style="color:var(--red)">Missed: <span>${nCI-covered} intervals</span></div>
+       <div class="si">True μ: <span>${mu.toFixed(1)}</span> (pink line)</div>`;
+  });
+  document.getElementById('ci-run').click();
+})();
+
+// NAV SCROLL
+const secs=document.querySelectorAll('.lab');
+const navLinks=document.querySelectorAll('nav a');
+const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){navLinks.forEach(l=>l.classList.remove('active'));const l=document.querySelector(`nav a[href="#${e.target.id}"]`);if(l)l.classList.add('active');}});},{rootMargin:'-15% 0px -70% 0px'});
+secs.forEach(s=>obs.observe(s));
+</script>
+</body>
+</html>
