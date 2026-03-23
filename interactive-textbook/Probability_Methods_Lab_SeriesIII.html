@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Probability Methods Lab — Interactive D3.js Education Series III</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#070d18;--bg2:#0c1322;--card:#10182a;--card2:#182036;--text:#e2e8f0;--muted:#94a3b8;--dim:#64748b;--faint:#475569;--border:#1c2640;--border2:#2d3f5e;--blue:#60a5fa;--purple:#a78bfa;--green:#34d399;--orange:#fb923c;--pink:#f472b6;--cyan:#22d3ee;--yellow:#fbbf24;--red:#f87171;--lime:#a3e635;--glow:rgba(96,165,250,0.10);--serif:'DM Serif Display',serif;--body:'IBM Plex Sans',sans-serif;--mono:'IBM Plex Mono',monospace;--prose:'Crimson Pro',serif;}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+body{font-family:var(--body);background:var(--bg);color:var(--text);line-height:1.7;font-size:15px;overflow-x:hidden}
+
+nav{position:fixed;top:0;left:0;width:252px;height:100vh;background:var(--card);border-right:1px solid var(--border);overflow-y:auto;z-index:100;padding:18px 0;scrollbar-width:thin;scrollbar-color:var(--border2) transparent}
+nav::-webkit-scrollbar{width:3px}nav::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.nb{font-family:var(--serif);font-size:14px;color:var(--cyan);padding:0 14px 12px;border-bottom:1px solid var(--border);margin-bottom:6px;line-height:1.3}
+.nb small{display:block;font-family:var(--mono);font-size:8px;color:var(--dim);letter-spacing:.12em;text-transform:uppercase;margin-top:3px}
+nav a{display:block;padding:4px 14px 4px 18px;color:var(--muted);text-decoration:none;font-size:11.5px;transition:all .2s;border-left:2px solid transparent}
+nav a:hover,nav a.active{color:var(--cyan);background:rgba(34,211,238,.06);border-left-color:var(--cyan)}
+
+main{margin-left:252px;max-width:1020px;padding:28px 36px 100px}
+.hero{text-align:center;padding:52px 0 40px;border-bottom:1px solid var(--border);margin-bottom:44px;position:relative}
+.hero::before{content:'';position:absolute;inset:-50px -180px;background:radial-gradient(ellipse at 50% 40%,rgba(34,211,238,.05) 0%,transparent 60%);pointer-events:none}
+.hero h1{font-family:var(--serif);font-size:40px;line-height:1.15;margin-bottom:6px;position:relative}.hero h1 span{color:var(--cyan)}
+.hero .sub{font-family:var(--prose);font-style:italic;font-size:17px;color:var(--muted)}
+
+.lab{margin:36px 0;scroll-margin-top:18px}
+.lh{display:flex;align-items:flex-start;gap:14px;margin-bottom:16px}
+.ln{font-family:var(--mono);font-size:10px;font-weight:700;color:var(--bg);background:var(--cyan);width:26px;height:26px;border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.lh h2{font-family:var(--serif);font-size:22px;color:var(--text);line-height:1.25}.lh h2 small{display:block;font-family:var(--body);font-size:12px;color:var(--dim);font-weight:400;margin-top:2px}
+.lab p{font-family:var(--prose);font-size:16px;line-height:1.8;color:var(--muted);margin-bottom:12px;max-width:800px}.lab p strong{color:var(--text)}
+
+.panel{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:22px;margin:18px 0;position:relative;overflow:hidden}
+.panel::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--cyan),var(--purple),var(--green))}
+.tag{position:absolute;top:9px;right:12px;font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--green);background:rgba(52,211,153,.08);padding:2px 6px;border-radius:3px}
+
+.ctrls{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:14px;align-items:center}
+.cg{display:flex;align-items:center;gap:5px}
+.cg label{font-family:var(--mono);font-size:10px;color:var(--dim);min-width:18px}
+.cg input[type=range]{-webkit-appearance:none;width:120px;height:3px;background:var(--border2);border-radius:2px;outline:none}
+.cg input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;background:var(--cyan);border-radius:50%;cursor:pointer;box-shadow:0 0 5px rgba(34,211,238,.35)}
+.cg .v{font-family:var(--mono);font-size:11px;color:var(--cyan);min-width:30px;text-align:right;font-weight:500}
+select.sel{background:var(--bg2);color:var(--text);border:1px solid var(--border2);padding:3px 7px;border-radius:4px;font-family:var(--mono);font-size:10px}
+button.btn{background:var(--cyan);color:var(--bg);border:none;padding:4px 12px;border-radius:5px;font-family:var(--mono);font-size:10px;cursor:pointer;font-weight:600;transition:all .15s}
+button.btn:hover{filter:brightness(1.15);transform:translateY(-1px)}
+button.b2{background:var(--purple)}button.b3{background:var(--green)}button.b4{background:var(--orange)}
+.stats{display:flex;gap:18px;margin-top:8px;flex-wrap:wrap}
+.si{font-family:var(--mono);font-size:10px;color:var(--dim)}.si span{color:var(--cyan);font-weight:500}
+.si.p span{color:var(--purple)}.si.g span{color:var(--green)}.si.o span{color:var(--orange)}.si.pk span{color:var(--pink)}
+
+.insight{background:linear-gradient(135deg,rgba(34,211,238,.05),rgba(167,139,250,.03));border:1px solid var(--border2);border-left:3px solid var(--cyan);border-radius:5px;padding:12px 16px;margin:14px 0;font-family:var(--prose);font-size:14px;color:var(--muted);line-height:1.7}
+.insight .il{font-family:var(--mono);font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--cyan);margin-bottom:3px}
+
+svg text{font-family:var(--mono)}.axis text{fill:var(--dim);font-size:9px}.axis path,.axis line{stroke:var(--border2)}.grid line{stroke:var(--border);stroke-opacity:.3}.grid path{display:none}
+
+.mob{display:none;position:fixed;top:8px;left:8px;z-index:200;background:var(--card);border:1px solid var(--border);color:var(--cyan);width:34px;height:34px;border-radius:5px;font-size:15px;cursor:pointer;align-items:center;justify-content:center}
+@media(max-width:860px){.mob{display:flex}nav{transform:translateX(-100%);transition:transform .3s}nav.open{transform:translateX(0)}main{margin-left:0;padding:28px 14px 80px}}
+canvas{border-radius:6px;display:block;margin:0 auto}
+</style>
+</head>
+<body>
+<button class="mob" onclick="document.querySelector('nav').classList.toggle('open')">☰</button>
+<nav>
+<div class="nb">Probability Methods<br>Interactive Lab<small>Series III · Estimation & Theory</small></div>
+<a href="#lab1">1 — Probability Integral Transform</a>
+<a href="#lab2">2 — Maximum Likelihood Estimation</a>
+<a href="#lab3">3 — Kernel Density Estimation</a>
+<a href="#lab4">4 — Rejection Sampling</a>
+<a href="#lab5">5 — Mixture Model Builder</a>
+<a href="#lab6">6 — Order Statistics</a>
+<a href="#lab7">7 — Entropy Comparator</a>
+<a href="#lab8">8 — Bootstrap Resampling</a>
+<a href="#lab9">9 — Bivariate Normal Explorer</a>
+<a href="#lab10">10 — Markov Chain Simulator</a>
+<a href="#lab11">11 — Tail Comparison Lab</a>
+<a href="#lab12">12 — Sufficient Statistics</a>
+</nav>
+
+<main>
+<div class="hero"><h1>Probability <span>Methods</span> Lab</h1><div class="sub">12 Interactive Simulations on Estimation, Sampling & Information Theory</div></div>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- LAB 1: PROBABILITY INTEGRAL TRANSFORM -->
+<!-- ═══════════════════════════════════════ -->
+<div class="lab" id="lab1">
+<div class="lh"><div class="ln">1</div><h2>Probability Integral Transform<small>How to generate any distribution from Uniform(0,1)</small></h2></div>
+<p>The PIT states: if U ~ Uniform(0,1) and F is any continuous CDF, then X = F⁻¹(U) has distribution F. This is the <strong>fundamental trick behind all random number generation</strong>. Watch uniform samples get "stretched" through the inverse CDF to produce exponential, normal, or any target distribution.</p>
+<div class="panel"><span class="tag">Animated Transform</span>
+<div class="ctrls">
+  <div class="cg"><label>Target</label><select class="sel" id="pit-tgt"><option value="exponential">Exponential(1)</option><option value="cauchy">Cauchy(0,1)</option><option value="weibull">Weibull(2,1)</option><option value="logistic">Logistic(0,1)</option></select></div>
+  <button class="btn" id="pit-run">▶ Transform 500 Samples</button>
+  <button class="btn b2" id="pit-reset">Reset</button>
+</div>
+<div style="display:flex;gap:4px;flex-wrap:wrap">
+  <div style="flex:1;min-width:260px" id="pit-left"></div>
+  <div style="flex:0 0 180px" id="pit-mid"></div>
+  <div style="flex:1;min-width:260px" id="pit-right"></div>
+</div>
+<div class="stats" id="pit-stats"></div>
+</div>
+<div class="insight"><div class="il">Why It Matters</div>Every simulation library — NumPy, R, Julia — ultimately uses this transform (or variants like Box-Muller) to convert hardware-generated uniform bits into samples from any desired distribution.</div>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- LAB 2: MAXIMUM LIKELIHOOD ESTIMATION -->
+<!-- ═══════════════════════════════════════ -->
+<div class="lab" id="lab2">
+<div class="lh"><div class="ln">2</div><h2>Maximum Likelihood Estimation<small>Watch the likelihood surface respond to each new data point</small></h2></div>
+<p>MLE finds the parameter values that make the observed data <strong>most probable</strong>. For a Normal(μ, σ²=1) model, the log-likelihood is ℓ(μ) = −n/2·log(2π) − Σ(xᵢ−μ)²/2. The MLE of μ is simply the sample mean. <strong>Click to add data points and watch the likelihood curve sharpen.</strong></p>
+<div class="panel"><span class="tag">Click-to-Add Data</span>
+<div class="ctrls">
+  <div class="cg"><label>True μ</label><input type="range" id="mle-mu" min="-3" max="3" step="0.25" value="1.5"><span class="v" id="mle-mu-v">1.5</span></div>
+  <button class="btn" id="mle-add1">+ 1 observation</button>
+  <button class="btn b3" id="mle-add10">+ 10</button>
+  <button class="btn b4" id="mle-add50">+ 50</button>
+  <button class="btn b2" id="mle-reset">Reset</button>
+</div>
+<div id="mle-chart"></div>
+<div class="stats" id="mle-stats"></div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- LAB 3: KERNEL DENSITY ESTIMATION -->
+<!-- ═══════════════════════════════════════ -->
+<div class="lab" id="lab3">
+<div class="lh"><div class="ln">3</div><h2>Kernel Density Estimation<small>Build a smooth PDF estimate from individual data kernels</small></h2></div>
+<p>KDE places a small "bump" (kernel) at each data point, then sums them. The <strong>bandwidth h</strong> controls smoothness: too small → spiky (overfitting); too large → oversmoothed (underfitting). This visualization shows <strong>each individual kernel</strong> plus their sum, compared to the true density.</p>
+<div class="panel"><span class="tag">Kernel Decomposition</span>
+<div class="ctrls">
+  <div class="cg"><label>n</label><input type="range" id="kde-n" min="5" max="80" step="5" value="20"><span class="v" id="kde-n-v">20</span></div>
+  <div class="cg"><label>h (bandwidth)</label><input type="range" id="kde-h" min="0.1" max="2" step="0.05" value="0.4"><span class="v" id="kde-h-v">0.40</span></div>
+  <div class="cg"><label>Source</label><select class="sel" id="kde-src"><option value="bimodal">Bimodal mixture</option><option value="skewed">Skewed (Gamma)</option><option value="normal">Normal(0,1)</option></select></div>
+  <button class="btn" id="kde-gen">Regenerate</button>
+</div>
+<div id="kde-chart"></div>
+<div class="stats" id="kde-stats"></div>
+</div>
+<div class="insight"><div class="il">Bandwidth Is Everything</div>Silverman's rule of thumb suggests h ≈ 1.06·σ·n^{−1/5}. But the optimal bandwidth depends on the true density shape — multimodal densities need smaller h to resolve the peaks.</div>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- LAB 4: REJECTION SAMPLING -->
+<!-- ═══════════════════════════════════════ -->
+<div class="lab" id="lab4">
+<div class="lh"><div class="ln">4</div><h2>Rejection Sampling<small>Accept/reject: the universal algorithm for generating from complex distributions</small></h2></div>
+<p>To sample from a hard target density f(x), we sample from an easy proposal g(x) and <strong>accept with probability f(x)/(M·g(x))</strong>. Rejected points appear below the target curve. The <strong>acceptance rate = 1/M</strong> measures efficiency — tighter envelopes waste fewer samples.</p>
+<div class="panel"><span class="tag">Animated Accept/Reject</span>
+<div class="ctrls">
+  <div class="cg"><label>Target</label><select class="sel" id="rej-tgt"><option value="beta">Beta(2,5)</option><option value="mixture">Mixture of Normals</option><option value="truncnorm">Truncated Normal [−2,2]</option></select></div>
+  <button class="btn" id="rej-run">▶ Sample 500</button>
+  <button class="btn b2" id="rej-reset">Reset</button>
+</div>
+<div id="rej-chart"></div>
+<div class="stats" id="rej-stats"></div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- LAB 5: MIXTURE MODEL BUILDER -->
+<!-- ═══════════════════════════════════════ -->
+<div class="lab" id="lab5">
+<div class="lh"><div class="ln">5</div><h2>Gaussian Mixture Model Builder<small>Construct complex densities from weighted normal components</small></h2></div>
+<p>Any continuous density can be approximated by a mixture of Gaussians: f(x) = Σ wᵢ · N(x; μᵢ, σᵢ²). Adjust the means, variances, and weights of up to 4 components to see how <strong>simple bell curves combine into bimodal, skewed, and heavy-tailed shapes</strong>.</p>
+<div class="panel"><span class="tag">Build Your Own</span>
+<div class="ctrls">
+  <div class="cg"><label>Components</label><select class="sel" id="gm-k"><option value="2">2</option><option value="3" selected>3</option><option value="4">4</option></select></div>
+</div>
+<div id="gm-controls"></div>
+<div id="gm-chart"></div>
+<div class="stats" id="gm-stats"></div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- LAB 6: ORDER STATISTICS -->
+<!-- ═══════════════════════════════════════ -->
+<div class="lab" id="lab6">
+<div class="lh"><div class="ln">6</div><h2>Order Statistics<small>The distribution of the minimum, maximum, median, and every rank in between</small></h2></div>
+<p>Given n i.i.d. samples, the k-th smallest value X₍ₖ₎ is the k-th <strong>order statistic</strong>. For Uniform(0,1) parents, X₍ₖ₎ ~ Beta(k, n−k+1). This explains why the sample median concentrates around the true median, and why extremes (min, max) have predictable distributions. <strong>Select any rank k to see its density.</strong></p>
+<div class="panel"><span class="tag">Rank Selector</span>
+<div class="ctrls">
+  <div class="cg"><label>n</label><input type="range" id="os-n" min="3" max="30" step="1" value="10"><span class="v" id="os-n-v">10</span></div>
+  <div class="cg"><label>k</label><input type="range" id="os-k" min="1" max="10" step="1" value="1"><span class="v" id="os-k-v">1 (min)</span></div>
+  <button class="btn" id="os-sim">Simulate 3000</button>
+</div>
+<div id="os-chart"></div>
+<div class="stats" id="os-stats"></div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- LAB 7: ENTROPY COMPARATOR -->
+<!-- ═══════════════════════════════════════ -->
+<div class="lab" id="lab7">
+<div class="lh"><div class="ln">7</div><h2>Entropy & Information<small>Measuring uncertainty across distributions</small></h2></div>
+<p>Shannon entropy H = −Σ p log p (discrete) or h = −∫ f log f dx (continuous differential entropy) quantifies <strong>how much uncertainty a distribution contains</strong>. Among all distributions on [0,∞) with fixed mean, the exponential has maximum entropy. Among all with fixed mean and variance, the normal wins. <strong>Compare entropies side by side.</strong></p>
+<div class="panel"><span class="tag">Visual Comparison</span>
+<div class="ctrls">
+  <div class="cg"><label>Mean</label><input type="range" id="ent-mu" min="0.5" max="5" step="0.25" value="2"><span class="v" id="ent-mu-v">2.0</span></div>
+</div>
+<div id="ent-chart"></div>
+<div class="stats" id="ent-stats"></div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- LAB 8: BOOTSTRAP -->
+<!-- ═══════════════════════════════════════ -->
+<div class="lab" id="lab8">
+<div class="lh"><div class="ln">8</div><h2>Bootstrap Resampling<small>Estimating sampling distributions without parametric assumptions</small></h2></div>
+<p>The bootstrap draws B resamples (with replacement) from the observed data, computes a statistic on each, and uses the resulting distribution to estimate standard errors and confidence intervals. <strong>No distributional assumptions required.</strong> Watch the bootstrap distribution of the sample mean emerge from just n observations.</p>
+<div class="panel"><span class="tag">Non-Parametric Inference</span>
+<div class="ctrls">
+  <div class="cg"><label>True dist</label><select class="sel" id="bs-src"><option value="normal">Normal(3,1)</option><option value="exponential">Exponential(0.5)</option><option value="bimodal">Bimodal</option></select></div>
+  <div class="cg"><label>n</label><input type="range" id="bs-n" min="5" max="50" step="5" value="15"><span class="v" id="bs-n-v">15</span></div>
+  <div class="cg"><label>B resamples</label><input type="range" id="bs-B" min="100" max="5000" step="100" value="2000"><span class="v" id="bs-B-v">2000</span></div>
+  <button class="btn" id="bs-run">▶ Bootstrap</button>
+</div>
+<div id="bs-chart"></div>
+<div class="stats" id="bs-stats"></div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- LAB 9: BIVARIATE NORMAL -->
+<!-- ═══════════════════════════════════════ -->
+<div class="lab" id="lab9">
+<div class="lh"><div class="ln">9</div><h2>Bivariate Normal Explorer<small>Contours, correlation, and conditional distributions</small></h2></div>
+<p>The bivariate normal is defined by means μ₁, μ₂, standard deviations σ₁, σ₂, and correlation ρ. <strong>Adjusting ρ tilts the elliptical contours</strong>. The conditional distribution X|Y=y is always normal — its mean shifts linearly with y, and its variance shrinks by factor (1−ρ²). This is the geometry behind linear regression.</p>
+<div class="panel"><span class="tag">2D Contour Map</span>
+<div class="ctrls">
+  <div class="cg"><label>ρ</label><input type="range" id="bv-rho" min="-0.95" max="0.95" step="0.05" value="0.6"><span class="v" id="bv-rho-v">0.60</span></div>
+  <div class="cg"><label>σ₁</label><input type="range" id="bv-s1" min="0.5" max="2.5" step="0.25" value="1"><span class="v" id="bv-s1-v">1.0</span></div>
+  <div class="cg"><label>σ₂</label><input type="range" id="bv-s2" min="0.5" max="2.5" step="0.25" value="1.5"><span class="v" id="bv-s2-v">1.5</span></div>
+  <div class="cg"><label>Y=</label><input type="range" id="bv-yc" min="-3" max="3" step="0.25" value="1"><span class="v" id="bv-yc-v">1.0</span></div>
+</div>
+<div style="display:flex;gap:4px;flex-wrap:wrap">
+  <div style="flex:1;min-width:380px" id="bv-contour"></div>
+  <div style="flex:0 0 300px" id="bv-cond"></div>
+</div>
+<div class="stats" id="bv-stats"></div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- LAB 10: MARKOV CHAIN -->
+<!-- ═══════════════════════════════════════ -->
+<div class="lab" id="lab10">
+<div class="lh"><div class="ln">10</div><h2>Markov Chain Simulator<small>Convergence to stationary distribution and mixing</small></h2></div>
+<p>A Markov chain transitions between states with fixed probabilities. Under mild conditions, the chain converges to a <strong>stationary distribution</strong> π — no matter where it starts. Watch the empirical state frequencies converge to π as the chain runs. This is the foundation of <strong>MCMC methods</strong>.</p>
+<div class="panel"><span class="tag">State Transition</span>
+<div class="ctrls">
+  <div class="cg"><label>Chain</label><select class="sel" id="mc-type"><option value="fair">Symmetric 3-state</option><option value="absorbing">Near-absorbing</option><option value="periodic">Periodic (2-state)</option><option value="weather">Weather model</option></select></div>
+  <button class="btn" id="mc-run">▶ Run 2000 Steps</button>
+  <button class="btn b2" id="mc-reset">Reset</button>
+</div>
+<div id="mc-chart2"></div>
+<div class="stats" id="mc-stats2"></div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- LAB 11: TAIL COMPARISON -->
+<!-- ═══════════════════════════════════════ -->
+<div class="lab" id="lab11">
+<div class="lh"><div class="ln">11</div><h2>Tail Comparison Lab<small>Log-scale view of how tails differ across distributions</small></h2></div>
+<p>On a <strong>log-scale y-axis</strong>, the tail behavior of distributions becomes strikingly clear. Normal tails drop off as exp(−x²) (parabolic on log-scale), while Student's t drops as a power law (linear on log-scale). Exponential tails are exactly linear. Pareto tails decline slowest. <strong>Tail behavior determines everything about extreme events.</strong></p>
+<div class="panel"><span class="tag">Log-Scale Tails</span>
+<div class="ctrls">
+  <div class="cg"><label>Show</label><select class="sel" id="tail-show" multiple size="4" style="height:auto">
+    <option value="normal" selected>Normal(0,1)</option>
+    <option value="t3" selected>Student t(3)</option>
+    <option value="exponential" selected>Exponential(1)</option>
+    <option value="laplace">Laplace(0,1)</option>
+    <option value="lognormal">Log-Normal(0,1)</option>
+  </select></div>
+</div>
+<div id="tail-chart"></div>
+<div class="stats" id="tail-stats"></div>
+</div>
+<div class="insight"><div class="il">Why Tails Matter</div>In risk management, the difference between normal and t(3) tails means the difference between a "once in 10,000 years" event and a "once a decade" event. Underestimating tail risk is the root cause of many financial catastrophes.</div>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- LAB 12: SUFFICIENT STATISTICS -->
+<!-- ═══════════════════════════════════════ -->
+<div class="lab" id="lab12">
+<div class="lh"><div class="ln">12</div><h2>Sufficient Statistics<small>Why the sample mean captures ALL the information about μ</small></h2></div>
+<p>A statistic T(X) is <strong>sufficient</strong> for parameter θ if the conditional distribution of X given T doesn't depend on θ. For Normal(μ,1), the sample mean X̄ is sufficient for μ — knowing X̄, the individual observations provide <strong>zero additional information</strong> about μ. This demonstration shows that two datasets with the same X̄ produce identical likelihood functions.</p>
+<div class="panel"><span class="tag">Information Compression</span>
+<div class="ctrls">
+  <div class="cg"><label>n</label><input type="range" id="ss-n" min="3" max="20" step="1" value="6"><span class="v" id="ss-n-v">6</span></div>
+  <button class="btn" id="ss-gen">Generate Two Datasets (Same X̄)</button>
+</div>
+<div id="ss-chart"></div>
+<div class="stats" id="ss-stats"></div>
+</div>
+<div class="insight"><div class="il">Fisher–Neyman Factorization</div>T is sufficient for θ iff the joint density factors as f(x|θ) = g(T(x), θ) · h(x). The h(x) part doesn't depend on θ — so once T is known, the data tell you nothing more about the parameter.</div>
+</div>
+
+</main>
+
+<script>
+// ═══════════════════════════════════════════
+// CORE UTILITIES
+// ═══════════════════════════════════════════
+const W=860,H=340,M_={top:18,right:28,bottom:38,left:50},iW_=W-M_.left-M_.right,iH_=H-M_.top-M_.bottom;
+const nPDF=(x,m,s)=>(1/(s*Math.sqrt(2*Math.PI)))*Math.exp(-.5*((x-m)/s)**2);
+const lnG=x=>{if(x<=0)return 0;const c=[76.18009172947146,-86.50532032941677,24.01409824083091,-1.231739572450155,.1208650973866179e-2,-.5395239384953e-5];let y=x,t=x+5.5;t-=(x+.5)*Math.log(t);let s=1.000000000190015;for(let j=0;j<6;j++)s+=c[j]/++y;return-t+Math.log(2.5066282746310005*s/x)};
+const gFn=x=>Math.exp(lnG(x));
+const bPDF=(x,a,b)=>{const B=gFn(a)*gFn(b)/gFn(a+b);return Math.pow(x,a-1)*Math.pow(1-x,b-1)/B};
+const rN=()=>{let u,v,s;do{u=2*Math.random()-1;v=2*Math.random()-1;s=u*u+v*v}while(s>=1||s===0);return u*Math.sqrt(-2*Math.log(s)/s)};
+const rE=l=>-Math.log(1-Math.random())/l;
+const rG=(a,b)=>{if(a<1){const u=Math.random();return rG(a+1,b)*Math.pow(u,1/a)}let d=a-1/3,c=1/Math.sqrt(9*d),x,v;do{do{x=rN();v=1+c*x}while(v<=0);v=v*v*v;const u=Math.random();if(u<1-.0331*(x*x)*(x*x))return d*v/b;if(Math.log(u)<.5*x*x+d*(1-v+Math.log(v)))return d*v/b}while(true)};
+const erf_=x=>{const a1=.254829592,a2=-.284496736,a3=1.421413741,a4=-1.453152027,a5=1.061405429,p=.3275911;const s=x<0?-1:1;x=Math.abs(x);const t=1/(1+p*x);return s*(1-(((((a5*t+a4)*t)+a3)*t+a2)*t+a1)*t*Math.exp(-x*x))};
+const normCDF=x=>.5*(1+erf_(x/Math.sqrt(2)));
+
+function mk(sel,w=W,h=H,m=M_){d3.select(sel).selectAll('svg').remove();const svg=d3.select(sel).append('svg').attr('viewBox',`0 0 ${w} ${h}`).attr('width','100%').style('max-height',h+'px');return{svg,g:svg.append('g').attr('transform',`translate(${m.left},${m.top})`),iw:w-m.left-m.right,ih:h-m.top-m.bottom}}
+
+// ═══════════════════════════════════════════
+// LAB 1: PIT
+// ═══════════════════════════════════════════
+(function(){
+  const invCDFs={
+    exponential:u=>-Math.log(1-u),
+    cauchy:u=>Math.tan(Math.PI*(u-.5)),
+    weibull:u=>Math.pow(-Math.log(1-u),1/2),
+    logistic:u=>Math.log(u/(1-u))
+  };
+  const pdfs={
+    exponential:(x)=>x>=0?Math.exp(-x):0,
+    cauchy:(x)=>1/(Math.PI*(1+x*x)),
+    weibull:(x)=>x>=0?2*x*Math.exp(-x*x):0,
+    logistic:(x)=>{const e=Math.exp(-x);return e/((1+e)**2)}
+  };
+  function run(){
+    const tgt=document.getElementById('pit-tgt').value;
+    const inv=invCDFs[tgt], pdf=pdfs[tgt];
+    const uniforms=Array.from({length:500},()=>Math.random());
+    const transformed=uniforms.map(inv).filter(x=>isFinite(x)&&Math.abs(x)<15);
+    // Left: Uniform histogram
+    const lM={top:18,right:10,bottom:30,left:40};
+    const {g:gL,iw:lww,ih:lhh}=mk('#pit-left',300,280,lM);
+    const uBins=d3.bin().thresholds(20).domain([0,1])(uniforms);
+    const xL=d3.scaleLinear().domain([0,1]).range([0,lww]);
+    const yL=d3.scaleLinear().domain([0,d3.max(uBins,b=>b.length)*1.2]).range([lhh,0]);
+    uBins.forEach(b=>{gL.append('rect').attr('x',xL(b.x0)+1).attr('y',yL(b.length)).attr('width',Math.max(1,xL(b.x1)-xL(b.x0)-2)).attr('height',lhh-yL(b.length)).attr('fill','#60a5fa').attr('opacity',.7).attr('rx',1)});
+    gL.append('g').attr('class','axis').attr('transform',`translate(0,${lhh})`).call(d3.axisBottom(xL).ticks(5));
+    gL.append('g').attr('class','axis').call(d3.axisLeft(yL).ticks(4));
+    gL.append('text').attr('x',lww/2).attr('y',-4).text('U ~ Uniform(0,1)').attr('fill','#60a5fa').attr('font-size',10).attr('text-anchor','middle');
+    // Middle: Arrow
+    const {g:gM}=mk('#pit-mid',180,280,{top:80,right:10,bottom:80,left:10});
+    gM.append('text').attr('x',80).attr('y',40).text('F⁻¹(u)').attr('fill','var(--cyan)').attr('font-size',14).attr('text-anchor','middle').attr('font-weight',600);
+    gM.append('line').attr('x1',20).attr('x2',140).attr('y1',65).attr('y2',65).attr('stroke','var(--cyan)').attr('stroke-width',2).attr('marker-end','url(#pit-arrow)');
+    gM.select(function(){return this.parentNode}).append('defs').append('marker').attr('id','pit-arrow').attr('viewBox','0 -4 8 8').attr('refX',8).attr('markerWidth',8).attr('markerHeight',8).attr('orient','auto').append('path').attr('d','M0,-4L8,0L0,4').attr('fill','var(--cyan)');
+    // Right: Transformed histogram
+    const {g:gR,iw:rww,ih:rhh}=mk('#pit-right',340,280,lM);
+    const tBins=d3.bin().thresholds(30)(transformed);
+    const xR=d3.scaleLinear().domain([d3.min(transformed),d3.max(transformed)]).range([0,rww]);
+    const yR=d3.scaleLinear().domain([0,d3.max(tBins,b=>b.length)*1.2]).range([rhh,0]);
+    tBins.forEach(b=>{gR.append('rect').attr('x',xR(b.x0)+1).attr('y',yR(b.length)).attr('width',Math.max(1,xR(b.x1)-xR(b.x0)-2)).attr('height',rhh-yR(b.length)).attr('fill','#34d399').attr('opacity',.7).attr('rx',1)});
+    // PDF overlay
+    const pdfData=[];const bw=tBins[0]?tBins[0].x1-tBins[0].x0:0.2;
+    for(let x=xR.domain()[0];x<=xR.domain()[1];x+=(xR.domain()[1]-xR.domain()[0])/200)pdfData.push({x,y:pdf(x)*transformed.length*bw});
+    gR.append('path').datum(pdfData).attr('d',d3.line().x(d=>xR(d.x)).y(d=>yR(d.y)).curve(d3.curveBasis)).attr('fill','none').attr('stroke','#f472b6').attr('stroke-width',2);
+    gR.append('g').attr('class','axis').attr('transform',`translate(0,${rhh})`).call(d3.axisBottom(xR).ticks(6));
+    gR.append('g').attr('class','axis').call(d3.axisLeft(yR).ticks(4));
+    gR.append('text').attr('x',rww/2).attr('y',-4).text(`X ~ ${tgt}`).attr('fill','#34d399').attr('font-size',10).attr('text-anchor','middle');
+    document.getElementById('pit-stats').innerHTML=`<div class="si">Samples: <span>${transformed.length}</span></div><div class="si g">Mean: <span>${d3.mean(transformed).toFixed(3)}</span></div><div class="si p">Std: <span>${d3.deviation(transformed).toFixed(3)}</span></div>`;
+  }
+  document.getElementById('pit-run').onclick=run;
+  document.getElementById('pit-reset').onclick=()=>{['#pit-left','#pit-mid','#pit-right'].forEach(s=>d3.select(s).selectAll('svg').remove());document.getElementById('pit-stats').innerHTML='';};
+  run();
+})();
+
+// ═══════════════════════════════════════════
+// LAB 2: MLE
+// ═══════════════════════════════════════════
+(function(){
+  let data=[];
+  function addObs(n){const mu=+document.getElementById('mle-mu').value;for(let i=0;i<n;i++)data.push(rN()+mu);render();}
+  function render(){
+    document.getElementById('mle-mu-v').textContent=(+document.getElementById('mle-mu').value).toFixed(2);
+    const{g,iw,ih}=mk('#mle-chart');
+    const muRange=d3.range(-5,5.05,.05);
+    // Log-likelihood
+    const ll=muRange.map(m=>{let s=0;data.forEach(x=>s+=-.5*(x-m)**2);return{x:m,y:s};});
+    const yMax=d3.max(ll,d=>d.y),yMin=yMax-Math.max(data.length*4,10);
+    const x=d3.scaleLinear().domain([-5,5]).range([0,iw]);
+    const y=d3.scaleLinear().domain([yMin,yMax+1]).range([ih,0]);
+    g.append('g').attr('class','grid').call(d3.axisLeft(y).ticks(5).tickSize(-iw).tickFormat(''));
+    const area=d3.area().x(d=>x(d.x)).y0(ih).y1(d=>y(Math.max(d.y,yMin))).curve(d3.curveBasis);
+    g.append('path').datum(ll).attr('d',area).attr('fill','rgba(34,211,238,.08)');
+    g.append('path').datum(ll).attr('d',d3.line().x(d=>x(d.x)).y(d=>y(Math.max(d.y,yMin))).curve(d3.curveBasis)).attr('fill','none').attr('stroke','#22d3ee').attr('stroke-width',2.5);
+    // MLE line
+    if(data.length>0){
+      const mle=d3.mean(data);
+      g.append('line').attr('x1',x(mle)).attr('x2',x(mle)).attr('y1',0).attr('y2',ih).attr('stroke','#34d399').attr('stroke-width',1.5).attr('stroke-dasharray','4,3');
+      g.append('text').attr('x',x(mle)+4).attr('y',12).text(`MLE=${mle.toFixed(3)}`).attr('fill','#34d399').attr('font-size',10);
+    }
+    // True mu
+    const trueMu=+document.getElementById('mle-mu').value;
+    g.append('line').attr('x1',x(trueMu)).attr('x2',x(trueMu)).attr('y1',0).attr('y2',ih).attr('stroke','#f472b6').attr('stroke-width',1).attr('stroke-dasharray','3,3');
+    // Data points on x-axis
+    data.slice(-50).forEach(d=>{g.append('circle').attr('cx',x(d)).attr('cy',ih-5).attr('r',2).attr('fill','#fbbf24').attr('opacity',.6);});
+    g.append('g').attr('class','axis').attr('transform',`translate(0,${ih})`).call(d3.axisBottom(x).ticks(8));
+    g.append('g').attr('class','axis').call(d3.axisLeft(y).ticks(5));
+    g.append('text').attr('x',iw/2).attr('y',ih+32).text('μ').attr('fill','var(--muted)').attr('font-size',11).attr('text-anchor','middle');
+    const mle=data.length?d3.mean(data):NaN;
+    document.getElementById('mle-stats').innerHTML=`<div class="si">n: <span>${data.length}</span></div><div class="si g">MLE (X̄): <span>${isNaN(mle)?'—':mle.toFixed(4)}</span></div><div class="si pk">True μ: <span>${trueMu.toFixed(2)}</span></div><div class="si o">|Error|: <span>${isNaN(mle)?'—':Math.abs(mle-trueMu).toFixed(4)}</span></div>`;
+  }
+  document.getElementById('mle-mu').oninput=function(){document.getElementById('mle-mu-v').textContent=(+this.value).toFixed(2);data=[];render()};
+  document.getElementById('mle-add1').onclick=()=>addObs(1);
+  document.getElementById('mle-add10').onclick=()=>addObs(10);
+  document.getElementById('mle-add50').onclick=()=>addObs(50);
+  document.getElementById('mle-reset').onclick=()=>{data=[];render()};
+  render();
+})();
+
+// ═══════════════════════════════════════════
+// LAB 3: KDE
+// ═══════════════════════════════════════════
+(function(){
+  let samples=[];
+  function gen(){
+    const n=+document.getElementById('kde-n').value,src=document.getElementById('kde-src').value;
+    document.getElementById('kde-n-v').textContent=n;
+    samples=[];
+    for(let i=0;i<n;i++){
+      if(src==='bimodal')samples.push(Math.random()<.4?rN()*0.6-2:rN()*0.8+2);
+      else if(src==='skewed')samples.push(rG(3,1));
+      else samples.push(rN());
+    }
+    render();
+  }
+  function render(){
+    const h=+document.getElementById('kde-h').value;document.getElementById('kde-h-v').textContent=h.toFixed(2);
+    const{g,iw,ih}=mk('#kde-chart');
+    const lo=d3.min(samples)-3*h-1,hi=d3.max(samples)+3*h+1;
+    const x=d3.scaleLinear().domain([lo,hi]).range([0,iw]);
+    const grid=d3.range(lo,hi,(hi-lo)/300);
+    // Individual kernels + sum
+    const sumY=grid.map(()=>0);
+    samples.forEach((s,si)=>{
+      const kData=grid.map((xx,j)=>{const v=nPDF(xx,s,h)/samples.length;sumY[j]+=v;return{x:xx,y:v}});
+      g.append('path').datum(kData).attr('d',d3.line().x(d=>x(d.x)).y(d=>0).curve(d3.curveBasis)).attr('fill','none').attr('stroke','#60a5fa').attr('stroke-width',.5).attr('opacity',.25);
+    });
+    const kdeData=grid.map((xx,j)=>({x:xx,y:sumY[j]}));
+    const yMax=d3.max(kdeData,d=>d.y);
+    const y=d3.scaleLinear().domain([0,yMax*1.15]).range([ih,0]);
+    // Redraw kernels with proper y scale
+    g.selectAll('path').remove();
+    samples.forEach(s=>{
+      const kData=grid.map(xx=>({x:xx,y:nPDF(xx,s,h)/samples.length}));
+      g.append('path').datum(kData).attr('d',d3.line().x(d=>x(d.x)).y(d=>y(d.y)).curve(d3.curveBasis)).attr('fill','none').attr('stroke','#60a5fa').attr('stroke-width',.6).attr('opacity',.2);
+    });
+    // KDE sum
+    g.append('path').datum(kdeData).attr('d',d3.area().x(d=>x(d.x)).y0(ih).y1(d=>y(d.y)).curve(d3.curveBasis)).attr('fill','rgba(34,211,238,.1)');
+    g.append('path').datum(kdeData).attr('d',d3.line().x(d=>x(d.x)).y(d=>y(d.y)).curve(d3.curveBasis)).attr('fill','none').attr('stroke','#22d3ee').attr('stroke-width',2.5);
+    // True density
+    const src=document.getElementById('kde-src').value;
+    const trueData=grid.map(xx=>{
+      let yt=0;
+      if(src==='bimodal')yt=.4*nPDF(xx,-2,.6)+.6*nPDF(xx,2,.8);
+      else if(src==='skewed'){const a=3;yt=xx>0?Math.pow(1,a)/gFn(a)*Math.pow(xx,a-1)*Math.exp(-xx):0;}
+      else yt=nPDF(xx,0,1);
+      return{x:xx,y:yt};
+    });
+    g.append('path').datum(trueData).attr('d',d3.line().x(d=>x(d.x)).y(d=>y(d.y)).curve(d3.curveBasis)).attr('fill','none').attr('stroke','#f472b6').attr('stroke-width',1.5).attr('stroke-dasharray','5,3');
+    // Data ticks
+    samples.forEach(s=>{g.append('line').attr('x1',x(s)).attr('x2',x(s)).attr('y1',ih).attr('y2',ih-8).attr('stroke','#fbbf24').attr('stroke-width',1.5)});
+    g.append('g').attr('class','grid').call(d3.axisLeft(y).ticks(5).tickSize(-iw).tickFormat(''));
+    g.append('g').attr('class','axis').attr('transform',`translate(0,${ih})`).call(d3.axisBottom(x).ticks(8));
+    g.append('g').attr('class','axis').call(d3.axisLeft(y).ticks(5).tickFormat(d3.format('.3f')));
+    g.append('text').attr('x',iw-8).attr('y',14).text('— KDE').attr('fill','#22d3ee').attr('font-size',10).attr('text-anchor','end');
+    g.append('text').attr('x',iw-8).attr('y',28).text('--- True density').attr('fill','#f472b6').attr('font-size',10).attr('text-anchor','end');
+    const silverman=1.06*d3.deviation(samples)*Math.pow(samples.length,-0.2);
+    document.getElementById('kde-stats').innerHTML=`<div class="si">h: <span>${h.toFixed(2)}</span></div><div class="si p">Silverman h*: <span>${silverman.toFixed(3)}</span></div><div class="si">n: <span>${samples.length}</span></div>`;
+  }
+  document.getElementById('kde-gen').onclick=gen;
+  document.getElementById('kde-h').oninput=function(){document.getElementById('kde-h-v').textContent=(+this.value).toFixed(2);if(samples.length)render()};
+  document.getElementById('kde-n').oninput=function(){document.getElementById('kde-n-v').textContent=this.value};
+  gen();
+})();
+
+// ═══════════════════════════════════════════
+// LAB 4: REJECTION SAMPLING
+// ═══════════════════════════════════════════
+(function(){
+  function run(){
+    const tgt=document.getElementById('rej-tgt').value;
+    let f,fMax,xRange;
+    if(tgt==='beta'){f=x=>bPDF(x,2,5);fMax=2.2;xRange=[0,1];}
+    else if(tgt==='mixture'){f=x=>.3*nPDF(x,-2,0.7)+.7*nPDF(x,1.5,1);fMax=.35;xRange=[-5,5];}
+    else{f=x=>(x>=-2&&x<=2)?nPDF(x,0,1)/(.5*(1+erf_(2/Math.sqrt(2)))-(1-(.5*(1+erf_(2/Math.sqrt(2)))))):0;fMax=.55;xRange=[-3,3];}
+    const accepted=[],rejected=[];
+    for(let i=0;i<500;i++){
+      const x=xRange[0]+Math.random()*(xRange[1]-xRange[0]);
+      const u=Math.random()*fMax;
+      if(u<=f(x))accepted.push({x,y:u});else rejected.push({x,y:u});
+    }
+    const{g,iw,ih}=mk('#rej-chart');
+    const x=d3.scaleLinear().domain(xRange).range([0,iw]);
+    const y=d3.scaleLinear().domain([0,fMax*1.1]).range([ih,0]);
+    g.append('g').attr('class','grid').call(d3.axisLeft(y).ticks(5).tickSize(-iw).tickFormat(''));
+    // Target curve
+    const fData=[];for(let xx=xRange[0];xx<=xRange[1];xx+=(xRange[1]-xRange[0])/300)fData.push({x:xx,y:f(xx)});
+    g.append('path').datum(fData).attr('d',d3.area().x(d=>x(d.x)).y0(ih).y1(d=>y(d.y)).curve(d3.curveBasis)).attr('fill','rgba(34,211,238,.08)');
+    g.append('path').datum(fData).attr('d',d3.line().x(d=>x(d.x)).y(d=>y(d.y)).curve(d3.curveBasis)).attr('fill','none').attr('stroke','#22d3ee').attr('stroke-width',2.5);
+    // Envelope
+    g.append('line').attr('x1',0).attr('x2',iw).attr('y1',y(fMax)).attr('y2',y(fMax)).attr('stroke','#fb923c').attr('stroke-width',1).attr('stroke-dasharray','4,3');
+    // Points
+    rejected.forEach(p=>{g.append('circle').attr('cx',x(p.x)).attr('cy',y(p.y)).attr('r',2).attr('fill','#f87171').attr('opacity',.35)});
+    accepted.forEach(p=>{g.append('circle').attr('cx',x(p.x)).attr('cy',y(p.y)).attr('r',2.5).attr('fill','#34d399').attr('opacity',.7)});
+    g.append('g').attr('class','axis').attr('transform',`translate(0,${ih})`).call(d3.axisBottom(x).ticks(8));
+    g.append('g').attr('class','axis').call(d3.axisLeft(y).ticks(5));
+    const rate=accepted.length/500;
+    document.getElementById('rej-stats').innerHTML=`<div class="si g">Accepted: <span>${accepted.length}</span></div><div class="si" style="color:var(--red)">Rejected: <span>${rejected.length}</span></div><div class="si">Rate: <span>${(rate*100).toFixed(1)}%</span></div><div class="si o">1/M: <span>${(1/fMax/(xRange[1]-xRange[0])*100).toFixed(1)}% (theory)</span></div>`;
+  }
+  document.getElementById('rej-run').onclick=run;
+  document.getElementById('rej-reset').onclick=()=>{d3.select('#rej-chart').selectAll('svg').remove();document.getElementById('rej-stats').innerHTML=''};
+  run();
+})();
+
+// ═══════════════════════════════════════════
+// LAB 5: GMM BUILDER
+// ═══════════════════════════════════════════
+(function(){
+  function buildCtrls(){
+    const k=+document.getElementById('gm-k').value;
+    let html='';
+    const defaultMu=[-2,0,2,4],defaultSig=[0.8,1,0.6,1.2],defaultW=[.3,.4,.3,.2];
+    for(let i=0;i<k;i++){
+      html+=`<div class="ctrls" style="margin-bottom:6px">
+        <div class="cg"><label style="color:${['#60a5fa','#a78bfa','#34d399','#fb923c'][i]}">C${i+1}</label></div>
+        <div class="cg"><label>μ</label><input type="range" class="gm-mu" min="-5" max="5" step="0.25" value="${defaultMu[i]}"><span class="v gm-mu-v">${defaultMu[i]}</span></div>
+        <div class="cg"><label>σ</label><input type="range" class="gm-sig" min="0.2" max="3" step="0.1" value="${defaultSig[i]}"><span class="v gm-sig-v">${defaultSig[i]}</span></div>
+        <div class="cg"><label>w</label><input type="range" class="gm-w" min="0.05" max="1" step="0.05" value="${defaultW[i]}"><span class="v gm-w-v">${defaultW[i]}</span></div>
+      </div>`;
+    }
+    document.getElementById('gm-controls').innerHTML=html;
+    document.querySelectorAll('.gm-mu,.gm-sig,.gm-w').forEach(el=>el.addEventListener('input',render));
+    render();
+  }
+  function render(){
+    const mus=[...document.querySelectorAll('.gm-mu')].map(e=>{e.nextElementSibling.textContent=(+e.value).toFixed(2);return+e.value});
+    const sigs=[...document.querySelectorAll('.gm-sig')].map(e=>{e.nextElementSibling.textContent=(+e.value).toFixed(1);return+e.value});
+    const rawW=[...document.querySelectorAll('.gm-w')].map(e=>{e.nextElementSibling.textContent=(+e.value).toFixed(2);return+e.value});
+    const wSum=rawW.reduce((a,b)=>a+b,0);const ws=rawW.map(w=>w/wSum);
+    const{g,iw,ih}=mk('#gm-chart');
+    const xD=[-8,8];
+    const x=d3.scaleLinear().domain(xD).range([0,iw]);
+    const grid=d3.range(xD[0],xD[1],.04);
+    const colors=['#60a5fa','#a78bfa','#34d399','#fb923c'];
+    // Components + mixture
+    const mixY=grid.map(()=>0);
+    mus.forEach((mu,i)=>{
+      const cData=grid.map((xx,j)=>{const v=ws[i]*nPDF(xx,mu,sigs[i]);mixY[j]+=v;return{x:xx,y:v}});
+      g.append('path').datum(cData).attr('d',d3.line().x(d=>x(d.x)).y(d=>0).curve(d3.curveBasis));
+    });
+    const yMax=d3.max(mixY)*1.15;
+    const y=d3.scaleLinear().domain([0,yMax]).range([ih,0]);
+    g.append('g').attr('class','grid').call(d3.axisLeft(y).ticks(5).tickSize(-iw).tickFormat(''));
+    mus.forEach((mu,i)=>{
+      const cData=grid.map(xx=>({x:xx,y:ws[i]*nPDF(xx,mu,sigs[i])}));
+      g.append('path').datum(cData).attr('d',d3.area().x(d=>x(d.x)).y0(ih).y1(d=>y(d.y)).curve(d3.curveBasis)).attr('fill',colors[i]).attr('fill-opacity',.08);
+      g.append('path').datum(cData).attr('d',d3.line().x(d=>x(d.x)).y(d=>y(d.y)).curve(d3.curveBasis)).attr('fill','none').attr('stroke',colors[i]).attr('stroke-width',1).attr('stroke-dasharray','4,3');
+    });
+    const mixData=grid.map((xx,j)=>({x:xx,y:mixY[j]}));
+    g.append('path').datum(mixData).attr('d',d3.line().x(d=>x(d.x)).y(d=>y(d.y)).curve(d3.curveBasis)).attr('fill','none').attr('stroke','#22d3ee').attr('stroke-width',2.5);
+    g.append('g').attr('class','axis').attr('transform',`translate(0,${ih})`).call(d3.axisBottom(x).ticks(8));
+    g.append('g').attr('class','axis').call(d3.axisLeft(y).ticks(5).tickFormat(d3.format('.3f')));
+    document.getElementById('gm-stats').innerHTML=`<div class="si">Weights (normalized): <span>${ws.map(w=>w.toFixed(2)).join(', ')}</span></div>`;
+  }
+  document.getElementById('gm-k').onchange=buildCtrls;
+  buildCtrls();
+})();
+
+// ═══════════════════════════════════════════
+// LAB 6: ORDER STATISTICS
+// ═══════════════════════════════════════════
+(function(){
+  function render(){
+    const n=+document.getElementById('os-n').value,k=+document.getElementById('os-k').value;
+    document.getElementById('os-n-v').textContent=n;
+    document.getElementById('os-k').max=n;
+    const kk=Math.min(k,n);
+    document.getElementById('os-k-v').textContent=kk+(kk===1?' (min)':kk===n?' (max)':kk===Math.ceil(n/2)?' (median)':'');
+    const{g,iw,ih}=mk('#os-chart');
+    const x=d3.scaleLinear().domain([0,1]).range([0,iw]);
+    // Theoretical: Beta(k, n-k+1)
+    const bData=[];for(let xx=.005;xx<=.995;xx+=.005)bData.push({x:xx,y:bPDF(xx,kk,n-kk+1)});
+    const yMax=d3.max(bData,d=>d.y);
+    const y=d3.scaleLinear().domain([0,Math.min(yMax*1.15,30)]).range([ih,0]);
+    g.append('g').attr('class','grid').call(d3.axisLeft(y).ticks(5).tickSize(-iw).tickFormat(''));
+    g.append('path').datum(bData).attr('d',d3.area().x(d=>x(d.x)).y0(ih).y1(d=>y(Math.min(d.y,yMax*1.15))).curve(d3.curveBasis)).attr('fill','rgba(34,211,238,.1)');
+    g.append('path').datum(bData).attr('d',d3.line().x(d=>x(d.x)).y(d=>y(Math.min(d.y,yMax*1.15))).curve(d3.curveBasis)).attr('fill','none').attr('stroke','#22d3ee').attr('stroke-width',2.5);
+    // Simulation
+    const simVals=[];for(let i=0;i<3000;i++){const s=Array.from({length:n},()=>Math.random()).sort((a,b)=>a-b);simVals.push(s[kk-1]);}
+    const bins=d3.bin().thresholds(40).domain([0,1])(simVals);
+    const bw=bins[0]?bins[0].x1-bins[0].x0:.025;
+    bins.forEach(b=>{const density=b.length/(3000*bw);g.append('rect').attr('x',x(b.x0)+1).attr('y',y(density)).attr('width',Math.max(1,x(b.x1)-x(b.x0)-2)).attr('height',ih-y(density)).attr('fill','#60a5fa').attr('opacity',.35).attr('rx',1)});
+    g.append('g').attr('class','axis').attr('transform',`translate(0,${ih})`).call(d3.axisBottom(x).ticks(8));
+    g.append('g').attr('class','axis').call(d3.axisLeft(y).ticks(5));
+    g.append('text').attr('x',iw-8).attr('y',14).text(`— Beta(${kk}, ${n-kk+1})`).attr('fill','#22d3ee').attr('font-size',10).attr('text-anchor','end');
+    const thMean=kk/(n+1);
+    document.getElementById('os-stats').innerHTML=`<div class="si">X₍${kk}₎ ~ Beta(${kk}, ${n-kk+1})</div><div class="si g">E[X₍${kk}₎]: <span>${thMean.toFixed(3)}</span></div><div class="si">Sim mean: <span>${d3.mean(simVals).toFixed(3)}</span></div>`;
+  }
+  ['os-n','os-k'].forEach(id=>document.getElementById(id).oninput=render);
+  document.getElementById('os-sim').onclick=render;
+  render();
+})();
+
+// ═══════════════════════════════════════════
+// LAB 7: ENTROPY
+// ═══════════════════════════════════════════
+(function(){
+  function render(){
+    const mu=+document.getElementById('ent-mu').value;document.getElementById('ent-mu-v').textContent=mu.toFixed(1);
+    const{g,iw,ih}=mk('#ent-chart');
+    const xRange=[0,mu*4];
+    const x=d3.scaleLinear().domain(xRange).range([0,iw]);
+    // Exponential: max entropy on [0,∞) with mean μ → H = 1 + ln(μ)
+    const expData=[],gamData=[],unifData=[];
+    const sig=mu; // for exponential, σ=μ
+    for(let xx=.01;xx<=xRange[1];xx+=xRange[1]/300){
+      expData.push({x:xx,y:(1/mu)*Math.exp(-xx/mu)});
+      const a=4,b=a/mu;gamData.push({x:xx,y:Math.pow(b,a)/gFn(a)*Math.pow(xx,a-1)*Math.exp(-b*xx)});
+      unifData.push({x:xx,y:(xx<=2*mu)?1/(2*mu):0});
+    }
+    const yMax=d3.max([...expData,...gamData,...unifData],d=>d.y);
+    const y=d3.scaleLinear().domain([0,yMax*1.15]).range([ih,0]);
+    g.append('g').attr('class','grid').call(d3.axisLeft(y).ticks(5).tickSize(-iw).tickFormat(''));
+    const line=d3.line().x(d=>x(d.x)).y(d=>y(d.y)).curve(d3.curveBasis);
+    g.append('path').datum(expData).attr('d',line).attr('fill','none').attr('stroke','#22d3ee').attr('stroke-width',2.5);
+    g.append('path').datum(gamData).attr('d',line).attr('fill','none').attr('stroke','#a78bfa').attr('stroke-width',2);
+    g.append('path').datum(unifData).attr('d',line).attr('fill','none').attr('stroke','#fb923c').attr('stroke-width',2).attr('stroke-dasharray','5,3');
+    g.append('g').attr('class','axis').attr('transform',`translate(0,${ih})`).call(d3.axisBottom(x).ticks(8));
+    g.append('g').attr('class','axis').call(d3.axisLeft(y).ticks(5).tickFormat(d3.format('.3f')));
+    // Entropy values
+    const hExp=1+Math.log(mu);
+    const a=4,b=a/mu;const hGam=a-Math.log(b)+lnG(a)+(1-a)*(lnG(a+.0001)-lnG(a))/.0001;// approx digamma
+    const hUnif=Math.log(2*mu);
+    g.append('text').attr('x',iw-8).attr('y',14).text(`Exp(1/${mu.toFixed(1)}) H=${hExp.toFixed(2)}`).attr('fill','#22d3ee').attr('font-size',10).attr('text-anchor','end');
+    g.append('text').attr('x',iw-8).attr('y',28).text(`Gamma(4,${b.toFixed(1)}) H≈${hGam.toFixed(2)}`).attr('fill','#a78bfa').attr('font-size',10).attr('text-anchor','end');
+    g.append('text').attr('x',iw-8).attr('y',42).text(`Unif(0,${(2*mu).toFixed(1)}) H=${hUnif.toFixed(2)}`).attr('fill','#fb923c').attr('font-size',10).attr('text-anchor','end');
+    document.getElementById('ent-stats').innerHTML=`<div class="si">All have mean = <span>${mu.toFixed(1)}</span></div><div class="si" style="color:#22d3ee">Exponential: <span>MAX entropy on [0,∞) with fixed mean</span></div>`;
+  }
+  document.getElementById('ent-mu').oninput=render;render();
+})();
+
+// ═══════════════════════════════════════════
+// LAB 8: BOOTSTRAP
+// ═══════════════════════════════════════════
+(function(){
+  document.getElementById('bs-run').onclick=()=>{
+    const src=document.getElementById('bs-src').value,n=+document.getElementById('bs-n').value,B=+document.getElementById('bs-B').value;
+    document.getElementById('bs-n-v').textContent=n;document.getElementById('bs-B-v').textContent=B;
+    const gens={normal:()=>rN()+3,exponential:()=>rE(.5),bimodal:()=>Math.random()<.5?rN()-2:rN()+2};
+    const data=Array.from({length:n},gens[src]);
+    const means=[];for(let b=0;b<B;b++){let s=0;for(let i=0;i<n;i++)s+=data[Math.floor(Math.random()*n)];means.push(s/n);}
+    const{g,iw,ih}=mk('#bs-chart');
+    const bins=d3.bin().thresholds(50)(means);
+    const x=d3.scaleLinear().domain([d3.min(means)-.1,d3.max(means)+.1]).range([0,iw]);
+    const y=d3.scaleLinear().domain([0,d3.max(bins,b=>b.length)*1.15]).range([ih,0]);
+    g.append('g').attr('class','grid').call(d3.axisLeft(y).ticks(5).tickSize(-iw).tickFormat(''));
+    bins.forEach(b=>{g.append('rect').attr('x',x(b.x0)+1).attr('y',y(b.length)).attr('width',Math.max(1,x(b.x1)-x(b.x0)-2)).attr('height',ih-y(b.length)).attr('fill','#22d3ee').attr('opacity',.7).attr('rx',1)});
+    // Original data
+    data.forEach(d=>{if(x(d)>=0&&x(d)<=iw)g.append('line').attr('x1',x(d)).attr('x2',x(d)).attr('y1',ih).attr('y2',ih-12).attr('stroke','#fbbf24').attr('stroke-width',2)});
+    // CI lines
+    const sorted=[...means].sort((a,b)=>a-b);
+    const lo=sorted[Math.floor(.025*B)],hi=sorted[Math.floor(.975*B)];
+    [lo,hi].forEach(v=>{g.append('line').attr('x1',x(v)).attr('x2',x(v)).attr('y1',0).attr('y2',ih).attr('stroke','#f472b6').attr('stroke-width',1.5).attr('stroke-dasharray','4,3')});
+    const xbar=d3.mean(data);
+    g.append('line').attr('x1',x(xbar)).attr('x2',x(xbar)).attr('y1',0).attr('y2',ih).attr('stroke','#34d399').attr('stroke-width',2);
+    g.append('g').attr('class','axis').attr('transform',`translate(0,${ih})`).call(d3.axisBottom(x).ticks(8));
+    g.append('g').attr('class','axis').call(d3.axisLeft(y).ticks(5));
+    const se=d3.deviation(means);
+    document.getElementById('bs-stats').innerHTML=`<div class="si g">X̄: <span>${xbar.toFixed(3)}</span></div><div class="si">Bootstrap SE: <span>${se.toFixed(4)}</span></div><div class="si pk">95% CI: <span>[${lo.toFixed(3)}, ${hi.toFixed(3)}]</span></div><div class="si">Width: <span>${(hi-lo).toFixed(3)}</span></div>`;
+  };
+  document.getElementById('bs-run').click();
+})();
+
+// ═══════════════════════════════════════════
+// LAB 9: BIVARIATE NORMAL
+// ═══════════════════════════════════════════
+(function(){
+  function render(){
+    const rho=+document.getElementById('bv-rho').value,s1=+document.getElementById('bv-s1').value,s2=+document.getElementById('bv-s2').value,yc=+document.getElementById('bv-yc').value;
+    document.getElementById('bv-rho-v').textContent=rho.toFixed(2);document.getElementById('bv-s1-v').textContent=s1.toFixed(1);document.getElementById('bv-s2-v').textContent=s2.toFixed(1);document.getElementById('bv-yc-v').textContent=yc.toFixed(1);
+    // Contour plot
+    const cM={top:18,right:20,bottom:36,left:46};
+    const{g:gC,iw:cw,ih:ch}=mk('#bv-contour',500,380,cM);
+    const R=4,grid=60;
+    const xS=d3.scaleLinear().domain([-R,R]).range([0,cw]);
+    const yS=d3.scaleLinear().domain([-R,R]).range([ch,0]);
+    // Generate density grid
+    const vals=[];
+    for(let j=0;j<grid;j++){for(let i=0;i<grid;i++){
+      const xx=-R+i*2*R/(grid-1), yy=-R+j*2*R/(grid-1);
+      const z=(xx/s1)**2-2*rho*(xx/s1)*(yy/s2)+(yy/s2)**2;
+      const p=1/(2*Math.PI*s1*s2*Math.sqrt(1-rho*rho))*Math.exp(-z/(2*(1-rho*rho)));
+      vals.push(p);
+    }}
+    const contourGen=d3.contours().size([grid,grid]).thresholds(10);
+    const contours=contourGen(vals);
+    const colorScale=d3.scaleSequential(d3.interpolateViridis).domain([0,d3.max(vals)]);
+    const xC=d3.scaleLinear().domain([0,grid]).range([0,cw]);
+    const yC=d3.scaleLinear().domain([0,grid]).range([ch,0]);
+    contours.forEach(c=>{gC.append('path').attr('d',d3.geoPath().projection(d3.geoTransform({point:function(x,y){this.stream.point(xC(x),yC(y))}}))(c)).attr('fill','none').attr('stroke',colorScale(c.value)).attr('stroke-width',1.5).attr('opacity',.7)});
+    // Y=yc line
+    gC.append('line').attr('x1',0).attr('x2',cw).attr('y1',yS(yc)).attr('y2',yS(yc)).attr('stroke','#fbbf24').attr('stroke-width',1.5).attr('stroke-dasharray','4,3');
+    gC.append('text').attr('x',cw-4).attr('y',yS(yc)-6).text(`Y=${yc}`).attr('fill','#fbbf24').attr('font-size',10).attr('text-anchor','end');
+    gC.append('g').attr('class','axis').attr('transform',`translate(0,${ch})`).call(d3.axisBottom(xS).ticks(6));
+    gC.append('g').attr('class','axis').call(d3.axisLeft(yS).ticks(6));
+    gC.append('text').attr('x',cw/2).attr('y',ch+30).text('X₁').attr('fill','var(--muted)').attr('font-size',11).attr('text-anchor','middle');
+
+    // Conditional distribution X|Y=yc
+    const condMu=rho*(s1/s2)*yc;
+    const condSig=s1*Math.sqrt(1-rho*rho);
+    const{g:gR,iw:rw,ih:rh}=mk('#bv-cond',300,380,{top:18,right:16,bottom:36,left:40});
+    const condData=[];for(let xx=-R;xx<=R;xx+=.04)condData.push({x:xx,y:nPDF(xx,condMu,condSig)});
+    const xR=d3.scaleLinear().domain([-R,R]).range([0,rw]);
+    const yR=d3.scaleLinear().domain([0,d3.max(condData,d=>d.y)*1.15]).range([rh,0]);
+    gR.append('g').attr('class','grid').call(d3.axisLeft(yR).ticks(5).tickSize(-rw).tickFormat(''));
+    gR.append('path').datum(condData).attr('d',d3.area().x(d=>xR(d.x)).y0(rh).y1(d=>yR(d.y)).curve(d3.curveBasis)).attr('fill','rgba(251,191,36,.1)');
+    gR.append('path').datum(condData).attr('d',d3.line().x(d=>xR(d.x)).y(d=>yR(d.y)).curve(d3.curveBasis)).attr('fill','none').attr('stroke','#fbbf24').attr('stroke-width',2.5);
+    gR.append('line').attr('x1',xR(condMu)).attr('x2',xR(condMu)).attr('y1',0).attr('y2',rh).attr('stroke','#f472b6').attr('stroke-width',1).attr('stroke-dasharray','3,3');
+    gR.append('g').attr('class','axis').attr('transform',`translate(0,${rh})`).call(d3.axisBottom(xR).ticks(6));
+    gR.append('g').attr('class','axis').call(d3.axisLeft(yR).ticks(5).tickFormat(d3.format('.2f')));
+    gR.append('text').attr('x',rw/2).attr('y',-4).text(`X₁ | X₂=${yc}`).attr('fill','#fbbf24').attr('font-size',11).attr('text-anchor','middle');
+    document.getElementById('bv-stats').innerHTML=`<div class="si">ρ: <span>${rho.toFixed(2)}</span></div><div class="si o">Cond. mean: <span>${condMu.toFixed(3)}</span></div><div class="si pk">Cond. σ: <span>${condSig.toFixed(3)}</span></div><div class="si p">Var reduction: <span>${((1-rho*rho)*100).toFixed(1)}% of marginal</span></div>`;
+  }
+  ['bv-rho','bv-s1','bv-s2','bv-yc'].forEach(id=>document.getElementById(id).oninput=render);
+  render();
+})();
+
+// ═══════════════════════════════════════════
+// LAB 10: MARKOV CHAIN
+// ═══════════════════════════════════════════
+(function(){
+  const chains={
+    fair:{P:[[.2,.4,.4],[.3,.3,.4],[.4,.3,.3]],labels:['A','B','C']},
+    absorbing:{P:[[.95,.04,.01],[.1,.8,.1],[.02,.08,.9]],labels:['A','B','C']},
+    periodic:{P:[[0,1],[1,0]],labels:['A','B']},
+    weather:{P:[[.7,.2,.1],[.3,.4,.3],[.2,.3,.5]],labels:['☀','☁','🌧']}
+  };
+  document.getElementById('mc-run').onclick=()=>{
+    const type=document.getElementById('mc-type').value;
+    const{P,labels}=chains[type];const k=P.length;const N=2000;
+    let state=0;const history=[state];const counts=new Array(k).fill(0);counts[0]++;
+    const runningFreqs=[];
+    for(let t=1;t<N;t++){
+      const u=Math.random();let cum=0;
+      for(let j=0;j<k;j++){cum+=P[state][j];if(u<=cum){state=j;break}}
+      history.push(state);counts[state]++;
+      runningFreqs.push(counts.map(c=>c/(t+1)));
+    }
+    const{g,iw,ih}=mk('#mc-chart2');
+    const x=d3.scaleLinear().domain([0,N]).range([0,iw]);
+    const y=d3.scaleLinear().domain([0,1]).range([ih,0]);
+    g.append('g').attr('class','grid').call(d3.axisLeft(y).ticks(5).tickSize(-iw).tickFormat(''));
+    const colors=['#22d3ee','#a78bfa','#34d399','#fb923c'];
+    for(let s=0;s<k;s++){
+      const pathData=runningFreqs.map((f,i)=>({x:i+1,y:f[s]}));
+      g.append('path').datum(pathData).attr('d',d3.line().x(d=>x(d.x)).y(d=>y(d.y))).attr('fill','none').attr('stroke',colors[s]).attr('stroke-width',1.5);
+      g.append('text').attr('x',iw-4).attr('y',y(runningFreqs[N-2][s])+4).text(labels[s]).attr('fill',colors[s]).attr('font-size',11).attr('text-anchor','end').attr('font-weight',600);
+    }
+    // Stationary distribution (solve πP=π by power iteration)
+    let pi=new Array(k).fill(1/k);
+    for(let iter=0;iter<200;iter++){
+      const next=new Array(k).fill(0);
+      for(let j=0;j<k;j++)for(let i=0;i<k;i++)next[j]+=pi[i]*P[i][j];
+      pi=next;
+    }
+    pi.forEach((p,s)=>{g.append('line').attr('x1',0).attr('x2',iw).attr('y1',y(p)).attr('y2',y(p)).attr('stroke',colors[s]).attr('stroke-width',1).attr('stroke-dasharray','3,3').attr('opacity',.5)});
+    g.append('g').attr('class','axis').attr('transform',`translate(0,${ih})`).call(d3.axisBottom(x).ticks(8));
+    g.append('g').attr('class','axis').call(d3.axisLeft(y).ticks(5).tickFormat(d3.format('.0%')));
+    document.getElementById('mc-stats2').innerHTML=
+      `<div class="si">Stationary π: <span>${pi.map((p,i)=>labels[i]+'='+p.toFixed(3)).join(', ')}</span></div>
+       <div class="si p">Empirical: <span>${counts.map((c,i)=>labels[i]+'='+(c/N).toFixed(3)).join(', ')}</span></div>`;
+  };
+  document.getElementById('mc-run').click();
+})();
+
+// ═══════════════════════════════════════════
+// LAB 11: TAIL COMPARISON
+// ═══════════════════════════════════════════
+(function(){
+  function render(){
+    const opts=[...document.getElementById('tail-show').selectedOptions].map(o=>o.value);
+    const{g,iw,ih}=mk('#tail-chart');
+    const xRange=[0.01,8];
+    const x=d3.scaleLinear().domain(xRange).range([0,iw]);
+    const y=d3.scaleLog().domain([1e-8,.5]).range([ih,0]);
+    g.append('g').attr('class','grid').call(d3.axisLeft(y).ticks(8,'~e').tickSize(-iw));
+    const dists={
+      normal:{fn:xx=>1-normCDF(xx),color:'#60a5fa',label:'Normal'},
+      t3:{fn:xx=>{let s=0;for(let t=xx;t<50;t+=.02)s+=gFn(2)/(Math.sqrt(3*Math.PI)*gFn(1.5))*Math.pow(1+t*t/3,-2)*.02;return s},color:'#f472b6',label:'t(3)'},
+      exponential:{fn:xx=>Math.exp(-xx),color:'#34d399',label:'Exponential'},
+      laplace:{fn:xx=>.5*Math.exp(-xx),color:'#fb923c',label:'Laplace'},
+      lognormal:{fn:xx=>{let s=0;for(let t=xx;t<50;t+=.02)s+=nPDF(Math.log(t),0,1)/t*.02;return s},color:'#a78bfa',label:'Log-Normal'}
+    };
+    const line=d3.line().x(d=>x(d.x)).y(d=>y(Math.max(d.y,1e-9))).defined(d=>d.y>1e-9).curve(d3.curveBasis);
+    opts.forEach(key=>{
+      const d=dists[key];if(!d)return;
+      const data=[];for(let xx=xRange[0];xx<=xRange[1];xx+=.04){const v=d.fn(xx);if(v>0)data.push({x:xx,y:v})}
+      g.append('path').datum(data).attr('d',line).attr('fill','none').attr('stroke',d.color).attr('stroke-width',2);
+      if(data.length>0){const last=data[data.length-1];g.append('text').attr('x',iw-4).attr('y',y(Math.max(last.y,1e-8))-6).text(d.label).attr('fill',d.color).attr('font-size',10).attr('text-anchor','end')}
+    });
+    g.append('g').attr('class','axis').attr('transform',`translate(0,${ih})`).call(d3.axisBottom(x).ticks(8));
+    g.append('g').attr('class','axis').call(d3.axisLeft(y).ticks(8,'~e'));
+    g.append('text').attr('x',iw/2).attr('y',ih+32).text('x (distance from center)').attr('fill','var(--muted)').attr('font-size',11).attr('text-anchor','middle');
+    g.append('text').attr('transform','rotate(-90)').attr('x',-ih/2).attr('y',-42).text('P(X > x) — log scale').attr('fill','var(--muted)').attr('font-size',11).attr('text-anchor','middle');
+    document.getElementById('tail-stats').innerHTML=`<div class="si">Y-axis: <span>Survival function P(X>x) on log scale</span></div><div class="si pk">Steeper = lighter tails; flatter = heavier tails</div>`;
+  }
+  document.getElementById('tail-show').onchange=render;render();
+})();
+
+// ═══════════════════════════════════════════
+// LAB 12: SUFFICIENT STATISTICS
+// ═══════════════════════════════════════════
+(function(){
+  document.getElementById('ss-gen').onclick=()=>{
+    const n=+document.getElementById('ss-n').value;document.getElementById('ss-n-v').textContent=n;
+    // Generate dataset A
+    const xbar=rN()*2;
+    const A=[];let sA=0;for(let i=0;i<n-1;i++){const v=rN();A.push(v);sA+=v}
+    A.push(xbar*n-sA); // force exact mean
+    // Generate dataset B with SAME mean
+    const B=[];let sB=0;for(let i=0;i<n-1;i++){const v=rN()*1.5;B.push(v);sB+=v}
+    B.push(xbar*n-sB);
+    // Likelihood functions
+    const{g,iw,ih}=mk('#ss-chart');
+    const muRange=d3.range(-5,5.05,.05);
+    const llA=muRange.map(m=>{let s=0;A.forEach(x=>s+=-.5*(x-m)**2);return{x:m,y:s}});
+    const llB=muRange.map(m=>{let s=0;B.forEach(x=>s+=-.5*(x-m)**2);return{x:m,y:s}});
+    const yMax=d3.max([...llA,...llB],d=>d.y);const yMin=yMax-15;
+    const x=d3.scaleLinear().domain([-5,5]).range([0,iw]);
+    const y=d3.scaleLinear().domain([yMin,yMax+1]).range([ih,0]);
+    g.append('g').attr('class','grid').call(d3.axisLeft(y).ticks(5).tickSize(-iw).tickFormat(''));
+    g.append('path').datum(llA).attr('d',d3.line().x(d=>x(d.x)).y(d=>y(Math.max(d.y,yMin))).curve(d3.curveBasis)).attr('fill','none').attr('stroke','#22d3ee').attr('stroke-width',2.5);
+    g.append('path').datum(llB).attr('d',d3.line().x(d=>x(d.x)).y(d=>y(Math.max(d.y,yMin))).curve(d3.curveBasis)).attr('fill','none').attr('stroke','#fb923c').attr('stroke-width',2.5).attr('stroke-dasharray','6,3');
+    g.append('line').attr('x1',x(xbar)).attr('x2',x(xbar)).attr('y1',0).attr('y2',ih).attr('stroke','#34d399').attr('stroke-width',1.5).attr('stroke-dasharray','3,3');
+    g.append('text').attr('x',x(xbar)+4).attr('y',12).text(`X̄=${xbar.toFixed(3)}`).attr('fill','#34d399').attr('font-size',10);
+    // Data ticks
+    A.forEach(d=>{if(x(d)>=0&&x(d)<=iw)g.append('circle').attr('cx',x(d)).attr('cy',ih-5).attr('r',3).attr('fill','#22d3ee').attr('opacity',.6)});
+    B.forEach(d=>{if(x(d)>=0&&x(d)<=iw)g.append('diamond').attr('cx',x(d));g.append('rect').attr('x',x(d)-2.5).attr('y',ih-12).attr('width',5).attr('height',5).attr('fill','#fb923c').attr('opacity',.6).attr('transform',`rotate(45,${x(d)},${ih-9.5})`)});
+    g.append('g').attr('class','axis').attr('transform',`translate(0,${ih})`).call(d3.axisBottom(x).ticks(8));
+    g.append('g').attr('class','axis').call(d3.axisLeft(y).ticks(5));
+    g.append('text').attr('x',iw-8).attr('y',14).text('— Dataset A').attr('fill','#22d3ee').attr('font-size',10).attr('text-anchor','end');
+    g.append('text').attr('x',iw-8).attr('y',28).text('--- Dataset B').attr('fill','#fb923c').attr('font-size',10).attr('text-anchor','end');
+    document.getElementById('ss-stats').innerHTML=`<div class="si g">Same X̄ = <span>${xbar.toFixed(4)}</span> → <span>identical likelihood curves!</span></div><div class="si">Dataset A: <span>[${A.map(v=>v.toFixed(2)).join(', ')}]</span></div><div class="si o">Dataset B: <span>[${B.map(v=>v.toFixed(2)).join(', ')}]</span></div>`;
+  };
+  document.getElementById('ss-gen').click();
+})();
+
+// NAV SCROLL
+const secs=document.querySelectorAll('.lab');const nls=document.querySelectorAll('nav a');
+const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){nls.forEach(l=>l.classList.remove('active'));const l=document.querySelector(`nav a[href="#${e.target.id}"]`);if(l)l.classList.add('active')}})},{rootMargin:'-15% 0px -70% 0px'});
+secs.forEach(s=>obs.observe(s));
+</script>
+</body>
+</html>
