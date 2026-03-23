@@ -1,0 +1,1362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Probability Distributions — Interactive Textbook</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0b1121;
+  --bg-card: #111827;
+  --bg-card-hover: #1a2332;
+  --bg-viz: #0d1526;
+  --text: #e2e8f0;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+  --accent: #60a5fa;
+  --accent-glow: rgba(96,165,250,0.15);
+  --accent2: #a78bfa;
+  --accent3: #34d399;
+  --accent4: #fb923c;
+  --accent5: #f472b6;
+  --border: #1e293b;
+  --border-light: #334155;
+  --serif: 'DM Serif Display', serif;
+  --body: 'IBM Plex Sans', sans-serif;
+  --mono: 'IBM Plex Mono', monospace;
+  --prose: 'Crimson Pro', serif;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--body);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 15px;
+  overflow-x: hidden;
+}
+
+/* ── NAVIGATION ── */
+nav {
+  position: fixed; top:0; left:0; width: 280px; height:100vh;
+  background: var(--bg-card);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  z-index: 100;
+  padding: 24px 0;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-light) transparent;
+}
+nav::-webkit-scrollbar { width: 4px; }
+nav::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 2px; }
+.nav-title {
+  font-family: var(--serif);
+  font-size: 18px;
+  color: var(--accent);
+  padding: 0 20px 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
+  letter-spacing: 0.02em;
+}
+.nav-part {
+  font-family: var(--body);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-dim);
+  padding: 12px 20px 4px;
+}
+nav a {
+  display: block;
+  padding: 6px 20px 6px 28px;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 13px;
+  transition: all 0.2s;
+  border-left: 2px solid transparent;
+}
+nav a:hover, nav a.active {
+  color: var(--accent);
+  background: var(--accent-glow);
+  border-left-color: var(--accent);
+}
+
+/* ── MAIN CONTENT ── */
+main {
+  margin-left: 280px;
+  max-width: 960px;
+  padding: 48px 48px 120px;
+}
+
+/* ── HERO ── */
+.hero {
+  text-align: center;
+  padding: 80px 0 64px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 64px;
+  position: relative;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -100px; left: -200px; right: -200px; bottom: -100px;
+  background: radial-gradient(ellipse at center, rgba(96,165,250,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero h1 {
+  font-family: var(--serif);
+  font-size: 52px;
+  color: var(--text);
+  line-height: 1.15;
+  margin-bottom: 12px;
+  position: relative;
+}
+.hero h1 span { color: var(--accent); }
+.hero .subtitle {
+  font-family: var(--prose);
+  font-style: italic;
+  font-size: 20px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+.hero .edition {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text-dim);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+/* ── SECTIONS ── */
+.part-header {
+  margin: 72px 0 32px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--accent);
+}
+.part-header h2 {
+  font-family: var(--serif);
+  font-size: 32px;
+  color: var(--accent);
+}
+.chapter {
+  margin: 48px 0;
+  scroll-margin-top: 24px;
+}
+.chapter h3 {
+  font-family: var(--serif);
+  font-size: 26px;
+  color: var(--text);
+  margin-bottom: 20px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.chapter h4 {
+  font-family: var(--serif);
+  font-size: 19px;
+  color: var(--accent2);
+  margin: 28px 0 12px;
+}
+.chapter p, .chapter li {
+  font-family: var(--prose);
+  font-size: 17px;
+  line-height: 1.85;
+  color: var(--text-muted);
+  margin-bottom: 14px;
+}
+.chapter ul { padding-left: 24px; list-style: none; }
+.chapter ul li::before {
+  content: '▸';
+  color: var(--accent);
+  margin-right: 8px;
+}
+.formula-block {
+  background: var(--bg-viz);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  padding: 16px 20px;
+  margin: 16px 0;
+  border-radius: 4px;
+  font-family: var(--mono);
+  font-size: 14px;
+  color: var(--accent);
+  overflow-x: auto;
+  white-space: pre-wrap;
+}
+.concept-box {
+  background: linear-gradient(135deg, rgba(96,165,250,0.06), rgba(167,139,250,0.04));
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  padding: 20px 24px;
+  margin: 20px 0;
+}
+.concept-box .label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent2);
+  margin-bottom: 8px;
+}
+
+/* ── INTERACTIVE VIZ PANELS ── */
+.viz-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 28px;
+  margin: 28px 0;
+  position: relative;
+  overflow: hidden;
+}
+.viz-panel::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent3));
+}
+.viz-panel h5 {
+  font-family: var(--serif);
+  font-size: 17px;
+  color: var(--text);
+  margin-bottom: 16px;
+}
+.viz-panel .viz-tag {
+  position: absolute;
+  top: 12px; right: 16px;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent3);
+  background: rgba(52,211,153,0.1);
+  padding: 3px 8px;
+  border-radius: 3px;
+}
+
+/* Controls */
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 20px;
+  align-items: center;
+}
+.control-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.control-group label {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text-dim);
+  min-width: 24px;
+}
+.control-group input[type=range] {
+  -webkit-appearance: none;
+  width: 140px;
+  height: 4px;
+  background: var(--border-light);
+  border-radius: 2px;
+  outline: none;
+}
+.control-group input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px; height: 14px;
+  background: var(--accent);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(96,165,250,0.4);
+}
+.control-group .val {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--accent);
+  min-width: 36px;
+  text-align: right;
+  font-weight: 500;
+}
+.stats-row {
+  display: flex;
+  gap: 24px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+.stat-item {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text-dim);
+}
+.stat-item span {
+  color: var(--accent);
+  font-weight: 500;
+}
+
+/* SVG styles */
+svg text { font-family: var(--mono); }
+.axis text { fill: var(--text-dim); font-size: 11px; }
+.axis path, .axis line { stroke: var(--border-light); }
+.grid line { stroke: var(--border); stroke-opacity: 0.4; }
+.grid path { display: none; }
+
+/* ── MOBILE ── */
+.mobile-toggle {
+  display: none;
+  position: fixed; top: 12px; left: 12px;
+  z-index: 200;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--accent);
+  width: 40px; height: 40px;
+  border-radius: 8px;
+  font-size: 18px;
+  cursor: pointer;
+}
+@media (max-width: 860px) {
+  .mobile-toggle { display: flex; align-items: center; justify-content: center; }
+  nav { transform: translateX(-100%); transition: transform 0.3s; }
+  nav.open { transform: translateX(0); }
+  main { margin-left: 0; padding: 48px 20px 120px; }
+}
+
+/* Summary Table */
+.summary-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 13px;
+}
+.summary-table th {
+  background: var(--bg-viz);
+  color: var(--accent);
+  font-family: var(--mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 2px solid var(--accent);
+}
+.summary-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.summary-table tr:hover td { background: var(--accent-glow); }
+</style>
+</head>
+<body>
+
+<button class="mobile-toggle" onclick="document.querySelector('nav').classList.toggle('open')">☰</button>
+
+<nav>
+  <div class="nav-title">Probability<br>Distributions</div>
+  <div class="nav-part">Part I · Foundations</div>
+  <a href="#ch1">1 — Probability Spaces</a>
+  <a href="#ch1-demo">↳ Interactive: Bayes' Theorem</a>
+  <div class="nav-part">Part II · Discrete</div>
+  <a href="#ch2">2 — Bernoulli & Binomial</a>
+  <a href="#ch2-demo">↳ Interactive: Binomial PMF</a>
+  <a href="#ch3">3 — Geometric & Neg. Binomial</a>
+  <a href="#ch3-demo">↳ Interactive: Geometric PMF</a>
+  <a href="#ch4">4 — Poisson</a>
+  <a href="#ch4-demo">↳ Interactive: Poisson PMF</a>
+  <a href="#ch5">5 — Hypergeometric</a>
+  <a href="#ch5-demo">↳ Interactive: Hypergeometric</a>
+  <a href="#ch6">6 — Uniform & Multinomial</a>
+  <div class="nav-part">Part III · Continuous</div>
+  <a href="#ch7">7 — Continuous Uniform</a>
+  <a href="#ch7-demo">↳ Interactive: Uniform PDF</a>
+  <a href="#ch8">8 — Normal (Gaussian)</a>
+  <a href="#ch8-demo">↳ Interactive: Normal PDF</a>
+  <a href="#clt-demo">↳ Interactive: Central Limit Thm</a>
+  <a href="#ch9">9 — Exponential & Gamma</a>
+  <a href="#ch9-demo">↳ Interactive: Exp & Gamma</a>
+  <a href="#ch10">10 — Beta Distribution</a>
+  <a href="#ch10-demo">↳ Interactive: Beta PDF</a>
+  <a href="#ch11">11 — Weibull, Log-Normal, etc.</a>
+  <a href="#ch11-demo">↳ Interactive: Weibull PDF</a>
+  <div class="nav-part">Part IV · Multivariate</div>
+  <a href="#ch12">12 — Joint Distributions</a>
+  <div class="nav-part">Part V · Asymptotics</div>
+  <a href="#ch13">13 — Convergence</a>
+  <a href="#ch14">14 — LLN & CLT</a>
+  <div class="nav-part">Part VI · Applications</div>
+  <a href="#ch15">15 — Clinical Medicine</a>
+  <a href="#ch16">16 — Engineering & QC</a>
+  <a href="#ch17">17 — Finance</a>
+  <a href="#ch18">18 — Machine Learning</a>
+  <div class="nav-part">Appendix</div>
+  <a href="#appendix">Summary Table</a>
+</nav>
+
+<main>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>Probability <span>Distributions</span></h1>
+  <div class="subtitle">Theory, Properties, and Applications</div>
+  <div class="edition">Interactive Reference Edition · 2026</div>
+</div>
+
+<!-- ═══════════════ PART I ═══════════════ -->
+<div class="part-header" id="part1"><h2>Part I — Mathematical Foundations</h2></div>
+
+<div class="chapter" id="ch1">
+<h3>Chapter 1: Probability Spaces & Measure Theory</h3>
+
+<h4>1.1 Sample Spaces and Events</h4>
+<p>A probability model begins with a <strong>sample space</strong> Ω — the set of all possible outcomes of a random experiment. An event is a subset of Ω. For continuous sample spaces (such as ℝ), we use σ-algebras to ensure probabilities are well-defined.</p>
+<p>A <strong>σ-algebra</strong> ℱ on Ω is a collection of subsets satisfying: (i) Ω ∈ ℱ, (ii) closure under complements, and (iii) closure under countable unions. The triple (Ω, ℱ, P) is a <strong>probability space</strong> — the rigorous foundation of all probability theory.</p>
+
+<h4>1.2 Kolmogorov's Axioms</h4>
+<p>Andrey Kolmogorov's 1933 axioms define a probability measure P on (Ω, ℱ): <strong>normalization</strong> P(Ω)=1, <strong>non-negativity</strong> P(A) ≥ 0, and <strong>countable additivity</strong> for disjoint sets. From these three axioms, the entire edifice of probability theory is derived.</p>
+
+<div class="concept-box">
+<div class="label">Key Consequences</div>
+<p>P(∅) = 0; monotonicity (A ⊆ B ⟹ P(A) ≤ P(B)); inclusion-exclusion: P(A ∪ B) = P(A) + P(B) − P(A ∩ B); complement rule: P(Aᶜ) = 1 − P(A).</p>
+</div>
+
+<h4>1.3 Conditional Probability & Bayes' Theorem</h4>
+<p>For events A and B with P(B) > 0, the conditional probability P(A|B) = P(A ∩ B)/P(B). <strong>Bayes' theorem</strong> follows: P(A|B) = P(B|A)·P(A)/P(B). This is the mathematical engine behind Bayesian inference, clinical diagnostics, and machine learning.</p>
+
+<!-- BAYES DEMO -->
+<div class="viz-panel" id="ch1-demo">
+  <span class="viz-tag">Interactive</span>
+  <h5>Bayes' Theorem — Diagnostic Test Calculator</h5>
+  <p style="font-size:13px;color:var(--text-dim);margin-bottom:16px;">Adjust prevalence, sensitivity, and specificity to see how positive predictive value (PPV) changes.</p>
+  <div class="controls">
+    <div class="control-group">
+      <label>Prevalence</label>
+      <input type="range" id="bayes-prev" min="0.1" max="50" step="0.1" value="5">
+      <span class="val" id="bayes-prev-val">5%</span>
+    </div>
+    <div class="control-group">
+      <label>Sensitivity</label>
+      <input type="range" id="bayes-sens" min="50" max="100" step="1" value="95">
+      <span class="val" id="bayes-sens-val">95%</span>
+    </div>
+    <div class="control-group">
+      <label>Specificity</label>
+      <input type="range" id="bayes-spec" min="50" max="100" step="1" value="90">
+      <span class="val" id="bayes-spec-val">90%</span>
+    </div>
+  </div>
+  <div id="bayes-chart"></div>
+  <div class="stats-row" id="bayes-stats"></div>
+</div>
+
+<h4>1.4 Random Variables</h4>
+<p>A <strong>random variable</strong> X: Ω → ℝ maps outcomes to real numbers. Its <strong>CDF</strong> F(x) = P(X ≤ x) fully characterizes its distribution. Discrete random variables have a PMF p(x) = P(X = x); continuous random variables have a PDF f(x) where F(x) = ∫f(t)dt.</p>
+
+<h4>1.5 Expectation, Variance, and Moments</h4>
+<p>The <strong>expectation</strong> E[X] measures central tendency. The <strong>variance</strong> Var(X) = E[(X−μ)²] measures spread. Higher moments include <strong>skewness</strong> (asymmetry, via the 3rd central moment) and <strong>kurtosis</strong> (tail heaviness, via the 4th).</p>
+
+<h4>1.6 Moment-Generating Functions</h4>
+<p>The MGF M_X(t) = E[e^{tX}] uniquely determines a distribution (when it exists). The k-th moment is the k-th derivative at t=0. For independent variables: M_{X+Y}(t) = M_X(t)·M_Y(t). The <strong>characteristic function</strong> φ_X(t) = E[e^{itX}] always exists and is used in proofs of the CLT.</p>
+
+<h4>1.7 Probability Inequalities</h4>
+<div class="concept-box">
+<div class="label">Fundamental Inequalities</div>
+<p><strong>Markov:</strong> P(X ≥ a) ≤ E[X]/a for non-negative X.  <strong>Chebyshev:</strong> P(|X−μ| ≥ kσ) ≤ 1/k².  <strong>Jensen:</strong> E[g(X)] ≥ g(E[X]) for convex g.</p>
+</div>
+</div>
+
+<!-- ═══════════════ PART II ═══════════════ -->
+<div class="part-header" id="part2"><h2>Part II — Discrete Probability Distributions</h2></div>
+
+<!-- CHAPTER 2: BINOMIAL -->
+<div class="chapter" id="ch2">
+<h3>Chapter 2: Bernoulli & Binomial Distributions</h3>
+
+<h4>2.1 The Bernoulli Distribution</h4>
+<p>The simplest nontrivial distribution: a single trial with success probability p. P(X=x) = p^x(1−p)^{1−x} for x ∈ {0,1}. Named after Jacob Bernoulli (1654–1705). Mean = p, Variance = p(1−p).</p>
+
+<h4>2.2 The Binomial Distribution</h4>
+<p>The number of successes X in n independent Bernoulli(p) trials. The PMF is:</p>
+<div class="formula-block">P(X = k) = C(n,k) · p^k · (1-p)^{n-k},   k = 0, 1, ..., n</div>
+<p>Mean = np, Variance = np(1−p), MGF = (q + pe^t)^n. Connected to the Poisson (as n→∞ with np=λ fixed) and the Normal (for large n via CLT).</p>
+
+<div class="viz-panel" id="ch2-demo">
+  <span class="viz-tag">Interactive</span>
+  <h5>Binomial Distribution — PMF Explorer</h5>
+  <div class="controls">
+    <div class="control-group">
+      <label>n</label>
+      <input type="range" id="binom-n" min="1" max="60" step="1" value="20">
+      <span class="val" id="binom-n-val">20</span>
+    </div>
+    <div class="control-group">
+      <label>p</label>
+      <input type="range" id="binom-p" min="0.01" max="0.99" step="0.01" value="0.5">
+      <span class="val" id="binom-p-val">0.50</span>
+    </div>
+  </div>
+  <div id="binom-chart"></div>
+  <div class="stats-row" id="binom-stats"></div>
+</div>
+</div>
+
+<!-- CHAPTER 3: GEOMETRIC & NEGATIVE BINOMIAL -->
+<div class="chapter" id="ch3">
+<h3>Chapter 3: Geometric & Negative Binomial</h3>
+
+<h4>3.1 The Geometric Distribution</h4>
+<p>Models the number of trials until the first success. P(X=k) = (1−p)^{k−1}·p for k=1,2,3,... Mean = 1/p, Variance = (1−p)/p². The geometric distribution is the <em>unique</em> discrete distribution with the <strong>memoryless property</strong>: P(X > s+t | X > s) = P(X > t).</p>
+
+<h4>3.2 The Negative Binomial Distribution</h4>
+<p>Generalizes the geometric to model trials until the r-th success. Also serves as a gamma-Poisson mixture for overdispersed count data. Widely used in genomics (RNA-seq), epidemiology, and insurance.</p>
+<div class="formula-block">P(X = k) = C(k-1, r-1) · p^r · (1-p)^{k-r},   k = r, r+1, ...</div>
+
+<div class="viz-panel" id="ch3-demo">
+  <span class="viz-tag">Interactive</span>
+  <h5>Geometric Distribution — PMF Explorer</h5>
+  <div class="controls">
+    <div class="control-group">
+      <label>p</label>
+      <input type="range" id="geom-p" min="0.05" max="0.95" step="0.01" value="0.3">
+      <span class="val" id="geom-p-val">0.30</span>
+    </div>
+  </div>
+  <div id="geom-chart"></div>
+  <div class="stats-row" id="geom-stats"></div>
+</div>
+</div>
+
+<!-- CHAPTER 4: POISSON -->
+<div class="chapter" id="ch4">
+<h3>Chapter 4: The Poisson Distribution</h3>
+<p>Models the number of events in a fixed interval when events occur independently at a constant average rate λ. Named after Siméon Denis Poisson (1781–1840).</p>
+<div class="formula-block">P(X = k) = e^{−λ} · λ^k / k!,   k = 0, 1, 2, ...</div>
+<p>A defining property: <strong>mean = variance = λ</strong>. The Poisson arises as the limit of Binomial(n, p) when n→∞ and np→λ (Poisson limit theorem / law of rare events). The reproductive property: independent Poisson sums are Poisson.</p>
+
+<div class="viz-panel" id="ch4-demo">
+  <span class="viz-tag">Interactive</span>
+  <h5>Poisson Distribution — PMF Explorer</h5>
+  <div class="controls">
+    <div class="control-group">
+      <label>λ</label>
+      <input type="range" id="pois-lam" min="0.5" max="25" step="0.5" value="5">
+      <span class="val" id="pois-lam-val">5.0</span>
+    </div>
+  </div>
+  <div id="pois-chart"></div>
+  <div class="stats-row" id="pois-stats"></div>
+</div>
+</div>
+
+<!-- CHAPTER 5: HYPERGEOMETRIC -->
+<div class="chapter" id="ch5">
+<h3>Chapter 5: The Hypergeometric Distribution</h3>
+<p>Models sampling <strong>without replacement</strong> from a finite population of N items, K of which are successes. Drawing a sample of size n, the number of successes X has PMF:</p>
+<div class="formula-block">P(X = k) = C(K,k) · C(N−K, n−k) / C(N, n)</div>
+<p>The finite population correction factor (N−n)/(N−1) distinguishes this from the binomial. Used in Fisher's exact test, quality acceptance sampling, and capture-recapture ecology.</p>
+
+<div class="viz-panel" id="ch5-demo">
+  <span class="viz-tag">Interactive</span>
+  <h5>Hypergeometric Distribution — PMF Explorer</h5>
+  <div class="controls">
+    <div class="control-group">
+      <label>N</label>
+      <input type="range" id="hyp-N" min="10" max="100" step="1" value="50">
+      <span class="val" id="hyp-N-val">50</span>
+    </div>
+    <div class="control-group">
+      <label>K</label>
+      <input type="range" id="hyp-K" min="1" max="49" step="1" value="15">
+      <span class="val" id="hyp-K-val">15</span>
+    </div>
+    <div class="control-group">
+      <label>n</label>
+      <input type="range" id="hyp-n" min="1" max="49" step="1" value="10">
+      <span class="val" id="hyp-n-val">10</span>
+    </div>
+  </div>
+  <div id="hyp-chart"></div>
+  <div class="stats-row" id="hyp-stats"></div>
+</div>
+</div>
+
+<!-- CHAPTER 6 -->
+<div class="chapter" id="ch6">
+<h3>Chapter 6: Discrete Uniform & Multinomial</h3>
+<h4>6.1 Discrete Uniform</h4>
+<p>Equal probability 1/(b−a+1) to each integer in {a, …, b}. The <strong>maximum-entropy</strong> distribution on a finite set — representing maximum uncertainty. A fair die is DiscreteUniform(1,6).</p>
+<h4>6.2 Multinomial</h4>
+<p>Generalizes the binomial to k outcomes per trial. In n trials with outcome probabilities p₁,…,pₖ, the joint PMF involves the multinomial coefficient n!/(x₁!···xₖ!). Each marginal Xᵢ ~ Bin(n, pᵢ); the covariance Cov(Xᵢ,Xⱼ) = −npᵢpⱼ is always negative (counts must sum to n).</p>
+</div>
+
+<!-- ═══════════════ PART III ═══════════════ -->
+<div class="part-header" id="part3"><h2>Part III — Continuous Probability Distributions</h2></div>
+
+<!-- CHAPTER 7: CONTINUOUS UNIFORM -->
+<div class="chapter" id="ch7">
+<h3>Chapter 7: Continuous Uniform Distribution</h3>
+<p>The simplest continuous distribution: f(x) = 1/(b−a) on [a,b]. The <strong>probability integral transform</strong> — if U ~ Uniform(0,1), then F⁻¹(U) has CDF F — is the basis for simulating any continuous distribution from a uniform RNG.</p>
+
+<div class="viz-panel" id="ch7-demo">
+  <span class="viz-tag">Interactive</span>
+  <h5>Continuous Uniform — PDF & CDF</h5>
+  <div class="controls">
+    <div class="control-group">
+      <label>a</label>
+      <input type="range" id="unif-a" min="-5" max="4" step="0.5" value="0">
+      <span class="val" id="unif-a-val">0.0</span>
+    </div>
+    <div class="control-group">
+      <label>b</label>
+      <input type="range" id="unif-b" min="-4" max="10" step="0.5" value="5">
+      <span class="val" id="unif-b-val">5.0</span>
+    </div>
+  </div>
+  <div id="unif-chart"></div>
+  <div class="stats-row" id="unif-stats"></div>
+</div>
+</div>
+
+<!-- CHAPTER 8: NORMAL -->
+<div class="chapter" id="ch8">
+<h3>Chapter 8: The Normal (Gaussian) Distribution</h3>
+<p>Unquestionably the most important distribution in statistics. Discovered by de Moivre (~1733), independently derived by Laplace and Gauss.</p>
+<div class="formula-block">f(x) = (1/(σ√(2π))) · exp(−(x−μ)² / (2σ²))</div>
+
+<div class="concept-box">
+<div class="label">The 68–95–99.7 Rule</div>
+<p>~68% of probability within ±1σ of the mean, ~95% within ±2σ, ~99.7% within ±3σ. The normal distribution has <strong>maximum differential entropy</strong> among all distributions with given mean and variance.</p>
+</div>
+
+<div class="viz-panel" id="ch8-demo">
+  <span class="viz-tag">Interactive</span>
+  <h5>Normal Distribution — PDF Explorer</h5>
+  <div class="controls">
+    <div class="control-group">
+      <label>μ</label>
+      <input type="range" id="norm-mu" min="-5" max="5" step="0.1" value="0">
+      <span class="val" id="norm-mu-val">0.0</span>
+    </div>
+    <div class="control-group">
+      <label>σ</label>
+      <input type="range" id="norm-sig" min="0.3" max="4" step="0.1" value="1">
+      <span class="val" id="norm-sig-val">1.0</span>
+    </div>
+  </div>
+  <div id="norm-chart"></div>
+  <div class="stats-row" id="norm-stats"></div>
+</div>
+
+<h4>8.4 The Central Limit Theorem</h4>
+<p>The CLT is arguably the most important theorem in statistics: the standardized sum of i.i.d. random variables with finite variance converges to N(0,1). This explains why the normal distribution appears so pervasively — whenever a quantity results from many small, independent, additive effects.</p>
+
+<div class="viz-panel" id="clt-demo">
+  <span class="viz-tag">Interactive</span>
+  <h5>Central Limit Theorem — Live Demonstration</h5>
+  <p style="font-size:13px;color:var(--text-dim);margin-bottom:16px;">Watch how the distribution of sample means converges to normal as sample size increases — regardless of the parent distribution.</p>
+  <div class="controls">
+    <div class="control-group">
+      <label>Source</label>
+      <select id="clt-source" style="background:var(--bg-viz);color:var(--text);border:1px solid var(--border-light);padding:4px 8px;border-radius:4px;font-family:var(--mono);font-size:12px;">
+        <option value="uniform">Uniform(0,1)</option>
+        <option value="exponential">Exponential(1)</option>
+        <option value="bernoulli">Bernoulli(0.3)</option>
+      </select>
+    </div>
+    <div class="control-group">
+      <label>n</label>
+      <input type="range" id="clt-n" min="1" max="50" step="1" value="1">
+      <span class="val" id="clt-n-val">1</span>
+    </div>
+    <div class="control-group">
+      <button id="clt-run" style="background:var(--accent);color:var(--bg);border:none;padding:6px 16px;border-radius:6px;font-family:var(--mono);font-size:12px;cursor:pointer;font-weight:600;">Generate 2000 Means</button>
+    </div>
+  </div>
+  <div id="clt-chart"></div>
+</div>
+</div>
+
+<!-- CHAPTER 9: EXPONENTIAL & GAMMA -->
+<div class="chapter" id="ch9">
+<h3>Chapter 9: Exponential & Gamma Distributions</h3>
+
+<h4>9.1 The Exponential Distribution</h4>
+<p>The continuous analogue of the geometric distribution — models waiting time until the first event in a Poisson process. f(x) = λe^{−λx} for x ≥ 0. Mean = 1/λ, Variance = 1/λ². Has the <strong>unique continuous memoryless property</strong> and constant hazard rate h(t) = λ.</p>
+
+<h4>9.2 The Gamma Distribution</h4>
+<p>Generalizes the exponential to model the wait until the α-th event. Shape parameter α and rate parameter β give mean = α/β and variance = α/β². Special cases include the Exponential (α=1), Chi-squared (α=ν/2, β=1/2), and Erlang (α ∈ ℤ⁺).</p>
+
+<div class="viz-panel" id="ch9-demo">
+  <span class="viz-tag">Interactive</span>
+  <h5>Exponential & Gamma — PDF Explorer</h5>
+  <div class="controls">
+    <div class="control-group">
+      <label>α</label>
+      <input type="range" id="gamma-a" min="0.5" max="10" step="0.5" value="1">
+      <span class="val" id="gamma-a-val">1.0</span>
+    </div>
+    <div class="control-group">
+      <label>β</label>
+      <input type="range" id="gamma-b" min="0.5" max="5" step="0.25" value="1">
+      <span class="val" id="gamma-b-val">1.0</span>
+    </div>
+  </div>
+  <div id="gamma-chart"></div>
+  <div class="stats-row" id="gamma-stats"></div>
+</div>
+</div>
+
+<!-- CHAPTER 10: BETA -->
+<div class="chapter" id="ch10">
+<h3>Chapter 10: The Beta Distribution</h3>
+<p>Defined on [0,1], the natural distribution for proportions and probabilities. Extremely flexible — symmetric bell, U-shaped, left-skewed, or right-skewed depending on parameters α and β.</p>
+<div class="formula-block">f(x) = [Γ(α+β)/(Γ(α)Γ(β))] · x^{α-1} · (1-x)^{β-1},   0 < x < 1</div>
+<p>The <strong>conjugate prior</strong> for the Bernoulli/binomial parameter p: if prior is Beta(α,β) and we observe k successes in n trials, the posterior is Beta(α+k, β+n−k). Also the distribution of order statistics from Uniform(0,1).</p>
+
+<div class="viz-panel" id="ch10-demo">
+  <span class="viz-tag">Interactive</span>
+  <h5>Beta Distribution — PDF Explorer</h5>
+  <div class="controls">
+    <div class="control-group">
+      <label>α</label>
+      <input type="range" id="beta-a" min="0.1" max="10" step="0.1" value="2">
+      <span class="val" id="beta-a-val">2.0</span>
+    </div>
+    <div class="control-group">
+      <label>β</label>
+      <input type="range" id="beta-b" min="0.1" max="10" step="0.1" value="5">
+      <span class="val" id="beta-b-val">5.0</span>
+    </div>
+  </div>
+  <div id="beta-chart"></div>
+  <div class="stats-row" id="beta-stats"></div>
+</div>
+</div>
+
+<!-- CHAPTER 11: WEIBULL, LOGNORMAL, ETC. -->
+<div class="chapter" id="ch11">
+<h3>Chapter 11: Weibull, Log-Normal & Other Distributions</h3>
+
+<h4>11.1 The Weibull Distribution</h4>
+<p>The standard model for failure-time analysis. Shape k controls the hazard: k=1 gives constant hazard (exponential), k>1 models wear-out failures, k<1 models infant mortality. Survival function S(x) = exp(−(x/λ)^k).</p>
+
+<div class="viz-panel" id="ch11-demo">
+  <span class="viz-tag">Interactive</span>
+  <h5>Weibull Distribution — PDF & Hazard Function</h5>
+  <div class="controls">
+    <div class="control-group">
+      <label>k</label>
+      <input type="range" id="weib-k" min="0.3" max="5" step="0.1" value="1.5">
+      <span class="val" id="weib-k-val">1.5</span>
+    </div>
+    <div class="control-group">
+      <label>λ</label>
+      <input type="range" id="weib-l" min="0.5" max="5" step="0.25" value="2">
+      <span class="val" id="weib-l-val">2.0</span>
+    </div>
+  </div>
+  <div id="weib-chart"></div>
+  <div class="stats-row" id="weib-stats"></div>
+</div>
+
+<h4>11.2 The Log-Normal Distribution</h4>
+<p>If ln(X) ~ N(μ,σ²), then X is log-normal. Always right-skewed with heavier tails than the normal. Models incomes (Gibrat's law), stock prices (Black-Scholes), particle sizes, hospital lengths of stay, and many biological measurements.</p>
+
+<h4>11.3 The Cauchy Distribution</h4>
+<p>The prototype heavy-tailed distribution. f(x) = 1/(π(1+x²)). <em>No finite moments exist</em> — the mean, variance, and all higher moments are undefined. The law of large numbers fails for Cauchy random variables. Arises as Z₁/Z₂ where both are standard normal, and equals Student's t with 1 degree of freedom.</p>
+
+<h4>11.4 The Pareto Distribution</h4>
+<p>Models the "80/20 rule" — power-law tails. f(x) = αx_m^α / x^{α+1} for x ≥ x_m. Used for income, city sizes (Zipf's law), internet file sizes, and insurance claims. When α ≤ 1, even the mean is infinite.</p>
+</div>
+
+<!-- ═══════════════ PART IV ═══════════════ -->
+<div class="part-header" id="part4"><h2>Part IV — Multivariate Distributions</h2></div>
+
+<div class="chapter" id="ch12">
+<h3>Chapter 12: Joint, Marginal & Conditional Distributions</h3>
+<p>For two random variables X and Y, the <strong>joint CDF</strong> F(x,y) = P(X ≤ x, Y ≤ y) captures their full joint behavior. Marginals are obtained by integrating out the other variable. Independence ⟺ f(x,y) = f_X(x)·f_Y(y).</p>
+
+<h4>12.2 Covariance & Correlation</h4>
+<p>Cov(X,Y) = E[XY] − E[X]E[Y]. The Pearson correlation ρ = Cov(X,Y)/(σ_X·σ_Y) satisfies −1 ≤ ρ ≤ 1. Independence implies ρ=0, but ρ=0 does not imply independence (except for the multivariate normal).</p>
+
+<h4>12.3 The Multivariate Normal</h4>
+<p>The most important multivariate distribution. X ~ N(μ, Σ) has the special property that uncorrelated components are independent. Every linear combination is univariate normal. Foundational for PCA, discriminant analysis, Gaussian processes, and variational inference.</p>
+</div>
+
+<!-- ═══════════════ PART V ═══════════════ -->
+<div class="part-header" id="part5"><h2>Part V — Convergence & Limit Theorems</h2></div>
+
+<div class="chapter" id="ch13">
+<h3>Chapter 13: Modes of Convergence</h3>
+<p>Four modes form a hierarchy: <strong>Almost sure</strong> and <strong>Mean-square</strong> convergence each imply <strong>convergence in probability</strong>, which implies <strong>convergence in distribution</strong> (the weakest, relevant to the CLT).</p>
+</div>
+
+<div class="chapter" id="ch14">
+<h3>Chapter 14: Law of Large Numbers & CLT</h3>
+<p>The <strong>Weak LLN</strong> (Khinchin, 1929): sample means converge in probability to the population mean. The <strong>Strong LLN</strong> (Kolmogorov, 1933): almost sure convergence. These justify the frequentist interpretation of probability and the consistency of statistical estimators.</p>
+<p>The <strong>Berry-Esseen theorem</strong> bounds the rate of CLT convergence: the maximum CDF deviation from Φ is at most C·E[|X₁−μ|³]/(σ³√n) with C ≤ 0.4748. The <strong>Delta method</strong> extends the CLT to smooth functions of sample means.</p>
+</div>
+
+<!-- ═══════════════ PART VI ═══════════════ -->
+<div class="part-header" id="part6"><h2>Part VI — Applications</h2></div>
+
+<div class="chapter" id="ch15">
+<h3>Chapter 15: Clinical Medicine & Public Health</h3>
+<p><strong>Diagnostic Testing:</strong> Sensitivity, specificity, and Bayes' theorem determine PPV — with profound implications for low-prevalence screening. <strong>Survival Analysis:</strong> Exponential (constant hazard), Weibull (monotone hazard), and log-normal models underlie Kaplan-Meier estimation and Cox regression. <strong>Epidemiology:</strong> Poisson models for incidence, negative binomial for overdispersed infectious disease data, binomial for clinical trial outcomes.</p>
+</div>
+
+<div class="chapter" id="ch16">
+<h3>Chapter 16: Engineering & Quality Management</h3>
+<p><strong>Reliability:</strong> The bathtub curve uses Weibull distributions with different shape parameters for infant mortality, useful life, and wear-out phases. <strong>SPC:</strong> X-bar charts (normal via CLT), c-charts (Poisson for defect counts), p-charts (binomial for proportions). Six Sigma and CMS quality reporting are deeply rooted in distribution theory.</p>
+</div>
+
+<div class="chapter" id="ch17">
+<h3>Chapter 17: Finance & Economics</h3>
+<p><strong>Asset Returns:</strong> Log-normal models (Black-Scholes) underestimate tail risk; Student's t and stable distributions better capture empirical heavy tails. <strong>Risk:</strong> VaR and Expected Shortfall are quantile-based measures. <strong>Queueing:</strong> M/M/1 queues (Poisson arrivals, exponential service) have geometric steady-state queue lengths — applicable to ED patient flow and server load balancing.</p>
+</div>
+
+<div class="chapter" id="ch18">
+<h3>Chapter 18: Machine Learning & Data Science</h3>
+<p><strong>Generative Models:</strong> GMMs use multivariate normals; LDA uses multinomial/Dirichlet; VAEs use normal latent spaces. <strong>Bayesian Inference:</strong> Conjugate families (beta-binomial, gamma-Poisson, normal-normal) yield closed-form posteriors; non-conjugate models use MCMC or variational methods. <strong>Hypothesis Testing:</strong> t, F, χ², and z statistics all derive from the normal distribution family.</p>
+</div>
+
+<!-- ═══════════════ APPENDIX ═══════════════ -->
+<div class="part-header" id="appendix"><h2>Appendix A — Summary of Distributions</h2></div>
+<div style="overflow-x:auto;">
+<table class="summary-table">
+<thead><tr><th>Distribution</th><th>Type</th><th>Mean</th><th>Variance</th><th>Key Use</th></tr></thead>
+<tbody>
+<tr><td>Bernoulli(p)</td><td>Discrete</td><td>p</td><td>p(1−p)</td><td>Single binary trial</td></tr>
+<tr><td>Binomial(n,p)</td><td>Discrete</td><td>np</td><td>np(1−p)</td><td>Count of successes in n trials</td></tr>
+<tr><td>Geometric(p)</td><td>Discrete</td><td>1/p</td><td>(1−p)/p²</td><td>Trials until first success</td></tr>
+<tr><td>NegBin(r,p)</td><td>Discrete</td><td>r/p</td><td>r(1−p)/p²</td><td>Trials until r-th success</td></tr>
+<tr><td>Poisson(λ)</td><td>Discrete</td><td>λ</td><td>λ</td><td>Events per interval</td></tr>
+<tr><td>Hypergeometric</td><td>Discrete</td><td>nK/N</td><td>complex</td><td>Sampling without replacement</td></tr>
+<tr><td>Uniform(a,b)</td><td>Continuous</td><td>(a+b)/2</td><td>(b−a)²/12</td><td>Equal likelihood</td></tr>
+<tr><td>Normal(μ,σ²)</td><td>Continuous</td><td>μ</td><td>σ²</td><td>CLT, measurement errors</td></tr>
+<tr><td>Exponential(λ)</td><td>Continuous</td><td>1/λ</td><td>1/λ²</td><td>Time between events</td></tr>
+<tr><td>Gamma(α,β)</td><td>Continuous</td><td>α/β</td><td>α/β²</td><td>Wait for α-th event</td></tr>
+<tr><td>Beta(α,β)</td><td>Continuous</td><td>α/(α+β)</td><td>complex</td><td>Proportions, Bayesian priors</td></tr>
+<tr><td>Weibull(k,λ)</td><td>Continuous</td><td>λΓ(1+1/k)</td><td>complex</td><td>Reliability, failure times</td></tr>
+<tr><td>Log-Normal</td><td>Continuous</td><td>e^{μ+σ²/2}</td><td>complex</td><td>Income, biological data</td></tr>
+<tr><td>Cauchy</td><td>Continuous</td><td>undefined</td><td>undefined</td><td>Heavy tails</td></tr>
+<tr><td>Pareto(α,x_m)</td><td>Continuous</td><td>αx_m/(α−1)</td><td>complex</td><td>Income, insurance claims</td></tr>
+<tr><td>Chi-squared(ν)</td><td>Continuous</td><td>ν</td><td>2ν</td><td>Goodness of fit</td></tr>
+<tr><td>Student's t(ν)</td><td>Continuous</td><td>0</td><td>ν/(ν−2)</td><td>Mean inference, unknown σ</td></tr>
+<tr><td>F(ν₁,ν₂)</td><td>Continuous</td><td>ν₂/(ν₂−2)</td><td>complex</td><td>ANOVA, variance ratios</td></tr>
+</tbody>
+</table>
+</div>
+
+</main>
+
+<script>
+// ═══════════════════════════════════════════════════
+//  UTILITY FUNCTIONS
+// ═══════════════════════════════════════════════════
+const C = (n,k) => {
+  if(k<0||k>n) return 0;
+  if(k===0||k===n) return 1;
+  let r=1;
+  for(let i=0;i<Math.min(k,n-k);i++) r=r*(n-i)/(i+1);
+  return r;
+};
+const factorial = n => { let r=1; for(let i=2;i<=n;i++) r*=i; return r; };
+const lnGamma = x => {
+  // Stirling approximation for Gamma function log
+  if(x<=0) return 0;
+  const c=[76.18009172947146,-86.50532032941677,24.01409824083091,
+           -1.231739572450155,0.1208650973866179e-2,-0.5395239384953e-5];
+  let y=x, tmp=x+5.5; tmp-=(x+0.5)*Math.log(tmp);
+  let ser=1.000000000190015;
+  for(let j=0;j<6;j++) ser+=c[j]/++y;
+  return -tmp+Math.log(2.5066282746310005*ser/x);
+};
+const gamma = x => Math.exp(lnGamma(x));
+const normalPDF = (x,mu,sig) => (1/(sig*Math.sqrt(2*Math.PI)))*Math.exp(-0.5*((x-mu)/sig)**2);
+
+const COLORS = {
+  bar: '#60a5fa',
+  barHover: '#93c5fd',
+  line: '#60a5fa',
+  line2: '#a78bfa',
+  line3: '#34d399',
+  area: 'rgba(96,165,250,0.15)',
+  area2: 'rgba(167,139,250,0.12)',
+  normalOverlay: '#f472b6',
+};
+
+// Standard chart dimensions
+const W = 820, H = 320, M = {top:20,right:30,bottom:40,left:50};
+const iW = W-M.left-M.right, iH = H-M.top-M.bottom;
+
+function makeSVG(sel) {
+  d3.select(sel).selectAll('svg').remove();
+  const svg = d3.select(sel).append('svg')
+    .attr('viewBox', `0 0 ${W} ${H}`)
+    .attr('width', '100%')
+    .style('max-height', H+'px');
+  return svg.append('g').attr('transform',`translate(${M.left},${M.top})`);
+}
+
+function drawBarChart(sel, data, xLabel, statsId, statsHTML) {
+  const g = makeSVG(sel);
+  const x = d3.scaleBand().domain(data.map(d=>d.k)).range([0,iW]).padding(0.25);
+  const y = d3.scaleLinear().domain([0, d3.max(data,d=>d.p)*1.15]).range([iH,0]);
+
+  g.append('g').attr('class','grid')
+    .call(d3.axisLeft(y).ticks(5).tickSize(-iW).tickFormat(''));
+
+  g.selectAll('.bar').data(data).enter().append('rect')
+    .attr('x',d=>x(d.k)).attr('y',d=>y(d.p))
+    .attr('width',x.bandwidth()).attr('height',d=>iH-y(d.p))
+    .attr('fill',COLORS.bar).attr('rx',2).attr('opacity',0.85);
+
+  g.append('g').attr('class','axis').attr('transform',`translate(0,${iH})`)
+    .call(d3.axisBottom(x).tickValues(
+      data.length>30 ? x.domain().filter((_,i)=>i%Math.ceil(data.length/15)===0) : x.domain()
+    ));
+  g.append('g').attr('class','axis').call(d3.axisLeft(y).ticks(5).tickFormat(d3.format('.3f')));
+
+  if(statsId && statsHTML) document.getElementById(statsId).innerHTML = statsHTML;
+}
+
+function drawLineChart(sel, datasets, xDomain, yMax, statsId, statsHTML) {
+  const g = makeSVG(sel);
+  const x = d3.scaleLinear().domain(xDomain).range([0,iW]);
+  const y = d3.scaleLinear().domain([0, yMax*1.1]).range([iH,0]);
+
+  g.append('g').attr('class','grid')
+    .call(d3.axisLeft(y).ticks(5).tickSize(-iW).tickFormat(''));
+
+  datasets.forEach(ds => {
+    const area = d3.area().x(d=>x(d.x)).y0(iH).y1(d=>y(d.y)).curve(d3.curveBasis);
+    const line = d3.line().x(d=>x(d.x)).y(d=>y(d.y)).curve(d3.curveBasis);
+    if(ds.area) g.append('path').datum(ds.data).attr('d',area).attr('fill',ds.area);
+    g.append('path').datum(ds.data).attr('d',line)
+      .attr('fill','none').attr('stroke',ds.color).attr('stroke-width',2.5);
+    if(ds.label) {
+      const last = ds.data[ds.data.length-1];
+      g.append('text').attr('x',x(last.x)-4).attr('y',y(last.y)-8)
+        .text(ds.label).attr('fill',ds.color).attr('font-size',11).attr('text-anchor','end');
+    }
+  });
+
+  g.append('g').attr('class','axis').attr('transform',`translate(0,${iH})`)
+    .call(d3.axisBottom(x).ticks(8));
+  g.append('g').attr('class','axis').call(d3.axisLeft(y).ticks(5).tickFormat(d3.format('.4f')));
+
+  if(statsId && statsHTML) document.getElementById(statsId).innerHTML = statsHTML;
+}
+
+// ═══════════════════════════════════════════════════
+//  1. BAYES THEOREM DEMO
+// ═══════════════════════════════════════════════════
+function updateBayes() {
+  const prev = +document.getElementById('bayes-prev').value/100;
+  const sens = +document.getElementById('bayes-sens').value/100;
+  const spec = +document.getElementById('bayes-spec').value/100;
+  document.getElementById('bayes-prev-val').textContent = (prev*100).toFixed(1)+'%';
+  document.getElementById('bayes-sens-val').textContent = (sens*100).toFixed(0)+'%';
+  document.getElementById('bayes-spec-val').textContent = (spec*100).toFixed(0)+'%';
+
+  // PPV across prevalence range
+  const data = [];
+  for(let pr=0.001; pr<=0.5; pr+=0.003) {
+    const ppv = (sens*pr)/(sens*pr+(1-spec)*(1-pr));
+    const npv = (spec*(1-pr))/(spec*(1-pr)+(1-sens)*pr);
+    data.push({x:pr*100, ppv, npv});
+  }
+  const ppvNow = (sens*prev)/(sens*prev+(1-spec)*(1-prev));
+  const npvNow = (spec*(1-prev))/(spec*(1-prev)+(1-sens)*prev);
+
+  const g = makeSVG('#bayes-chart');
+  const x = d3.scaleLinear().domain([0,50]).range([0,iW]);
+  const y = d3.scaleLinear().domain([0,1]).range([iH,0]);
+
+  g.append('g').attr('class','grid').call(d3.axisLeft(y).ticks(5).tickSize(-iW).tickFormat(''));
+
+  const ppvLine = d3.line().x(d=>x(d.x)).y(d=>y(d.ppv)).curve(d3.curveBasis);
+  const npvLine = d3.line().x(d=>x(d.x)).y(d=>y(d.npv)).curve(d3.curveBasis);
+  const ppvArea = d3.area().x(d=>x(d.x)).y0(iH).y1(d=>y(d.ppv)).curve(d3.curveBasis);
+
+  g.append('path').datum(data).attr('d',ppvArea).attr('fill',COLORS.area);
+  g.append('path').datum(data).attr('d',ppvLine).attr('fill','none').attr('stroke',COLORS.line).attr('stroke-width',2.5);
+  g.append('path').datum(data).attr('d',npvLine).attr('fill','none').attr('stroke',COLORS.line2).attr('stroke-width',2).attr('stroke-dasharray','6,4');
+
+  // Marker for current prevalence
+  g.append('line').attr('x1',x(prev*100)).attr('x2',x(prev*100)).attr('y1',0).attr('y2',iH)
+    .attr('stroke',COLORS.normalOverlay).attr('stroke-width',1.5).attr('stroke-dasharray','4,3');
+  g.append('circle').attr('cx',x(prev*100)).attr('cy',y(ppvNow)).attr('r',5)
+    .attr('fill',COLORS.line).attr('stroke','#fff').attr('stroke-width',1.5);
+
+  g.append('g').attr('class','axis').attr('transform',`translate(0,${iH})`)
+    .call(d3.axisBottom(x).ticks(8).tickFormat(d=>d+'%'));
+  g.append('g').attr('class','axis').call(d3.axisLeft(y).ticks(5).tickFormat(d3.format('.0%')));
+
+  // Legend
+  g.append('text').attr('x',iW-10).attr('y',16).text('— PPV').attr('fill',COLORS.line).attr('font-size',11).attr('text-anchor','end');
+  g.append('text').attr('x',iW-10).attr('y',32).text('--- NPV').attr('fill',COLORS.line2).attr('font-size',11).attr('text-anchor','end');
+
+  document.getElementById('bayes-stats').innerHTML =
+    `<div class="stat-item">PPV: <span>${(ppvNow*100).toFixed(1)}%</span></div>
+     <div class="stat-item">NPV: <span>${(npvNow*100).toFixed(1)}%</span></div>
+     <div class="stat-item">LR+: <span>${(sens/(1-spec)).toFixed(1)}</span></div>
+     <div class="stat-item">LR−: <span>${((1-sens)/spec).toFixed(3)}</span></div>`;
+}
+['bayes-prev','bayes-sens','bayes-spec'].forEach(id=>
+  document.getElementById(id).addEventListener('input', updateBayes));
+updateBayes();
+
+// ═══════════════════════════════════════════════════
+//  2. BINOMIAL
+// ═══════════════════════════════════════════════════
+function updateBinom() {
+  const n = +document.getElementById('binom-n').value;
+  const p = +document.getElementById('binom-p').value;
+  document.getElementById('binom-n-val').textContent = n;
+  document.getElementById('binom-p-val').textContent = p.toFixed(2);
+
+  const data = [];
+  for(let k=0;k<=n;k++) data.push({k, p: C(n,k)*Math.pow(p,k)*Math.pow(1-p,n-k)});
+
+  const mean = n*p, variance = n*p*(1-p);
+  drawBarChart('#binom-chart', data, 'k', 'binom-stats',
+    `<div class="stat-item">Mean: <span>${mean.toFixed(2)}</span></div>
+     <div class="stat-item">Variance: <span>${variance.toFixed(2)}</span></div>
+     <div class="stat-item">Std Dev: <span>${Math.sqrt(variance).toFixed(2)}</span></div>
+     <div class="stat-item">Skewness: <span>${((1-2*p)/Math.sqrt(n*p*(1-p))).toFixed(3)}</span></div>`);
+}
+['binom-n','binom-p'].forEach(id=>document.getElementById(id).addEventListener('input',updateBinom));
+updateBinom();
+
+// ═══════════════════════════════════════════════════
+//  3. GEOMETRIC
+// ═══════════════════════════════════════════════════
+function updateGeom() {
+  const p = +document.getElementById('geom-p').value;
+  document.getElementById('geom-p-val').textContent = p.toFixed(2);
+
+  const data = [];
+  const maxK = Math.min(Math.ceil(5/p), 40);
+  for(let k=1;k<=maxK;k++) data.push({k, p: Math.pow(1-p,k-1)*p});
+
+  drawBarChart('#geom-chart', data, 'k', 'geom-stats',
+    `<div class="stat-item">Mean: <span>${(1/p).toFixed(2)}</span></div>
+     <div class="stat-item">Variance: <span>${((1-p)/(p*p)).toFixed(2)}</span></div>
+     <div class="stat-item">Memoryless: <span>Yes (unique discrete)</span></div>`);
+}
+document.getElementById('geom-p').addEventListener('input',updateGeom);
+updateGeom();
+
+// ═══════════════════════════════════════════════════
+//  4. POISSON
+// ═══════════════════════════════════════════════════
+function updatePoisson() {
+  const lam = +document.getElementById('pois-lam').value;
+  document.getElementById('pois-lam-val').textContent = lam.toFixed(1);
+
+  const data = [];
+  const maxK = Math.ceil(lam + 4*Math.sqrt(lam) + 3);
+  for(let k=0;k<=maxK;k++) data.push({k, p: Math.exp(-lam)*Math.pow(lam,k)/factorial(k)});
+
+  drawBarChart('#pois-chart', data, 'k', 'pois-stats',
+    `<div class="stat-item">Mean = Var = <span>${lam.toFixed(1)}</span></div>
+     <div class="stat-item">Skewness: <span>${(1/Math.sqrt(lam)).toFixed(3)}</span></div>
+     <div class="stat-item">Kurtosis: <span>${(3+1/lam).toFixed(3)}</span></div>`);
+}
+document.getElementById('pois-lam').addEventListener('input',updatePoisson);
+updatePoisson();
+
+// ═══════════════════════════════════════════════════
+//  5. HYPERGEOMETRIC
+// ═══════════════════════════════════════════════════
+function updateHyper() {
+  let N = +document.getElementById('hyp-N').value;
+  let K = +document.getElementById('hyp-K').value;
+  let n = +document.getElementById('hyp-n').value;
+  if(K>=N) K=N-1;
+  if(n>=N) n=N-1;
+  document.getElementById('hyp-K').max = N-1;
+  document.getElementById('hyp-n').max = N-1;
+  document.getElementById('hyp-N-val').textContent = N;
+  document.getElementById('hyp-K-val').textContent = K;
+  document.getElementById('hyp-n-val').textContent = n;
+
+  const data = [];
+  const lo = Math.max(0, n-(N-K)), hi = Math.min(n,K);
+  for(let k=lo;k<=hi;k++) data.push({k, p: C(K,k)*C(N-K,n-k)/C(N,n)});
+
+  const mean = n*K/N;
+  const variance = n*(K/N)*(1-K/N)*(N-n)/(N-1);
+  drawBarChart('#hyp-chart', data, 'k', 'hyp-stats',
+    `<div class="stat-item">Mean: <span>${mean.toFixed(2)}</span></div>
+     <div class="stat-item">Variance: <span>${variance.toFixed(2)}</span></div>
+     <div class="stat-item">FPC: <span>${((N-n)/(N-1)).toFixed(3)}</span></div>`);
+}
+['hyp-N','hyp-K','hyp-n'].forEach(id=>document.getElementById(id).addEventListener('input',updateHyper));
+updateHyper();
+
+// ═══════════════════════════════════════════════════
+//  7. CONTINUOUS UNIFORM
+// ═══════════════════════════════════════════════════
+function updateUnif() {
+  let a = +document.getElementById('unif-a').value;
+  let b = +document.getElementById('unif-b').value;
+  if(b<=a) b=a+0.5;
+  document.getElementById('unif-a-val').textContent = a.toFixed(1);
+  document.getElementById('unif-b-val').textContent = b.toFixed(1);
+
+  const h = 1/(b-a);
+  const pad = (b-a)*0.3;
+  const data = [];
+  for(let x=a-pad; x<=b+pad; x+=0.05) {
+    data.push({x, y: (x>=a && x<=b) ? h : 0});
+  }
+
+  drawLineChart('#unif-chart', [{data, color:COLORS.line, area:COLORS.area}],
+    [a-pad, b+pad], h, 'unif-stats',
+    `<div class="stat-item">Mean: <span>${((a+b)/2).toFixed(2)}</span></div>
+     <div class="stat-item">Variance: <span>${((b-a)**2/12).toFixed(3)}</span></div>
+     <div class="stat-item">Height: <span>${h.toFixed(4)}</span></div>`);
+}
+['unif-a','unif-b'].forEach(id=>document.getElementById(id).addEventListener('input',updateUnif));
+updateUnif();
+
+// ═══════════════════════════════════════════════════
+//  8. NORMAL
+// ═══════════════════════════════════════════════════
+function updateNormal() {
+  const mu = +document.getElementById('norm-mu').value;
+  const sig = +document.getElementById('norm-sig').value;
+  document.getElementById('norm-mu-val').textContent = mu.toFixed(1);
+  document.getElementById('norm-sig-val').textContent = sig.toFixed(1);
+
+  const data = [];
+  for(let x=mu-4*sig; x<=mu+4*sig; x+=sig*0.04) data.push({x, y: normalPDF(x,mu,sig)});
+
+  // Shaded regions for 68-95-99.7
+  const shade1 = data.filter(d=>d.x>=mu-sig && d.x<=mu+sig);
+  const shade2 = data.filter(d=>d.x>=mu-2*sig && d.x<=mu+2*sig);
+
+  const g = makeSVG('#norm-chart');
+  const xS = d3.scaleLinear().domain([mu-4*sig, mu+4*sig]).range([0,iW]);
+  const yMax = normalPDF(mu,mu,sig);
+  const yS = d3.scaleLinear().domain([0, yMax*1.15]).range([iH,0]);
+
+  g.append('g').attr('class','grid').call(d3.axisLeft(yS).ticks(5).tickSize(-iW).tickFormat(''));
+
+  // 2σ shading
+  const area2 = d3.area().x(d=>xS(d.x)).y0(iH).y1(d=>yS(d.y)).curve(d3.curveBasis);
+  g.append('path').datum(shade2).attr('d',area2).attr('fill','rgba(167,139,250,0.08)');
+  // 1σ shading
+  g.append('path').datum(shade1).attr('d',area2).attr('fill','rgba(96,165,250,0.12)');
+
+  const line = d3.line().x(d=>xS(d.x)).y(d=>yS(d.y)).curve(d3.curveBasis);
+  g.append('path').datum(data).attr('d',line).attr('fill','none').attr('stroke',COLORS.line).attr('stroke-width',2.5);
+
+  // Mean line
+  g.append('line').attr('x1',xS(mu)).attr('x2',xS(mu)).attr('y1',0).attr('y2',iH)
+    .attr('stroke',COLORS.normalOverlay).attr('stroke-width',1).attr('stroke-dasharray','4,3');
+
+  g.append('g').attr('class','axis').attr('transform',`translate(0,${iH})`).call(d3.axisBottom(xS).ticks(8));
+  g.append('g').attr('class','axis').call(d3.axisLeft(yS).ticks(5).tickFormat(d3.format('.3f')));
+
+  // Labels
+  g.append('text').attr('x',xS(mu)).attr('y',yS(yMax)+12).text('μ').attr('fill',COLORS.normalOverlay).attr('font-size',12).attr('text-anchor','middle');
+
+  document.getElementById('norm-stats').innerHTML =
+    `<div class="stat-item">Mean: <span>${mu.toFixed(1)}</span></div>
+     <div class="stat-item">Std Dev: <span>${sig.toFixed(1)}</span></div>
+     <div class="stat-item">68% range: <span>[${(mu-sig).toFixed(1)}, ${(mu+sig).toFixed(1)}]</span></div>
+     <div class="stat-item">95% range: <span>[${(mu-2*sig).toFixed(1)}, ${(mu+2*sig).toFixed(1)}]</span></div>`;
+}
+['norm-mu','norm-sig'].forEach(id=>document.getElementById(id).addEventListener('input',updateNormal));
+updateNormal();
+
+// ═══════════════════════════════════════════════════
+//  CLT DEMO
+// ═══════════════════════════════════════════════════
+function runCLT() {
+  const source = document.getElementById('clt-source').value;
+  const n = +document.getElementById('clt-n').value;
+  document.getElementById('clt-n-val').textContent = n;
+
+  const rng = {
+    uniform: () => Math.random(),
+    exponential: () => -Math.log(1-Math.random()),
+    bernoulli: () => Math.random() < 0.3 ? 1 : 0
+  };
+  const stats = {
+    uniform: {mu:0.5, sig:Math.sqrt(1/12)},
+    exponential: {mu:1, sig:1},
+    bernoulli: {mu:0.3, sig:Math.sqrt(0.3*0.7)}
+  };
+  const {mu, sig} = stats[source];
+  const gen = rng[source];
+
+  const means = [];
+  for(let i=0;i<2000;i++){
+    let s=0; for(let j=0;j<n;j++) s+=gen();
+    means.push(s/n);
+  }
+
+  // Histogram
+  const bins = d3.bin().thresholds(40)(means);
+  const maxCount = d3.max(bins, b=>b.length);
+
+  const g = makeSVG('#clt-chart');
+  const xS = d3.scaleLinear().domain([d3.min(means)-0.05, d3.max(means)+0.05]).range([0,iW]);
+  const yS = d3.scaleLinear().domain([0, maxCount*1.1]).range([iH,0]);
+
+  g.append('g').attr('class','grid').call(d3.axisLeft(yS).ticks(5).tickSize(-iW).tickFormat(''));
+
+  g.selectAll('.bar').data(bins).enter().append('rect')
+    .attr('x',d=>xS(d.x0)+1).attr('y',d=>yS(d.length))
+    .attr('width',d=>Math.max(0,xS(d.x1)-xS(d.x0)-2))
+    .attr('height',d=>iH-yS(d.length))
+    .attr('fill',COLORS.bar).attr('opacity',0.7).attr('rx',1);
+
+  // Normal overlay
+  const sigMean = sig/Math.sqrt(n);
+  if(n>1) {
+    const normData = [];
+    const [lo,hi] = xS.domain();
+    for(let x=lo;x<=hi;x+=(hi-lo)/200) {
+      normData.push({x, y: normalPDF(x,mu,sigMean) * 2000 * (bins[0].x1-bins[0].x0)});
+    }
+    const line = d3.line().x(d=>xS(d.x)).y(d=>yS(d.y)).curve(d3.curveBasis);
+    g.append('path').datum(normData).attr('d',line)
+      .attr('fill','none').attr('stroke',COLORS.normalOverlay).attr('stroke-width',2).attr('stroke-dasharray','6,3');
+    g.append('text').attr('x',iW-8).attr('y',16).text('— N(μ, σ²/n)').attr('fill',COLORS.normalOverlay).attr('font-size',11).attr('text-anchor','end');
+  }
+
+  g.append('g').attr('class','axis').attr('transform',`translate(0,${iH})`).call(d3.axisBottom(xS).ticks(8));
+  g.append('g').attr('class','axis').call(d3.axisLeft(yS).ticks(5));
+}
+document.getElementById('clt-run').addEventListener('click', runCLT);
+document.getElementById('clt-n').addEventListener('input', () => {
+  document.getElementById('clt-n-val').textContent = document.getElementById('clt-n').value;
+  runCLT();
+});
+document.getElementById('clt-source').addEventListener('change', runCLT);
+runCLT();
+
+// ═══════════════════════════════════════════════════
+//  9. GAMMA
+// ═══════════════════════════════════════════════════
+function updateGamma() {
+  const a = +document.getElementById('gamma-a').value;
+  const b = +document.getElementById('gamma-b').value;
+  document.getElementById('gamma-a-val').textContent = a.toFixed(1);
+  document.getElementById('gamma-b-val').textContent = b.toFixed(1);
+
+  const mean = a/b;
+  const maxX = mean + 5*Math.sqrt(a)/b;
+  const data = [];
+  for(let x=0.01; x<=maxX; x+=maxX/300) {
+    const y = Math.pow(b,a)/gamma(a) * Math.pow(x,a-1) * Math.exp(-b*x);
+    data.push({x, y: isFinite(y)?Math.max(0,y):0});
+  }
+  const yMax = d3.max(data, d=>d.y);
+
+  // Also show exponential when α=1 for comparison
+  const datasets = [{data, color:COLORS.line, area:COLORS.area}];
+  if(a !== 1) {
+    const expData = [];
+    for(let x=0.01;x<=maxX;x+=maxX/300) expData.push({x, y: b*Math.exp(-b*x)});
+    datasets.push({data:expData, color:COLORS.line2, label:'Exp(β)'});
+  }
+
+  drawLineChart('#gamma-chart', datasets, [0, maxX],
+    Math.max(yMax, b), 'gamma-stats',
+    `<div class="stat-item">Mean: <span>${mean.toFixed(2)}</span></div>
+     <div class="stat-item">Variance: <span>${(a/(b*b)).toFixed(3)}</span></div>
+     <div class="stat-item">Mode: <span>${a>=1 ? ((a-1)/b).toFixed(2) : '0 (α<1)'}</span></div>
+     <div class="stat-item">Special: <span>${a===1?'= Exponential':'α=1 → Exp'}</span></div>`);
+}
+['gamma-a','gamma-b'].forEach(id=>document.getElementById(id).addEventListener('input',updateGamma));
+updateGamma();
+
+// ═══════════════════════════════════════════════════
+//  10. BETA
+// ═══════════════════════════════════════════════════
+function updateBeta() {
+  const a = +document.getElementById('beta-a').value;
+  const b = +document.getElementById('beta-b').value;
+  document.getElementById('beta-a-val').textContent = a.toFixed(1);
+  document.getElementById('beta-b-val').textContent = b.toFixed(1);
+
+  const B = gamma(a)*gamma(b)/gamma(a+b);
+  const data = [];
+  for(let x=0.005; x<=0.995; x+=0.005) {
+    const y = Math.pow(x,a-1)*Math.pow(1-x,b-1)/B;
+    data.push({x, y: isFinite(y)?Math.max(0,Math.min(y,50)):0});
+  }
+  const yMax = d3.max(data, d=>d.y);
+  const mean = a/(a+b);
+  const variance = a*b/((a+b)**2*(a+b+1));
+
+  drawLineChart('#beta-chart', [{data, color:COLORS.line, area:COLORS.area}],
+    [0,1], yMax, 'beta-stats',
+    `<div class="stat-item">Mean: <span>${mean.toFixed(3)}</span></div>
+     <div class="stat-item">Variance: <span>${variance.toFixed(4)}</span></div>
+     <div class="stat-item">Mode: <span>${(a>1&&b>1)?((a-1)/(a+b-2)).toFixed(3):'boundary'}</span></div>
+     <div class="stat-item">Shape: <span>${a===b?'symmetric':a>b?'left-skewed':'right-skewed'}</span></div>`);
+}
+['beta-a','beta-b'].forEach(id=>document.getElementById(id).addEventListener('input',updateBeta));
+updateBeta();
+
+// ═══════════════════════════════════════════════════
+//  11. WEIBULL
+// ═══════════════════════════════════════════════════
+function updateWeibull() {
+  const k = +document.getElementById('weib-k').value;
+  const lam = +document.getElementById('weib-l').value;
+  document.getElementById('weib-k-val').textContent = k.toFixed(1);
+  document.getElementById('weib-l-val').textContent = lam.toFixed(2);
+
+  const maxX = lam * 3.5;
+  const pdfData = [], hazData = [];
+  for(let x=0.01; x<=maxX; x+=maxX/300) {
+    const pdf = (k/lam)*Math.pow(x/lam,k-1)*Math.exp(-Math.pow(x/lam,k));
+    const haz = (k/lam)*Math.pow(x/lam,k-1);
+    pdfData.push({x, y: isFinite(pdf)?Math.max(0,pdf):0});
+    hazData.push({x, y: isFinite(haz)?Math.max(0,Math.min(haz,10)):0});
+  }
+  const yMax = Math.max(d3.max(pdfData,d=>d.y), d3.max(hazData,d=>d.y));
+
+  drawLineChart('#weib-chart', [
+    {data:pdfData, color:COLORS.line, area:COLORS.area, label:'PDF'},
+    {data:hazData, color:COLORS.accent4||'#fb923c', label:'h(x)'}
+  ], [0, maxX], yMax, 'weib-stats',
+    `<div class="stat-item">Mean: <span>${(lam*gamma(1+1/k)).toFixed(3)}</span></div>
+     <div class="stat-item">Hazard: <span>${k<1?'Decreasing (infant mortality)':k===1?'Constant (exponential)':'Increasing (wear-out)'}</span></div>
+     <div class="stat-item">k: <span>${k.toFixed(1)} — ${k<1?'DFR':k===1?'CFR':'IFR'}</span></div>`);
+}
+['weib-k','weib-l'].forEach(id=>document.getElementById(id).addEventListener('input',updateWeibull));
+updateWeibull();
+
+// ═══════════════════════════════════════════════════
+//  NAV ACTIVE STATE
+// ═══════════════════════════════════════════════════
+const sections = document.querySelectorAll('.chapter, .part-header, .viz-panel[id]');
+const navLinks = document.querySelectorAll('nav a');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(e.isIntersecting) {
+      navLinks.forEach(l => l.classList.remove('active'));
+      const link = document.querySelector(`nav a[href="#${e.target.id}"]`);
+      if(link) link.classList.add('active');
+    }
+  });
+}, {rootMargin: '-20% 0px -70% 0px'});
+sections.forEach(s => { if(s.id) observer.observe(s); });
+</script>
+
+</body>
+</html>
