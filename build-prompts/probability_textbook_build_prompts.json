@@ -1,0 +1,588 @@
+{
+  "manifest": {
+    "title": "Probability Education Platform v2 — Build Prompt Manifest",
+    "description": "Structured Claude Code prompts to rebuild the Probability Education Platform using SvelteKit 2, rust-sci-core (WASM), and D3.js 7.8.5. Each prompt is a complete, self-contained instruction unit for Claude Code. Execute prompts in phase order. Prompts within a phase may be parallelized.",
+    "version": "2.0.0",
+    "created": "2026-04-03",
+    "tech_stack": {
+      "frontend_framework": "SvelteKit 2 + adapter-static (PWA)",
+      "wasm_backend": "rust-sci-core (timothyhartzog/rust-sci-core) — 5 crates: sci-units, sci-stats, sci-clinical, sci-growth, sci-wasm",
+      "visualization": "D3.js 7.8.5 (cdnjs)",
+      "math_rendering": "KaTeX 0.16.x (cdnjs)",
+      "build_tool": "Vite via SvelteKit",
+      "wasm_bindgen": "wasm-bindgen + wasm-pack",
+      "styling": "Hartzog Web Standard v1.0 — DM Serif Display / IBM Plex Sans / IBM Plex Mono, CSS custom properties",
+      "testing": "Vitest (unit) + Playwright (e2e)",
+      "deployment": "GitHub Pages via GitHub Actions",
+      "fonts": "DM Serif Display (headings), IBM Plex Sans (body), IBM Plex Mono (data/code)"
+    },
+    "repo": "timothyhartzog/Probability-education",
+    "rust_sci_core_repo": "timothyhartzog/rust-sci-core",
+    "branch": "main",
+    "total_phases": 8,
+    "total_prompts": 98
+  },
+
+  "css_palette": {
+    "comment": "Hartzog Web Standard v1.0 palette — use these CSS custom properties throughout",
+    "--color-bg": "#fafaf8",
+    "--color-surface": "#ffffff",
+    "--color-border": "#e5e5e0",
+    "--color-text": "#1a1a18",
+    "--color-text2": "#4a4a44",
+    "--color-text3": "#8a8a80",
+    "--color-accent": "#2563eb",
+    "--color-red": "#dc2626",
+    "--color-rbg": "#fef2f2",
+    "--color-orange": "#ea580c",
+    "--color-obg": "#fff7ed",
+    "--color-yellow": "#ca8a04",
+    "--color-ybg": "#fefce8",
+    "--color-green": "#16a34a",
+    "--color-gbg": "#f0fdf4",
+    "--color-blue": "#2563eb",
+    "--color-bbg": "#eff6ff",
+    "--color-purple": "#7c3aed",
+    "--color-pbg": "#f5f3ff"
+  },
+
+  "phases": [
+
+    {
+      "phase": 1,
+      "title": "Project Scaffolding & Infrastructure",
+      "description": "Initialize SvelteKit 2 workspace, configure WASM pipeline, set up rust-sci-core as git dependency, configure D3.js CDN integration, and establish the shared CSS/theme system.",
+      "prompts": [
+        {
+          "id": "P1-01",
+          "title": "SvelteKit 2 Project Init with adapter-static",
+          "priority": "critical",
+          "depends_on": [],
+          "prompt": "Initialize a new SvelteKit 2 project in the current repository root named 'probability-education'. Use adapter-static for GitHub Pages deployment. Configure: (1) svelte.config.js with adapter-static, paths.base='/Probability-education' for GitHub Pages subdirectory hosting; (2) vite.config.ts importing sveltekit() plugin; (3) package.json with scripts: dev, build, preview, check; (4) TypeScript strict mode; (5) .gitignore for node_modules, .svelte-kit, build, dist; (6) src/app.html base template loading DM Serif Display and IBM Plex Sans from Google Fonts and IBM Plex Mono, plus KaTeX 0.16.x and D3.js 7.8.5 from cdnjs in the <head>; (7) src/app.css with complete Hartzog Web Standard v1.0 CSS custom properties system including all palette variables, typography scale, and component defaults. The SvelteKit app lives in src/. Preserve all existing files outside src/ (index.html, js/, css/, to-be-built/, etc.)."
+        },
+        {
+          "id": "P1-02",
+          "title": "rust-sci-core WASM Build Pipeline",
+          "priority": "critical",
+          "depends_on": ["P1-01"],
+          "prompt": "Set up the WASM build pipeline for rust-sci-core. (1) Create a Cargo.toml workspace at the repo root that references rust-sci-core as a git dependency: { git = 'https://github.com/timothyhartzog/rust-sci-core', branch = 'main' }. (2) Create a local crate at wasm-bridge/ that depends on rust-sci-core's sci-wasm and sci-stats crates and re-exports all public WASM bindings. (3) Add a package.json script 'build:wasm' that runs wasm-pack build wasm-bridge/ --target web --out-dir static/wasm/. (4) Configure vite.config.ts to copy static/wasm/ to the build output. (5) Create src/lib/wasm.ts — a TypeScript module that lazy-initializes the WASM module: export async function initWasm() returning the bound sci_wasm namespace. (6) Create src/lib/stores/wasm-store.ts — a Svelte writable store 'wasmReady' that becomes true after initWasm() resolves. Document the full pipeline in wasm-bridge/README.md."
+        },
+        {
+          "id": "P1-03",
+          "title": "Shared D3.js Utility Library",
+          "priority": "critical",
+          "depends_on": ["P1-01"],
+          "prompt": "Create src/lib/d3-utils.ts — a comprehensive D3.js 7.8.5 utility library (D3 loaded from CDN via window.d3). Implement: (1) ChartFactory class with static methods: createSVG(container, {width, height, margin}) returning {svg, innerWidth, innerHeight}; (2) createAxis(svg, scale, {position, ticks, label, color}) for x/y axis rendering; (3) createTooltip(container) returning a tooltip div with Hartzog palette styling; (4) animateTransition(selection, duration=750) wrapping d3.transition; (5) createColorScale(domain, scheme='blues') returning a d3 sequential scale; (6) HistogramFactory.draw(svg, data, {bins, color, xLabel, yLabel}); (7) LinePlotFactory.draw(svg, data, {x, y, color, strokeWidth, curve}); (8) ScatterFactory.draw(svg, data, {x, y, r, color, tooltip}); (9) HeatmapFactory.draw(svg, matrix, {xLabels, yLabels, colorRange}); (10) constants: PALETTE object mirroring Hartzog CSS vars, TOOLTIP_DEFAULTS, FONT_FAMILY. All methods are typed. Export a default d3Utils object."
+        },
+        {
+          "id": "P1-04",
+          "title": "KaTeX Math Rendering Component",
+          "priority": "high",
+          "depends_on": ["P1-01"],
+          "prompt": "Create src/lib/components/Math.svelte — a Svelte component that renders LaTeX math using KaTeX (loaded from CDN). Props: formula (string), display (boolean, default false), color (string, optional). On mount, call window.katex.render(formula, el, {displayMode: display, throwOnError: false, colorIsTextColor: true}). On formula update, re-render. Handle KaTeX parse errors gracefully by showing the raw formula in a <code> tag with a warning. Also create src/lib/components/MathBlock.svelte — wraps Math.svelte in a styled div with top/bottom margin and optional label prop. Export both from src/lib/index.ts."
+        },
+        {
+          "id": "P1-05",
+          "title": "Global Layout and Navigation",
+          "priority": "critical",
+          "depends_on": ["P1-01"],
+          "prompt": "Create the SvelteKit root layout at src/routes/+layout.svelte. Implement: (1) A fixed top navigation bar with the site title 'Probability: Foundations to Research Frontiers', a hamburger menu icon for mobile, and a desktop nav showing Part labels (I–V); (2) A slide-out sidebar (on mobile) listing all 28 chapters organized under Part headers, each chapter linking to /part-N/chapter-M; (3) A breadcrumb trail below the nav showing current location; (4) A main content area with max-width 900px centered; (5) A footer with GitHub link and 'Built with SvelteKit + Rust/WASM + D3.js'; (6) Dark/light toggle button in the nav that sets a 'data-theme' attribute on <html> and saves preference to localStorage; (7) A progress bar across the top of the nav showing reading progress on the current page. Style using Hartzog Web Standard CSS custom properties. Create src/routes/+layout.ts exporting a load function that returns { title: 'Probability Education' }."
+        },
+        {
+          "id": "P1-06",
+          "title": "Home Page and Chapter Index",
+          "priority": "high",
+          "depends_on": ["P1-05"],
+          "prompt": "Create src/routes/+page.svelte — the home page. Include: (1) A hero section with book title in DM Serif Display 48px, subtitle 'From High School Coin Flips to Graduate Measure Theory', and a brief description of the platform; (2) A D3.js animated probability visualization (balls falling into bins forming a bell curve) as the hero graphic; (3) A 'Prerequisites by Level' section — a four-column card grid showing Part I (Algebra II), Part II (Calculus I-III), Part III (Real Analysis + Measure Theory), Part IV-V (Graduate Analysis + Functional Analysis); (4) A chapter map — a full 5-part by chapter grid where each cell is a clickable card showing chapter number, title, difficulty badge, and estimated reading time; (5) A 'How to Use This Book' accordion section; (6) Quick-start links: 'Start from the Beginning', 'Jump to Measure Theory', 'Explore Stochastic Calculus'. Animate cards in on scroll using IntersectionObserver. Use Hartzog palette colors for part headers."
+        },
+        {
+          "id": "P1-07",
+          "title": "GitHub Actions CI/CD for GitHub Pages",
+          "priority": "high",
+          "depends_on": ["P1-01", "P1-02"],
+          "prompt": "Create .github/workflows/deploy.yml — a GitHub Actions workflow for deploying the SvelteKit app to GitHub Pages. Steps: (1) Trigger on push to main; (2) Checkout with submodules; (3) Install Rust toolchain stable + wasm-pack via cargo install; (4) Install wasm32-unknown-unknown target; (5) Run 'npm run build:wasm' to compile rust-sci-core to WASM; (6) Run 'npm ci' to install JS dependencies; (7) Run 'npm run build' to build SvelteKit; (8) Run 'npm test' for Vitest unit tests; (9) Deploy build/ directory to GitHub Pages using actions/deploy-pages@v3. Also create .github/workflows/ci.yml — a separate CI workflow that runs on PRs with: lint (svelte-check), type check, unit tests (Vitest), and a wasm build check."
+        },
+        {
+          "id": "P1-08",
+          "title": "Shared Types and Chapter Data Registry",
+          "priority": "critical",
+          "depends_on": ["P1-01"],
+          "prompt": "Create src/lib/types.ts with TypeScript interfaces: Chapter { id, part, chapterNum, title, subtitle, prerequisites, difficulty: 'high-school'|'undergrad'|'graduate'|'research', estimatedMinutes, topics: string[], hasWasm: boolean, hasD3: boolean }, Part { id, num, title, description, chapters: Chapter[] }, SimulationConfig { title, description, params: Param[], wasmFn: string | null }. Create src/lib/data/chapters.ts exporting the complete CHAPTERS array with all 28 chapters from the textbook outline, fully populated. Create src/lib/data/parts.ts exporting PARTS array. Create src/lib/utils.ts with helpers: getChapter(partNum, chapterNum), getNextChapter(chapter), getPrevChapter(chapter), formatMinutes(n), difficultyColor(d). Export everything from src/lib/index.ts."
+        }
+      ]
+    },
+
+    {
+      "phase": 2,
+      "title": "Part I — Foundations (Chapters 1–6)",
+      "description": "Build all routes, content, and interactive simulations for Part I: high school to early college level probability.",
+      "prompts": [
+        {
+          "id": "P2-01",
+          "title": "Chapter 1 — What Is Probability? (Route + Content + Simulations)",
+          "difficulty_level": "high-school",
+          "depends_on": ["P1-01", "P1-03", "P1-04", "P1-05"],
+          "prompt": "Create src/routes/part-1/chapter-1/+page.svelte — Chapter 1: What Is Probability? Implement all six sections as scrollable content with MathBlock components for every formula. Build three D3.js interactive simulations: (1) CoinFlipSimulator — a simulation where the user sets n (1–10,000 flips via slider) and clicks Run; show the running proportion of heads as a D3 line chart converging to 0.5, illustrating frequentist probability. Annotate with P(H) = 0.5 and show how the proportion oscillates then stabilizes. (2) VennDiagram — an interactive Venn diagram for two events A and B; user drags a slider for P(A), P(B), and P(A∩B); the SVG updates in real time showing the union (shaded), intersection (darker shade), and labels for P(A∪B) computed via inclusion-exclusion. Display the addition rule formula dynamically. (3) KolmogorovAxioms — an interactive checklist where the user proposes a 'probability function' by setting values on a 4-outcome sample space; a validator checks all three Kolmogorov axioms in real time, turning each green or red. Include a definitions sidebar with all key terms. Use MathBlock for Kolmogorov axioms. Add KaTeX-rendered formulas inline throughout the text."
+        },
+        {
+          "id": "P2-02",
+          "title": "Chapter 2 — Counting and Combinatorics",
+          "difficulty_level": "high-school",
+          "depends_on": ["P2-01"],
+          "prompt": "Create src/routes/part-1/chapter-2/+page.svelte — Chapter 2: Counting and Combinatorics. Cover all 8 sections. Build four interactive D3.js tools: (1) PermutationExplorer — user selects n (2–8) and r (1–n); display all P(n,r) permutations as an animated tree diagram; show the formula and computed value; highlight one path at a time with animation. (2) CombinationCalculator — user selects n and r; display C(n,r) combinations as animated boxes; show Pascal's Triangle up to row n with the relevant entry highlighted. (3) PascalTriangle — full interactive Pascal's Triangle (rows 0–12); hover on any entry to see C(n,r); click to highlight diagonals (Fibonacci, powers of 2, hockey stick). (4) InclusionExclusion — user inputs |A|, |B|, |C| and pairwise intersections; the tool draws an animated Venn for three events and computes |A∪B∪C| step by step, showing each term of the inclusion-exclusion formula appearing one at a time. Include derangement calculator with D_n formula. Render all combinatorial formulas with KaTeX."
+        },
+        {
+          "id": "P2-03",
+          "title": "Chapter 3 — Conditional Probability and Independence",
+          "difficulty_level": "high-school",
+          "depends_on": ["P2-01"],
+          "prompt": "Create src/routes/part-1/chapter-3/+page.svelte — Chapter 3: Conditional Probability and Independence. Cover all six sections. Build five interactive simulations: (1) BayesTheoremVisualizer — a 'natural frequency' square visualization; user sets disease prevalence (0.1–5%), test sensitivity, and specificity via sliders; the square fills proportionally showing true positives, false positives, etc.; PPV updates in real time; a second panel shows the algebraic Bayes calculation with all numbers substituted. (2) MontyHallSimulator — the classic Monty Hall problem with a graphical door interface; Run N times (1–10,000); track switch vs. stay win rates converging to 2/3 and 1/3 respectively; D3 dual line chart. (3) BirthdayParadox — user sets group size (2–100); show P(at least two share birthday) via exact formula and via simulation; D3 line chart; animate running a classroom simulation. (4) ConditionalReductionDiagram — animated sample space reduction on click; user clicks 'B occurred' and watches the sample space visually shrink and probabilities renormalize. (5) IndependenceChecker — user sets a joint PMF for two binary RVs; the tool checks independence by comparing P(A∩B) vs P(A)·P(B) for every pair. KaTeX render all formulas. Include Simpson's paradox worked example with a data table."
+        },
+        {
+          "id": "P2-04",
+          "title": "Chapter 4 — Discrete Random Variables",
+          "difficulty_level": "high-school",
+          "wasm_modules": ["sci-stats: binomial_pmf, geometric_pmf, poisson_pmf, hypergeometric_pmf, negative_binomial_pmf"],
+          "depends_on": ["P1-02", "P2-01"],
+          "prompt": "Create src/routes/part-1/chapter-4/+page.svelte — Chapter 4: Discrete Random Variables. Use rust-sci-core sci-stats WASM for all distribution computations. Build six interactive tools: (1) PMFExplorer — select distribution (Bernoulli, Binomial, Geometric, Negative Binomial, Hypergeometric, Poisson) and tune parameters; D3 bar chart of PMF updates live; show E[X] and Var(X) computed by WASM; overlay the theoretical CDF as a step function. (2) CDFStepper — animated step function builder; user clicks 'add outcome' and watches the CDF build step by step with probability mass annotations. (3) ExpectationCalculator — user inputs a custom PMF (up to 8 outcomes) in a table; WASM computes E[X], E[X²], Var(X), SD(X); a D3 visualization shows the weighted average interpretation with each outcome scaled by probability. (4) BinomialExplorer — n (1–100) and p (0–1) sliders; WASM computes full binomial PMF; D3 bar chart animates as parameters change; show normal approximation overlay when n≥30. (5) PoissonApproximation — show binomial PMF (large n, small p) alongside Poisson(λ=np) PMF; slider controls n and p; D3 dual bar chart shows convergence. (6) GeometricMemoryless — demonstrate memoryless property: P(X>s+t | X>s) = P(X>t); user sets s and t; verify numerically with WASM. KaTeX all formulas. Include a full distribution reference table."
+        },
+        {
+          "id": "P2-05",
+          "title": "Chapter 5 — Continuous Random Variables",
+          "difficulty_level": "high-school",
+          "wasm_modules": ["sci-stats: normal_pdf, normal_cdf, normal_quantile, exponential_pdf, gamma_pdf, beta_pdf, uniform_pdf"],
+          "depends_on": ["P1-02", "P2-04"],
+          "prompt": "Create src/routes/part-1/chapter-5/+page.svelte — Chapter 5: Continuous Random Variables. Use rust-sci-core sci-stats WASM for all density/CDF computations. Build five interactive tools: (1) PDFIntegrator — select distribution (Uniform, Exponential, Normal, Gamma, Beta) and set parameters; D3 area chart of PDF; user drags two vertical lines to select interval [a,b]; WASM computes the integral P(a≤X≤b) shown as shaded area with value displayed; also show CDF value at each endpoint. (2) NormalExplorer — μ (−5 to 5) and σ (0.1–5) sliders; D3 normal curve animates; show 68-95-99.7 rule shading toggles; z-score calculator; normal table lookup UI. (3) ExponentialMemoryless — demonstrate P(X>s+t|X>s)=P(X>t) visually; WASM computes; slider for λ, s, t. (4) GammaFamilyBrowser — α and β sliders; show Gamma PDF family; highlight special cases (Exponential at α=1, Chi-squared); D3 animated density curve. (5) CLTPreview — informal preview: draw n samples from any chosen distribution; show sample mean distribution converging to Normal; animated histogram with D3 as n grows. All densities computed by WASM. Full KaTeX formula rendering for every definition."
+        },
+        {
+          "id": "P2-06",
+          "title": "Chapter 6 — Joint Distributions (Introductory)",
+          "difficulty_level": "undergrad",
+          "wasm_modules": ["sci-stats: bivariate_normal_pdf, pearson_correlation"],
+          "depends_on": ["P1-02", "P2-04", "P2-05"],
+          "prompt": "Create src/routes/part-1/chapter-6/+page.svelte — Chapter 6: Joint Distributions. Use WASM for bivariate normal and correlation computations. Build four interactive tools: (1) JointPMFExplorer — user fills in a 4×4 joint PMF table for discrete (X,Y); the tool validates the table (must sum to 1), computes marginals P(X=x) and P(Y=y), displays conditional distributions P(Y|X=x) on click, checks independence, and shows E[X], E[Y], Cov(X,Y), ρ. Visualize as D3 heatmap. (2) BivariateNormalPlotter — ρ slider (−0.99 to 0.99), μ_X, μ_Y, σ_X, σ_Y sliders; WASM computes bivariate normal PDF; D3 contour plot (elliptical contours) updates live; marginals shown as side panels. (3) CovarianceGeometry — scatter plot of (X,Y) pairs drawn from bivariate normal; drag the ρ slider and watch the cloud morph; Pearson r shown live. (4) SumDistribution — user selects two independent distributions; WASM convolves their PMFs/PDFs numerically; D3 bar/line chart shows the resulting sum distribution alongside the individual distributions. KaTeX all formulas including Var(X+Y) = Var(X)+Var(Y)+2Cov(X,Y)."
+        }
+      ]
+    },
+
+    {
+      "phase": 3,
+      "title": "Part II — Intermediate Probability (Chapters 7–11)",
+      "description": "Build routes and simulations for sophomore/junior undergraduate level content: transforms, multivariate distributions, conditional expectation, limit theorems, and stochastic processes.",
+      "prompts": [
+        {
+          "id": "P3-01",
+          "title": "Chapter 7 — Transforms and Generating Functions",
+          "difficulty_level": "undergrad",
+          "wasm_modules": ["sci-stats: mgf_normal, mgf_exponential, mgf_binomial, pgf_geometric, compute_moments_from_mgf"],
+          "depends_on": ["P1-02", "P2-06"],
+          "prompt": "Create src/routes/part-2/chapter-7/+page.svelte — Chapter 7: Transforms and Generating Functions. Cover MGF, PGF, Characteristic Functions, and Cumulant Generating Functions. Build four tools: (1) MGFExplorer — select distribution; WASM evaluates M_X(t) over a t-range; D3 plots M_X(t); user clicks 'Differentiate' and sees M'_X(0) = E[X], M''_X(0) = E[X²] computed numerically by WASM; also show cumulant generating function log(M_X(t)). (2) MomentRecovery — user selects distribution and moment order n (1–6); WASM computes the nth derivative of M_X at t=0; display computed moment vs. known formula. (3) IndependenceSumsViaTransforms — choose two independent distributions; WASM multiplies their MGFs pointwise; D3 shows M_{X+Y}(t) = M_X(t)·M_Y(t) graphically; also show the resulting sum distribution (convolution). (4) CumulantDashboard — for any selected distribution, display all cumulants κ_1 through κ_6: mean, variance, skewness (via κ_3/κ_2^{3/2}), excess kurtosis (via κ_4/κ_2²); show additivity of cumulants for independent RVs. KaTeX all formulas."
+        },
+        {
+          "id": "P3-02",
+          "title": "Chapter 8 — Multivariate Distributions",
+          "difficulty_level": "undergrad",
+          "wasm_modules": ["sci-stats: multinomial_pmf, multivariate_normal_pdf, order_statistics_pdf"],
+          "depends_on": ["P1-02", "P2-06"],
+          "prompt": "Create src/routes/part-2/chapter-8/+page.svelte — Chapter 8: Multivariate Distributions. Build five interactive tools: (1) MultinomialExplorer — k categories (2–6), n trials, probability vector sliders (auto-normalize to sum 1); WASM computes multinomial PMF for a specified outcome vector; D3 bar chart shows marginal distributions; display covariance matrix Cov(X_i, X_j) = −np_ip_j for i≠j. (2) MultivariateNormalDashboard — 2D and 3D view toggle; mean vector [μ1, μ2] sliders; covariance matrix Σ entry sliders (enforcing positive semi-definiteness); D3 contour plot (2D) or heatmap; display conditional N(μ_{1|2}, σ²_{1|2}) distribution when conditioning on X_2=x_2. (3) OrderStatisticsPlotter — select parent distribution and n (2–20); WASM computes PDF of kth order statistic X_(k) via beta-related formula; D3 shows all order statistic densities simultaneously; slider selects k. (4) ConvolutionAnimator — step-by-step animated convolution of two PDFs/PMFs; D3 shows f_X, f_Y, and builds f_{X+Y} as an animated sweep. (5) GaussianMixtureExplorer — 2 or 3 component Gaussian mixture; weight sliders (auto-normalize), per-component μ and σ sliders; D3 shows component Gaussians and the mixture in different colors. KaTeX all formulas."
+        },
+        {
+          "id": "P3-03",
+          "title": "Chapter 9 — Conditional Expectation",
+          "difficulty_level": "undergrad",
+          "wasm_modules": ["sci-stats: conditional_expectation_bivariate_normal"],
+          "depends_on": ["P1-02", "P2-06"],
+          "prompt": "Create src/routes/part-2/chapter-9/+page.svelte — Chapter 9: Conditional Expectation. Cover E[Y|X] as number and as RV, tower property, Eve's Law. Build four tools: (1) ConditionalExpectationExplorer — bivariate distribution (discrete 4×4 table or bivariate normal); user clicks X=x value; highlight the conditional distribution P(Y|X=x); display E[Y|X=x] and Var(Y|X=x); animate across all x values showing E[Y|X] as a function of x. (2) TowerPropertyVerifier — a two-level hierarchy: user sets P(X) and conditional distributions P(Y|X=x); tool computes E[Y] via law of total expectation E[E[Y|X]] = E[Y] step by step, showing each term; verify against direct computation. (3) EvesLawDecomposition — show Var(Y) = E[Var(Y|X)] + Var(E[Y|X]) with sliders for bivariate normal ρ; display each term numerically and as proportion of total variance; D3 bar chart of variance decomposition. (4) CompoundDistributionCalculator — user sets N ~ Poisson(λ) and X_i ~ some distribution; WASM computes E[S_N] = E[N]·E[X_i] (Wald's identity) and Var(S_N); compare with simulation. KaTeX all formulas."
+        },
+        {
+          "id": "P3-04",
+          "title": "Chapter 10 — Limit Theorems",
+          "difficulty_level": "undergrad",
+          "wasm_modules": ["sci-stats: clt_sample_mean_distribution, chernoff_bound, hoeffding_bound"],
+          "depends_on": ["P1-02", "P2-05"],
+          "prompt": "Create src/routes/part-2/chapter-10/+page.svelte — Chapter 10: Limit Theorems. Cover all convergence types, LLN, CLT, concentration inequalities, delta method. Build six tools: (1) ConvergenceTypeAnimator — for a sequence of RVs X_n = 1/n + ε_n; animate sample paths; toggle between 'in probability' and 'almost sure' convergence visualizations; show the difference with carefully chosen counterexample (typewriter sequence). (2) WLLNSimulator — choose parent distribution and sample size n (1–10,000); D3 line chart shows running sample mean X̄_n vs. true mean μ; multiple sample paths; Chebyshev bound overlay. (3) CLTSimulator — choose any parent distribution (Uniform, Exponential, Bernoulli, Pareto); set n (1–200); draw 5,000 sample means; D3 histogram vs. theoretical N(μ, σ²/n) overlay; Berry-Esseen bound displayed. (4) ConcentrationInequalityComparison — user sets σ², ε; D3 plot of Markov, Chebyshev, and Chernoff bounds as functions of ε; show exponential vs. polynomial tail decay. (5) DeltaMethodApproximation — choose g(x) (log, sqrt, exp, 1/x) and base distribution; show delta method approximation Var(g(X̄)) ≈ [g'(μ)]²·σ²/n vs. simulation. (6) LargeDeviationsPreview — Cramér's theorem illustration: show P(X̄ ≥ x) and the exponential rate function I(x) on a log-scale D3 plot."
+        },
+        {
+          "id": "P3-05",
+          "title": "Chapter 11 — Introduction to Stochastic Processes",
+          "difficulty_level": "undergrad",
+          "wasm_modules": ["sci-stats: markov_chain_stationary, markov_chain_n_step, gambler_ruin_absorption"],
+          "depends_on": ["P1-02", "P2-06"],
+          "prompt": "Create src/routes/part-2/chapter-11/+page.svelte — Chapter 11: Introduction to Stochastic Processes. Build seven interactive simulations: (1) MarkovChainEditor — user builds a transition matrix via a node-link graph (D3 force-directed); drag to add states; click edge to set probability; WASM validates row sums; run the chain animated step by step; show state occupation over time. (2) StationaryDistributionSolver — input transition matrix; WASM solves πP=π (via power iteration); display π as a bar chart; animate convergence of P^n to the stationary distribution. (3) GamblerRuin — interactive gambler: set p (win prob), starting fortune k, target N; WASM computes absorption probability and expected duration; D3 shows multiple sample paths of the random walk. (4) RandomWalkExplorer — 1D simple random walk with p slider; D3 animated path; show return-to-origin count; Pólya's recurrence result for p=0.5. (5) PoissonProcessSimulator — λ slider; simulate arrivals; D3 event timeline; show inter-arrival exponential distribution; superposition demo (two independent Poisson processes merging). (6) MarkovChainClassifier — user inputs a transition matrix; WASM identifies communicating classes, recurrent/transient states, periods; color-coded display. (7) CTMCIntro — birth-death process with birth rate λ and death rate μ; D3 animated state diagram; simulate in continuous time; show stationary distribution ρ^k(1-ρ)."
+        }
+      ]
+    },
+
+    {
+      "phase": 4,
+      "title": "Part III — Advanced Undergraduate / Early Graduate (Chapters 12–15)",
+      "description": "Measure-theoretic probability, advanced limit theorems, martingales, and continuous-time processes.",
+      "prompts": [
+        {
+          "id": "P4-01",
+          "title": "Chapter 12 — Measure-Theoretic Probability",
+          "difficulty_level": "graduate",
+          "depends_on": ["P3-04"],
+          "prompt": "Create src/routes/part-3/chapter-12/+page.svelte — Chapter 12: Measure-Theoretic Probability. This chapter is primarily conceptual; build two interactive tools and rich expository content: (1) SigmaAlgebraBuilder — on a finite Ω = {ω1,...,ω4}, user toggles subsets on/off; the tool checks whether the selected collection is a σ-algebra (closed under complement, countable union); if not, shows which axiom fails and which sets must be added to 'close' it; display the generated σ-algebra. (2) LebesgueIntegralApproximator — for a user-drawn function on [0,1] (click to set value at points), show the sequence of simple function approximations s_n ↑ f; D3 animation of MCT; compare Riemann vs. Lebesgue integral for a function with a countable discontinuity set. Include deep expository text on: why σ-algebras are needed, Carathéodory's extension intuition, Radon-Nikodým theorem intuition with a visual (two overlapping measures), Kolmogorov's 0-1 law examples (tail events). KaTeX all measure-theoretic definitions. Add a 'Measure Theory Glossary' sidebar with all key terms."
+        },
+        {
+          "id": "P4-02",
+          "title": "Chapter 13 — Advanced Limit Theorems",
+          "difficulty_level": "graduate",
+          "wasm_modules": ["sci-stats: characteristic_function_normal, borel_cantelli_simulation"],
+          "depends_on": ["P1-02", "P4-01"],
+          "prompt": "Create src/routes/part-3/chapter-13/+page.svelte — Chapter 13: Advanced Limit Theorems. Build four tools: (1) BorelCantelliSimulator — user defines a sequence of events with decreasing probabilities p_n; show Σp_n converging or diverging; animate which events occur in simulation; BCL1 vs BCL2 outcomes. (2) WeakConvergenceVisualizer — show a sequence of distributions (e.g., Uniform on [−1/n, 1/n] → Dirac at 0); D3 CDF animation; portmanteau theorem conditions checked live. (3) LindebergCLTChecker — user inputs a triangular array of distributions (different variances); WASM checks Lindeberg condition; show normalized sum distribution vs. N(0,1) with Berry-Esseen bound. (4) LargeDeviationsRateFunction — select distribution; WASM computes Cramér rate function I(x) = sup_t{tx − log M(t)} via numerical optimization; D3 plot of I(x) alongside log P(X̄ ≥ x)/n from simulation; verify Cramér's theorem. Include Donsker's theorem exposition with a D3 animation of random walk paths converging to Brownian motion paths."
+        },
+        {
+          "id": "P4-03",
+          "title": "Chapter 14 — Martingales",
+          "difficulty_level": "graduate",
+          "wasm_modules": ["sci-stats: martingale_optional_stopping, azuma_hoeffding_bound"],
+          "depends_on": ["P1-02", "P4-01"],
+          "prompt": "Create src/routes/part-3/chapter-14/+page.svelte — Chapter 14: Martingales. Build five interactive tools: (1) MartingalePathPlotter — choose a martingale type (random walk, product martingale, Doob's martingale); set parameters; D3 animated sample paths showing the martingale property E[X_{n+1}|F_n] = X_n verified empirically; display running E[X_n] = E[X_0] vs. actual sample paths. (2) OptionalStoppingExplorer — set a stopping time τ (first passage to level L, fixed time N, or gambler ruin); WASM simulates many paths; estimate E[X_τ]; display whether OST conditions hold (UI checklist); compare E[X_τ] vs E[X_0]. (3) MartingaleConvergenceDemo — show an L²-bounded martingale X_n; D3 animated sample paths converging a.s. to X_∞; display the upcrossing count for a given interval [a,b]. (4) AzumaHoeffdingDemo — user constructs a martingale difference sequence with bounded differences c_k; WASM computes Azuma-Hoeffding bound P(X_n−X_0 ≥ t) ≤ exp(−t²/2Σc_k²); compare vs. simulated tail probability. (5) McDiarmidApplication — user defines a function f(X_1,...,X_n) with bounded differences; show McDiarmid's inequality bound vs. empirical concentration from simulation."
+        },
+        {
+          "id": "P4-04",
+          "title": "Chapter 15 — Continuous-Time Stochastic Processes",
+          "difficulty_level": "graduate",
+          "wasm_modules": ["sci-stats: brownian_motion_path, ornstein_uhlenbeck_path, poisson_process_path"],
+          "depends_on": ["P1-02", "P4-01"],
+          "prompt": "Create src/routes/part-3/chapter-15/+page.svelte — Chapter 15: Continuous-Time Stochastic Processes. Build five interactive tools: (1) BrownianMotionSimulator — WASM generates Brownian motion paths via Euler-Maruyama on fine grid; D3 animated path; toggle properties: nowhere differentiable zoom-in animation, quadratic variation accumulation chart showing [W,W]_t = t; reflection principle visualization with reflected path above a level. (2) BrownianBridgeExplorer — WASM generates B(t) conditioned on B(1)=0; D3 multiple paths; show distribution B(t) ~ N(0, t(1−t)). (3) OUProcessSimulator — θ (mean reversion), μ (long-run mean), σ sliders; WASM generates OU path; D3 shows mean reversion; display stationary distribution N(μ, σ²/2θ). (4) GaussianProcessDashboard — select covariance kernel (squared exponential, Matérn, periodic); D3 shows 5 sample paths from GP; posterior update when user clicks to add observations. (5) CTMCSimulator — user defines Q matrix (generator) via UI; WASM simulates continuous-time jump process; D3 step-function path showing state over time; display embedded chain and holding time distributions."
+        }
+      ]
+    },
+
+    {
+      "phase": 5,
+      "title": "Part IV — Graduate Level (Chapters 16–22)",
+      "description": "Stochastic calculus, Markov processes, ergodic theory, information theory, Bayesian nonparametrics, random matrices, and probabilistic combinatorics.",
+      "prompts": [
+        {
+          "id": "P5-01",
+          "title": "Chapter 16 — Stochastic Calculus",
+          "difficulty_level": "graduate",
+          "wasm_modules": ["sci-stats: ito_integral_simulation, black_scholes_path, sde_euler_maruyama"],
+          "depends_on": ["P1-02", "P4-04"],
+          "prompt": "Create src/routes/part-4/chapter-16/+page.svelte — Chapter 16: Stochastic Calculus. Build five tools: (1) ItoIntegralConstructor — step-by-step construction of ∫H_s dW_s as a limit of Riemann-Stieltjes sums; WASM generates Brownian motion; D3 animation shows the left-endpoint approximation; display Itô isometry E[(∫H dW)²] = E[∫H² dt] verified numerically. (2) ItoFormulaCalculator — user selects f(x) (polynomial, log, exp, sqrt); WASM applies Itô's formula symbolically and numerically to W_t; display df = f'(W_t)dW_t + ½f''(W_t)dt; D3 shows f(W_t) path vs. numerical Itô integration. (3) GeometricBrownianMotion — μ, σ sliders; WASM generates GBM paths S_t = S_0 exp((μ−σ²/2)t + σW_t); D3 multiple paths with log-normal distribution at fixed t shown as sidebar histogram. (4) GirsanovTransformDemo — show a drift removal transformation; WASM simulates W_t + θt under P and W̃_t = W_t − θt under Q; D3 dual panel showing the path distributions under each measure; display Radon-Nikodým derivative Z_t = exp(θW_t − θ²t/2). (5) FeynmanKacSolver — user selects a parabolic PDE (heat equation, Black-Scholes); WASM solves via Monte Carlo (Feynman-Kac); compare vs. analytical solution; D3 surface plot of u(t,x)."
+        },
+        {
+          "id": "P5-02",
+          "title": "Chapter 17 — Markov Processes and Potential Theory",
+          "difficulty_level": "graduate",
+          "wasm_modules": ["sci-stats: levy_process_path, stable_distribution_pdf"],
+          "depends_on": ["P1-02", "P4-04"],
+          "prompt": "Create src/routes/part-4/chapter-17/+page.svelte — Chapter 17: Markov Processes and Potential Theory. Build four tools: (1) LevyProcessSimulator — user selects a Lévy process type (Brownian motion, Poisson process, variance gamma, stable process with index α); WASM generates paths with jumps; D3 càdlàg path visualization (right-continuous with left limits); display Lévy-Khintchine characteristic exponent. (2) LevyItoDecomposition — WASM decomposes a Lévy path into: drift + continuous diffusion + large jumps + small jumps; D3 shows each component separately and the sum. (3) StableDistributionPlotter — α (0–2) and β (−1 to 1) sliders; WASM evaluates stable PDF via numerical Fourier inversion; D3 density curves; highlight special cases (Cauchy at α=1, Normal at α=2, Lévy at α=1/2). (4) GibbsMeasureExplorer — 1D Ising model on a chain of N (5–30) spins; temperature T slider; WASM implements Metropolis-Hastings for sampling; D3 shows spin configuration as colored blocks; plot magnetization vs. temperature phase diagram."
+        },
+        {
+          "id": "P5-03",
+          "title": "Chapter 18 — Ergodic Theory",
+          "difficulty_level": "graduate",
+          "wasm_modules": ["sci-stats: birkhoff_average, entropy_computation"],
+          "depends_on": ["P1-02", "P4-01"],
+          "prompt": "Create src/routes/part-4/chapter-18/+page.svelte — Chapter 18: Ergodic Theory. Build four tools: (1) BirkhoffErgodicDemo — choose a measure-preserving transformation T (irrational rotation, doubling map, baker's map); D3 animated orbit on the unit circle/square; show Birkhoff average (1/n)Σf(T^k x) converging to ∫f dμ; compare ergodic vs. non-ergodic transformations. (2) MixingVisualization — D3 animation of the baker's map acting on a colored square; show how 'mixing' causes any rectangle to become equidistributed; display |P(A∩T^{−n}B) − P(A)P(B)| → 0. (3) KolmogorovSinaiEntropy — select a symbolic dynamical system; WASM computes partition entropy H(α) and KS entropy h; display how h measures the average information created per step. (4) MarkovMixingTimes — user sets a transition matrix; WASM computes spectral gap (1 − λ_2) and mixing time bound; D3 shows total variation distance ||P^n(x,·) − π||_TV decaying exponentially; compare bound vs. simulation."
+        },
+        {
+          "id": "P5-04",
+          "title": "Chapter 19 — Information Theory and Probability",
+          "difficulty_level": "graduate",
+          "wasm_modules": ["sci-stats: shannon_entropy, kl_divergence, fisher_information, mutual_information"],
+          "depends_on": ["P1-02", "P2-04"],
+          "prompt": "Create src/routes/part-4/chapter-19/+page.svelte — Chapter 19: Information Theory and Probability. Build five tools: (1) ShannonEntropyExplorer — user sets a probability distribution over k outcomes (sliders); WASM computes H(X) = −Σp log p in bits; D3 bar chart + information diagram; show H maximized at uniform; animate from peaked to flat distribution. (2) KLDivergenceVisualizer — user sets two distributions P and Q (e.g., two Gaussians with different μ, σ); WASM computes D_KL(P‖Q) and D_KL(Q‖P); D3 overlay plot showing divergence as 'excess surprise'; display asymmetry. (3) MutualInformationDashboard — bivariate distribution editor; WASM computes I(X;Y) = H(X)+H(Y)−H(X,Y); Venn diagram of entropies; data processing inequality demo: show I(X;Z) ≤ I(X;Y) when Z=g(Y). (4) FisherInformationCalculator — select parametric family; WASM computes Fisher information I(θ) numerically; display Cramér-Rao lower bound 1/I(θ); show how I(θ) relates to the curvature of the log-likelihood. (5) MaximumEntropyDistributions — user sets constraints (mean, variance, support); WASM finds the maximum entropy distribution satisfying constraints; identify the exponential family form."
+        },
+        {
+          "id": "P5-05",
+          "title": "Chapter 20 — Bayesian Nonparametrics",
+          "difficulty_level": "graduate",
+          "wasm_modules": ["sci-stats: dirichlet_process_crp, gaussian_process_posterior"],
+          "depends_on": ["P1-02", "P4-01"],
+          "prompt": "Create src/routes/part-4/chapter-20/+page.svelte — Chapter 20: Bayesian Nonparametrics. Build four tools: (1) DeFinettiExchangeabilityDemo — show an exchangeable sequence represented as a mixture of i.i.d. sequences; user selects a Beta(α,β) mixing distribution; D3 shows how marginal distributions are non-independent but symmetric; verify exchangeability vs. independence. (2) DirichletProcessExplorer — α concentration slider, base measure H (Normal, Uniform); WASM implements stick-breaking: generate a DP sample (discrete distribution); D3 stem plot shows atom locations and masses; Chinese restaurant process seating animation. (3) GaussianProcessRegression — user clicks on a 2D plot to add training points (x, y); WASM updates GP posterior (squared exponential kernel); D3 shows mean function and ±2σ credible bands updating in real time; kernel hyperparameter sliders (length scale, signal variance). (4) BvMTheoremDemo — Bernstein-von Mises: show posterior of θ in a parametric model concentrating as n→∞; D3 animation of posterior narrowing and shifting toward MLE; display √n(θ_n − θ_0) → N(0, I(θ_0)^{−1})."
+        },
+        {
+          "id": "P5-06",
+          "title": "Chapter 21 — Random Matrices",
+          "difficulty_level": "graduate",
+          "wasm_modules": ["sci-stats: wigner_semicircle_simulation, marchenko_pastur_simulation, eigenvalue_distribution"],
+          "depends_on": ["P1-02", "P4-01"],
+          "prompt": "Create src/routes/part-4/chapter-21/+page.svelte — Chapter 21: Random Matrices. Build four tools: (1) WignerSemicircleSimulator — user sets N (matrix dimension: 10–1000) and Gaussian vs. Rademacher entries; WASM generates a random symmetric matrix and computes eigenvalues; D3 histogram of eigenvalues overlaid with Wigner semicircle law f(x) = (2/π)√(1−x²/4); animate as N grows. (2) MarchenkoPasturExplorer — p (features) and n (samples) sliders; γ = p/n shown; WASM generates Wishart matrix eigenvalue distribution; D3 histogram vs. Marchenko-Pastur density; show bulk edge λ± = (1±√γ)². (3) TracyWidomDistribution — WASM generates the largest eigenvalue distribution from GOE matrices; D3 histogram vs. Tracy-Widom curve; compare with Gaussian approximation breakdown. (4) SpikedModelDemo — low-rank signal + noise model: add one large spike eigenvalue (BBP transition); slider for signal-to-noise ratio; D3 shows phase transition at SNR = 1 where the spike eigenvalue separates from the bulk."
+        },
+        {
+          "id": "P5-07",
+          "title": "Chapter 22 — Probabilistic Combinatorics",
+          "difficulty_level": "graduate",
+          "wasm_modules": ["sci-stats: erdos_renyi_giant_component, random_graph_connectivity"],
+          "depends_on": ["P1-02", "P3-04"],
+          "prompt": "Create src/routes/part-4/chapter-22/+page.svelte — Chapter 22: Probabilistic Combinatorics. Build four tools: (1) ErdosRenyiPhaseTransition — n (nodes: 10–500) and p (edge probability) sliders; WASM generates G(n,p) random graph; D3 force-directed graph visualization; display giant component fraction as p varies; show phase transition at p = 1/n; animate the emergence of connectivity. (2) ProbabilisticMethodDemo — show Ramsey lower bounds: WASM computes P(no monochromatic clique of size k in 2-coloring of K_n) > 0 for specific n; first and second moment method calculations displayed step by step. (3) LovaszLocalLemmaIllustrator — k-SAT instance with m clauses; show dependency graph; WASM checks LLL condition ep(d+1)≤1; animate which clauses are 'bad events'; display Moser-Tardos resampling algorithm. (4) TalagrandConcentration — user defines a Lipschitz function f on {0,1}^n; WASM computes the Talagrand inequality bound P(|f−Mf|≥t) ≤ 2exp(−t²/4); compare with Gaussian approximation; D3 shows concentration of measure on the hypercube."
+        }
+      ]
+    },
+
+    {
+      "phase": 6,
+      "title": "Part V — Research Frontiers (Chapters 23–28)",
+      "description": "Stochastic analysis on manifolds, interacting particle systems, optimal transport, high-dimensional probability, MCMC, and probabilistic graphical models.",
+      "prompts": [
+        {
+          "id": "P6-01",
+          "title": "Chapter 23 — Stochastic Analysis on Manifolds",
+          "difficulty_level": "research",
+          "wasm_modules": ["sci-stats: rough_path_signature", "sci-stats: malliavin_derivative_approximation"],
+          "depends_on": ["P1-02", "P5-01"],
+          "prompt": "Create src/routes/part-5/chapter-23/+page.svelte — Chapter 23: Stochastic Analysis on Manifolds. Build three tools: (1) BrownianMotionOnSphere — WASM generates Brownian motion on S² via stereographic projection; D3 animated path on a globe (using d3-geo); show convergence to uniform measure on S²; display heat kernel K_t(x,y) as a function of geodesic distance. (2) RoughPathSignature — user draws a rough path (click-drag on canvas); WASM computes the first four terms of the path signature (iterated integrals); D3 displays the signature as a tree; show how signature determines the path up to tree-like equivalence; animate the universal limit theorem with two nearby paths. (3) MalliavinDerivativeDemo — WASM computes the Malliavin derivative D_t F for F = f(W_T) where f is user-selected; display D_t F as a function of t on [0,T]; show the Clark-Ocone formula F = E[F] + ∫E[D_t F|F_t] dW_t numerically verified. Include deep expository content on Malliavin calculus intuition, rough path theory motivation, and connections to machine learning (signature features)."
+        },
+        {
+          "id": "P6-02",
+          "title": "Chapter 24 — Interacting Particle Systems",
+          "difficulty_level": "research",
+          "wasm_modules": ["sci-stats: voter_model_simulation", "sci-stats: contact_process_simulation", "sci-stats: tasep_simulation"],
+          "depends_on": ["P1-02", "P4-04"],
+          "prompt": "Create src/routes/part-5/chapter-24/+page.svelte — Chapter 24: Interacting Particle Systems. Build four tools: (1) VoterModelSimulator — 2D grid (20×20 to 100×100); WASM runs voter model updates; D3 heatmap animation showing opinion clusters; display interface density; compare on torus vs. infinite lattice behavior. (2) ContactProcessPhaseTransition — infection rate λ slider; WASM simulates contact process on a line of 100 nodes; D3 space-time diagram (x-axis: site, y-axis: time); show survival vs. extinction phases; estimate critical λ_c. (3) TASEPSimulator — N particles, hopping rate p; WASM runs Totally Asymmetric Simple Exclusion Process; D3 animated particle positions; plot current (flux) vs. density; show hydrodynamic limit (Burgers' equation profile). (4) HydrodynamicLimit — WASM runs a particle system at two resolutions (fine and coarse); D3 side-by-side: microscopic stochastic evolution vs. macroscopic PDE solution; show convergence as particle number grows."
+        },
+        {
+          "id": "P6-03",
+          "title": "Chapter 25 — Optimal Transport",
+          "difficulty_level": "research",
+          "wasm_modules": ["sci-stats: wasserstein_distance_1d", "sci-stats: optimal_transport_2d", "sci-stats: sinkhorn_algorithm"],
+          "depends_on": ["P1-02", "P5-04"],
+          "prompt": "Create src/routes/part-5/chapter-25/+page.svelte — Chapter 25: Optimal Transport. Build five tools: (1) MongeProblemVisualizer — 1D case; user draws source distribution μ (click to set mass) and target distribution ν; WASM computes the optimal transport map T via quantile coupling; D3 shows arrows from source mass to target mass; display Wasserstein-1 and Wasserstein-2 distances. (2) KantorovichDualityExplorer — 2D discrete transport with n source and m target points; WASM solves the LP; D3 bipartite graph showing optimal coupling with edge widths proportional to transport mass; display primal and dual objective values. (3) SinkhornAlgorithmAnimator — user sets ε regularization; WASM runs Sinkhorn iterations; D3 heatmap of transport plan π evolving; show convergence to optimal regularized plan; display iteration count vs. ε. (4) WassersteinBarycenters — 3 input distributions (Gaussian blobs); ε slider for regularization; WASM computes Wasserstein barycenter via fixed-point iteration; D3 shows input distributions and barycenter evolving. (5) WassersteinGANConnection — show the connection: D3 diagram of generator/discriminator; WASM computes W_1 distance between real and generated distributions during 'training'; display how W_1 provides stable gradients vs. JS divergence."
+        },
+        {
+          "id": "P6-04",
+          "title": "Chapter 26 — High-Dimensional Probability",
+          "difficulty_level": "research",
+          "wasm_modules": ["sci-stats: sub_gaussian_concentration", "sci-stats: rademacher_complexity", "sci-stats: jl_lemma_simulation"],
+          "depends_on": ["P1-02", "P5-06"],
+          "prompt": "Create src/routes/part-5/chapter-26/+page.svelte — Chapter 26: High-Dimensional Probability. Build five tools: (1) ConcentrationOnSphere — d slider (2–1000); WASM samples uniform points on S^{d−1}; D3 shows distribution of first coordinate (approaches N(0,1/d)); animate how mass concentrates near the equator; display 'concentration of measure' — most volume near a thin equatorial band. (2) JohnsonLindenstraussDemo — n points in ℝ^d; WASM applies a random Gaussian projection to ℝ^k where k = O(log n/ε²); D3 shows pairwise distance preservation |‖x−y‖ − ‖Px−Py‖| ≤ ε; animate as k varies; display JL lemma bound. (3) SubGaussianTailComparison — σ² slider; D3 shows sub-Gaussian P(X≥t) ≤ 2exp(−t²/2σ²) vs. actual Gaussian tail vs. Bernstein tail; interactive ψ₂ norm display. (4) VCDimensionExplorer — user selects a hypothesis class (halfplanes, rectangles, neural networks); interactive point placement; WASM checks whether configuration is shattered; display VC dimension and growth function bound. (5) CompressedSensingDemo — n (measurements), p (dimension), s (sparsity) sliders; WASM checks RIP constant; simulate Lasso recovery of a sparse signal; D3 shows original vs. recovered signal; display phase transition boundary."
+        },
+        {
+          "id": "P6-05",
+          "title": "Chapter 27 — MCMC and Computational Probability",
+          "difficulty_level": "research",
+          "wasm_modules": ["sci-stats: metropolis_hastings", "sci-stats: hmc_sampler", "sci-stats: gibbs_sampler", "sci-stats: spectral_gap"],
+          "depends_on": ["P1-02", "P4-03"],
+          "prompt": "Create src/routes/part-5/chapter-27/+page.svelte — Chapter 27: MCMC and Computational Probability. Build six tools: (1) MetropolisHastingsSimulator — user selects target distribution (banana-shaped, multimodal, funnel); proposal variance slider; WASM runs MH chain; D3 animated 2D scatter of samples vs. target contours; display acceptance rate; show trace plots and autocorrelation. (2) GibbsSamplerVisualizer — bivariate distribution; WASM runs Gibbs sampling; D3 animated zigzag trajectory; compare to MH on same target. (3) HMCSimulator — leapfrog step size ε and number of steps L sliders; WASM runs Hamiltonian Monte Carlo on a 2D target; D3 shows Hamiltonian trajectories in (q,p) phase space; display acceptance rate and effective sample size. (4) MixingTimeAnalyzer — user defines a Markov chain; WASM computes spectral gap via power method; D3 shows TV distance convergence ||P^n − π||_TV vs. n; overlay spectral gap bound; Cheeger inequality display. (5) ImportanceSamplingDemo — user sets proposal q and target p; WASM estimates E_p[f] via importance weights; D3 shows effective sample size ESS = (Σw_i)²/Σw_i²; display variance reduction vs. naive MC. (6) SequentialMCAnimation — state-space model with hidden states; WASM runs particle filter; D3 animated particles (weighted cloud) vs. true hidden state; resampling events highlighted."
+        },
+        {
+          "id": "P6-06",
+          "title": "Chapter 28 — Probabilistic Graphical Models",
+          "difficulty_level": "research",
+          "wasm_modules": ["sci-stats: belief_propagation", "sci-stats: em_algorithm"],
+          "depends_on": ["P1-02", "P4-01"],
+          "prompt": "Create src/routes/part-5/chapter-28/+page.svelte — Chapter 28: Probabilistic Graphical Models. Build five tools: (1) BayesianNetworkBuilder — D3 drag-and-drop DAG editor (up to 8 nodes); user sets CPTs via tables; WASM checks d-separation between query sets; run exact inference via variable elimination; display posterior P(X|evidence) as bar chart. (2) BeliefPropagationAnimator — factor graph of a simple MRF; WASM runs sum-product BP; D3 animated message passing on the graph (edges pulse as messages propagate); display convergence; show exact vs. loopy BP comparison. (3) EMAlgorithmVisualizer — Gaussian mixture model with k=2 or 3; D3 scatter plot of data; WASM runs EM iterations; animate E-step (soft assignments shown as colors) and M-step (Gaussian ellipses updating); display ELBO growing monotonically. (4) CausalDAGExplorer — user builds a DAG; WASM implements Pearl's do-calculus; display observational P(Y|X) vs. interventional P(Y|do(X)); show back-door criterion; d-separation checker. (5) VariationalInferenceDashboard — mean field VI for a simple model; WASM optimizes ELBO via coordinate ascent; D3 shows ELBO increasing and approximate posterior q(θ) converging toward true posterior p(θ|data); display KL divergence decomposition."
+        }
+      ]
+    },
+
+    {
+      "phase": 7,
+      "title": "Appendices and Reference Components",
+      "description": "Build all appendix routes, the distribution reference, inequality compendium, and notation glossary.",
+      "prompts": [
+        {
+          "id": "P7-01",
+          "title": "Appendix D — Distribution Reference Table",
+          "priority": "high",
+          "depends_on": ["P1-01", "P2-04", "P2-05"],
+          "prompt": "Create src/routes/appendix/distributions/+page.svelte — the complete probability distribution reference. Build a searchable, sortable, filterable table of all 25+ named distributions covered in the textbook. Each row: distribution name (linked to the chapter where it appears), type (discrete/continuous), parameters, PMF/PDF formula (KaTeX), CDF formula (KaTeX), MGF formula, mean, variance, support, and exponential family form. Add a 'Compare' feature: user selects 2–4 distributions and a D3 side-by-side PDF/PMF chart appears with parameter sliders powered by WASM. Add a 'Relationships' D3 network diagram showing how distributions are related (e.g., Binomial → Poisson as limit, Gamma → Exponential as special case, Normal → Chi-squared via squaring). Include a filter bar for discrete/continuous, bounded/unbounded support, and textbook part."
+        },
+        {
+          "id": "P7-02",
+          "title": "Appendix E — Inequalities Compendium",
+          "priority": "high",
+          "depends_on": ["P1-01", "P3-04"],
+          "prompt": "Create src/routes/appendix/inequalities/+page.svelte — a complete reference for all probability inequalities. For each inequality: state it with full KaTeX notation, give the proof idea (collapsible), show the tightness conditions, provide an interactive D3 visualization where user can see the bound vs. the true quantity, and link to the chapter(s) where it is used. Inequalities to include: Markov, Chebyshev, Jensen, Cauchy-Schwarz, Hölder, Minkowski, Chernoff, Hoeffding, Azuma-Hoeffding, Bernstein, McDiarmid, Paley-Zygmund, Efron-Stein, Talagrand's transportation inequality, sub-Gaussian tail bound, Borell-TIS inequality, Pisier's inequality. Add a 'Comparison Mode' where user enters σ², ε and all applicable concentration inequalities are evaluated and ranked by tightness with a D3 bar chart."
+        },
+        {
+          "id": "P7-03",
+          "title": "Appendix A/B — Real Analysis and Measure Theory Compendium",
+          "priority": "medium",
+          "depends_on": ["P4-01"],
+          "prompt": "Create src/routes/appendix/measure-theory/+page.svelte — a reference compendium for real analysis and measure theory prerequisites. Include: (1) Sigma-algebra builder tool (reuse from Chapter 12); (2) Convergence theorems (MCT, DCT, Fatou) with interactive counterexamples showing why hypotheses are necessary — WASM generates sequences of functions failing each hypothesis; D3 animated plots; (3) Lᵖ space norms: D3 visualization of ‖f‖_p for different p on a fixed function; show Hölder and Minkowski inequalities interactively; (4) Fubini's theorem: D3 animated double integral with iterated integration in both orders; show a Fubini failure case when f ∉ L¹; (5) Radon-Nikodym theorem: two overlapping measure diagrams with a slider controlling absolute continuity. Full KaTeX rendering throughout."
+        },
+        {
+          "id": "P7-04",
+          "title": "Appendix F/G — Notation, Glossary, and Solutions",
+          "priority": "medium",
+          "depends_on": ["P1-01"],
+          "prompt": "Create src/routes/appendix/notation/+page.svelte — searchable notation and symbol reference. Table: symbol, LaTeX, meaning, chapter introduced, example usage (KaTeX). Add a full glossary with alphabetical index, each term defined, cross-referenced to chapter and section, with a KaTeX formula where applicable. Include a Greek alphabet table with standard probability usages (μ, σ, λ, ρ, etc.). Create src/routes/appendix/solutions/+page.svelte — selected hints and solutions. Organize by chapter; each solution collapsible; KaTeX math rendering. Add a random problem generator that picks an unsolved problem from a curated list with a 'Reveal Hint' and 'Reveal Solution' button. Create src/routes/appendix/bibliography/+page.svelte — annotated bibliography organized by chapter with all cited textbooks and papers."
+        }
+      ]
+    },
+
+    {
+      "phase": 8,
+      "title": "Cross-Cutting Features and Polish",
+      "description": "Search, progress tracking, offline PWA support, performance optimization, and accessibility.",
+      "prompts": [
+        {
+          "id": "P8-01",
+          "title": "Full-Text Search with FlexSearch",
+          "priority": "high",
+          "depends_on": ["P1-08"],
+          "prompt": "Implement full-text search using FlexSearch (npm: flexsearch). Create src/lib/search.ts: (1) At build time, generate a search index from all chapter content, section titles, and key terms using a SvelteKit +page.server.ts that reads all chapter data; serialize to static/search-index.json; (2) At runtime, load the index lazily on first search; (3) Create src/lib/components/SearchModal.svelte — a CMD+K activated modal with an input field; show results grouped by chapter with highlighted matching text; navigate to result on Enter or click; (4) Add a search icon to the global nav that opens the modal; (5) Index: chapter titles, section headings, key terms, theorem names, distribution names, formula descriptions; (6) Highlight matched terms in results using <mark> tags with Hartzog accent color. Include keyboard navigation (↑↓ to move through results, Esc to close)."
+        },
+        {
+          "id": "P8-02",
+          "title": "Progress Tracking and Bookmarks",
+          "priority": "high",
+          "depends_on": ["P1-05"],
+          "prompt": "Implement chapter progress tracking stored in localStorage. Create src/lib/stores/progress-store.ts: a Svelte store persisting to localStorage with schema { visitedChapters: Set<string>, completedChapters: Set<string>, bookmarks: { chapterId, sectionId, note, timestamp }[], lastVisited: string }. Create src/lib/components/ProgressSidebar.svelte — a slide-out panel showing: overall completion percentage (D3 radial gauge), part-by-part progress bars, list of bookmarks with edit/delete, recently visited chapters. Add a 'Mark as Complete' button at the bottom of each chapter page. Add a bookmark button in the chapter nav that saves the current scroll position. Show progress indicator dots on the chapter grid on the home page. Add a 'Continue Where You Left Off' button on the home page pointing to lastVisited chapter."
+        },
+        {
+          "id": "P8-03",
+          "title": "PWA Offline Support",
+          "priority": "medium",
+          "depends_on": ["P1-07"],
+          "prompt": "Add Progressive Web App support. (1) Create src/service-worker.ts using SvelteKit's built-in service worker support; cache all static assets, chapter pages, WASM binary, KaTeX fonts, D3.js, and Google Fonts; implement stale-while-revalidate strategy for chapter content; (2) Create static/manifest.json with app name 'Probability Education', icons at 192×192 and 512×512 (SVG-based, use the probability π symbol in Hartzog blue on white), theme_color matching Hartzog accent, display: standalone; (3) Add install prompt logic in src/lib/components/InstallBanner.svelte — shown once after 30 seconds if PWA is installable; (4) Add an offline indicator in the nav that shows a pill 'Offline Mode' in orange when navigator.onLine is false; (5) Ensure all WASM simulations work offline (WASM binary is cached by service worker)."
+        },
+        {
+          "id": "P8-04",
+          "title": "Accessibility and ARIA Compliance",
+          "priority": "high",
+          "depends_on": ["P1-05"],
+          "prompt": "Audit and fix all accessibility issues across the entire SvelteKit app. Implement: (1) Skip-to-content link at the top of each page; (2) All interactive D3 SVG elements get role, aria-label, and keyboard interaction (Tab, Enter, Space, arrow keys for sliders); (3) All simulation parameter sliders get aria-valuemin, aria-valuemax, aria-valuenow, aria-label; (4) All KaTeX-rendered formulas get aria-label with a plain English description; (5) Color is never the sole indicator of meaning — always add shape, pattern, or label; (6) Focus management: when modals open, trap focus; on close, return to trigger; (7) All images get descriptive alt text; (8) Reduced motion: respect prefers-reduced-motion by disabling animations in D3 transitions and replacing with instant state changes; (9) High contrast mode: add a third theme option in the dark/light toggle; (10) Run axe-core in Playwright tests and assert zero WCAG AA violations."
+        },
+        {
+          "id": "P8-05",
+          "title": "Performance Optimization and Code Splitting",
+          "priority": "medium",
+          "depends_on": ["P1-01", "P1-02"],
+          "prompt": "Optimize the SvelteKit build for performance. (1) Configure Vite code splitting: each chapter route is a separate chunk; shared utilities (D3 utils, math components) in a common chunk; WASM module loaded lazily only when a chapter with hasWasm=true is visited; (2) Add a Svelte component src/lib/components/LazyWasm.svelte that wraps any simulation requiring WASM — shows a 'Loading computation engine...' skeleton while WASM initializes, then renders the simulation; (3) Implement route-level <svelte:head> for per-chapter meta tags (title, description, og:title for social sharing); (4) Add image lazy loading (IntersectionObserver) for any chapter thumbnail images; (5) Configure vite-plugin-compression to gzip all assets; (6) Add a Lighthouse CI step to the GitHub Actions CI workflow — assert Performance ≥ 90, Accessibility ≥ 95, Best Practices ≥ 90; (7) Cache WASM binary in IndexedDB between sessions using idb-keyval to avoid re-downloading."
+        },
+        {
+          "id": "P8-06",
+          "title": "Comprehensive Test Suite",
+          "priority": "high",
+          "depends_on": ["P1-07"],
+          "prompt": "Create a comprehensive test suite. (1) Vitest unit tests in src/tests/: test every WASM-wrapped function in src/lib/wasm.ts with known inputs and outputs; test all utility functions in src/lib/utils.ts; test the progress store state transitions; test the search index generation; test all distribution computations against known values (scipy reference values); (2) Create src/tests/distributions.test.ts — test binomial PMF at k=0,1,n; Poisson PMF at boundary cases; Normal CDF at z=0, ±1, ±2; (3) Playwright e2e tests in tests/: smoke test every chapter route loads without console errors; test the coin flip simulator runs and produces output; test search finds Chapter 3 when typing 'Bayes'; test dark mode toggle persists on refresh; test PWA install banner appears; (4) Run tests in CI on every PR; fail the PR if any test fails or if Lighthouse score drops below threshold."
+        },
+        {
+          "id": "P8-07",
+          "title": "Chapter Navigation and Deep Linking",
+          "priority": "medium",
+          "depends_on": ["P1-05", "P1-08"],
+          "prompt": "Implement rich in-chapter navigation. (1) Auto-generate a Table of Contents (TOC) for each chapter page by scanning h2 and h3 elements using a Svelte action; display as a sticky right sidebar on desktop, a floating button on mobile that expands the TOC; highlight the active section based on IntersectionObserver; (2) Add anchor links to every heading (hover to reveal #-icon); (3) Deep link simulations: each simulation has a unique URL hash (e.g., /part-1/chapter-3#bayes-theorem-visualizer); on page load, if hash matches a simulation ID, scroll to it and expand it; (4) Previous/Next chapter navigation bar at the bottom of each chapter with chapter title and difficulty badge; (5) Add a 'Related Chapters' widget at the bottom of each chapter page showing 3 related chapters based on topic tags; (6) Add keyboard shortcuts: J/K to navigate between chapters, T to open TOC, S to open search, B to bookmark current position."
+        },
+        {
+          "id": "P8-08",
+          "title": "Export and Sharing Features",
+          "priority": "low",
+          "depends_on": ["P1-01"],
+          "prompt": "Add content export and social sharing features. (1) 'Export as PDF' button on each chapter using window.print() with a dedicated print CSS that hides nav, simulations show as static screenshots, formulas render properly — create src/app-print.css; (2) 'Share this Chapter' button that uses Web Share API (with clipboard fallback) to share the chapter URL with title and description; (3) 'Copy Citation' button that generates a formatted citation string: 'Probability: Foundations to Research Frontiers, Chapter N: [Title]. timothyhartzog.github.io/Probability-education, accessed [date]'; (4) Each simulation has a 'Share State' button that encodes current slider positions as URL query params so a specific simulation configuration can be shared; decode and restore state on page load; (5) Add Open Graph meta tags (og:title, og:description, og:image) to each chapter route for rich link previews on social media — generate og:image as a static PNG per chapter showing the chapter title and a D3 visualization thumbnail."
+        }
+      ]
+    }
+  ],
+
+  "rust_sci_core_integration_guide": {
+    "title": "rust-sci-core Integration Reference",
+    "description": "How to call rust-sci-core WASM functions from SvelteKit components",
+    "wasm_init_pattern": {
+      "file": "src/lib/wasm.ts",
+      "pattern": "import init, * as sciWasm from '/wasm/wasm_bridge.js'; let initialized = false; export async function initWasm() { if (!initialized) { await init(); initialized = true; } return sciWasm; }"
+    },
+    "component_pattern": {
+      "description": "Use LazyWasm.svelte wrapper for any component requiring WASM",
+      "example": "<LazyWasm let:wasm><BinomialPlotter {wasm} /></LazyWasm>"
+    },
+    "crates_used": {
+      "sci-stats": "Probability distributions, statistical tests, random sampling, MCMC",
+      "sci-units": "Physical units for parameter validation (e.g., probabilities in [0,1])",
+      "sci-clinical": "Not used in probability textbook — exclude from wasm-bridge",
+      "sci-growth": "Not used in probability textbook — exclude from wasm-bridge",
+      "sci-wasm": "WASM bindings and serialization — include fully"
+    },
+    "performance_notes": [
+      "Cache WASM module in IndexedDB after first load",
+      "For large matrix operations (random matrices chapter), use SharedArrayBuffer if available",
+      "Simulation loops running >1M iterations should use WASM, not JS",
+      "D3 rendering stays in JS — only computation offloaded to WASM"
+    ]
+  },
+
+  "d3_visualization_standards": {
+    "title": "D3.js Visualization Standards for Probability Textbook",
+    "version": "D3.js 7.8.5 via cdnjs",
+    "chart_defaults": {
+      "margin": { "top": 20, "right": 30, "bottom": 50, "left": 60 },
+      "animation_duration_ms": 750,
+      "axis_color": "var(--color-text3)",
+      "grid_color": "var(--color-border)",
+      "tooltip_background": "var(--color-surface)",
+      "font_family": "IBM Plex Sans, sans-serif",
+      "mono_font": "IBM Plex Mono, monospace"
+    },
+    "color_conventions": {
+      "primary_distribution": "var(--color-blue)",
+      "secondary_distribution": "var(--color-orange)",
+      "theoretical_curve": "var(--color-purple)",
+      "simulation_histogram": "var(--color-bbg)",
+      "confidence_band": "var(--color-gbg)",
+      "highlight": "var(--color-accent)",
+      "danger_zone": "var(--color-red)",
+      "success_zone": "var(--color-green)"
+    },
+    "responsive_pattern": "Use ResizeObserver on the container div; re-render SVG on size change; debounce 100ms",
+    "accessibility": "All SVG elements get <title> and <desc> children; use role='img' on SVG root; sliders get aria-label"
+  },
+
+  "sveltekit_route_structure": {
+    "title": "Complete SvelteKit Route Map",
+    "routes": [
+      "/                           → Home page with chapter grid",
+      "/part-1/chapter-1           → Ch 1: What Is Probability?",
+      "/part-1/chapter-2           → Ch 2: Counting and Combinatorics",
+      "/part-1/chapter-3           → Ch 3: Conditional Probability",
+      "/part-1/chapter-4           → Ch 4: Discrete Random Variables",
+      "/part-1/chapter-5           → Ch 5: Continuous Random Variables",
+      "/part-1/chapter-6           → Ch 6: Joint Distributions (Intro)",
+      "/part-2/chapter-7           → Ch 7: Transforms and Generating Functions",
+      "/part-2/chapter-8           → Ch 8: Multivariate Distributions",
+      "/part-2/chapter-9           → Ch 9: Conditional Expectation",
+      "/part-2/chapter-10          → Ch 10: Limit Theorems",
+      "/part-2/chapter-11          → Ch 11: Intro to Stochastic Processes",
+      "/part-3/chapter-12          → Ch 12: Measure-Theoretic Probability",
+      "/part-3/chapter-13          → Ch 13: Advanced Limit Theorems",
+      "/part-3/chapter-14          → Ch 14: Martingales",
+      "/part-3/chapter-15          → Ch 15: Continuous-Time Processes",
+      "/part-4/chapter-16          → Ch 16: Stochastic Calculus",
+      "/part-4/chapter-17          → Ch 17: Markov Processes and Potential Theory",
+      "/part-4/chapter-18          → Ch 18: Ergodic Theory",
+      "/part-4/chapter-19          → Ch 19: Information Theory",
+      "/part-4/chapter-20          → Ch 20: Bayesian Nonparametrics",
+      "/part-4/chapter-21          → Ch 21: Random Matrices",
+      "/part-4/chapter-22          → Ch 22: Probabilistic Combinatorics",
+      "/part-5/chapter-23          → Ch 23: Stochastic Analysis on Manifolds",
+      "/part-5/chapter-24          → Ch 24: Interacting Particle Systems",
+      "/part-5/chapter-25          → Ch 25: Optimal Transport",
+      "/part-5/chapter-26          → Ch 26: High-Dimensional Probability",
+      "/part-5/chapter-27          → Ch 27: MCMC and Computational Probability",
+      "/part-5/chapter-28          → Ch 28: Probabilistic Graphical Models",
+      "/appendix/distributions      → Distribution Reference Table",
+      "/appendix/inequalities       → Inequalities Compendium",
+      "/appendix/measure-theory     → Real Analysis & Measure Theory Reference",
+      "/appendix/notation           → Notation Glossary",
+      "/appendix/solutions          → Hints and Selected Solutions",
+      "/appendix/bibliography       → Annotated Bibliography"
+    ]
+  },
+
+  "execution_instructions": {
+    "title": "How to Execute These Prompts with Claude Code",
+    "tool": "Claude Code (claude.ai/code or CLI)",
+    "model": "claude-sonnet-4-20250514",
+    "recommended_workflow": [
+      "1. Open Claude Code in the Probability-education repository root",
+      "2. Execute Phase 1 prompts P1-01 through P1-08 in order — these are the critical foundation",
+      "3. Run 'npm run build:wasm' and 'npm run dev' to verify the scaffold works",
+      "4. Execute Phase 2 prompts (Part I chapters) — these can be parallelized across multiple Claude Code sessions",
+      "5. Continue through phases 3–6 (Parts II–V chapters)",
+      "6. Execute Phase 7 (appendices) any time after Phase 2 completes",
+      "7. Execute Phase 8 (cross-cutting) last, after all chapters are built",
+      "8. Run 'npm run build' and verify GitHub Pages deployment"
+    ],
+    "parallelization_note": "Within any phase after Phase 1, chapter prompts are independent and can be run in parallel Claude Code sessions. Each prompt is fully self-contained.",
+    "context_to_provide": "When executing any chapter prompt, also provide: the textbook outline from the conversation history, the Hartzog Web Standard v1.0 CSS palette, and the D3 visualization standards from this JSON.",
+    "estimated_sessions": "98 prompts total. At ~15 minutes per prompt, approximately 24 hours of Claude Code execution time.",
+    "github_pat": "See your GitHub settings → Personal Access Tokens (repo scope required)"
+  }
+}
