@@ -1,0 +1,190 @@
+/* ═══════════════════════════════════════════════════════════════
+   Probability Education Platform v2
+   Hartzog Web Standard v1.0 — Global Styles
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Fonts ─────────────────────────────────────────────────────── */
+:root {
+  --font-heading: 'DM Serif Display', Georgia, serif;
+  --font-body: 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'Fira Code', monospace;
+}
+
+/* ── Palette: Light (default) ───────────────────────────────────── */
+:root, [data-theme="light"] {
+  --bg:        #fafaf8;
+  --surface:   #ffffff;
+  --border:    #e5e5e0;
+  --text:      #1a1a18;
+  --text2:     #4a4a44;
+  --text3:     #8a8a80;
+  --accent:    #2563eb;
+  --red:       #dc2626;
+  --rbg:       #fef2f2;
+  --orange:    #ea580c;
+  --obg:       #fff7ed;
+  --yellow:    #ca8a04;
+  --ybg:       #fefce8;
+  --green:     #16a34a;
+  --gbg:       #f0fdf4;
+  --blue:      #2563eb;
+  --bbg:       #eff6ff;
+  --purple:    #7c3aed;
+  --pbg:       #f5f3ff;
+
+  /* Chart palette */
+  --c1: #2563eb;
+  --c2: #ea580c;
+  --c3: #16a34a;
+  --c4: #7c3aed;
+  --c5: #db2777;
+  --c6: #0891b2;
+  --c7: #ca8a04;
+  --c8: #64748b;
+}
+
+/* ── Palette: Dark ──────────────────────────────────────────────── */
+[data-theme="dark"] {
+  --bg:        #0f0f0e;
+  --surface:   #1c1c1a;
+  --border:    #2e2e2a;
+  --text:      #f0f0ec;
+  --text2:     #b0b0a8;
+  --text3:     #6a6a62;
+  --accent:    #60a5fa;
+  --red:       #f87171;
+  --rbg:       #1f1010;
+  --orange:    #fb923c;
+  --obg:       #1f1208;
+  --yellow:    #fbbf24;
+  --ybg:       #1f1a08;
+  --green:     #4ade80;
+  --gbg:       #081f10;
+  --blue:      #60a5fa;
+  --bbg:       #081020;
+  --purple:    #a78bfa;
+  --pbg:       #120820;
+}
+
+/* ── Reset ──────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Typography ─────────────────────────────────────────────────── */
+h1, h2, h3, h4 {
+  font-family: var(--font-heading);
+  line-height: 1.2;
+  color: var(--text);
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+}
+h1 { font-size: clamp(1.75rem, 4vw, 2.5rem); }
+h2 { font-size: clamp(1.4rem, 3vw, 1.9rem); }
+h3 { font-size: clamp(1.1rem, 2vw, 1.4rem); }
+h4 { font-size: 1.1rem; }
+
+p { margin: 0 0 1em; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+code, pre { font-family: var(--font-mono); font-size: 0.9em; }
+
+pre {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 1rem;
+  overflow-x: auto;
+}
+
+/* ── Math blocks (KaTeX) ────────────────────────────────────────── */
+.math-block {
+  border-left: 4px solid var(--accent);
+  background: var(--bbg);
+  border-radius: 0 6px 6px 0;
+  padding: 1rem 1.25rem;
+  margin: 1.5rem 0;
+  overflow-x: auto;
+  font-size: 1.05em;
+}
+.math-inline { display: inline; }
+
+/* ── Cards ──────────────────────────────────────────────────────── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.25rem;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.card:hover {
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  transform: translateY(-1px);
+}
+
+/* ── Badges ─────────────────────────────────────────────────────── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  letter-spacing: 0.02em;
+}
+.badge-hs   { background: var(--gbg); color: var(--green); }
+.badge-ug   { background: var(--bbg); color: var(--blue); }
+.badge-grad { background: var(--pbg); color: var(--purple); }
+.badge-res  { background: var(--rbg); color: var(--red); }
+
+/* ── Simulation frame ───────────────────────────────────────────── */
+.sim-container {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin: 1.5rem 0;
+}
+.sim-header {
+  background: var(--bbg);
+  border-bottom: 1px solid var(--border);
+  padding: 0.65rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--blue);
+}
+.sim-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--blue);
+  opacity: 0.6;
+}
+
+/* ── Legacy iframe embed ────────────────────────────────────────── */
+.legacy-frame {
+  width: 100%;
+  border: none;
+  border-radius: 0 0 12px 12px;
+  display: block;
+  min-height: 600px;
+}
+
+/* ── Utility ────────────────────────────────────────────────────── */
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
