@@ -1,0 +1,301 @@
+{
+  "meta": {
+    "project": "timothyhartzog/Probability-education",
+    "platform": "SvelteKit v2 app at app/",
+    "last_updated": "2026-04-03",
+    "how_to_use": "Execute tasks in priority order. Mark status 'done' by committing. Each task is self-contained — read the 'prompt' field and implement exactly what it describes.",
+    "build_command": "cd app && npm run build",
+    "dev_command": "cd app && npm run dev",
+    "commit_pattern": "git add app/ && git commit -m 'feat(ch-N): description' && git push origin main"
+  },
+
+  "tasks": [
+
+    {
+      "id": "T01",
+      "priority": 1,
+      "status": "ready",
+      "title": "Chapter 4 — Discrete Random Variables",
+      "file": "app/src/routes/part-1/chapter-4/+page.svelte",
+      "estimated_lines": 400,
+      "depends_on": [],
+      "prompt": "Replace the stub at app/src/routes/part-1/chapter-4/+page.svelte with a full interactive chapter page. Use ChapterLayout with ch=getChapter(1,4). Write prose sections for: (4.1) From events to random variables — definition of X: Ω→ℝ; (4.2) Probability Mass Functions — definition, CDF F(x)=P(X≤x), properties; (4.3) Expected Value — E[X]=Σx·P(X=x), linearity E[aX+b]=aE[X]+b, E[X+Y]=E[X]+E[Y]; (4.4) Variance — Var(X)=E[X²]−(E[X])², standard deviation, Var(aX+b)=a²Var(X); (4.5) Key Distributions — Bernoulli, Binomial, Geometric, Poisson. Build three D3 simulations using pure JS math (NO npm imports for math, NO WASM yet): (1) PMF Explorer: a dropdown to select distribution (Bernoulli p, Binomial n/p, Geometric p, Poisson λ); parameter sliders update a D3 bar chart of the PMF in real time; show E[X] and Var(X) as computed values; also show the CDF as a step function overlay. (2) ExpectationViz: user inputs a custom PMF in a 6-row table (outcome, probability); validate probabilities sum to 1; show E[X] as a weighted average on a number line using D3 (circles sized by probability, red dot at E[X]); display Var(X) and SD(X). (3) PoissonVsBinomial: sliders for n (10–500) and p (0.001–0.1); D3 dual bar chart showing Binomial(n,p) PMF vs Poisson(np) PMF; label λ=np; animate convergence. Use KaTeX for all formulas (single onMount block, 300ms delay). Standard CSS vars only. getNext/getPrev for navigation.",
+
+      "math_reference": {
+        "pmf_binomial": "P(X=k) = C(n,k) p^k (1-p)^{n-k}",
+        "pmf_poisson": "P(X=k) = e^{-λ} λ^k / k!",
+        "pmf_geometric": "P(X=k) = (1-p)^{k-1} p",
+        "expectation": "E[X] = sum_x x P(X=x)",
+        "variance": "Var(X) = E[X^2] - (E[X])^2"
+      },
+
+      "js_math_needed": [
+        "binomialPmf(k, n, p)",
+        "poissonPmf(k, lambda)",
+        "geometricPmf(k, p)",
+        "binom(n, k)",
+        "fact(n)"
+      ]
+    },
+
+    {
+      "id": "T02",
+      "priority": 1,
+      "status": "ready",
+      "title": "Chapter 5 — Continuous Random Variables",
+      "file": "app/src/routes/part-1/chapter-5/+page.svelte",
+      "estimated_lines": 450,
+      "depends_on": ["T01"],
+      "prompt": "Replace the stub at app/src/routes/part-1/chapter-5/+page.svelte with a full interactive chapter page. Use ChapterLayout with ch=getChapter(1,5). Write prose for: (5.1) Why P(X=x)=0 for continuous RVs; (5.2) PDFs — definition ∫f(x)dx=1, P(a≤X≤b)=∫f; (5.3) CDF F(x)=∫_{-∞}^x f(t)dt, f(x)=F'(x); (5.4) Expected value E[X]=∫xf(x)dx; (5.5) Normal distribution — μ,σ, 68-95-99.7 rule, Z-scores z=(X-μ)/σ; (5.6) Exponential — memoryless property P(X>s+t|X>s)=P(X>t). Build four D3 simulations using pure JS math: (1) PDFIntegrator: dropdown selects distribution (Uniform, Exponential, Normal); parameter sliders (μ,σ for Normal; λ for Exponential; a,b for Uniform); D3 area chart of PDF; user drags two vertical handles to select interval [a,b] using d3.drag(); show shaded area and computed P(a≤X≤b) using numerical integration (Simpsons rule, 1000 steps); also display F(a) and F(b) from CDF. (2) NormalExplorer: μ slider (-3 to 3) and σ slider (0.3 to 3); D3 normal curve updates live; three toggle buttons for 68%/95%/99.7% shading; Z-score converter input; small reference table showing P(|X-μ|<kσ) for k=1,2,3. (3) ExponentialMemoryless: λ slider; s and t sliders; compute P(X>s+t|X>s) and P(X>t) using CDF; show they are equal with a highlighted comparison bar. (4) CLTPreview: dropdown to select parent distribution (Uniform, Exponential, Bernoulli); slider for sample size n (1-50); simulate 2000 sample means; D3 histogram; overlay N(μ,σ²/n) in different color. Use KaTeX for all formulas. Standard CSS vars only.",
+
+      "math_reference": {
+        "normal_pdf": "f(x) = (1/(σ√(2π))) exp(-(x-μ)²/(2σ²))",
+        "normal_cdf": "Φ(z) = P(Z≤z) (use Abramowitz-Stegun approximation)",
+        "exp_pdf": "f(x) = λ e^{-λx}, x≥0",
+        "exp_cdf": "F(x) = 1 - e^{-λx}",
+        "uniform_pdf": "f(x) = 1/(b-a) for x∈[a,b]"
+      },
+
+      "js_math_needed": [
+        "normalPdf(x, mu, sigma)",
+        "normalCdf(x) — use Abramowitz-Stegun from CLAUDE.md",
+        "expPdf(x, lambda)",
+        "expCdf(x, lambda)",
+        "simpsonIntegral(f, a, b, n=1000)"
+      ]
+    },
+
+    {
+      "id": "T03",
+      "priority": 1,
+      "status": "ready",
+      "title": "Chapter 6 — Joint Distributions",
+      "file": "app/src/routes/part-1/chapter-6/+page.svelte",
+      "estimated_lines": 400,
+      "depends_on": ["T02"],
+      "prompt": "Replace the stub at app/src/routes/part-1/chapter-6/+page.svelte with a full interactive chapter page. Use ChapterLayout with ch=getChapter(1,6). Write prose for: (6.1) Joint PMFs — P(X=x,Y=y), marginals, conditionals; (6.2) Independence — f(x,y)=f_X(x)f_Y(y); (6.3) Covariance Cov(X,Y)=E[XY]-E[X]E[Y] and correlation ρ; (6.4) Var(X+Y)=Var(X)+Var(Y)+2Cov(X,Y); (6.5) Bivariate Normal — ρ parameter and its geometric meaning. Build three D3 simulations: (1) JointPMFExplorer: a 4×4 editable table for a joint PMF P(X=i,Y=j); validate each cell ≥0 and total sum = 1; click a cell to highlight; compute and display marginals P(X=i) and P(Y=j) as bar charts on the sides; compute E[X], E[Y], Var(X), Var(Y), Cov(X,Y), ρ; show whether X,Y are independent (check P(X=i,Y=j)=P(X=i)P(Y=j) for all i,j). Visualize joint PMF as a D3 heatmap. (2) BivariateNormalViz: ρ slider (-0.95 to 0.95), μ_X, μ_Y, σ_X, σ_Y sliders; draw bivariate normal contours (ellipses) using D3 — compute 3 contour levels analytically (use the formula for the quadratic form in the exponent, draw SVG ellipses rotated by the correlation angle); show how ρ tilts the ellipses. (3) CovarianceDemo: generate 200 scatter points from bivariate normal with chosen ρ; D3 scatter plot; animate as ρ changes; display sample correlation as points move. Use KaTeX for all formulas.",
+
+      "math_reference": {
+        "cov": "Cov(X,Y) = E[XY] - E[X]E[Y]",
+        "corr": "ρ = Cov(X,Y) / (σ_X σ_Y)",
+        "var_sum": "Var(X+Y) = Var(X) + Var(Y) + 2Cov(X,Y)",
+        "biv_normal_contour": "The level set of the bivariate normal PDF is an ellipse with semi-axes proportional to σ_X, σ_Y, rotated by the correlation angle"
+      }
+    },
+
+    {
+      "id": "T04",
+      "priority": 2,
+      "status": "ready",
+      "title": "Search — Full-Text Search Modal",
+      "file": "app/src/lib/components/SearchModal.svelte",
+      "estimated_lines": 180,
+      "depends_on": [],
+      "prompt": "Create a full-text search system for the probability textbook. (1) Create app/src/lib/search-data.ts — a static array of SearchEntry objects: { id: string, route: string, title: string, chapterNum: number, part: number, body: string } where body contains the chapter title, subtitle, all topic names, and key mathematical terms. Populate from the chapters.ts data plus hardcoded key terms per chapter (e.g., Chapter 3 includes 'Bayes theorem conditional probability Monty Hall birthday paradox independence'). (2) Create app/src/lib/components/SearchModal.svelte — a modal dialog that: opens on Cmd+K or Ctrl+K keyboard shortcut (add event listener in +layout.svelte); has a text input with autofocus; filters SearchEntry array in real time using simple substring matching on title+body; displays results grouped by part with chapter number, title, and matching snippet; navigate with arrow keys, select with Enter or click; close with Escape or click outside. Style with CSS vars. (3) Add a search icon button to the nav in +layout.svelte that also opens the modal. The search is purely client-side — no server needed. Export a writable Svelte store 'searchOpen' that layout.svelte uses to toggle the modal.",
+      "search_terms_per_chapter": {
+        "ch1": "probability sample space event Kolmogorov axioms frequentist classical Bayesian uncertainty coin flip",
+        "ch2": "counting permutations combinations Pascal triangle binomial coefficient inclusion exclusion derangement",
+        "ch3": "conditional probability Bayes theorem independence Monty Hall birthday paradox base rate",
+        "ch4": "discrete random variable PMF expected value variance Bernoulli binomial Poisson geometric hypergeometric",
+        "ch5": "continuous random variable PDF CDF normal distribution exponential gamma beta z-score empirical rule",
+        "ch6": "joint distribution marginal conditional covariance correlation bivariate normal independence",
+        "ch7": "moment generating function characteristic function cumulant PGF Fourier transform",
+        "ch10": "law of large numbers central limit theorem CLT concentration Chebyshev Chernoff Berry-Esseen delta method",
+        "ch14": "martingale optional stopping Doob inequality Azuma Hoeffding McDiarmid filtration stopping time",
+        "ch16": "Ito integral stochastic calculus SDE Brownian motion Girsanov Feynman-Kac Black-Scholes"
+      }
+    },
+
+    {
+      "id": "T05",
+      "priority": 2,
+      "status": "ready",
+      "title": "Progress Tracking Store",
+      "file": "app/src/lib/stores/progress.ts",
+      "estimated_lines": 80,
+      "depends_on": [],
+      "prompt": "Create a progress tracking system using Svelte stores and localStorage. (1) Create app/src/lib/stores/progress.ts — export a writable store 'progress' backed by localStorage key 'prob-edu-progress' with schema: { visited: string[], completed: string[], lastVisited: string | null } where each string is a chapter route like '/part-1/chapter-3'. On store creation, load from localStorage; on every update, save to localStorage. Export helper functions: markVisited(route), markCompleted(route), isVisited(route), isCompleted(route), getProgress() returning { total: 28, visited: number, completed: number, pct: number }. (2) In app/src/routes/+layout.svelte, import the progress store and call markVisited($page.url.pathname) inside an afterNavigate callback whenever the route is a chapter page (pathname matches /part-N/chapter-N). (3) In ChapterLayout.svelte, add a 'Mark Complete ✓' button at the bottom of the chapter body that calls markCompleted(ch.route); show it as filled/green if already completed. (4) On the home page (+page.svelte), add a progress bar below the hero showing 'X / 28 chapters visited' with a D3-style progress bar. Show green dots on chapter cards if completed.",
+      "schema": {
+        "localStorage_key": "prob-edu-progress",
+        "structure": "{ visited: string[], completed: string[], lastVisited: string | null }"
+      }
+    },
+
+    {
+      "id": "T06",
+      "priority": 2,
+      "status": "ready",
+      "title": "Inequalities Appendix Page",
+      "file": "app/src/routes/appendix/inequalities/+page.svelte",
+      "estimated_lines": 350,
+      "depends_on": [],
+      "prompt": "Replace the stub at app/src/routes/appendix/inequalities/+page.svelte with a full reference page for probability inequalities. Include all of the following with: (a) a KaTeX-rendered statement, (b) one-line proof idea, (c) conditions/assumptions, (d) an interactive D3 visualization. Inequalities to include: (1) Markov's Inequality P(X≥a)≤E[X]/a — slider for a, E[X]; D3 number line showing the bound. (2) Chebyshev's Inequality P(|X-μ|≥kσ)≤1/k² — k slider; show how the bound 1/k² compares to the Normal distribution tail at kσ. (3) Jensen's Inequality E[g(X)]≥g(E[X]) for convex g — dropdown to select g (x², log, exp); D3 shows the chord above the curve. (4) Chernoff Bound P(X≥(1+δ)μ)≤e^{-μδ²/3} for Binomial — δ slider; show exponential vs polynomial decay. (5) Hoeffding's Inequality P(S_n-E[S_n]≥t)≤exp(-2t²/Σ(b_i-a_i)²) — t slider; compare to Chebyshev. (6) Azuma-Hoeffding for martingales with bounded differences — show P(X_n-X_0≥t)≤exp(-t²/2Σc_k²). (7) Jensen's + Cauchy-Schwarz. Use KaTeX with id='eq-N' pattern and setTimeout 300ms. Add a comparison panel at the bottom where user enters σ², ε and all applicable bounds are evaluated.",
+      "key_formulas": {
+        "markov": "P(X \\geq a) \\leq \\frac{E[X]}{a}",
+        "chebyshev": "P(|X - \\mu| \\geq k\\sigma) \\leq \\frac{1}{k^2}",
+        "chernoff_binomial": "P(X \\geq (1+\\delta)\\mu) \\leq e^{-\\mu\\delta^2/3}",
+        "hoeffding": "P\\!\\left(\\bar{X}_n - E[\\bar{X}_n] \\geq t\\right) \\leq \\exp\\!\\left(\\frac{-2n^2t^2}{\\sum_{i=1}^n (b_i-a_i)^2}\\right)"
+      }
+    },
+
+    {
+      "id": "T07",
+      "priority": 2,
+      "status": "ready",
+      "title": "Enrich Ch 10 (Limit Theorems) with prose + CLT demo",
+      "file": "app/src/routes/part-2/chapter-10/+page.svelte",
+      "estimated_lines": 300,
+      "depends_on": [],
+      "prompt": "Replace the stub at app/src/routes/part-2/chapter-10/+page.svelte with a rich chapter page. The existing v1 module '2.3-lln-lab' covers LLN — embed it with LegacyModule. Also embed '2.4-clt-studio' for CLT. But FIRST write substantial prose sections for: (10.1) Types of Convergence — definitions of convergence in probability, almost sure convergence, L² convergence, convergence in distribution; include the implication diagram (a.s. → in prob → in dist; L² → in prob) as a D3 diagram (4 nodes, arrows, with tooltips explaining counterexamples); (10.2) Weak Law of Large Numbers — statement, proof via Chebyshev; (10.3) Central Limit Theorem — statement with full conditions, Berry-Esseen rate O(1/√n), informal proof idea via MGFs; (10.4) Concentration Inequalities — Markov → Chebyshev → Chernoff hierarchy; (10.5) Berry-Esseen: build one new D3 simulation: a convergence rate visualizer — slider for n, choose parent distribution (Uniform/Exponential/Bernoulli); simulate 5000 sample means; compute KS distance between empirical CDF and N(0,1); plot KS distance vs n on log-log scale; overlay the C/√n Berry-Esseen bound. Embed LegacyModule moduleId='2.3-lln-lab' for LLN and moduleId='2.4-clt-studio' for CLT demo. Use KaTeX for all formulas.",
+      "legacy_modules": ["2.3-lln-lab", "2.4-clt-studio"]
+    },
+
+    {
+      "id": "T08",
+      "priority": 2,
+      "status": "ready",
+      "title": "Enrich Ch 14 (Martingales) with prose",
+      "file": "app/src/routes/part-3/chapter-14/+page.svelte",
+      "estimated_lines": 250,
+      "depends_on": [],
+      "prompt": "Replace the stub at app/src/routes/part-3/chapter-14/+page.svelte. Write prose for: (14.1) Filtrations and adapted processes; (14.2) Martingale definition E[X_{n+1}|F_n]=X_n, sub/supermartingales, examples (random walk, likelihood ratios, Doob martingale); (14.3) Stopping times and OST conditions; (14.4) Martingale convergence theorems (L¹ and L²); (14.5) Azuma-Hoeffding inequality statement and applications (randomized algorithms, bounded difference method). Build one new simulation: MartingaleAzuma — user selects martingale type (sum of bounded iid, random walk with bounded steps); sets c_k (uniform bound on differences); sets target t; compute Azuma-Hoeffding bound P(X_n-X_0≥t)≤exp(-t²/2Σc_k²); simulate 10000 paths and show empirical P(X_n-X_0≥t) vs the bound as n increases on a D3 plot. Then embed LegacyModule moduleId='4.2-martingale-explorer'. KaTeX all formulas.",
+      "legacy_modules": ["4.2-martingale-explorer"]
+    },
+
+    {
+      "id": "T09",
+      "priority": 3,
+      "status": "ready",
+      "title": "Chapter 20 — Bayesian Nonparametrics (full page)",
+      "file": "app/src/routes/part-4/chapter-20/+page.svelte",
+      "estimated_lines": 500,
+      "depends_on": [],
+      "prompt": "Replace the stub at app/src/routes/part-4/chapter-20/+page.svelte with a full graduate-level chapter page. Use ChapterLayout with ch=getChapter(4,20). Write prose for: (20.1) de Finetti's theorem — exchangeability, representation as mixture of i.i.d.; (20.2) Dirichlet process — definition via Dirichlet distributions, base measure H, concentration α; (20.3) Chinese Restaurant Process — describe the CRP metaphor in detail with the seating probabilities; (20.4) Stick-breaking construction of DP; (20.5) Gaussian process regression — definition via mean function and kernel, posterior update formula; (20.6) Bernstein-von Mises theorem — posterior concentrates at true parameter. Build three simulations: (1) CRP Simulator — α slider (0.1–10); animate the CRP seating process step by step (table = cluster); D3 bar chart showing table sizes; display number of tables (clusters) after n=50 customers; show that E[#tables] ≈ α ln(n). (2) DirichletSampleViz — α slider and base measure selector (Normal, Uniform); draw 5 sample discrete distributions from the DP stick-breaking (truncate at 20 atoms); D3 stem plot showing atom locations and masses; animate new samples. (3) GPRegression — user clicks on 2D plot to add training points; use squared exponential kernel k(x,x')=exp(-||x-x'||²/2l²); length scale l slider; compute posterior mean and variance analytically (μ_post = K_* K^{-1} y, σ²_post = k** - K_* K^{-1} K_*^T); D3 line chart with shaded ±2σ credible band updating in real time. Implement the Gaussian matrix operations in pure JS. Also embed LegacyModule moduleId='8.1-prior-posterior'. KaTeX all formulas.",
+      "legacy_modules": ["8.1-prior-posterior"],
+      "math_reference": {
+        "crp_prob": "P(customer n+1 joins table k) = n_k / (α + n), P(new table) = α / (α + n)",
+        "stick_breaking": "β_k ~ Beta(1, α), π_k = β_k Π_{j<k}(1-β_j)",
+        "gp_kernel": "k(x,x') = σ²_f exp(-|x-x'|²/(2l²))",
+        "gp_posterior_mean": "μ_* = k_* (K + σ²_n I)^{-1} y",
+        "gp_posterior_var": "σ²_* = k_{**} - k_* (K + σ²_n I)^{-1} k_*^T"
+      }
+    },
+
+    {
+      "id": "T10",
+      "priority": 3,
+      "status": "ready",
+      "title": "Chapter 25 — Optimal Transport (full page)",
+      "file": "app/src/routes/part-5/chapter-25/+page.svelte",
+      "estimated_lines": 500,
+      "depends_on": [],
+      "prompt": "Replace the stub at app/src/routes/part-5/chapter-25/+page.svelte with a full research-level chapter page. Use ChapterLayout with ch=getChapter(5,25). Write prose for: (25.1) The Monge problem — moving mass, transport maps, cost minimization; (25.2) Kantorovich relaxation — couplings π ∈ Π(μ,ν), Wasserstein distance W_p; (25.3) Duality — Kantorovich dual, c-convex functions; (25.4) Brenier's theorem — optimal transport map = gradient of convex function; (25.5) Sinkhorn algorithm — regularized OT with entropy, iterative scaling; (25.6) Applications — Wasserstein barycenters, distribution shift in ML, Wasserstein GANs. Build three simulations: (1) 1D Transport Visualizer — user draws source histogram μ (click bars to set height) and target histogram ν (click second set of bars); use quantile coupling for 1D: optimal map T(x) = F_ν^{-1}(F_μ(x)); D3 shows arrows from each source bin to its destination; display W_1 and W_2 distances computed numerically. (2) Sinkhorn Algorithm Animator — discrete OT: 4 source points and 4 target points on a 2D canvas (user can drag points); ε slider for regularization; run Sinkhorn iterations with a 'Step' button; D3 heatmap of the transport plan π_{ij} updates each iteration; display primal and dual objective values; show convergence. (3) WassersteinVsKL — two Gaussians (μ₁,σ₁) and (μ₂,σ₂) with sliders; compute W_2 analytically (W_2² = (μ₁-μ₂)² + (σ₁-σ₂)²) and KL divergence; D3 shows how W_2 varies smoothly when distributions don't overlap (unlike KL which explodes). KaTeX all formulas.",
+      "math_reference": {
+        "w2_gaussians": "W_2(N(μ_1,σ_1^2), N(μ_2,σ_2^2))^2 = (μ_1-μ_2)^2 + (σ_1-σ_2)^2",
+        "sinkhorn_update": "u ← a / (K v), v ← b / (K^T u) where K_{ij} = exp(-C_{ij}/ε)",
+        "kantorovich_dual": "W_p^p(μ,ν) = sup_{φ,ψ: φ(x)+ψ(y)≤c(x,y)} ∫φ dμ + ∫ψ dν"
+      }
+    },
+
+    {
+      "id": "T11",
+      "priority": 3,
+      "status": "ready",
+      "title": "Chapter 28 — Probabilistic Graphical Models (full page)",
+      "file": "app/src/routes/part-5/chapter-28/+page.svelte",
+      "estimated_lines": 500,
+      "depends_on": [],
+      "prompt": "Replace the stub at app/src/routes/part-5/chapter-28/+page.svelte with a full research-level chapter page. Use ChapterLayout with ch=getChapter(5,28). Write prose for: (28.1) Bayesian networks — DAGs, conditional independence, d-separation; (28.2) Belief propagation — sum-product algorithm, message passing; (28.3) EM algorithm — derivation via Jensen's inequality on the ELBO, E-step and M-step; (28.4) Causal inference — do-calculus, interventions, back-door criterion; (28.5) Variational inference — ELBO, mean field approximation. Build three simulations: (1) BayesianNetworkExplorer — a small hardcoded DAG: Weather→Sprinkler→WetGrass, Rain→WetGrass; user clicks evidence nodes to set observed=true/false; compute exact posteriors via variable elimination (implement for this small network); D3 force-directed graph shows nodes with posterior probability bars inside each node; animate belief update propagation. (2) EMAlgorithmViz — Gaussian mixture with k=2; D3 scatter plot of 60 pre-generated data points (hardcode a nice dataset); Run E-step (soft assignment shown as point colors interpolating between two colors by responsibility) and M-step (Gaussian ellipses updating) with a Step button; display ELBO increasing; show convergence. Implement GMM EM in pure JS. (3) DoCalculusDemo — a simple confounding DAG (X→Y←Z→X); show observational P(Y|X) vs interventional P(Y|do(X)); slider sets strength of confounding; D3 side-by-side bars showing the difference; explain back-door criterion and how adjustment for Z recovers causal effect. KaTeX all formulas.",
+      "math_reference": {
+        "elbo": "\\mathcal{L}(q) = E_q[\\log p(x,z)] - E_q[\\log q(z)] = \\log p(x) - D_{KL}(q||p)",
+        "em_estep": "q(z) \\leftarrow p(z|x, \\theta^{\\text{old}})",
+        "em_mstep": "\\theta^{\\text{new}} = \\arg\\max_\\theta E_{q}[\\log p(x,z|\\theta)]",
+        "backdoor": "P(Y|do(X)) = \\sum_z P(Y|X,Z) P(Z) \\text{ if Z satisfies back-door criterion}"
+      }
+    },
+
+    {
+      "id": "T12",
+      "priority": 4,
+      "status": "ready",
+      "title": "Chapter 26 — High-Dimensional Probability (full page)",
+      "file": "app/src/routes/part-5/chapter-26/+page.svelte",
+      "estimated_lines": 450,
+      "depends_on": [],
+      "prompt": "Replace the stub at app/src/routes/part-5/chapter-26/+page.svelte with a full chapter page. Use ChapterLayout with ch=getChapter(5,26). Write prose for: (26.1) Concentration of measure on the sphere — most volume near equator; (26.2) Sub-Gaussian random variables — ψ₂ norm, tail bound; (26.3) Johnson-Lindenstrauss lemma — statement, random Gaussian projection; (26.4) VC dimension — definition, growth function, Sauer-Shelah lemma; (26.5) Rademacher complexity — definition, generalization bound. Build three simulations: (1) ConcentrationOnSphere — dimension d slider (2–1000); simulate 500 uniform points on S^{d-1} by normalizing Gaussian vectors; D3 histogram of first coordinate; overlay the density (1-t²)^{(d-3)/2} normalized; show how distribution concentrates near 0 as d grows; display 'fraction within 0.1 of 0: X%'. (2) JLLemmaDemo — n=20 points in ℝ^d (d=100, hardcode random); k slider (5–60) for projection dimension; generate random Gaussian matrix A∈ℝ^{k×d}; compute all C(20,2)=190 pairwise distances before and after projection; D3 scatter plot: original distance vs projected distance for each pair; show relative error distribution; draw ε-tolerance lines; count pairs violating the JL guarantee. (3) VCDimensionExplorer — hypothesis class = halfplanes in 2D; user places n points (click to add, max 8); show whether each subset of points can be shattered by halfplanes (brute force check all 2^n labelings); display VC dimension found so far; animate by showing a separating halfplane for each labeling that can be separated. KaTeX all formulas.",
+      "math_reference": {
+        "jl_lemma": "For ε∈(0,1), k=O(log(n)/ε²), random projection A/√k satisfies (1-ε)‖u-v‖² ≤ ‖Au-Av‖² ≤ (1+ε)‖u-v‖² with high probability",
+        "subgaussian_tail": "P(X ≥ t) ≤ 2 exp(-t²/(2σ²))",
+        "vc_growth": "Φ(m,d) ≤ (em/d)^d for m ≥ d (Sauer-Shelah)"
+      }
+    },
+
+    {
+      "id": "T13",
+      "priority": 4,
+      "status": "ready",
+      "title": "Notation and Glossary Appendix",
+      "file": "app/src/routes/appendix/notation/+page.svelte",
+      "estimated_lines": 200,
+      "depends_on": [],
+      "prompt": "Build the notation and glossary appendix at app/src/routes/appendix/notation/+page.svelte. (1) A searchable notation table with columns: Symbol, LaTeX, Meaning, Introduced (chapter link). Include at minimum: Ω, ∅, P(A), P(A|B), E[X], Var(X), Cov(X,Y), ρ, σ², μ, φ(t) (CF), M_X(t) (MGF), F(x) (CDF), f(x) (PDF/PMF), N(μ,σ²), Exp(λ), Bin(n,p), Poi(λ), ~, ⊥⊥, →ᵖ, →ᵃˢ, →ᵈ, ℱ_t (filtration), [X,X]_t (QV), dW_t, π (stationary), H(X) (entropy), D_KL(P‖Q), I(θ) (Fisher). (2) A Greek alphabet card showing Greek letters used in probability with their standard meaning. (3) A full glossary: alphabetically sorted terms (almost sure, Borel set, càdlàg, ergodic, filtration, i.i.d., Lévy process, martingale, optional stopping, Radon-Nikodým, σ-algebra, semimartingale, stationary distribution, stopping time, submartingale, supermartingale, tight, uniform integrability, weak convergence); each term defined in 1-2 sentences with a link to the relevant chapter. Use KaTeX for symbols. Search box filters all three sections simultaneously."
+    },
+
+    {
+      "id": "T14",
+      "priority": 5,
+      "status": "ready",
+      "title": "Chapter 21 — Random Matrices (full page)",
+      "file": "app/src/routes/part-4/chapter-21/+page.svelte",
+      "estimated_lines": 400,
+      "depends_on": [],
+      "prompt": "Replace the stub at app/src/routes/part-4/chapter-21/+page.svelte. Write prose for: (21.1) GOE/GUE ensembles — symmetric random matrices with Gaussian entries; (21.2) Wigner's semicircle law — statement, moment method proof sketch; (21.3) Marchenko-Pastur law — Wishart matrices (W = X^T X / n where X is p×n), limit spectral density for γ=p/n→const; (21.4) Tracy-Widom distribution — largest eigenvalue fluctuations; (21.5) Universality. Build two D3 simulations: (1) WignerSemicircle — N slider (10–200); generate an N×N symmetric random matrix with Gaussian entries scaled by 1/√N; compute all eigenvalues using the power iteration / QR algorithm (or use a simplified version: generate 5000 eigenvalues analytically from the Wigner distribution for display speed using the semicircle quantile function ρ(x)=(2/π)√(1-x²/4) for |x|≤2); D3 histogram overlaid with the exact semicircle density f(x)=(1/(2π))√(4-x²); update as N changes. (2) MarchenkoPastur — p and n sliders (10–200 each); display γ=p/n; show the Marchenko-Pastur density f(x)=(1/(2πγ))√((λ₊-x)(x-λ₋))/x for x∈[λ₋,λ₊] where λ±=(1±√γ)²; D3 plot of the density curve; show the BBP spike: add a signal of strength β; show how the top eigenvalue separates from the bulk when β>1. KaTeX all formulas.",
+      "math_reference": {
+        "semicircle": "f(x) = \\frac{1}{2\\pi}\\sqrt{4 - x^2}, \\quad |x| \\leq 2",
+        "marchenko_pastur": "f(x) = \\frac{1}{2\\pi\\gamma}\\frac{\\sqrt{(\\lambda_+ - x)(x - \\lambda_-)}}{x}",
+        "mp_edges": "\\lambda_{\\pm} = (1 \\pm \\sqrt{\\gamma})^2"
+      }
+    },
+
+    {
+      "id": "T15",
+      "priority": 5,
+      "status": "ready",
+      "title": "PWA Support — Service Worker and Manifest",
+      "file": "app/src/service-worker.ts",
+      "estimated_lines": 60,
+      "depends_on": ["T01","T02","T03"],
+      "prompt": "Add Progressive Web App support to the SvelteKit app. (1) Create app/static/manifest.json with: name='Probability Education', short_name='Probability', description='Interactive probability textbook from coin flips to stochastic calculus', start_url='./', display='standalone', theme_color='#2563eb', background_color='#fafaf8', icons=[{src:'favicon.svg',type:'image/svg+xml',sizes:'any'}]. (2) Add <link rel='manifest' href='%sveltekit.assets%/manifest.json'> to app/src/app.html. (3) Create app/src/service-worker.ts — a SvelteKit service worker using the built-in $service-worker module: import { build, files, version } from '$service-worker'; cache all static assets (files) and built chunks (build) under a versioned cache name 'prob-edu-v'+version; implement stale-while-revalidate for navigation requests; implement cache-first for assets; handle the install, activate, and fetch events. (4) In app/src/routes/+layout.svelte, add a browser check and register the service worker: if ('serviceWorker' in navigator) navigator.serviceWorker.register('/service-worker.js'). (5) Add an 'Offline' indicator pill to the nav that appears when navigator.onLine is false, using a Svelte $effect or onMount to listen for online/offline events."
+    }
+  ],
+
+  "conventions": {
+    "never_modify": [
+      "src/ (v1 modules — read-only)",
+      "index.html (v1 landing page)",
+      "vite.config.js (root — v1)",
+      "package.json (root — v1)",
+      "css/ and js/ directories"
+    ],
+    "always_in": "app/ directory for all v2 work",
+    "commit_from": "repo root (not app/)",
+    "build_must_pass": "npm run build in app/ must succeed before every commit",
+    "no_npm_imports_for_math": "D3 and KaTeX come from CDN. Access as (window as any).d3 and (window as any).katex. Do NOT npm install d3 or katex.",
+    "single_script_block": "One <script lang='ts'> block per Svelte component. Merge all logic there.",
+    "katex_delay": "KaTeX renders in setTimeout 300ms inside onMount to ensure CDN script has loaded.",
+    "css_vars_only": "Never hardcode colors. Always use var(--accent), var(--surface), etc.",
+    "chapter_layout_required": "Every chapter page MUST use <ChapterLayout>. No exceptions."
+  },
+
+  "css_vars_reference": {
+    "--bg": "#fafaf8", "--surface": "#ffffff", "--border": "#e5e5e0",
+    "--text": "#1a1a18", "--text2": "#4a4a44", "--text3": "#8a8a80",
+    "--accent": "#2563eb", "--red": "#dc2626", "--rbg": "#fef2f2",
+    "--orange": "#ea580c", "--obg": "#fff7ed", "--yellow": "#ca8a04",
+    "--ybg": "#fefce8", "--green": "#16a34a", "--gbg": "#f0fdf4",
+    "--blue": "#2563eb", "--bbg": "#eff6ff", "--purple": "#7c3aed",
+    "--pbg": "#f5f3ff",
+    "--font-heading": "DM Serif Display", "--font-body": "IBM Plex Sans",
+    "--font-mono": "IBM Plex Mono"
+  }
+}
